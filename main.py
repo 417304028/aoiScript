@@ -1,152 +1,488 @@
 import os
+import random
+import tools
 import sys
 import time
 import psutil
+import pyperclip
+import win32com
+import win32con
+import win32gui
+import pythoncom
+import win32com.client
 from pyautogui import locateOnScreen, click
+import pyautogui
+import easyocr
+import logging
+import cv2
+import numpy as np
+from PIL import Image
+from PIL import ImageGrab
 import pyautogui
 
 AOI_EXE_PATH = r'D:\EYAOI\Bin\AOI.exe'
 JOB_PATH = r'D:\EYAOI\JOB\djb'
 
-# 使用坐标，受屏幕分辨率影响
-# 检查是否已打开，开始运行
+PROGRAM_COMPONENT = 'images/whole_board/program_component.png'
+PROGRAM_COMPONENT_DARK = 'images/whole_board/program_component_dark.png'
+NO_CHECKED_COMPONENT = 'images/whole_board/job/no_checked_component.png'
+CHECKED_COMPONENT = 'images/whole_board/job/checked_component.png'
+
+PROGRAM_NAME = 'images/open_program/program_name.png'
+LOADING_PROGRAM = 'images/open_program/load.png'
+
+ALG2D = 'images/alg_param/alg2d.png'
+OPEN_PROGRAM_YES = 'images/prompt_box/open_program_yes.png'
+ADD_CHECKED_YES = 'images/prompt_box/add_check_yes.png'
+ADD_WINDOW = 'images/click_menu/add_window.png'
+SQUARE_POSITIONING = 'images/add_check_window/check_type/common/square_positioning.png'
+
+X_OFFSET = 'images/add_check_window/drawback/ontology/x_offset.png'
+Y_OFFSET = 'images/add_check_window/drawback/ontology/y_offset.png'
+DEFAULT = 'images/add_check_window/drawback/ontology/default.png'
+
+TOPIC_PATH = 'images/gui/topic.png'
+OPEN_PROGRAM_PATH = 'images/gui/open_program.png'
+BOARD_BOARD = 'images/gui/board/auto.png'
+EDIT_BACK_BUTTON = 'images/gui/edit/back.png'
+GUI_EDIT_LIGHT = 'images/gui/edit/light.png'
+GUI_EDIT_LIGHT_MENU = 'images/gui/edit/light_menu.png'
+TEST_WINDOW = 'images/gui/edit/test_window.png'
+TEST_COMPONENT = 'images/gui/edit/test_component.png'
+
+# CURRENT_COMPONENT_STATUS = None
+ALL_COMPONENTS = []
+# pyautogui 的全局暂停时间
+pyautogui.PAUSE = 1  # 暂停1s
+
+
+
 def check_and_launch_aoi():
     aoi_running = any("AOI.exe" == p.name() for p in psutil.process_iter())
-
     if not aoi_running:
         print("AOI程序未运行,正在启动...")
         os.startfile(AOI_EXE_PATH)
         print("等待AOI程序启动...")
+        wait_for_symbol(TOPIC_PATH, 60)
     else:
-        sys.exit("AOI程序已运行")
+        print("AOI已启动，正在恢复正常窗口")
+        hwnd_list = []
+        pythoncom.CoInitialize()
+        shell = win32com.client.Dispatch('WScript.Shell')
+        shell.SendKeys('%')
+        def enum_windows_proc(hwnd, lParam):
+            window_text = win32gui.GetWindowText(hwnd)
+            parent_hwnd = win32gui.GetParent(hwnd)
+            # ！！！！！！！！！版本变动后这边可能要改！！！！！！！！！！
+            if 'Sinic-Tek 3D AOI' in win32gui.GetWindowText(hwnd) and win32gui.GetClassName(hwnd) == 'WindowsForms10.Window.8.app.0.27829a8_r8_ad1' and parent_hwnd == 0:
+                class_name = win32gui.GetClassName(hwnd)
+                print(f"窗口标题: '{window_text}'，类名: '{class_name}'")
+                hwnd_list.append(hwnd)
 
+        win32gui.EnumWindows(enum_windows_proc, None)
+       
+        # 检查窗口状态并适当调整
+        for hwnd in hwnd_list:
+            # 获取窗口状态 这几行会导致窗口大小异常！！！！！！！！
+            window_placement = win32gui.GetWindowPlacement(hwnd)
+            print(hwnd)
+            # 确保窗口是正常大小
+            # win32gui.MoveWindow(hwnd, 0, 0, 1920, 1040, True)
+            # win32gui.ShowWindow(hwnd, win32con.SW_SHOWNA) #打不开
+            # win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)  #窗口异常
+            # win32gui.ShowWindow(hwnd, win32con.SW_SHOWNORMAL) #窗口异常
+            win32gui.ShowWindow(hwnd, win32con.SW_SHOWMAXIMIZED)
+            win32gui.ShowWindow(hwnd, win32con.SW_SHOWNOACTIVATE)
+            win32gui.ShowWindow(hwnd, win32con.SW_SHOW)
+        tools.wait_for_symbol(TOPIC_PATH, 20)
+    sys.exit("test")
+# 确认打开aoi后，点击打开程式
+def open_job():
+    if not wait_for_symbol(TOPIC_PATH, 20):
+        sys.exit("未能在规定时间内确认AOI状态，操作中止。")
+    time.sleep(0.2)
+    wait_for_symbol(OPEN_PROGRAM_PATH, 20)
+    # 打开程式
+    click_button(OPEN_PROGRAM_PATH, 1)
+    # TODO：其实转为获取句柄更快
+    time.sleep(0.4)
+    # 点击模板
+    click_button(PROGRAM_NAME, 1)
+    time.sleep(0.3)
+    # 点轨1
+    click_button(LOADING_PROGRAM, 1)
+    # 点是
+    click_button(OPEN_PROGRAM_YES, 1)
 
-# 等到无算法提示的出现，点击确认，否则要等十秒
-def skip_warning(image_path):
-    warning = None
-    timeout = 50  # 最多等待10秒
-    start_time = time.time()
-
-    while warning is None and (time.time() - start_time) < timeout:
-        try:
-            warning = pyautogui.locateOnScreen(image_path)
-            if warning is not None:
-                print("找到按钮" + image_path)
-                click(warning)
-                print("操作成功")
-                break
-        except:
-            print("未找到" + image_path)
-        time.sleep(1)  # 每次检查间隔1秒
-    if warning is None:
-        sys.exit("在指定时间内未找到图片" + image_path)
-
-
-# 模拟键盘操作，打开djb批量编辑界面
-def batch_djb_edit():
-    print("按键")
-    pyautogui.hotkey('ctrl', 'shift', 'p')
-    time.sleep(1)
-    pyautogui.press('enter')
-    print("进入djb批量编辑界面")
-
-
-# 点击打开DJB文件文本框
-def click_open_label():
-    pyautogui.click(180, 210)
-
-def input_path(content):
-    print("输入路径")
-    pyautogui.typewrite(content)  # 输入文本
-    print("输入完毕")
-
-def click_button(image_path):
-    print("寻找按钮..." + image_path)
-    button = locateOnScreen(image_path)
-
-    if button:
-        click(button)
-    else:
-        sys.exit(f"未找到按钮: {image_path}")
-
-# 把带有hardware.png的一个一个点击，会有一个成功的提示，表示已导出，点击确定。然后复制一份文件夹，开始下一份文件夹的复制
-def open_and_output_file():
-    click('open.png')
-
-    # 等待加载
-    loading = None
-    timeout = 30
-    start_time = time.time()
-
-    # 确认加载完成
-    while loading is None and (time.time() - start_time) < timeout:
-        try:
-            loading = pyautogui.locateOnScreen('hardware.png')
-            if loading is not None:
-                print("加载完,准备djb处理")
-                break
-        except:
-            print("加载中———")
-        time.sleep(1)  # 每次检查间隔1秒
-    if loading is None:
-        sys.exit("在指定时间内未找到hardware.png,可能加载失败")
-        
-    # 加载完成后再导出
-    # 不重复依次点击所有的hardware.png按钮，并导出，确保导出成功后点击导出成功的提示按钮，再进行下一个hardware的导出
-    seen_buttons = set()  # 用于存储已点击的按钮位置
-    hardware_buttons = list(pyautogui.locateAllOnScreen('hardware.png'))
-    for hardware_button in hardware_buttons:
-        button_position = pyautogui.center(hardware_button)
-        if button_position not in seen_buttons:
-            print("点击芯片")
-            x, y = button_position
-            pyautogui.click(x, y)
-            print(f"点击位置: ({x}, {y})")
-            print("点击导出")
-            click_button('export.png')  
-            time.sleep(2)
-
-            # 加载成功，关闭提示
-            export_success = None
-            start_time = time.time()
-            timeout = 3
-            while export_success is None and (time.time() - start_time) < timeout:
-                print("查找导出成功提示")
-                export_success = locateOnScreen('export_success.png')
-                if export_success:
-                    pyautogui.click(export_success)
-                    print("导出成功，点击确认")
-                    seen_buttons.add(button_position)
-            if export_success is None:
-                print("未找到导出成功提示")
-
-    # TODO 是否需要对其他文件夹作改动
-
-def open_aoi():
-    # 打开aoi
-    check_and_launch_aoi()
-    skip_warning("images/login/done.png")
-    print("等待5秒界面刷新")
-    time.sleep(5)
-    # 开始djb批量编辑
-    batch_djb_edit()
+# 获取程式元件列表
+def get_component_list():
+    global ALL_COMPONENTS
     time.sleep(3)
-    click_open_label()
-    input_path(JOB_PATH)
-    # 导入文件夹，一个一个导出djb
-    open_and_output_file()
-    click_button('export.png')
+    # 注意首次加载板的时候出现的和后续加载时的面板不同
+    # 首次加载应该识别程式元件 点击后打开
+    # 点击程式元件面板
+    wait_for_symbol(PROGRAM_COMPONENT_DARK, 60)
+    time.sleep(5)
+    click_button(PROGRAM_COMPONENT_DARK, 2)
+    time.sleep(0.3)
+    confidence_level = 0.9
+    try:
+        # 识别未检测的元件坐标并保存，标记为no_checked
+        no_checked_components = list(pyautogui.locateAllOnScreen(NO_CHECKED_COMPONENT, confidence=confidence_level))
+        no_checked_positions = [{'x': pos.left, 'y': pos.top, 'status': 'no_checked', 'seen': False} for pos in no_checked_components]
+    except pyautogui.ImageNotFoundException:
+        no_checked_positions = []
+        print("未检测的元件图像未找到。")
+
+    try:
+        # 识别已检测的元件坐标并保存，标记为checked
+        checked_components = list(pyautogui.locateAllOnScreen(CHECKED_COMPONENT, confidence=confidence_level))
+        checked_positions = [{'x': pos.left, 'y': pos.top, 'status': 'checked', 'seen': False} for pos in checked_components]
+    except pyautogui.ImageNotFoundException:
+        checked_positions = []
+        print("已检测的元件图像未找到。")
+    # 更新全局变量all_components
+    ALL_COMPONENTS = no_checked_positions + checked_positions
+# 获取选择框
+def get_choose_box():
+    # 定位中心点附近的黄色方块
+    center_x, center_y = 935, 445
+    search_region = (center_x - 393, center_y - 148, 786, 296)  # 更新搜索区域
+    screenshot = pyautogui.screenshot(region=search_region)
+    image = np.array(screenshot)
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    
+    # 定义黄色的HSV范围
+    lower_yellow = np.array([30, 255, 255])
+    upper_yellow = np.array([30, 255, 255])
+    
+    # 根据阈值构建掩模
+    mask = cv2.inRange(hsv_image, lower_yellow, upper_yellow)
+    
+    # 寻找轮廓
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # 过滤小轮廓
+    yellow_blocks = [cv2.boundingRect(cnt) for cnt in contours if cv2.contourArea(cnt) > 6]
+    print(yellow_blocks)
+    # 检查找到的方块数量
+    if len(yellow_blocks) == 8:
+        # 按照距离中心点的距离排序
+        yellow_blocks.sort(key=lambda pos: (pos[0] + pos[2]//2 - center_x + search_region[0])**2 + (pos[1] + pos[3]//2 - center_y + search_region[1])**2)
+        print(yellow_blocks)
+        # 选择第5个最近的方块
+        target_block = yellow_blocks[4]  # 选择第五个最近的方块，索引为4
+        target_x = target_block[0] + target_block[2]//2 + search_region[0]
+        target_y = target_block[1] + target_block[3]//2 + search_region[1]
+        target = (target_x, target_y)
+        print(target_x, target_y)
+        return True, target
+    elif len(yellow_blocks) > 0:
+        return True, None
+    else:
+        return False, None
+# 调整将CAD框随机变大，再变小
+def adjust_cad_frame():
+    wait_for_symbol(EDIT_BACK_BUTTON, 10)
+    time.sleep(2)
+    # 选中框框快捷键
+    pyautogui.press('b')
+    print("选中检测框")
+    time.sleep(1.5)
+    success, point = get_choose_box()
+    print(point)
+    # 识别到完整的选择框
+    if success:
+        if point is not None:
+            print("move")
+            x, y = point
+            print(x, y)
+            pyautogui.moveTo(x, y, duration=0.5)
+            pyautogui.mouseDown()
+            # 计算区域边界
+            left_bound, top_bound, width, height = 540, 150, 1327 - 540, 738 - 150
+            right_bound = left_bound + width
+            bottom_bound = top_bound + height
+
+            # 计算到边界的最小距离
+            min_dist_to_left = point[0] - left_bound
+            min_dist_to_right = right_bound - point[0]
+            min_dist_to_top = point[1] - top_bound
+            min_dist_to_bottom = bottom_bound - point[1]
+
+            # 选择最小距离并计算随机移动距离
+            min_dist = min(min_dist_to_left, min_dist_to_right, min_dist_to_top, min_dist_to_bottom)
+            move_dist = random.randint(1, min_dist)
+
+            # 确定移动方向
+            if min_dist == min_dist_to_left:
+                move_x = -move_dist
+                move_y = 0
+            elif min_dist == min_dist_to_right:
+                move_x = move_dist
+                move_y = 0
+            elif min_dist == min_dist_to_top:
+                move_x = 0
+                move_y = -move_dist
+            else:
+                move_x = 0
+                move_y = move_dist
+
+            # 执行扩大选择框操作
+            pyautogui.moveRel(move_x, move_y, duration=2)
+            time.sleep(0.5)
+            pyautogui.mouseUp()
+            # 最大点
+            big_x, big_y = pyautogui.position()
+            time.sleep(1)
+            # 执行缩小选择框操作
+            center_x, center_y = 935, 445
+            pyautogui.moveTo(big_x, big_y)
+            pyautogui.mouseDown()
+            move_to_center_x = random.randint(0, abs(center_x - big_x))
+            move_to_center_y = random.randint(0, abs(center_y - big_y))
+            if center_x < big_x:
+                move_to_center_x = -move_to_center_x
+            if center_y < big_y:
+                move_to_center_y = -move_to_center_y
+            target = (move_to_center_x, move_to_center_y)
+            pyautogui.moveRel(target[0], target[1], duration=1)
+            pyautogui.mouseUp()
+        # TODO 识别到不完整的选择框 估计是选择框出界了
+        else:
+            pass
+    else:
+        sys.exit("未识别到选择框")
+
+
+def move_cad():
+    # 将鼠标移动到指定位置
+    pyautogui.moveTo(935, 445)
+    # 按下鼠标左键准备拖动
+    pyautogui.mouseDown()
+    # 生成随机的x和y偏移量，范围在-300到300之间
+    x_offset = random.randint(-300, 300)
+    y_offset = random.randint(-300, 300)
+    # 执行鼠标拖动操作
+    pyautogui.moveRel(x_offset, y_offset, duration = 0.5)
+    # 释放鼠标左键完成拖动
+    pyautogui.mouseUp()
+    print("完成拖动")
+
+# 画CAD框
+def add_cad_frame():
+    wait_for_symbol(EDIT_BACK_BUTTON, 5)
+    # 获取(937, 447)处的颜色
+    target_color = pyautogui.screenshot().getpixel((936, 446))
+    # 转换颜色到HSV
+    target_color_hsv = cv2.cvtColor(np.uint8([[target_color]]), cv2.COLOR_RGB2HSV)[0][0]
+
+    # 定义颜色的HSV范围，初始范围
+    hue_variation = 15
+    saturation_variation = 30
+    value_variation = 30
+    found = False
+
+    while not found:
+        lower_bound = np.array([target_color_hsv[0] - hue_variation, target_color_hsv[1] - saturation_variation, target_color_hsv[2] - value_variation])
+        upper_bound = np.array([target_color_hsv[0] + hue_variation, target_color_hsv[1] + saturation_variation, target_color_hsv[2] + value_variation])
+
+        # 截取整个屏幕图像
+        screenshot = pyautogui.screenshot()
+        screenshot_np = np.array(screenshot)
+        screenshot_hsv = cv2.cvtColor(screenshot_np, cv2.COLOR_RGB2HSV)
+
+        # 创建颜色掩码
+        mask = cv2.inRange(screenshot_hsv, lower_bound, upper_bound)
+
+        # 寻找连贯区域的轮廓
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        # 找到包含点(935, 445)的连贯区域
+        target_contour = None
+        for contour in contours:
+            if cv2.pointPolygonTest(contour, (936, 446), False) >= 0:
+                target_contour = contour
+                found = True
+                break
+
+        # 如果找到了符合条件的连贯区域
+        if target_contour is not None:
+            x, y, w, h = cv2.boundingRect(target_contour)
+            # 扩大区域
+            expand_margin = 10
+            top_left = (x - expand_margin, y - expand_margin)
+            bottom_right = (x + w + expand_margin, y + h + expand_margin)
+            print("Top-left corner:", top_left)
+            print("Bottom-right corner:", bottom_right)
+            print("找到疑似cad区域")
+        else:
+            # 增加HSV范围并重试
+            hue_variation += 5
+            saturation_variation += 10
+            value_variation += 10
+            print("hue_variation:", hue_variation)
+            if hue_variation > 180 or saturation_variation > 255 or value_variation > 255:
+                print("未识别出cad区域，可能准心不在cad内")
+    pyautogui.rightClick(935, 445)
+    click_button(ADD_WINDOW, 1)
+    # 使用pyautogui模拟鼠标拖动
+    pyautogui.moveTo(top_left, duration=1)
+    pyautogui.mouseDown()
+    pyautogui.moveTo(bottom_right, duration = 1)
+    pyautogui.mouseUp()
+    print("cad描边完毕")
+# 缺陷类型选择X偏移，随机调整左下角抽色空间的RT值，点击测试当前窗口，获取当前高度上下限的结果值
+def x_offset_test():
+    time.sleep(2)
+    click_button(SQUARE_POSITIONING, 1)
+    click_button(X_OFFSET, 1)
+    click_button(ADD_CHECKED_YES, 1)
+    time.sleep(0.2)
+    print("开始方形定位——x偏移检测")
+
+    # 调整RT值
+    set_random_value(840, 850, 1)
+    set_random_value(840, 870, 1)
+    set_random_value(840, 945, 1)
+    set_random_value(840, 965, 1)
+    pyautogui.press('enter')
+    time.sleep(0.5)
+    click_button(TEST_WINDOW, 1)
+    time.sleep(0.5)
+    pyautogui.doubleClick(1780, 395)
+    pyautogui.keyDown('ctrl')
+    pyautogui.press('c')
+    pyautogui.keyUp('ctrl')
+    top_result = pyperclip.paste()
+    pyautogui.doubleClick(1780, 415)
+    pyautogui.keyDown('ctrl')
+    pyautogui.press('c')
+    pyautogui.keyUp('ctrl')
+    bottom_result = pyperclip.paste()
+    print(top_result, bottom_result)
+    print("x_offset_test完成")
+
+def set_random_value(x, y, type):
+    if type == 0:   # 0代表RGB值
+        random_num = random.randint(0, 300)
+    elif type == 1:   # 1代表RT值
+        random_num = random.randint(0, 1437)
+    pyautogui.click(x, y)
+    pyautogui.keyDown('ctrl')
+    pyautogui.press('a')
+    pyautogui.keyUp('ctrl')
+    pyautogui.press('backspace')
+    pyautogui.typewrite(str(random_num))
+
+
+# 打开2D模式，随机调整rgb值，点击测试当前元件，再调整RGB值，点击测试当前该窗口
+def change_rgb_test():
+    click_button(ALG2D, 1)
+    # rgb三个数字框 改0-300任意数值 改完后回车
+    set_random_value(835, 825, 0)
+    set_random_value(835, 870, 0)
+    set_random_value(835, 915, 0)
+    pyautogui.press('enter')
+    time.sleep(0.1)
+    click_button(TEST_COMPONENT, 1)
+    set_random_value(835, 825, 0)
+    set_random_value(835, 870, 0)
+    set_random_value(835, 915, 0)
+    pyautogui.press('enter')
+    click_button(TEST_WINDOW, 1)
+
+# 随机切换光源，随机调整方形定位算法的框大小及位置，点击测试，读取高度上下限的结果值
+def change_light_test():
+    click_button(GUI_EDIT_LIGHT, 1)
+    try:
+        wait_for_symbol(GUI_EDIT_LIGHT_MENU, 5)
+        # 在屏幕上找到图片
+        location = pyautogui.locateOnScreen(GUI_EDIT_LIGHT_MENU)
+        if location:
+            # 计算图片的宽度和高度
+            width, height = location.width, location.height
+            # 生成图片范围内的随机点击坐标
+            click_x = location.left + random.randint(0, width)
+            click_y = location.top + random.randint(0, height)
+            # 执行点击操作
+            pyautogui.click(x=click_x, y=click_y)
+            print(f"点击光源选择菜单的({click_x}, {click_y}位置)")
+            time.sleep(0.5)
+        else:
+            sys.exit("找光源编辑菜单出错")
+    except pyautogui.ImageNotFoundException:
+        sys.exit("未找到光源编辑菜单")
+    # 现在光源切换完毕，开始调整方形定位算法框大小及位置
+    # adjust_cad_frame()
+    add_cad_frame()
+    click_button(SQUARE_POSITIONING, 1)
+    click_button(X_OFFSET, 1)
+    click_button(ADD_CHECKED_YES, 1)
+    # 点击测试
+    click_button(TEST_WINDOW, 1)
+    time.sleep(0.5)
+    pyautogui.doubleClick(1780, 395)
+    pyautogui.keyDown('ctrl')
+    pyautogui.press('c')
+    pyautogui.keyUp('ctrl')
+    top_result = pyperclip.paste()
+    pyautogui.click(1780, 418)
+    pyautogui.keyDown('ctrl')
+    pyautogui.press('c')
+    pyautogui.keyUp('ctrl')
+    bottom_result = pyperclip.paste()
+    print(top_result, bottom_result)
     
 
+def component_test(component):
+    x, y = component['x'], component['y']
+    time.sleep(2)
+    pyautogui.doubleClick(x, y)
+    pyautogui.press('enter')
+    component['seen'] = True
+    if component['status'] == 'no_checked':
+        # for i in range(3):
+            # if i == 0:
+                # 调整将CAD框随机变大，再变小，再随机移动CAD；
+            print("处理未检测的元件")
+            adjust_cad_frame()
+            move_cad()
+            # 画一个方形定位算法（最好和CAD重合），缺陷类型选择X偏移，随机调整左下角抽色空间的RT值，点击测试当前窗口，获取当前高度上下限的结果值
+            add_cad_frame()
+            x_offset_test()
+            # 打开2D模式，随机调整RGB值，点击测试当前文件，再调整RGB值，点击测试当前窗口
+            change_rgb_test()
+            # 随机切换光源，随机调整方形定位算法的框大小及位置，点击测试，读取高度上下限的结果值
+            change_light_test()
+            # print(f"该元件已处理第 {i+1} 次")
+    elif component['status'] == 'checked':
+        print("处理已检测的元件")
+        for i in range(3):
+            # 调整将CAD框随机变大，再变小，再随机移动CAD；
+            sys.exit("停停停，先测到这里")
+            adjust_cad_frame()
+            # 画一个方形定位算法（最好和CAD重合），缺陷类型选择X偏移，随机调整左下角抽色空间的RT值，点击测试当前窗口，获取当前高度上下限的结果值
+            x_offset_test()
+            # 打开2D模式，随机调整RGB值，点击测试当前文件，再调整RGB值，点击测试当前窗口
+            change_rgb_test()
+            # 随机切换光源，随机调整方形定位算法的框大小及位置，点击测试，读取高度上下限的结果值
+            random_change_light()
+            print(f"该元件已处理第 {i+1} 次")
+
+# 测试job算法 
+def aoi_test_alg():
+    # 打开aoi
+    check_and_launch_aoi()
+    # 打开指定路径job
+    open_job()
+    # 获取程式元件列表
+    get_component_list()
+    print(ALL_COMPONENTS)
+    # 选择元件 TODO 后面再修改
+    for component in ALL_COMPONENTS:
+        if not component['seen']:  # 只处理未处理的元件
+            component_test(component)
 
 if __name__ == '__main__':
-    open_aoi()
-    # 1.打开指定路径djb
-    # 2.调整将CAD框随机变大，再变小，再随机移动CAD；
-    # 3.画一个方形定位算法（最好和CAD重合），缺陷类型选择X偏移，随机调整左下角抽色空间的RT值，点击测试当前窗口，获取当前高度上下限的结果值
-    # 4.打开2D模式，随机调整RGB值，点击测试当前文件，再调整RGB值，点击测试当前窗口
-    # 5.随机切换光源，随机调整方形定位算法的框大小及位置，点击测试，读取高度上下限的结果值
-
-    # 重复2 - 5 步骤3次
-
-
+    aoi_test_alg()
