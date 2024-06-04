@@ -1,0 +1,30 @@
+AOI_EXE_PATH = r'D:\EYAOI\Bin\AOI.exe'
+JOB_PATH = r'D:\EYAOI\JOB\djb'
+
+PROGRAM_COMPONENT = 'images/whole_board/program_component.png'
+PROGRAM_COMPONENT_DARK = 'images/whole_board/program_component_dark.png'
+NO_CHECKED_COMPONENT = 'images/whole_board/job/no_checked_component.png'
+CHECKED_COMPONENT = 'images/whole_board/job/checked_component.png'
+
+PROGRAM_NAME = 'images/open_program/program_name.png'
+LOADING_PROGRAM = 'images/open_program/load.png'
+
+ALG2D = 'images/alg_param/alg2d.png'
+OPEN_PROGRAM_YES = 'images/prompt_box/open_program_yes.png'
+OPEN_PROGRAM_NO = 'images/prompt_box/open_program_no.png'
+ADD_CHECKED_YES = 'images/prompt_box/add_check_yes.png'
+ADD_WINDOW = 'images/click_menu/add_window.png'
+SQUARE_POSITIONING = 'images/add_check_window/check_type/common/square_positioning.png'
+
+X_OFFSET = 'images/add_check_window/drawback/ontology/x_offset.png'
+Y_OFFSET = 'images/add_check_window/drawback/ontology/y_offset.png'
+DEFAULT = 'images/add_check_window/drawback/ontology/default.png'
+
+TOPIC_PATH = 'images/gui/topic.png'
+OPEN_PROGRAM_PATH = 'images/gui/open_program.png'
+BOARD_BOARD = 'images/gui/board/auto.png'
+EDIT_BACK_BUTTON = 'images/gui/edit/back.png'
+GUI_EDIT_LIGHT = 'images/gui/edit/light.png'
+GUI_EDIT_LIGHT_MENU = 'images/gui/edit/light_menu.png'
+TEST_WINDOW = 'images/gui/edit/test_window.png'
+TEST_COMPONENT = 'images/gui/edit/test_component.png'
