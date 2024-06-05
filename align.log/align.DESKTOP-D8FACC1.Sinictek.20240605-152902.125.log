@@ -1,0 +1,63 @@
+Log file created at: 2024/06/05 15:29:02.125
+Running on machine: DESKTOP-D8FACC1
+Processor: Intel(R) Core(TM) i5-6500 CPU @ 3.20GHz
+Number of physical processors: 4
+Number of logical  processors: 4
+CPU features: MMX SSE SSE2 SSE3 SSSE3 SSE4.1 SSE4.2 POPCNT FP16 AVX AVX2 FMA3 
+Log line format : [LEVEL: yyyy-mm-dd hh:mm:ss.uuu threadid file:line] msg
+[INFO: 2024-06-05 15:29:02.126 6280 PatternMatching.cpp:5437] +----------------------------------------------------+
+[INFO: 2024-06-05 15:29:02.126 6280 PatternMatching.cpp:5438] + alignCreate                                        +
+[INFO: 2024-06-05 15:29:02.126 6280 PatternMatching.cpp:5439] +----------------------------------------------------+
+[INFO: 2024-06-05 15:29:02.126 6280 PatternMatching.cpp:5441] handle = 000001CCBB34FFC0 width = 5000 height = 5000
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1961] +----------------------------------------------------+
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1962] + alignSetConfig                                     +
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1963] +----------------------------------------------------+
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1965] minScale = 1.000
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1966] maxScale = 1.000
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1967] minAngle = -180.000
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1968] maxAngle = 180.000
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1969] maxMatching = 1
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1970] edgeThresh = 48
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1971] compThresh = 8
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1972] minScore = 0.500
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1973] ignorePolarity = 0
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1974] maxPyrlevel = 0
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1975] elasticity = 0
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1976] originX = -1.000
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1977] originY = -1.000
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1978] subpixel = 2
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1979] maxOverlap = 0.500
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1980] sortMode = 0
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1981] onBoundary = 0
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1982] considerClutter = 0
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1983] saveImage = 0
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1984] minContrast = 0
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1985] lastLevel = 1
+[INFO: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:1986] edgeContrast = 0
+[ERROR: 2024-06-05 15:29:02.129 6280 PatternMatching.cpp:2293] The dog's error code is : -1319
+[INFO: 2024-06-05 15:29:02.139 6280 PatternMatching.cpp:1961] +----------------------------------------------------+
+[INFO: 2024-06-05 15:29:02.139 6280 PatternMatching.cpp:1962] + alignSetConfig                                     +
+[INFO: 2024-06-05 15:29:02.139 6280 PatternMatching.cpp:1963] +----------------------------------------------------+
+[INFO: 2024-06-05 15:29:02.139 6280 PatternMatching.cpp:1965] minScale = 1.000
+[INFO: 2024-06-05 15:29:02.139 6280 PatternMatching.cpp:1966] maxScale = 1.000
+[INFO: 2024-06-05 15:29:02.139 6280 PatternMatching.cpp:1967] minAngle = -180.000
+[INFO: 2024-06-05 15:29:02.139 6280 PatternMatching.cpp:1968] maxAngle = 180.000
+[INFO: 2024-06-05 15:29:02.139 6280 PatternMatching.cpp:1969] maxMatching = 1
+[INFO: 2024-06-05 15:29:02.139 6280 PatternMatching.cpp:1970] edgeThresh = 36
+[INFO: 2024-06-05 15:29:02.139 6280 PatternMatching.cpp:1971] compThresh = 16
+[INFO: 2024-06-05 15:29:02.139 6280 PatternMatching.cpp:1972] minScore = 0.500
+[INFO: 2024-06-05 15:29:02.140 6280 PatternMatching.cpp:1973] ignorePolarity = 0
+[INFO: 2024-06-05 15:29:02.140 6280 PatternMatching.cpp:1974] maxPyrlevel = 0
+[INFO: 2024-06-05 15:29:02.140 6280 PatternMatching.cpp:1975] elasticity = 0
+[INFO: 2024-06-05 15:29:02.140 6280 PatternMatching.cpp:1976] originX = -1.000
+[INFO: 2024-06-05 15:29:02.140 6280 PatternMatching.cpp:1977] originY = -1.000
+[INFO: 2024-06-05 15:29:02.140 6280 PatternMatching.cpp:1978] subpixel = 2
+[INFO: 2024-06-05 15:29:02.140 6280 PatternMatching.cpp:1979] maxOverlap = 0.500
+[INFO: 2024-06-05 15:29:02.140 6280 PatternMatching.cpp:1980] sortMode = 0
+[INFO: 2024-06-05 15:29:02.140 6280 PatternMatching.cpp:1981] onBoundary = 0
+[INFO: 2024-06-05 15:29:02.140 6280 PatternMatching.cpp:1982] considerClutter = 0
+[INFO: 2024-06-05 15:29:02.140 6280 PatternMatching.cpp:1983] saveImage = 0
+[INFO: 2024-06-05 15:29:02.140 6280 PatternMatching.cpp:1984] minContrast = 0
+[INFO: 2024-06-05 15:29:02.140 6280 PatternMatching.cpp:1985] lastLevel = 1
+[INFO: 2024-06-05 15:29:02.140 6280 PatternMatching.cpp:1986] edgeContrast = 0
+[ERROR: 2024-06-05 15:29:02.140 6280 PatternMatching.cpp:2293] The dog's error code is : -1319

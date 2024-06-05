@@ -3,6 +3,7 @@ import sys
 import time
 import config
 import pyperclip
+import scripts.jbgn as jbgn
 
 from PIL import Image
 from PIL import ImageGrab
@@ -10,6 +11,7 @@ import cv2
 import numpy as np
 import pyautogui
 from gui.main_window import start_gui
+import gui.main_window as mw
 
 # CURRENT_COMPONENT_STATUS = None
 ALL_COMPONENTS = []
@@ -408,4 +410,5 @@ def component_test(component):
 
 
 if __name__ == '__main__':
-    start_gui()
+    mw.start_gui()
+    # jbgn.jbgn_001_01()
