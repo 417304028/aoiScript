@@ -4,14 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="91d32466-c2f3-43df-8c6a-f51d737a9e85" name="更改" comment="新增aoi关联脚本的python-qt界面">
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    <list default="true" id="91d32466-c2f3-43df-8c6a-f51d737a9e85" name="更改" comment="四个用例脚本编写">
+      <change afterPath="$PROJECT_DIR$/main_001_01.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main_001_02.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main_001_03.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main_001_04.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DongleConfig.ini" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/LogDog/alglog_20240603-161102.1732" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/LogDog/alglog_20240605-152901.8408" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/align.log/align.DESKTOP-D8FACC1.Sinictek.20240605-152902.125.log" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gui/create_script.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/create_script.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gui/create_script.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/gui/main_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/main_window.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/open_program/program_name.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/whole_board/whole_board_image.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gui/resources/sinictek.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/gui/resources/sinic_tek.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/whole_board/whole_board_image_dark.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/whole_board/whole_board_image_dark.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/whole_board/whole_board_image_light.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/whole_board/whole_board_image_light.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/jbgn.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/jbgn.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
@@ -57,6 +65,9 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main_001_02.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main_001_03.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main_001_04.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
@@ -69,7 +80,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.main_001_04">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="aoiScript" />
       <option name="ENV_FILES" value="" />
@@ -93,9 +104,81 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="main_001_02" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="aoiScript" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main_001_02.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main_001_03" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="aoiScript" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main_001_03.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main_001_04" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="aoiScript" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main_001_04.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.main_001_04" />
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.main_001_03" />
+        <item itemvalue="Python.main_001_02" />
       </list>
     </recent_temporary>
   </component>
@@ -122,6 +205,9 @@
       <workItem from="1717487657921" duration="3329000" />
       <workItem from="1717550923824" duration="2729000" />
       <workItem from="1717554249745" duration="8705000" />
+      <workItem from="1717579956966" duration="183000" />
+      <workItem from="1717592916011" duration="3489000" />
+      <workItem from="1717639876995" duration="20327000" />
     </task>
     <task id="LOCAL-00001" summary="新增aoi关联脚本的python-qt界面">
       <option name="closed" value="true" />
@@ -131,7 +217,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717493558305</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="四个用例脚本编写">
+      <option name="closed" value="true" />
+      <created>1717580072898</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1717580072898</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -150,9 +244,13 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="新增aoi关联脚本的python-qt界面" />
-    <option name="LAST_COMMIT_MESSAGE" value="新增aoi关联脚本的python-qt界面" />
+    <MESSAGE value="四个用例脚本编写" />
+    <option name="LAST_COMMIT_MESSAGE" value="四个用例脚本编写" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/aoiScript$main.coverage" NAME="main 覆盖结果" MODIFIED="1717578010235" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/aoiScript$main_001_04.coverage" NAME="main_001_04 覆盖结果" MODIFIED="1717658253699" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/aoiScript$main_001_02.coverage" NAME="main_001_02 覆盖结果" MODIFIED="1717652607365" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/aoiScript$main_001_03.coverage" NAME="main_001_03 覆盖结果" MODIFIED="1717653994692" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/aoiScript$main.coverage" NAME="main 覆盖结果" MODIFIED="1717656261006" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

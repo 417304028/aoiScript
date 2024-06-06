@@ -1,21 +1,29 @@
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QApplication, QLabel, QLineEdit, QFileDialog, QScrollArea, QStyle, \
-    QVBoxLayout, QWidget, QMessageBox
-from PyQt5.QtGui import QPixmap, QIcon
-from PyQt5.QtCore import QSettings, QSize, Qt
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QApplication, QLabel, QLineEdit, QFileDialog, QScrollArea, QStyle
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import QSettings, QSize, Qt, QTimer
 import sys, os, subprocess
-# import gui.create_script as cs
-from gui.create_script import CreateScriptWindow
+import config
+from gui.create_script_window import CreateScriptWindow
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.initUI()
         self.statusBar()
+        self.minimize_timer = QTimer(self)
+        self.minimize_timer.setInterval(5000)
+        self.minimize_timer.timeout.connect(self.clear_status_message)  # 连接定时器超时信号到槽函数
+
+    def clear_status_message(self):
+        self.statusBar().clearMessage()
+
     def initUI(self):
         # 窗口设置
         self.setWindowTitle('AOI关联脚本')
         self.setGeometry(300, 300, 600, 400)
-        self.setWindowIcon(QIcon('gui/resources/sinictek.jpg'))  # 设置窗口图标
+        self.setWindowIcon(QIcon(config.PYQT_ICON))  # 设置窗口图标
+
 
         # 路径输入文本框
         self.script_path_label = QLabel('脚本/脚本文件夹', self)
@@ -78,7 +86,7 @@ class MainWindow(QMainWindow):
     # 浏览文件
     def browse_file(self):
         options = QFileDialog.Options()
-        file_names, _ = QFileDialog.getOpenFileNames(self, "选择文件", "/", "Python Files (*.py);;All Files (*)",
+        file_names, _ = QFileDialog.getOpenFileNames(self, "选择文件", "/", "Executable Files (*.exe);;All Files (*)",
                                                      options=options)
         if file_names:
             self.script_path_input.setText("; ".join(file_names))
@@ -94,34 +102,34 @@ class MainWindow(QMainWindow):
             self.process_name(folder_path, is_folder=True)
             self.save_default_path([folder_path])
             # 执行脚本
-
     def execute_script(self):
-        script_path = self.script_path_input.text()
-        target_script = self.script_label.text()
-        self.statusBar().showMessage("脚本执行已开始，请稍候...")
-        try:
-            # 如果是单个文件的话执行单个文件
-            if os.path.isfile(script_path) and script_path.endswith('.exe'):
-                self.showMinimized()
-                subprocess.run([script_path], check=True)
-            # 如果是多个文件的话，按顺序一个一个执行
-            elif isinstance(script_path, list):
-                self.showMinimized()
-                for path in script_path:
-                    if path.endswith('.exe'):
-                        subprocess.run([path], check=True)
-            # 如果是文件夹的话执行该文件夹下所有文件
-            elif os.path.isdir(script_path):
-                self.showMinimized()
-                for file in os.listdir(script_path):
-                    if file.endswith('.exe'):
-                        full_path = os.path.join(script_path, file)
-                        subprocess.run([full_path], check=True)
-            print(f"执行脚本: {script_path} 目标: {target_script}")
-        except Exception as e:
-            self.statusBar().showMessage(f"发生错误: {e}")
-        else:
-            self.statusBar().showMessage("脚本开始执行，请稍后")
+            script_path = self.script_path_input.text()
+            target_script = self.script_label.text()
+            self.statusBar().showMessage("脚本执行已开始，请稍候...")
+            try:
+                # 如果是单个文件的话执行单个文件
+                if os.path.isfile(script_path) and script_path.endswith('.exe'):
+                    self.showMinimized()
+                    subprocess.run([script_path], check=True)
+                # 如果是多个文件的话，按顺序一个一个执行
+                elif isinstance(script_path, list):
+                    self.showMinimized()
+                    for path in script_path:
+                        if path.endswith('.exe'):
+                            subprocess.run([path], check=True)
+                # 如果是文件夹的话执行该文件夹下所有文件
+                elif os.path.isdir(script_path):
+                    self.showMinimized()
+                    for file in os.listdir(script_path):
+                        if file.endswith('.exe'):
+                            full_path = os.path.join(script_path, file)
+                            subprocess.run([full_path], check=True)
+                print(f"执行脚本: {script_path} 目标: {target_script}")
+            except Exception as e:
+                self.statusBar().showMessage(f"发生错误: {e}")
+            else:
+                self.statusBar().showMessage("脚本开始执行，请稍后")
+                self.message_timer.start()  # 启动定时器以在5秒后清除状态栏消息
 
     # 打开创建脚本窗口
     def open_create_window(self):
