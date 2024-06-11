@@ -3,14 +3,12 @@ import sys
 import time
 import config
 import pyperclip
-import scripts.jbgn as jbgn
-from PIL import Image
-from PIL import ImageGrab
 import cv2
 import numpy as np
 import pyautogui
-from gui.main_window import start_gui
+import utils
 import gui.main_window as mw
+import scripts.lxbj
 
 # CURRENT_COMPONENT_STATUS = None
 ALL_COMPONENTS = []
@@ -20,21 +18,21 @@ pyautogui.PAUSE = 1  # 暂停1s
 
 # 确认打开aoi后，点击打开程式
 def open_job():
-    if not wait_for_symbol(TOPIC_PATH, 20):
+    if not utils.search_symbol(config.AOI_TOPIC, 20):
         sys.exit("未能在规定时间内确认AOI状态，操作中止。")
     time.sleep(0.2)
-    wait_for_symbol(OPEN_PROGRAM_PATH, 20)
+    utils.search_symbol(config.OPEN_PROGRAM, 20)
     # 打开程式
-    click_button(OPEN_PROGRAM_PATH, 1)
+    utils.click_button(config.OPEN_PROGRAM, 1)
     # TODO：其实转为获取句柄更快
     time.sleep(0.4)
     # 点击模板
-    click_button(PROGRAM_NAME, 1)
+    utils.click_button(config.PROGRAM_NAME, 1)
     time.sleep(0.3)
     # 点轨1
-    click_button(LOADING_PROGRAM, 1)
+    utils.click_button(config.LOAD_PROGRAM, 1)
     # 点是
-    click_button(OPEN_PROGRAM_YES, 1)
+    utils.click_button(config.OPEN_PROGRAM_YES, 1)
 
 
 # 获取程式元件列表
@@ -44,14 +42,15 @@ def get_component_list():
     # 注意首次加载板的时候出现的和后续加载时的面板不同
     # 首次加载应该识别程式元件 点击后打开
     # 点击程式元件面板
-    wait_for_symbol(PROGRAM_COMPONENT_DARK, 60)
+    utils.search_symbol(config.PROGRAM_COMPONENT_DARK, 60)
     time.sleep(5)
-    click_button(PROGRAM_COMPONENT_DARK, 2)
+    utils.click_button(config.PROGRAM_COMPONENT_DARK, 2)
     time.sleep(0.3)
     confidence_level = 0.9
     try:
         # 识别未检测的元件坐标并保存，标记为no_checked
-        no_checked_components = list(pyautogui.locateAllOnScreen(NO_CHECKED_COMPONENT, confidence=confidence_level))
+        no_checked_components = list(
+            pyautogui.locateAllOnScreen(config.NO_CHECKED_COMPONENT, confidence=confidence_level))
         no_checked_positions = [{'x': pos.left, 'y': pos.top, 'status': 'no_checked', 'seen': False} for pos in
                                 no_checked_components]
     except pyautogui.ImageNotFoundException:
@@ -60,7 +59,7 @@ def get_component_list():
 
     try:
         # 识别已检测的元件坐标并保存，标记为checked
-        checked_components = list(pyautogui.locateAllOnScreen(CHECKED_COMPONENT, confidence=confidence_level))
+        checked_components = list(pyautogui.locateAllOnScreen(config.CHECKED_COMPONENT, confidence=confidence_level))
         checked_positions = [{'x': pos.left, 'y': pos.top, 'status': 'checked', 'seen': False} for pos in
                              checked_components]
     except pyautogui.ImageNotFoundException:
@@ -96,7 +95,7 @@ def get_choose_box():
     if len(yellow_blocks) == 8:
         # 按照距离中心点的距离排序
         yellow_blocks.sort(key=lambda pos: (pos[0] + pos[2] // 2 - center_x + search_region[0]) ** 2 + (
-                    pos[1] + pos[3] // 2 - center_y + search_region[1]) ** 2)
+                pos[1] + pos[3] // 2 - center_y + search_region[1]) ** 2)
         print(yellow_blocks)
         # 选择第5个最近的方块
         target_block = yellow_blocks[4]  # 选择第五个最近的方块，索引为4
@@ -113,7 +112,7 @@ def get_choose_box():
 
 # 调整将CAD框随机变大，再变小
 def adjust_cad_frame():
-    wait_for_symbol(EDIT_BACK_BUTTON, 10)
+    utils.search_symbol(config.EDIT_BACK_BUTTON, 10)
     time.sleep(2)
     # 选中框框快捷键
     pyautogui.press('b')
@@ -202,7 +201,7 @@ def move_cad():
 
 # 画CAD框
 def add_cad_frame():
-    wait_for_symbol(EDIT_BACK_BUTTON, 5)
+    utils.search_symbol(config.EDIT_BACK_BUTTON, 5)
     # 获取(937, 447)处的颜色
     target_color = pyautogui.screenshot().getpixel((936, 446))
     # 转换颜色到HSV
@@ -258,7 +257,7 @@ def add_cad_frame():
             if hue_variation > 180 or saturation_variation > 255 or value_variation > 255:
                 print("未识别出cad区域，可能准心不在cad内")
     pyautogui.rightClick(935, 445)
-    click_button(ADD_WINDOW, 1)
+    utils.click_button(config.ADD_WINDOW, 1)
     # 使用pyautogui模拟鼠标拖动
     pyautogui.moveTo(top_left, duration=1)
     pyautogui.mouseDown()
@@ -270,9 +269,9 @@ def add_cad_frame():
 # 缺陷类型选择X偏移，随机调整左下角抽色空间的RT值，点击测试当前窗口，获取当前高度上下限的结果值
 def x_offset_test():
     time.sleep(2)
-    click_button(SQUARE_POSITIONING, 1)
-    click_button(X_OFFSET, 1)
-    click_button(ADD_CHECKED_YES, 1)
+    utils.click_button(config.SQUARE_POSITIONING, 1)
+    utils.click_button(config.X_OFFSET, 1)
+    utils.click_button(config.ADD_CHECKED_YES, 1)
     time.sleep(0.2)
     print("开始方形定位——x偏移检测")
 
@@ -283,7 +282,7 @@ def x_offset_test():
     set_random_value(840, 965, 1)
     pyautogui.press('enter')
     time.sleep(0.5)
-    click_button(TEST_WINDOW, 1)
+    utils.click_button(config.TEST_WINDOW, 1)
     time.sleep(0.5)
     pyautogui.doubleClick(1780, 395)
     pyautogui.keyDown('ctrl')
@@ -314,28 +313,28 @@ def set_random_value(x, y, type):
 
 # 打开2D模式，随机调整rgb值，点击测试当前元件，再调整RGB值，点击测试当前该窗口
 def change_rgb_test():
-    click_button(ALG2D, 1)
+    utils.click_button(config.ALG2D, 1)
     # rgb三个数字框 改0-300任意数值 改完后回车
     set_random_value(835, 825, 0)
     set_random_value(835, 870, 0)
     set_random_value(835, 915, 0)
     pyautogui.press('enter')
     time.sleep(0.1)
-    click_button(TEST_COMPONENT, 1)
+    utils.click_button(config.TEST_COMPONENT, 1)
     set_random_value(835, 825, 0)
     set_random_value(835, 870, 0)
     set_random_value(835, 915, 0)
     pyautogui.press('enter')
-    click_button(TEST_WINDOW, 1)
+    utils.click_button(config.TEST_WINDOW, 1)
 
 
 # 随机切换光源，随机调整方形定位算法的框大小及位置，点击测试，读取高度上下限的结果值
 def change_light_test():
-    click_button(GUI_EDIT_LIGHT, 1)
+    utils.click_button(config.GUI_EDIT_LIGHT, 1)
     try:
-        wait_for_symbol(GUI_EDIT_LIGHT_MENU, 5)
+        utils.search_symbol(config.GUI_EDIT_LIGHT_MENU, 5)
         # 在屏幕上找到图片
-        location = pyautogui.locateOnScreen(GUI_EDIT_LIGHT_MENU)
+        location = pyautogui.locateOnScreen(config.GUI_EDIT_LIGHT_MENU)
         if location:
             # 计算图片的宽度和高度
             width, height = location.width, location.height
@@ -353,11 +352,11 @@ def change_light_test():
     # 现在光源切换完毕，开始调整方形定位算法框大小及位置
     # adjust_cad_frame()
     add_cad_frame()
-    click_button(SQUARE_POSITIONING, 1)
-    click_button(X_OFFSET, 1)
-    click_button(ADD_CHECKED_YES, 1)
+    utils.click_button(config.SQUARE_POSITIONING, 1)
+    utils.click_button(config.X_OFFSET, 1)
+    utils.click_button(config.ADD_CHECKED_YES, 1)
     # 点击测试
-    click_button(TEST_WINDOW, 1)
+    utils.click_button(config.TEST_WINDOW, 1)
     time.sleep(0.5)
     pyautogui.doubleClick(1780, 395)
     pyautogui.keyDown('ctrl')
@@ -409,4 +408,5 @@ def component_test(component):
 
 
 if __name__ == '__main__':
-    mw.start_gui()
+    # mw.start_gui()
+    scripts.lxbj.lxbj_001_03()

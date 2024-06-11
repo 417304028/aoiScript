@@ -11,51 +11,29 @@ import config
 import functools
 import win32com.client
 import datetime
+import os
+from pywinauto import Application
 from PIL import ImageGrab
 from PIL import ImageChops
 from openpyxl import Workbook, load_workbook
 from openpyxl.drawing.image import Image as ExcelImage
-import os
 
+
+# 确保aoi打开并前置
 def check_and_launch_aoi():
     aoi_running = any("AOI.exe" == p.name() for p in psutil.process_iter())
     if not aoi_running:
         print("AOI程序未运行,正在启动...")
-        os.startfile(config.AOI_EXE_PATH)
+        app = Application().start(config.AOI_EXE_PATH)
         print("等待AOI程序启动...")
-        search_symbol(config.AOI_TOPIC, 60)
-        time.sleep(1)
+        app.window(title_re=".*AOI.*").wait('visible', timeout=60)
     else:
         print("AOI已启动，正在恢复正常窗口")
-        hwnd_list = []
-        pythoncom.CoInitialize()
-        shell = win32com.client.Dispatch('WScript.Shell')
-        shell.SendKeys('%')
-
-        def enum_windows_proc(hwnd, lParam):
-            # 版本变动后版本号可能要改！！！！！！！！！！
-            if 'Sinic-Tek 3D AOI' in win32gui.GetWindowText(hwnd) and win32gui.GetClassName(
-                    hwnd) == 'WindowsForms10.Window.8.app.0.27829a8_r8_ad1' and win32gui.GetParent(hwnd) == 0:
-                hwnd_list.append(hwnd)
-
-        win32gui.EnumWindows(enum_windows_proc, None)
-        print(hwnd_list)
-        # 检查窗口状态并适当调整
-        for hwnd in hwnd_list:
-            print(hwnd)
-            # 确保窗口是正常大小 试了好多次才成功正常前置并正常显示的千万别改！！！！！！！
-            if win32gui.IsIconic(hwnd):
-                win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
-            win32gui.SetForegroundWindow(hwnd)  # 不能前置
-            # win32gui.SetWindowPos(hwnd, win32con.HWND_TOP, 0, 0, 1920, 1040, win32con.SWP_SHOWWINDOW) # 不能前置
-            # win32gui.MoveWindow(hwnd, 0, 0, 1920, 1040, True) # 不能前置
-            # win32gui.ShowWindow(hwnd, win32con.SW_SHOWNA) # 不能前置
-            # win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)  # 能前置,窗口内部框异常显示
-            # win32gui.ShowWindow(hwnd, win32con.SW_SHOWNORMAL) # 能前置，但被最大化了
-            # win32gui.ShowWindow(hwnd, win32con.SW_SHOWMAXIMIZED) # 能前置，窗口内部框异常显示
-            # win32gui.ShowWindow(hwnd, win32con.SW_SHOWNOACTIVATE) # 能前置，窗口内部框异常显示
-            # win32gui.ShowWindow(hwnd, win32con.SW_SHOW) # 不能前置
-        search_symbol(config.AOI_TOPIC, 20)
+        app = Application().connect(path="AOI.exe")
+        main_window = app.window(title_re=".*AOI.*")
+        if main_window.is_minimized():
+            main_window.restore()
+        main_window.set_focus()
 
 
 def search_symbol(symbol, timeout, region=None):
@@ -108,6 +86,7 @@ def search_symbol_erroring(symbol, timeout, region=None):
         except Exception as e:
             raise Exception(f"发生异常: {e}")
 
+
 # 5s内尝试识别并点击按钮
 def click_button(image_path, num):
     print("寻找按钮并点击..." + image_path)
@@ -141,7 +120,7 @@ def screenshot_to_excel(test_case_name, path, exception):
     print("创建log目录")
     os.makedirs(log_dir, exist_ok=True)  # 确保log目录存在
     print("创建完成")
-    
+
     try:
         # 截图
         screenshot = ImageGrab.grab()
@@ -172,7 +151,7 @@ def screenshot_to_excel(test_case_name, path, exception):
         ws[f"C{row}"] = path
         ws[f"D{row}"] = str(exception)
         print("插入图片")
-        
+
         # 将截图插入到Excel
         img = ExcelImage(screenshot_file)
         img.anchor = f"E{row}"  # 设置图片的锚点
@@ -186,6 +165,8 @@ def screenshot_to_excel(test_case_name, path, exception):
     finally:
         if os.path.exists(screenshot_file):
             os.remove(screenshot_file)  # 清理临时文件
+
+
 # 装饰器，出问题时截图并保存至excel
 def screenshot_error_to_excel(func):
     @functools.wraps(func)
@@ -220,6 +201,39 @@ def check_load_program(symbol, program_bbox, program_loaded_bbox):
         return False
 
 
+# 确保在元器件编辑界面
+def ensure_in_edit_program():
+    try:
+        print("尝试连接到AOI.exe...")
+        app = Application().connect(path="AOI.exe")
+        print("连接成功，尝试获取主窗口...")
+        
+        # 尝试获取主窗口，使用更简单的正则表达式
+        try:
+            main_window = app.window(title_re=".*Sinic-Tek 3D AOI.*")
+        except Exception as e:
+            print(f"获取主窗口失败: {e}")
+            return
+        
+        # 打印主窗口对象
+        print("主窗口对象:", main_window)
+        
+        # 先找到 splitContainerControl3 窗格
+        print("尝试查找 splitContainerControl3 窗格...")
+        split_container = main_window.child_window(auto_id="splitContainerControl3")
+        # split_container = main_window.child_window(auto_id="splitContainerControl3", control_type="Pane")
+        if split_container.exists(timeout=10):
+            print("找到 splitContainerControl3 窗格，尝试查找 程式元件 窗格...")
+            # 在 splitContainerControl3 窗格中查找 程式元件 窗格
+            edit_component_window = split_container.child_window(title="程式元件", control_type="Pane")
+            if edit_component_window.exists(timeout=10):
+                print("在元器件编辑界面")
+            else:
+                print("不在元器件编辑界面")
+        else:
+            print("未找到 splitContainerControl3 窗格")
+    except Exception as e:
+        print(f"发生错误: {e}")
 # 确保指定位置内是该文本
 def text_in_bbox(text, bbox):
     # 点击输入框

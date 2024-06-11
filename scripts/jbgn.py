@@ -11,11 +11,10 @@ def jbgn_001_01():
         utils.check_and_launch_aoi()
         # 打开程式
         utils.click_button(config.OPEN_PROGRAM, 1)
-
         directory = r"D:\EYAOI\JOB"
         bbox = (640, 190, 719, 203)
+        time.sleep(0.2)
         utils.text_in_bbox(directory, bbox)
-
         time.sleep(0.2)
         # 把最近打开程式收起来
         pyautogui.click(544, 292)
@@ -56,8 +55,8 @@ def jbgn_001_02():
     utils.click_button(config.OPEN_PROGRAM, 1)
     directory = r"D:\EYAOI\JOB"
     bbox = (640, 190, 719, 203)
+    time.sleep(0.2)
     utils.text_in_bbox(directory, bbox)
-
     time.sleep(0.2)
     # 把最近打开程式收起来
     pyautogui.click(544, 292)
@@ -84,6 +83,7 @@ def jbgn_001_03():
     utils.click_button(config.OPEN_PROGRAM, 1)
     directory = r"D:\EYAOI\JOB"
     bbox = (640, 190, 719, 203)
+    time.sleep(0.2)
     utils.text_in_bbox(directory, bbox)
     time.sleep(0.2)
     # 把最近打开程式收起来
@@ -126,6 +126,7 @@ def jbgn_001_04():
     directory = r"D:\EYAOI\JOB"
     bbox = (640, 190, 719, 203)
     program_loaded_bbox = (1000, 280, 1380, 550)
+    time.sleep(0.2)
     utils.text_in_bbox(directory, bbox)
     time.sleep(0.2)
     # 把最近打开程式收起来
