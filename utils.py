@@ -33,7 +33,11 @@ def check_and_launch_aoi():
         main_window = app.window(title_re=".*AOI.*")
         if main_window.is_minimized():
             main_window.restore()
+            time.sleep(0.5)
         main_window.set_focus()
+        time.sleep(0.5)
+    main_window.wait('visible', timeout=20)
+    print("aoi窗口已准备好")
 
 
 def search_symbol(symbol, timeout, region=None):
@@ -88,28 +92,28 @@ def search_symbol_erroring(symbol, timeout, region=None):
 
 
 # 5s内尝试识别并点击按钮
-def click_button(image_path, num):
-    print("寻找按钮并点击..." + image_path)
-    start_time = time.time()
-    clicked = False  # 添加一个标志来检测是否成功点击
-    while time.time() - start_time < 5:
-        try:
-            if num == 1:
-                pyautogui.click(image_path)
-                print("点击" + image_path + "成功")
-                clicked = True  # 更新标志为True表示成功点击
-                break
-            elif num == 2:
-                pyautogui.doubleClick(image_path)
-                print("双击" + image_path + "成功")
-                clicked = True  # 更新标志为True表示成功点击
-                break
-        except Exception as e:
-            print(f"尝试点击{image_path}时报错: 错误信息: {e}")
-            time.sleep(1)
+# def click_button(image_path, num):
+#     print("寻找按钮并点击..." + image_path)
+#     start_time = time.time()
+#     clicked = False  # 添加一个标志来检测是否成功点击
+#     while time.time() - start_time < 5:
+#         try:
+#             if num == 1:
+#                 pyautogui.click(image_path)
+#                 print("点击" + image_path + "成功")
+#                 clicked = True  # 更新标志为True表示成功点击
+#                 break
+#             elif num == 2:
+#                 pyautogui.doubleClick(image_path)
+#                 print("双击" + image_path + "成功")
+#                 clicked = True  # 更新标志为True表示成功点击
+#                 break
+#         except Exception as e:
+#             print(f"尝试点击{image_path}时报错: 错误信息: {e}")
+#             time.sleep(1)
 
-    if not clicked:  # 检查是否成功点击
-        raise Exception(f"超时: 在规定时间内未能点击{image_path}")
+#     if not clicked:  # 检查是否成功点击
+#         raise Exception(f"超时: 在规定时间内未能点击{image_path}")
 
 
 def screenshot_to_excel(test_case_name, path, exception):
@@ -201,39 +205,66 @@ def check_load_program(symbol, program_bbox, program_loaded_bbox):
         return False
 
 
+# 点不到就报错
+def click_button(name):
+    app = Application('uia').connect(path=r'D:\EYAOI\Bin\AOI.exe')
+    # 找到主程序
+    main_window = app.window(auto_id="MainForm")
+    if main_window.exists():
+        print("start to click button")
+        button = main_window.child_window(title=name, control_type="Button")
+        print(button.exists())
+        print("控件名称:", button.element_info.name)
+        print("控件类型:", button.element_info.control_type)
+        print("是否可用:", button.element_info.enabled)
+        print("是否可见:", button.element_info.visible)
+        print("位置:", button.element_info.rectangle)
+        rect = button.element_info.rectangle
+        # 计算中心点坐标
+        center_x = rect.left + (rect.right - rect.left) // 2
+        center_y = rect.top + (rect.bottom - rect.top) // 2
+        print(center_x, center_y)
+        # button.set_focus()
+        # time.sleep(1)
+
+        # 使用pyautogui点击中心点 TODO 他妈的点不了
+        pyautogui.click(center_x, center_y)
+        button.click_input()
+    else:
+        print("no click")
+
+
 # 确保在元器件编辑界面
 def ensure_in_edit_program():
     try:
         print("尝试连接到AOI.exe...")
-        app = Application().connect(path="AOI.exe")
-        print("连接成功，尝试获取主窗口...")
-        
-        # 尝试获取主窗口，使用更简单的正则表达式
-        try:
-            main_window = app.window(title_re=".*Sinic-Tek 3D AOI.*")
-        except Exception as e:
-            print(f"获取主窗口失败: {e}")
-            return
-        
-        # 打印主窗口对象
-        print("主窗口对象:", main_window)
-        
-        # 先找到 splitContainerControl3 窗格
-        print("尝试查找 splitContainerControl3 窗格...")
-        split_container = main_window.child_window(auto_id="splitContainerControl3")
-        # split_container = main_window.child_window(auto_id="splitContainerControl3", control_type="Pane")
-        if split_container.exists(timeout=10):
-            print("找到 splitContainerControl3 窗格，尝试查找 程式元件 窗格...")
-            # 在 splitContainerControl3 窗格中查找 程式元件 窗格
-            edit_component_window = split_container.child_window(title="程式元件", control_type="Pane")
-            if edit_component_window.exists(timeout=10):
-                print("在元器件编辑界面")
+        app = Application('uia').connect(path=r'D:\EYAOI\Bin\AOI.exe')
+        # 找到主程序
+        main_window = app.window(auto_id="MainForm")
+        if main_window.exists():
+            print("成功连接到 'Sinic-Tek 3D AOI' 程序")
+            split_container = main_window.child_window(auto_id="splitContainerControl3", control_type="Pane")
+            if split_container.exists(timeout=2):
+                print("找到大选项卡")
             else:
-                print("不在元器件编辑界面")
+                print("选项卡找不着")
+
+            # 尝试查找并选择 '程式元件' 选项卡
+            program_component_tab = main_window.child_window(
+                title="程式元件",
+                control_type="TabItem",
+            )
+            if program_component_tab.exists(timeout=3):
+                return True
+            else:
+                return False
         else:
-            print("未找到 splitContainerControl3 窗格")
+            print("未能连接到 'Sinic-Tek 3D AOI' 程序")
+            return False
     except Exception as e:
         print(f"发生错误: {e}")
+
+
 # 确保指定位置内是该文本
 def text_in_bbox(text, bbox):
     # 点击输入框
@@ -253,3 +284,7 @@ def text_in_bbox(text, bbox):
     if text not in clipboard_text:
         pyautogui.typewrite(text)
         pyautogui.press('enter')
+
+
+def random_change_param():
+    return None
