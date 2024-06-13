@@ -1,15 +1,15 @@
+import ctypes
+ctypes.windll.shcore.SetProcessDpiAwareness(0) # 解决使用pyautowin时缩放问题
 import sys
 import time
 import psutil
 import pyperclip
-import win32gui
-import win32com
-import win32con
-import pythoncom
+import cv2
+import numpy as np
 import pyautogui
 import config
 import functools
-import win32com.client
+import win32gui,win32con
 import datetime
 import os
 from pywinauto import Application
@@ -28,16 +28,22 @@ def check_and_launch_aoi():
         print("等待AOI程序启动...")
         app.window(title_re=".*AOI.*").wait('visible', timeout=60)
     else:
-        print("AOI已启动，正在恢复正常窗口")
-        app = Application().connect(path="AOI.exe")
-        main_window = app.window(title_re=".*AOI.*")
+        main_window = connect_aoi_window()
+        # 确保窗口未最小化
         if main_window.is_minimized():
             main_window.restore()
-            time.sleep(0.5)
-        main_window.set_focus()
-        time.sleep(0.5)
-    main_window.wait('visible', timeout=20)
-    print("aoi窗口已准备好")
+            print("窗口已恢复")
+        # 确保窗口最大化
+        if not main_window.is_maximized():
+            main_window.maximize()
+            print("窗口已最大化")
+        # 获取窗口句柄
+        hwnd = main_window.handle
+        # 将窗口置顶
+        win32gui.SetForegroundWindow(hwnd)
+        win32gui.ShowWindow(hwnd, win32con.SW_SHOW)
+        win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, 0, 0, 0, 0, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
+        print("窗口已置顶")
 
 
 def search_symbol(symbol, timeout, region=None):
@@ -207,9 +213,7 @@ def check_load_program(symbol, program_bbox, program_loaded_bbox):
 
 # 点不到就报错
 def click_button(name):
-    app = Application('uia').connect(path=r'D:\EYAOI\Bin\AOI.exe')
-    # 找到主程序
-    main_window = app.window(auto_id="MainForm")
+    main_window = connect_aoi_window()
     if main_window.exists():
         print("start to click button")
         button = main_window.child_window(title=name, control_type="Button")
@@ -235,32 +239,112 @@ def click_button(name):
 
 
 # 确保在元器件编辑界面
-def ensure_in_edit_program():
+def ensure_in_edit_program(title):
     try:
-        print("尝试连接到AOI.exe...")
-        app = Application('uia').connect(path=r'D:\EYAOI\Bin\AOI.exe')
-        # 找到主程序
-        main_window = app.window(auto_id="MainForm")
+        main_window = connect_aoi_window()
+        # 逐级查找 '程式元件' 选项卡
+        program_component_tab = main_window.child_window(title=title)
+        if program_component_tab.exists(timeout=3):
+            print("控件类型:", program_component_tab.element_info.control_type)
+            print("位置:", program_component_tab.element_info.rectangle)
+            return True
+        else:
+            print("未找到" + title + "选项卡")
+            return False
+    except Exception as e:
+        print(f"发生错误: {e}")
+        return False
+
+
+# 连接窗口
+def connect_aoi_window():
+    print("尝试连接到aoi窗格")
+    # app = Application('win32').connect(path=config.AOI_EXE_PATH)
+    app = Application().connect(path=config.AOI_EXE_PATH)
+    main_window = app.window(title_re=".*Sinic-Tek 3D AOI.*", auto_id="MainForm")
+    if main_window.exists():
+        print("成功连接到aoi窗格")
+        return main_window
+    else:
+        return Exception
+
+
+# 画检测框
+def add_check_window(first, second):
+    try:
+        main_window = connect_aoi_window()
         if main_window.exists():
             print("成功连接到 'Sinic-Tek 3D AOI' 程序")
-            split_container = main_window.child_window(auto_id="splitContainerControl3", control_type="Pane")
-            if split_container.exists(timeout=2):
-                print("找到大选项卡")
+            click_button("检测窗口")
+            # 绘制框框（获取准星旁边的颜色，扩大到颜色分界处，截取坐标）
+            target_color = pyautogui.screenshot().getpixel((936, 446))
+            # 转换颜色到HSV
+            target_color_hsv = cv2.cvtColor(np.uint8([[target_color]]), cv2.COLOR_RGB2HSV)[0][0]
+            # 定义颜色的HSV范围，初始范围
+            hue_variation = 15
+            saturation_variation = 30
+            value_variation = 30
+            found = False
+            while not found:
+                lower_bound = np.array([target_color_hsv[0] - hue_variation, target_color_hsv[1] - saturation_variation,
+                                        target_color_hsv[2] - value_variation])
+                upper_bound = np.array([target_color_hsv[0] + hue_variation, target_color_hsv[1] + saturation_variation,
+                                        target_color_hsv[2] + value_variation])
+                # 截取整个屏幕图像
+                screenshot = pyautogui.screenshot()
+                screenshot_np = np.array(screenshot)
+                screenshot_hsv = cv2.cvtColor(screenshot_np, cv2.COLOR_RGB2HSV)
+                # 创建颜色掩码
+                mask = cv2.inRange(screenshot_hsv, lower_bound, upper_bound)
+                # 寻找连贯区域的轮廓
+                contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                # 找到包含点(935, 445)的连贯区域
+                target_contour = None
+                for contour in contours:
+                    if cv2.pointPolygonTest(contour, (936, 446), False) >= 0:
+                        target_contour = contour
+                        found = True
+                        break
+                    # 如果找到了符合条件的连贯区域
+                if target_contour is not None:
+                    x, y, w, h = cv2.boundingRect(target_contour)
+                    # 扩大区域
+                    expand_margin = 10
+                    top_left = (x - expand_margin, y - expand_margin)
+                    bottom_right = (x + w + expand_margin, y + h + expand_margin)
+                    print("Top-left corner:", top_left)
+                    print("Bottom-right corner:", bottom_right)
+                    print("找到疑似cad区域")
+                else:
+                    # 增加HSV范围并重试
+                    hue_variation += 5
+                    saturation_variation += 10
+                    value_variation += 10
+                    print("hue_variation:", hue_variation)
+                    if hue_variation > 180 or saturation_variation > 255 or value_variation > 255:
+                        print("未识别出cad区域，可能准心不在cad内")
+            # 使用pyautogui模拟鼠标拖动
+            pyautogui.moveTo(top_left, duration=1)
+            pyautogui.mouseDown()
+            pyautogui.moveTo(bottom_right, duration=1)
+            pyautogui.mouseUp()
+            print("cad描边完毕")
+            #=======================================================
+            # 找到并点击“高级”选项卡，再点击second选项卡
+            time.sleep(1)
+            first_tab = main_window.child_window(title=first, control_type="TabItem")
+            if first_tab.exists():
+                first_tab.click_input()
+                print("已点击" + first + "选项卡")
+                time.sleep(1)
+                second_tab = main_window.child_window(title=second, control_type="TabItem")
+                second_tab.wait('visible', timeout=5)
+                if second_tab.exists():
+                    second_tab.click_input()
+                    print("已点击" + second + "选项卡")
             else:
-                print("选项卡找不着")
-
-            # 尝试查找并选择 '程式元件' 选项卡
-            program_component_tab = main_window.child_window(
-                title="程式元件",
-                control_type="TabItem",
-            )
-            if program_component_tab.exists(timeout=3):
-                return True
-            else:
-                return False
-        else:
-            print("未能连接到 'Sinic-Tek 3D AOI' 程序")
-            return False
+                raise Exception
+            # 等到含 影像处理 的窗口出现
     except Exception as e:
         print(f"发生错误: {e}")
 

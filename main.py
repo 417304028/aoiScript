@@ -199,73 +199,6 @@ def move_cad():
     print("完成拖动")
 
 
-# 画CAD框
-def add_cad_frame():
-    utils.search_symbol(config.EDIT_BACK_BUTTON, 5)
-    # 获取(937, 447)处的颜色
-    target_color = pyautogui.screenshot().getpixel((936, 446))
-    # 转换颜色到HSV
-    target_color_hsv = cv2.cvtColor(np.uint8([[target_color]]), cv2.COLOR_RGB2HSV)[0][0]
-
-    # 定义颜色的HSV范围，初始范围
-    hue_variation = 15
-    saturation_variation = 30
-    value_variation = 30
-    found = False
-
-    while not found:
-        lower_bound = np.array([target_color_hsv[0] - hue_variation, target_color_hsv[1] - saturation_variation,
-                                target_color_hsv[2] - value_variation])
-        upper_bound = np.array([target_color_hsv[0] + hue_variation, target_color_hsv[1] + saturation_variation,
-                                target_color_hsv[2] + value_variation])
-
-        # 截取整个屏幕图像
-        screenshot = pyautogui.screenshot()
-        screenshot_np = np.array(screenshot)
-        screenshot_hsv = cv2.cvtColor(screenshot_np, cv2.COLOR_RGB2HSV)
-
-        # 创建颜色掩码
-        mask = cv2.inRange(screenshot_hsv, lower_bound, upper_bound)
-
-        # 寻找连贯区域的轮廓
-        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-        # 找到包含点(935, 445)的连贯区域
-        target_contour = None
-        for contour in contours:
-            if cv2.pointPolygonTest(contour, (936, 446), False) >= 0:
-                target_contour = contour
-                found = True
-                break
-
-        # 如果找到了符合条件的连贯区域
-        if target_contour is not None:
-            x, y, w, h = cv2.boundingRect(target_contour)
-            # 扩大区域
-            expand_margin = 10
-            top_left = (x - expand_margin, y - expand_margin)
-            bottom_right = (x + w + expand_margin, y + h + expand_margin)
-            print("Top-left corner:", top_left)
-            print("Bottom-right corner:", bottom_right)
-            print("找到疑似cad区域")
-        else:
-            # 增加HSV范围并重试
-            hue_variation += 5
-            saturation_variation += 10
-            value_variation += 10
-            print("hue_variation:", hue_variation)
-            if hue_variation > 180 or saturation_variation > 255 or value_variation > 255:
-                print("未识别出cad区域，可能准心不在cad内")
-    pyautogui.rightClick(935, 445)
-    utils.click_button(config.ADD_WINDOW, 1)
-    # 使用pyautogui模拟鼠标拖动
-    pyautogui.moveTo(top_left, duration=1)
-    pyautogui.mouseDown()
-    pyautogui.moveTo(bottom_right, duration=1)
-    pyautogui.mouseUp()
-    print("cad描边完毕")
-
-
 # 缺陷类型选择X偏移，随机调整左下角抽色空间的RT值，点击测试当前窗口，获取当前高度上下限的结果值
 def x_offset_test():
     time.sleep(2)
@@ -409,4 +342,4 @@ def component_test(component):
 
 if __name__ == '__main__':
     # mw.start_gui()
-    scripts.lxbj.lxbj_001_03()
+    scripts.lxbj.lxbj_001_02()

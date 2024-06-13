@@ -13,6 +13,7 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
+
 AOI_EXE_PATH = r'D:\EYAOI\Bin\AOI.exe'
 JOB_PATH = r'D:\EYAOI\JOB\djb'
 

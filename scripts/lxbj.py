@@ -30,21 +30,27 @@ import utils
 def lxbj_001_02():
     utils.check_and_launch_aoi()
     # 检测是否在元器件编辑界面
-    utils.ensure_in_edit_program()
-    # 点击添加检测窗口 选择含有代料的窗口
-
-    # 添加标准影像 添加五种随机不同光源的代料（需添加成功）
-
-    # 修改窗口的算法参数值
-    utils.random_change_param()
-    # 分别点击测试当前窗口/元件/分组/面板
-    utils.click_button("测试当前窗口")
-    time.sleep(2)
-    utils.click_button("测试当前元件")
-    time.sleep(2)
-    utils.click_button("测试当前分组")
-    time.sleep(2)
-    utils.click_button("测试当前面板")
+    editing_program = utils.ensure_in_edit_program("程式元件")
+    if not editing_program:
+        raise Exception
+    # 添加检测窗口 选择含有代料的窗口
+    # utils.add_check_window("高级","颜色匹配")
+    # # 添加标准影像 添加五种随机不同光源的代料（需添加成功）
+    # for _ in range(5):
+    #     utils.click_button("添加标准影像")
+    #     utils.random_choose_light()
+    #     utils.click_button("是")
+    #     time.sleep(1)
+    # # 修改窗口的算法参数值
+    # utils.random_change_param()
+    # # 分别点击测试当前窗口/元件/分组/面板
+    # utils.click_button("测试当前窗口")
+    # time.sleep(2)
+    # utils.click_button("测试当前元件")
+    # time.sleep(2)
+    # utils.click_button("测试当前分组")
+    # time.sleep(2)
+    # utils.click_button("测试当前面板")
 
 
 # @utils.screenshot_error_to_excel
