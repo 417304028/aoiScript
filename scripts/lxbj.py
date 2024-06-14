@@ -30,9 +30,10 @@ import utils
 def lxbj_001_02():
     utils.check_and_launch_aoi()
     # 检测是否在元器件编辑界面
-    editing_program = utils.ensure_in_edit_program("程式元件")
-    if not editing_program:
-        raise Exception
+    editing_program = utils.ensure_in_specific_window("检测窗口")
+    print(editing_program)
+    # if not editing_program:
+    #     raise Exception
     # 添加检测窗口 选择含有代料的窗口
     # utils.add_check_window("高级","颜色匹配")
     # # 添加标准影像 添加五种随机不同光源的代料（需添加成功）
@@ -57,8 +58,8 @@ def lxbj_001_02():
 # 不良窗口/元件
 def lxbj_001_03():
     utils.check_and_launch_aoi()
-    # 检查是否在元器件编辑界面
-    editing = utils.ensure_in_edit_program()
+    # 检查是否在元器件编辑界面(算法参数或者调色板存在)
+    editing = utils.ensure_in_specific_window(name="调色板",control_type="Pane")
     if not editing:
         raise Exception
     # 选择某一窗口 点击测试当前窗口（检测窗口：缺陷名称）
@@ -68,3 +69,22 @@ def lxbj_001_03():
 
     # 点击测试当前元件 有不良窗口的话查看提示（左侧窗口缺陷名称默认则取算法参数界面首个不良结果对应的缺陷名）
     utils.click_button("测试当前元件")
+
+def lxbj_005_01():
+    # 参数配置——ui配置——程序设置：
+    # 选择【导出元件ok图】，不选【导出所有元件ok图】
+    # 在某一元件【元器件编辑】界面，右击--【导出元件OK图】
+    # 在提示框，点击【确定】
+    # 弹框提示：生成ok图完成，并可以在F:\DataExport\Job名\OKImage下发现
+    # 删除目录D:\EYAOI\JOB\Job\Job名.oki
+    # 删除目录F:\DataExport\Job名\OKImage
+    pass
+def lxbj_005_02():
+    # 参数配置——ui配置——程序设置：
+    # 不选【导出元件ok图】，选择【导出所有元件ok图】
+    # 在某一元件【元器件编辑】界面，右击--【导出元件OK图】
+    # 在提示框，点击【确定】
+    # 弹框提示：生成ok图完成，并可以在F:\DataExport\Job名\OKImage下发现
+    # 删除目录D:\EYAOI\JOB\Job\Job名.oki
+    # 删除目录F:\DataExport\Job名\OKImage
+    pass

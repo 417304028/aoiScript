@@ -342,4 +342,5 @@ def component_test(component):
 
 if __name__ == '__main__':
     # mw.start_gui()
-    scripts.lxbj.lxbj_001_02()
+    scripts.lxbj.lxbj_001_03()
+    
