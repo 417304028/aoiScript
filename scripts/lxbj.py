@@ -30,12 +30,17 @@ import utils
 def lxbj_001_02():
     utils.check_and_launch_aoi()
     # 检测是否在元器件编辑界面
-    editing_program = utils.ensure_in_specific_window("检测窗口")
-    print(editing_program)
+    # editing_program = utils.ensure_in_specific_window("调色板","dpnlColorFilter")
     # if not editing_program:
+    #     print("不在元器件编辑界面")
     #     raise Exception
+    time.sleep(1)
     # 添加检测窗口 选择含有代料的窗口
-    # utils.add_check_window("高级","颜色匹配")
+    # utils.add_check_window()
+    dlg = utils.connect_aoi_window().child_window(control_type="TabItem", title=" 高级 ")
+    dlg.click_input()
+    # utils.click_button("高级","TabItem")
+    # "高级","颜色匹配"
     # # 添加标准影像 添加五种随机不同光源的代料（需添加成功）
     # for _ in range(5):
     #     utils.click_button("添加标准影像")
@@ -71,20 +76,34 @@ def lxbj_001_03():
     utils.click_button("测试当前元件")
 
 def lxbj_005_01():
-    # 参数配置——ui配置——程序设置：
+    # 参数配置——ui配置——程序设置
+    
     # 选择【导出元件ok图】，不选【导出所有元件ok图】
+
     # 在某一元件【元器件编辑】界面，右击--【导出元件OK图】
+
     # 在提示框，点击【确定】
+
     # 弹框提示：生成ok图完成，并可以在F:\DataExport\Job名\OKImage下发现
+
     # 删除目录D:\EYAOI\JOB\Job\Job名.oki
+
     # 删除目录F:\DataExport\Job名\OKImage
+
     pass
 def lxbj_005_02():
     # 参数配置——ui配置——程序设置：
+
     # 不选【导出元件ok图】，选择【导出所有元件ok图】
+
     # 在某一元件【元器件编辑】界面，右击--【导出元件OK图】
+
     # 在提示框，点击【确定】
+
     # 弹框提示：生成ok图完成，并可以在F:\DataExport\Job名\OKImage下发现
+
     # 删除目录D:\EYAOI\JOB\Job\Job名.oki
+
     # 删除目录F:\DataExport\Job名\OKImage
+
     pass
