@@ -10,7 +10,7 @@ def jbgn_001_01():
         # 确保aoi打开
         utils.check_and_launch_aoi()
         # 打开程式
-        utils.click_button(config.OPEN_PROGRAM, 1)
+        utils.click_by_controls(config.OPEN_PROGRAM, 1)
         directory = r"D:\EYAOI\JOB"
         bbox = (640, 190, 719, 203)
         time.sleep(0.2)
@@ -32,15 +32,15 @@ def jbgn_001_01():
             # 确定弹窗存在
             utils.search_symbol_erroring(config.OPEN_PROGRAM_TOPIC, 5)
             # 点击取消
-            utils.click_button(config.OPEN_PROGRAM_CANCEL, 1)
+            utils.click_by_controls(config.OPEN_PROGRAM_CANCEL, 1)
             time.sleep(0.2)
             print("开始确定无闪退")
             # 确定返回之前的整版视图
-            utils.click_button(config.WHOLE_BOARD_LIGHT, 1)
+            utils.click_by_controls(config.WHOLE_BOARD_LIGHT, 1)
             print("已确定无闪退")
             time.sleep(0.2)
         else:
-            utils.click_button(config.OPEN_PROGRAM_YES, 1)
+            utils.click_by_controls(config.OPEN_PROGRAM_YES, 1)
             # 有进度条提示
             utils.search_symbol_erroring(config.PROGRAM_LOADING, 30)
             # 确定加载后
@@ -52,7 +52,7 @@ def jbgn_001_01():
 @utils.screenshot_error_to_excel
 def jbgn_001_02():
     utils.check_and_launch_aoi()
-    utils.click_button(config.OPEN_PROGRAM, 1)
+    utils.click_by_controls(config.OPEN_PROGRAM, 1)
     directory = r"D:\EYAOI\JOB"
     bbox = (640, 190, 719, 203)
     time.sleep(0.2)
@@ -68,7 +68,7 @@ def jbgn_001_02():
         plus_exist = utils.check_load_program(config.OPEN_PROGRAM_PLUS, program_bbox, program_loaded_bbox)
         if not plus_exist:
             raise Exception("程式都不存在，可能文件夹下无可识别的程式")
-    utils.click_button(config.OPEN_PROGRAM_YES, 1)
+    utils.click_by_controls(config.OPEN_PROGRAM_YES, 1)
     # 有进度条提示
     utils.search_symbol_erroring(config.PROGRAM_LOADING, 30)
     # 确定加载后
@@ -80,7 +80,7 @@ def jbgn_001_02():
 @utils.screenshot_error_to_excel
 def jbgn_001_03():
     utils.check_and_launch_aoi()
-    utils.click_button(config.OPEN_PROGRAM, 1)
+    utils.click_by_controls(config.OPEN_PROGRAM, 1)
     directory = r"D:\EYAOI\JOB"
     bbox = (640, 190, 719, 203)
     time.sleep(0.2)
@@ -110,7 +110,7 @@ def jbgn_001_03():
             pyautogui.locateOnScreen(config.OPEN_PROGRAM_PLUS, region=program_loaded_bbox)
         if exist_plus:
             pyautogui.locateOnScreen(config.OPEN_PROGRAM_PLUS, region=program_loaded_bbox)
-    utils.click_button(config.OPEN_PROGRAM_YES, 1)
+    utils.click_by_controls(config.OPEN_PROGRAM_YES, 1)
     # 有进度条提示
     utils.search_symbol_erroring(config.PROGRAM_LOADING, 30)
     # 确定加载后
@@ -122,7 +122,7 @@ def jbgn_001_03():
 @utils.screenshot_error_to_excel
 def jbgn_001_04():
     utils.check_and_launch_aoi()
-    utils.click_button(config.OPEN_PROGRAM, 1)
+    utils.click_by_controls(config.OPEN_PROGRAM, 1)
     directory = r"D:\EYAOI\JOB"
     bbox = (640, 190, 719, 203)
     program_loaded_bbox = (1000, 280, 1380, 550)
@@ -138,7 +138,7 @@ def jbgn_001_04():
     if cursor_load:
         loaded_cursor = pyautogui.locateCenterOnScreen(config.OPEN_PROGRAM_CURSOR, region=program_loaded_bbox)
         pyautogui.click(loaded_cursor)
-        utils.click_button(config.REMOVE_PROGRAM, 1)
+        utils.click_by_controls(config.REMOVE_PROGRAM, 1)
         if utils.search_symbol(config.OPEN_PROGRAM_CURSOR, None, program_loaded_bbox):
             raise Exception("指针程式移除失败")
         else:
@@ -149,7 +149,7 @@ def jbgn_001_04():
         if cursor_load:
             loaded_plus = pyautogui.locateCenterOnScreen(config.OPEN_PROGRAM_PLUS, region=program_loaded_bbox)
             pyautogui.click(loaded_plus)
-            utils.click_button(config.REMOVE_PROGRAM, 1)
+            utils.click_by_controls(config.REMOVE_PROGRAM, 1)
             if utils.search_symbol(config.OPEN_PROGRAM_PLUS, None, program_loaded_bbox):
                 raise Exception("＋号程式移除失败")
             else:
