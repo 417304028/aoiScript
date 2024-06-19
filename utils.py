@@ -14,7 +14,7 @@ import functools
 import datetime
 import os
 from pywinauto import Application
-from PIL import ImageGrab
+from PIL import ImageGrab,Image
 from PIL import ImageChops
 from openpyxl import Workbook, load_workbook
 from openpyxl.drawing.image import Image as ExcelImage
@@ -189,6 +189,7 @@ def is_checked(top_left, bottom_right, pixel_threshold=18):
 def click_by_png(image_path, times=1, timeout=5):
     start_time = time.time()
     clicked = False  # 添加一个标志来检测是否成功点击
+    image_path = image_fit_screen(image_path)
     print(f"尝试点击图片: {image_path}")
     while time.time() - start_time < timeout:
         try:
@@ -209,6 +210,7 @@ def click_by_png(image_path, times=1, timeout=5):
 
 def search_symbol(symbol, timeout, region=None):
     start_time = time.time()
+    symbol = image_fit_screen(symbol)
     if timeout is not None:
         while time.time() - start_time < timeout:
             try:
@@ -234,6 +236,7 @@ def search_symbol(symbol, timeout, region=None):
 
 def search_symbol_erroring(symbol, timeout, region=None):
     start_time = time.time()
+    symbol = image_fit_screen(symbol)
     if timeout is not None:
         while time.time() - start_time < timeout:
             try:
@@ -582,17 +585,34 @@ def random_choose_light():
     pyautogui.click(chosen_coord)
 
 
-# 算法参数面板随机改变值
+# 算法参数面板随机改变值(缩小即无效)
 def random_change_param():
     # 分为两种改随机的方式:
-    # 下拉框为面积内随机选
+    # 下拉框为面积内随机选（点击点，输入各个下拉框面积，下拉随机值（限定范围），随机选面积内一点点击，但麻烦）
     
-    # 数值类点击后 ctrl+a 0-1000随即改
-
-    
+    # 使用for循环点击各个点，输入0-1000随机数字
+    points = [(1720, 398), (1720, 418), (1720, 440), (1720, 460), (1720, 480), (1720, 500), (1720, 630), (1720, 650), (1720, 690), (1720, 715), (1720, 735), (1720, 775), (1720, 840), (1720, 860)]
+    for point in points:
+        pyautogui.click(point)
+        pyautogui.hotkey('ctrl', 'a')
+        random_number = random.randint(0, 1000)
+        pyautogui.typewrite(str(random_number))
 
 
 # ==========================工具类======================
+# 图片适应屏幕分辨率
+def image_fit_screen(image_path):
+    # 获取当前屏幕分辨率
+    screen_width, screen_height = pyautogui.size()
+    # 打开图像文件
+    img = Image.open(image_path)
+    # 调整图像大小到当前屏幕分辨率
+    img = img.resize((int(img.width * screen_width / 1920), int(img.height * screen_height / 1080)), Image.ANTIALIAS)
+    # 保存到临时文件
+    temp_image_path = f"temp_{image_path}"
+    img.save(temp_image_path)
+    return temp_image_path
+
 # 确保指定位置内是该文本
 def text_in_bbox(text, bbox):
     # 点击输入框
@@ -646,10 +666,33 @@ def get_center_coordinates(coord1, coord2):
     y_center = (coord1[1] + coord2[1]) // 2
     return (x_center, y_center)
 
+def read_text(point):
+    # 获取当前屏幕分辨率
+    monitor = get_monitors()[0]
+    current_resolution = (monitor.width, monitor.height)
 
-def read_text(top_left_point, bottom_right_point):
+    # 计算坐标调整比例
+    x_ratio = current_resolution[0] / 1920
+    y_ratio = current_resolution[1] / 1080
+
+    # 调整坐标
+    adjusted_point = (int(point[0] * x_ratio), int(point[1] * y_ratio))
+
+    # 单击调整后的坐标
+    pyautogui.click(adjusted_point[0], adjusted_point[1])
+
+    # 全选并复制
+    pyautogui.hotkey('ctrl', 'a')
+    pyautogui.hotkey('ctrl', 'c')
+
+    # 读取剪贴板内容
+    clipboard_text = pyperclip.paste()
+
+    return clipboard_text
+
+def read_text_ocr(top_left_point, bottom_right_point):
     # 创建一个OCR识别器，指定中文简体和英文
-    reader = easyocr.Reader(['ch_sim', 'en'])
+    reader = easyocr.Reader(['ch_sim'])
 
     # 截取屏幕上指定区域的图像
     screenshot = ImageGrab.grab(

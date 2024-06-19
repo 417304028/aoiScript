@@ -60,6 +60,7 @@ PARAM_UI_TOPIC = resource_path('images/param_setting/ui_setting/topic.png')
 
 
 AOI_TOPIC = resource_path('images/gui/topic.png')
+RUN = resource_path('images/gui/run/run.png')
 OPEN_PROGRAM = resource_path('images/gui/open_program.png')
 BOARD_BOARD = resource_path('images/gui/board/auto.png')
 EDIT_BACK_BUTTON = resource_path('images/gui/edit/back.png')

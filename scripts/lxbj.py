@@ -79,7 +79,7 @@ def lxbj_001_03():
     pyautogui.press("b")
     utils.click_by_png(config.TEST_WINDOW)
     # 查看提示：通过？红色不通过的话看原因
-    # utils.read_text()
+    utils.read_text_ocr()
     # 点击测试当前元件 有不良窗口的话查看提示（左侧窗口缺陷名称默认则取算法参数界面首个不良结果对应的缺陷名）
     utils.click_by_png(config.TEST_COMPONENT)
 
@@ -112,10 +112,13 @@ def lxbj_005_01():
         raise Exception
     utils.click_by_png(config.EXPORT_COMPONENT_SUCCESS)
     # 弹框提示：生成ok图完成，并可以在F:\DataExport\Job名\OKImage下发现
+    utils.click_by_png(config.RUN)
+    program_name = utils.read_text("110,70")
     # 删除目录D:\EYAOI\JOB\Job\Job名.oki
-    # os.rmdir("D:\\EYAOI\\JOB\\Job\\Job名.oki")
+    os.rmdir(f"D:\\EYAOI\\JOB\\{program_name}\\{program_name}.oki")
     # 删除目录F:\DataExport\Job名\OKImage
-    # os.rmdir("D:\\DataExport\\Job名\\OKImage")
+    os.rmdir(f"F:\\DataExport\\{program_name}\\OKImage")
+
 def lxbj_005_02():
     # 参数配置——ui配置——程序设置
     utils.click_by_png(config.SETTING)
@@ -143,7 +146,9 @@ def lxbj_005_02():
         raise Exception
     utils.click_by_png(config.EXPORT_COMPONENT_SUCCESS)
     # 弹框提示：生成ok图完成，并可以在F:\DataExport\Job名\OKImage下发现
+    utils.click_by_png(config.RUN)
+    program_name = utils.read_text("110,70")
     # 删除目录D:\EYAOI\JOB\Job\Job名.oki
-    # os.rmdir("D:\\EYAOI\\JOB\\Job\\Job名.oki")
+    os.rmdir(f"D:\\EYAOI\\JOB\\{program_name}\\{program_name}.oki")
     # 删除目录F:\DataExport\Job名\OKImage
-    # os.rmdir("D:\\DataExport\\Job名\\OKImage")
+    os.rmdir(f"F:\\DataExport\\{program_name}\\OKImage")
