@@ -3,7 +3,7 @@ import random
 import easyocr
 import sys
 import time
-from screeninfo import get_monitors
+
 import psutil
 import pyperclip
 import cv2
@@ -14,12 +14,22 @@ import functools
 import datetime
 import os
 from pywinauto import Application
-from PIL import ImageGrab,Image
+from PIL import ImageGrab, Image
 from PIL import ImageChops
+from screeninfo import get_monitors
+from loguru import logger
 from openpyxl import Workbook, load_workbook
 from openpyxl.drawing.image import Image as ExcelImage
 
 ctypes.windll.shcore.SetProcessDpiAwareness(0)  # 解决使用pyautowin时缩放问题
+# ============================日志=======================
+# 设置日志记录器
+def setup_logger():
+    exe_dir = os.path.dirname(sys.executable)
+    log_dir = os.path.join(exe_dir, "log")
+    os.makedirs(log_dir, exist_ok=True)
+    log_file = os.path.join(log_dir, "script_log_{time:YYYY-MM-DD}.log")
+    logger.add(log_file, retention="10 days", rotation="100MB", format="{time} {level} {message}", level="INFO")
 
 
 # ============================窗格处理===================
@@ -31,28 +41,30 @@ def connect_aoi_window():
     # top_window.wait('ready', timeout=10)
     # time.sleep(0.3)
     # if top_window.exists():
-    #     print("成功连接到aoi窗口")
+    #     logger.info("成功连接到aoi窗口")
     #     return top_window
     # else:
     #     raise Exception
     try:
-        app = Application(backend="uia").connect(auto_id="MainForm")
+        # app = Application(backend="uia").connect(auto_id="MainForm")
+        app = Application().connect(auto_id="MainForm")
         main_window = app.window(auto_id="MainForm")
         if main_window.exists(timeout=10):
-            print("成功连接到窗口")
+            logger.info("成功连接到窗口")
             return main_window
         else:
-            print("未找到窗口")
+            logger.info("未找到窗口")
     except Exception as e:
-        print(f"连接窗口时发生错误: {e}")
+        logger.error(f"连接窗口时发生错误: {e}")
+
 
 # 确保aoi打开并前置
 def check_and_launch_aoi():
     aoi_running = any("AOI.exe" == p.name() for p in psutil.process_iter())
     if not aoi_running:
-        print("AOI程序未运行,正在启动...")
+        logger.info("AOI程序未运行,正在启动...")
         app = Application().start(config.AOI_EXE_PATH)
-        print("等待AOI程序启动...")
+        logger.info("等待AOI程序启动...")
         app.window(title_re=".*AOI.*").wait('ready', timeout=60)
     else:
         main_window = connect_aoi_window()
@@ -61,18 +73,18 @@ def check_and_launch_aoi():
         # # 确保窗口未最小化
         # if main_window.is_minimized():
         #     main_window.restore()
-        #     print("窗口已恢复")
+        #     logger.info("窗口已恢复")
         # # 确保窗口最大化
         # if not main_window.is_maximized():
         #     main_window.maximize()
-        #     print("窗口已最大化")
+        #     logger.info("窗口已最大化")
         # # 获取窗口句柄
         # hwnd = main_window.handle
         # win32gui.SetForegroundWindow(hwnd)
         # win32gui.ShowWindow(hwnd, win32con.SW_SHOW)
-        # print(hwnd)
+        # logger.info(hwnd)
         # win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, 0, 0, 0, 0, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
-        # print("窗口已置顶")
+        # logger.info("窗口已置顶")
 
 
 # 确保在特定界面（通过特定标识物的存在）
@@ -89,13 +101,13 @@ def ensure_in_specific_window(name=None, auto_id=None, control_type=None):
 
         specific_symbol = main_window.child_window(**criteria)
         if specific_symbol.exists(timeout=3):
-            print(specific_symbol.get_properties())
+            logger.info(specific_symbol.get_properties())
             return True
         else:
-            print("未找到" + name + "窗格，可能目前不在指定的界面")
+            logger.info("未找到" + name + "窗格，可能目前不在指定的界面")
             return False
     except Exception as e:
-        print(f"发生错误: {e}")
+        logger.error(f"发生错误: {e}")
         return False
 
 
@@ -114,11 +126,11 @@ def click_by_controls(name=None, auto_id=None, control_type=None):
         button = main_window.child_window(**criteria)
         if button.exists(timeout=3):
             button.click_input()
-            print("已点击按钮：" + (name if name else "未指定名称"))
+            logger.info("已点击按钮：" + (name if name else "未指定名称"))
         else:
-            print("点击时未找到指定的按钮")
+            logger.info("点击时未找到指定的按钮")
     except Exception as e:
-        print(f"发生错误: {e}")
+        logger.error(f"发生错误: {e}")
 
 
 # ==============================识别处理===============================
@@ -158,10 +170,12 @@ def get_crosshair_center():
     if M["m00"] != 0:
         cx = int(M["m10"] / M["m00"]) + left
         cy = int(M["m01"] / M["m00"]) + top
-        print("全屏准星位置:", (cx, cy))
+        logger.info("全屏准星位置:", (cx, cy))
         return (cx, cy)
     else:
+        logger.error("未找到准星")
         raise Exception("未找到准星")
+
 
 # 打勾框是否打勾
 def is_checked(top_left, bottom_right, pixel_threshold=18):
@@ -186,11 +200,12 @@ def is_checked(top_left, bottom_right, pixel_threshold=18):
     # 判断是否勾选（根据对勾占据的像素点来设置阈值）
     return white_pixels >= pixel_threshold
 
+
 def click_by_png(image_path, times=1, timeout=5):
     start_time = time.time()
     clicked = False  # 添加一个标志来检测是否成功点击
     image_path = image_fit_screen(image_path)
-    print(f"尝试点击图片: {image_path}")
+    logger.info(f"尝试点击图片: {image_path}")
     while time.time() - start_time < timeout:
         try:
             location = pyautogui.locateCenterOnScreen(image_path)
@@ -199,14 +214,16 @@ def click_by_png(image_path, times=1, timeout=5):
                     pyautogui.click(location)
                 elif times == 2:
                     pyautogui.doubleClick(location)
-                print(f"点击{image_path}成功")
+                logger.info(f"点击{image_path}成功")
                 clicked = True  # 更新标志为True表示成功点击
                 break
         except Exception as e:
-            print(f"尝试点击{image_path}时报错: 错误信息: {e}")
+            logger.info(f"尝试点击{image_path}时报错: 错误信息: {e}")
         time.sleep(0.5)
     if not clicked:  # 检查是否成功点击
+        logger.error(f"超时: 在{timeout}秒内未能点击{image_path}")
         raise Exception(f"超时: 在{timeout}秒内未能点击{image_path}")
+
 
 def search_symbol(symbol, timeout, region=None):
     start_time = time.time()
@@ -215,22 +232,24 @@ def search_symbol(symbol, timeout, region=None):
         while time.time() - start_time < timeout:
             try:
                 if pyautogui.locateOnScreen(symbol, region=region) is not None:
-                    print("已确认" + symbol + "存在")
+                    logger.info("已确认" + symbol + "存在")
                     return True
             except pyautogui.ImageNotFoundException:
-                print("正在识别" + symbol)
+                logger.info("正在识别" + symbol)
             except Exception as e:
+                logger.error(f"发生异常: {e}")
                 raise Exception(f"发生异常: {e}")
         return False
     else:
         try:
             while True:
                 if pyautogui.locateOnScreen(symbol, region=region) is not None:
-                    print("已确认" + symbol + "存在")
+                    logger.info("已确认" + symbol + "存在")
                     return True
         except pyautogui.ImageNotFoundException:
             return False
         except Exception as e:
+            logger.error(f"发生异常: {e}")
             raise Exception(f"发生异常: {e}")
 
 
@@ -241,11 +260,12 @@ def search_symbol_erroring(symbol, timeout, region=None):
         while time.time() - start_time < timeout:
             try:
                 if pyautogui.locateOnScreen(symbol, region=region) is not None:
-                    print("已确认" + symbol + "存在")
+                    logger.info("已确认" + symbol + "存在")
                     return True
             except pyautogui.ImageNotFoundException:
-                print("正在识别" + symbol)
+                logger.info("正在识别" + symbol)
             except Exception as e:
+                logger.error(f"发生异常: {e}")
                 raise Exception(f"发生异常: {e}")
         # 如果超时后还没有找到符号，抛出超时异常
         raise Exception(f"超时: 没找到" + symbol)
@@ -253,65 +273,66 @@ def search_symbol_erroring(symbol, timeout, region=None):
         try:
             while True:
                 if pyautogui.locateOnScreen(symbol, region=region) is not None:
-                    print("已确认" + symbol + "存在")
+                    logger.info("已确认" + symbol + "存在")
                     return True
         except pyautogui.ImageNotFoundException:
             raise Exception(f"没找到图片: {symbol}")
         except Exception as e:
+            logger.error(f"发生异常: {e}")
             raise Exception(f"发生异常: {e}")
 
 
 # =========================装饰器=========================
 def screenshot_to_excel(test_case_name, path, exception):
-    print("开始截图异常情况")
+    logger.info("开始截图异常情况")
     # 使用 sys.executable 获取 .exe 文件的目录
     exe_dir = os.path.dirname(sys.executable)
     log_dir = os.path.join(exe_dir, "log")
-    print("创建log目录")
+    logger.info("创建log目录")
     os.makedirs(log_dir, exist_ok=True)  # 确保log目录存在
-    print("创建完成")
+    logger.info("创建完成")
 
     try:
         # 截图
         screenshot = ImageGrab.grab()
         screenshot_file = os.path.join(log_dir, "temp_screenshot.png")
-        print("开始保存截图")
+        logger.info("开始保存截图")
         screenshot.save(screenshot_file)  # 保存截图为文件
-        print("保存截图完成")
+        logger.info("保存截图完成")
 
         # 定义Excel文件路径
         excel_path = os.path.join(log_dir, "test_results.xlsx")
 
         # 检查Excel文件是否存在，如果不存在则创建
         if not os.path.exists(excel_path):
-            print("创建excel")
+            logger.info("创建excel")
             wb = Workbook()
         else:
-            print("加载excel")
+            logger.info("加载excel")
             wb = load_workbook(excel_path)
         ws = wb.active
 
         # 确定下一个空白行
         row = ws.max_row + 1
-        print("写入数据")
+        logger.info("写入数据")
 
         # 写入数据
         ws[f"A{row}"] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         ws[f"B{row}"] = test_case_name
         ws[f"C{row}"] = path
         ws[f"D{row}"] = str(exception)
-        print("插入图片")
+        logger.info("插入图片")
 
         # 将截图插入到Excel
         img = ExcelImage(screenshot_file)
         img.anchor = f"E{row}"  # 设置图片的锚点
         ws.add_image(img)
-        print("数据处理完毕，开始保存excel")
+        logger.info("数据处理完毕，开始保存excel")
         wb.save(excel_path)
-        print("Excel文件保存在:", excel_path)
-        print("保存完毕")
+        logger.info("Excel文件保存在:", excel_path)
+        logger.info("保存完毕")
     except Exception as e:
-        print(f"在保存截图和数据到Excel时发生错误: {e}")
+        logger.error(f"在保存截图和数据到Excel时发生错误: {e}")
     finally:
         if os.path.exists(screenshot_file):
             os.remove(screenshot_file)  # 清理临时文件
@@ -327,6 +348,7 @@ def screenshot_error_to_excel(func):
             current_function_name = func.__name__
             path = sys.executable
             screenshot_to_excel(current_function_name, path, e)
+            logger.error(f"发生异常: {e}")
             raise  # 可选：重新抛出异常以便外部也能知道异常发生
 
     return wrapper
@@ -340,11 +362,11 @@ def add_check_window():
         time.sleep(1.5)
         crosshair_center = get_crosshair_center()
         if crosshair_center is None:
-            print("未找到准星中心")
+            logger.info("未找到准星中心")
             return
 
         nearby_point = (crosshair_center[0] + 3, crosshair_center[1] + 3)
-        print(nearby_point)
+        logger.info(nearby_point)
         # 绘制框框（获取准星旁边的颜色，扩大到颜色分界处，截取坐标）
         target_color = pyautogui.screenshot().getpixel(nearby_point)
         # 转换颜色到HSV
@@ -394,14 +416,14 @@ def add_check_window():
                 bottom_right = (x + w + expand_margin, y + h + expand_margin)
                 last_top_left = top_left
                 last_bottom_right = bottom_right
-                print("找到疑似cad区域，左上及右下坐标如下" + str(top_left) + "," + str(bottom_right))
+                logger.info("找到疑似cad区域，左上及右下坐标如下" + str(top_left) + "," + str(bottom_right))
             else:
                 # 增加HSV范围并重试
                 hue_variation += 1
                 saturation_variation += 2
                 value_variation += 2
                 if hue_variation > 180 or saturation_variation > 255 or value_variation > 255:
-                    print("未识别出cad区域，可能准心不在cad内")
+                    logger.info("未识别出cad区域，可能准心不在cad内")
                     break
 
         if last_top_left and last_bottom_right:
@@ -411,14 +433,17 @@ def add_check_window():
             pyautogui.mouseDown()
             pyautogui.moveTo(last_bottom_right, duration=1)
             pyautogui.mouseUp()
-            print("cad描边完毕")
+            logger.info("cad描边完毕")
         else:
-            print("未找到任何区域")
+            logger.info("未找到任何区域")
 
     except Exception as e:
-        print(f"发生错误: {e}")
+        logger.info(f"发生错误: {e}")
+
 
 ALL_COMPONENTS = []
+
+
 # 获取程式元件列表
 def get_component_list():
     global ALL_COMPONENTS
@@ -439,7 +464,7 @@ def get_component_list():
                                 no_checked_components]
     except pyautogui.ImageNotFoundException:
         no_checked_positions = []
-        print("未检测的元件图像未找到。")
+        logger.info("未检测的元件图像未找到。")
 
     try:
         # 识别已检测的元件坐标并保存，标记为checked
@@ -448,7 +473,7 @@ def get_component_list():
                              checked_components]
     except pyautogui.ImageNotFoundException:
         checked_positions = []
-        print("已检测的元件图像未找到。")
+        logger.info("已检测的元件图像未找到。")
     # 更新全局变量all_components
     ALL_COMPONENTS = no_checked_positions + checked_positions
 
@@ -474,24 +499,25 @@ def get_choose_box():
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     # 过滤小轮廓
     yellow_blocks = [cv2.boundingRect(cnt) for cnt in contours if cv2.contourArea(cnt) > 6]
-    print(yellow_blocks)
+    logger.info(yellow_blocks)
     # 检查找到的方块数量
     if len(yellow_blocks) == 8:
         # 按照距离中心点的距离排序
         yellow_blocks.sort(key=lambda pos: (pos[0] + pos[2] // 2 - center_x + search_region[0]) ** 2 + (
                 pos[1] + pos[3] // 2 - center_y + search_region[1]) ** 2)
-        print(yellow_blocks)
+        logger.info(yellow_blocks)
         # 选择第5个最近的方块
         target_block = yellow_blocks[4]  # 选择第五个最近的方块，索引为4
         target_x = target_block[0] + target_block[2] // 2 + search_region[0]
         target_y = target_block[1] + target_block[3] // 2 + search_region[1]
         target = (target_x, target_y)
-        print(target_x, target_y)
+        logger.info(target_x, target_y)
         return True, target
     elif len(yellow_blocks) > 0:
         return True, None
     else:
         return False, None
+
 
 # 调整将CAD框随机变大，再变小
 def adjust_cad_frame():
@@ -499,16 +525,16 @@ def adjust_cad_frame():
     time.sleep(2)
     # 选中框框快捷键
     pyautogui.press('b')
-    print("选中检测框")
+    logger.info("选中检测框")
     time.sleep(1.5)
     success, point = get_choose_box()
-    print(point)
+    logger.info(point)
     # 识别到完整的选择框
     if success:
         if point is not None:
-            print("move")
+            logger.info("move")
             x, y = point
-            print(x, y)
+            logger.info(x, y)
             pyautogui.moveTo(x, y, duration=0.5)
             pyautogui.mouseDown()
             # 计算区域边界
@@ -566,6 +592,7 @@ def adjust_cad_frame():
     else:
         sys.exit("未识别到选择框")
 
+
 def random_choose_light():
     # 绝对坐标列表（1920x1080分辨率）
     absolute_coords = [
@@ -589,9 +616,10 @@ def random_choose_light():
 def random_change_param():
     # 分为两种改随机的方式:
     # 下拉框为面积内随机选（点击点，输入各个下拉框面积，下拉随机值（限定范围），随机选面积内一点点击，但麻烦）
-    
+
     # 使用for循环点击各个点，输入0-1000随机数字
-    points = [(1720, 398), (1720, 418), (1720, 440), (1720, 460), (1720, 480), (1720, 500), (1720, 630), (1720, 650), (1720, 690), (1720, 715), (1720, 735), (1720, 775), (1720, 840), (1720, 860)]
+    points = [(1720, 398), (1720, 418), (1720, 440), (1720, 460), (1720, 480), (1720, 500), (1720, 630), (1720, 650),
+              (1720, 690), (1720, 715), (1720, 735), (1720, 775), (1720, 840), (1720, 860)]
     for point in points:
         pyautogui.click(point)
         pyautogui.hotkey('ctrl', 'a')
@@ -607,11 +635,40 @@ def image_fit_screen(image_path):
     # 打开图像文件
     img = Image.open(image_path)
     # 调整图像大小到当前屏幕分辨率
-    img = img.resize((int(img.width * screen_width / 1920), int(img.height * screen_height / 1080)), Image.ANTIALIAS)
+    img = img.resize((int(img.width * screen_width / 1920), int(img.height * screen_height / 1080)), Image.Resampling.LANCZOS)
     # 保存到临时文件
     temp_image_path = f"temp_{image_path}"
     img.save(temp_image_path)
     return temp_image_path
+
+
+def filter_green(image):
+    # 定义绿色的HSV范围
+    lower_green = np.array([60, 100, 100])
+    upper_green = np.array([90, 255, 255])
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    mask = cv2.inRange(hsv, lower_green, upper_green)
+    result = cv2.bitwise_and(image, image, mask=mask)
+    if np.sum(mask) > 0:
+        return True, result
+    else:
+        return False, image
+
+def filter_red(image):
+    # 定义红色的HSV范围
+    lower_red1 = np.array([0, 100, 100])
+    upper_red1 = np.array([10, 255, 255])
+    lower_red2 = np.array([160, 100, 100])
+    upper_red2 = np.array([180, 255, 255])
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
+    mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
+    mask = cv2.bitwise_or(mask1, mask2)
+    result = cv2.bitwise_and(image, image, mask=mask)
+    if np.sum(mask) > 0:
+        return True, result
+    else:
+        return False, image
 
 # 确保指定位置内是该文本
 def text_in_bbox(text, bbox):
@@ -632,6 +689,7 @@ def text_in_bbox(text, bbox):
     if text not in clipboard_text:
         pyautogui.typewrite(text)
         pyautogui.press('enter')
+
 
 def compare_images(img1, img2):
     return ImageChops.difference(img1, img2).getbbox() is None
@@ -666,6 +724,7 @@ def get_center_coordinates(coord1, coord2):
     y_center = (coord1[1] + coord2[1]) // 2
     return (x_center, y_center)
 
+
 def read_text(point):
     # 获取当前屏幕分辨率
     monitor = get_monitors()[0]
@@ -690,19 +749,51 @@ def read_text(point):
 
     return clipboard_text
 
-def read_text_ocr(top_left_point, bottom_right_point):
-    # 创建一个OCR识别器，指定中文简体和英文
-    reader = easyocr.Reader(['ch_sim'])
+# 矫正识别结果的错别字
+def correct_typos(text):
+    target_texts = ["检测窗口", "未完待续"]
+    for target_text in target_texts:
+        match_count = 0
+        # 检查输入文本与目标文本的每个字符
+        for char in text:
+            if char in target_text:
+                match_count += 1
+        # 如果匹配的字符数达到2个或以上，则返回目标文本
+        if match_count >= 2:
+            return target_text
+    return text  # 如果没有足够的匹配，返回原始文本
 
+# 识别屏幕上指定区域
+def read_text_ocr(top_left_point, bottom_right_point):
+    logger.info("开始识别")
     # 截取屏幕上指定区域的图像
     screenshot = ImageGrab.grab(
         bbox=(top_left_point[0], top_left_point[1], bottom_right_point[0], bottom_right_point[1]))
     screenshot_np = np.array(screenshot)
     screenshot_np = cv2.cvtColor(screenshot_np, cv2.COLOR_RGB2BGR)
 
+    # 调用颜色过滤方法
+    have_specific_color, filtered_image = filter_red(screenshot_np)
+    if have_specific_color:
+        logger.info("red")
+    if not have_specific_color:
+        logger.info("green")
+        have_specific_color, filtered_image = filter_green(screenshot_np)
+
     # 使用EasyOCR进行文字识别
-    results = reader.readtext(screenshot_np)
+    reader = easyocr.Reader(['ch_sim'])
+    results = reader.readtext(filtered_image)
+
+    # 在截图上绘制矩形框标记识别区域
+    cv2.rectangle(filtered_image, (0, 0), (filtered_image.shape[1], filtered_image.shape[0]), (0, 255, 0), 2)
+
+    # # 显示带有标记的图像
+    # cv2.imshow('Marked Area', filtered_image)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
     # 输出识别结果
     for (bbox, text, prob) in results:
-        print(f"识别的文字: {text}, 置信度: {prob}")
+        text = correct_typos(text)
+        logger.info(f"识别的文字: {text}, 置信度: {prob}")
+    logger.info("识别结束")

@@ -25,7 +25,7 @@ import os
 
 # 查看RV，SRC上元件窗口，结果值 正常显示
 
-# # @utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel
 # 添加待料
 def lxbj_001_02():
     utils.check_and_launch_aoi()
@@ -67,7 +67,7 @@ def lxbj_001_02():
     utils.click_by_png(config.TEST_BOARD)
 
 
-# @utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel
 # 不良窗口/元件
 def lxbj_001_03():
     utils.check_and_launch_aoi()
@@ -83,7 +83,7 @@ def lxbj_001_03():
     # 点击测试当前元件 有不良窗口的话查看提示（左侧窗口缺陷名称默认则取算法参数界面首个不良结果对应的缺陷名）
     utils.click_by_png(config.TEST_COMPONENT)
 
-
+@utils.screenshot_error_to_excel
 def lxbj_005_01():
     utils.check_and_launch_aoi()
     # 参数配置——ui配置——程序设置
@@ -119,6 +119,8 @@ def lxbj_005_01():
     # 删除目录F:\DataExport\Job名\OKImage
     os.rmdir(f"F:\\DataExport\\{program_name}\\OKImage")
 
+
+@utils.screenshot_error_to_excel
 def lxbj_005_02():
     # 参数配置——ui配置——程序设置
     utils.click_by_png(config.SETTING)
@@ -137,7 +139,7 @@ def lxbj_005_02():
     utils.click_by_png(config.PARAM_UI_YES)
     utils.click_by_png(config.PARAM_UI_CLOSE)
     # 在某一元件【元器件编辑】界面，右击--【导出元件OK图】
-    point = (935,445)
+    point = (935, 445)
     pyautogui.rightClick(point)
     utils.click_by_png(config.EXPORT_COMPONENT_OK)
     # 在提示框，点击【确定】
