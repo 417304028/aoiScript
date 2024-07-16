@@ -1,9 +1,9 @@
 import ctypes
 import random
+import shutil
 import easyocr
 import sys
 import time
-
 import psutil
 import pyperclip
 import cv2
@@ -13,7 +13,8 @@ import config
 import functools
 import datetime
 import os
-from pywinauto import Application
+import re
+from pywinauto import Application,Desktop
 from PIL import ImageGrab, Image
 from PIL import ImageChops
 from screeninfo import get_monitors
@@ -25,12 +26,12 @@ ctypes.windll.shcore.SetProcessDpiAwareness(0)  # 解决使用pyautowin时缩放
 # ============================日志=======================
 # 设置日志记录器
 def setup_logger():
-    exe_dir = os.path.dirname(sys.executable)
-    log_dir = os.path.join(exe_dir, "log")
+    log_dir = os.path.join(os.getcwd(), "log")
+    print("Log Directory:", log_dir)
     os.makedirs(log_dir, exist_ok=True)
     log_file = os.path.join(log_dir, "script_log_{time:YYYY-MM-DD}.log")
-    logger.add(log_file, retention="10 days", rotation="100MB", format="{time} {level} {message}", level="INFO")
-
+    logger.add(log_file, rotation="100 MB", retention="10 days", format="{time:YYYY-MM-DD HH:mm:ss.SSS} {level} {message}", level="INFO")
+    logger.info("已开启日志记录")
 
 # ============================窗格处理===================
 # 连接窗口（好像只能用win32连接窗口,uia不行）
@@ -47,7 +48,19 @@ def connect_aoi_window():
     #     raise Exception
     try:
         # app = Application(backend="uia").connect(auto_id="MainForm")
-        app = Application().connect(auto_id="MainForm")
+        windows = Desktop(backend="uia").windows()
+        window_found = False
+        pattern = re.compile(r".*Sinic-Tek 3D AOI.*")  # 正则表达式匹配包含 "Sinic-Tek 3D AOI" 的标题
+
+        for w in windows:
+            if pattern.match(w.window_text()):
+                window_properties = w.get_properties()
+                logger.info(f"aoi窗口存在,详细信息：{window_properties}")
+                window_found = True
+                # break
+        if not window_found:  # 如果循环结束后标志仍为False，表示没有找到窗口
+            logger.error("aoi窗口不存在")
+        app = Application().connect(title_re=".*Sinic-Tek 3D AOI.*")
         main_window = app.window(auto_id="MainForm")
         if main_window.exists(timeout=10):
             logger.info("成功连接到窗口")
@@ -68,6 +81,7 @@ def check_and_launch_aoi():
         app.window(title_re=".*AOI.*").wait('ready', timeout=60)
     else:
         main_window = connect_aoi_window()
+        main_window.wait('ready', timeout=10)
         main_window.set_focus()
         main_window.wait('ready', timeout=10)
         # # 确保窗口未最小化
@@ -178,7 +192,8 @@ def get_crosshair_center():
 
 
 # 打勾框是否打勾
-def is_checked(top_left, bottom_right, pixel_threshold=18):
+def is_checked(top_left, bottom_right, expect_checked):
+    pixel_threshold=18
     # 调整坐标
     adjusted_top_left, adjusted_bottom_right = adjust_coordinates(top_left, bottom_right)
 
@@ -198,8 +213,13 @@ def is_checked(top_left, bottom_right, pixel_threshold=18):
     white_pixels = np.sum(thresh == 255)
 
     # 判断是否勾选（根据对勾占据的像素点来设置阈值）
-    return white_pixels >= pixel_threshold
-
+    check = white_pixels >= pixel_threshold
+    if check == expect_checked:
+        pass
+    else:
+        center_x = (adjusted_top_left[0] + adjusted_bottom_right[0]) // 2
+        center_y = (adjusted_top_left[1] + adjusted_bottom_right[1]) // 2
+        pyautogui.click(center_x, center_y)
 
 def click_by_png(image_path, times=1, timeout=5):
     start_time = time.time()
@@ -253,7 +273,7 @@ def search_symbol(symbol, timeout, region=None):
             raise Exception(f"发生异常: {e}")
 
 
-def search_symbol_erroring(symbol, timeout, region=None):
+def search_symbol_erroring(symbol, timeout = 5, region=None):
     start_time = time.time()
     symbol = image_fit_screen(symbol)
     if timeout is not None:
@@ -285,9 +305,9 @@ def search_symbol_erroring(symbol, timeout, region=None):
 # =========================装饰器=========================
 def screenshot_to_excel(test_case_name, path, exception):
     logger.info("开始截图异常情况")
-    # 使用 sys.executable 获取 .exe 文件的目录
-    exe_dir = os.path.dirname(sys.executable)
-    log_dir = os.path.join(exe_dir, "log")
+    # 获取当前工作目录
+    current_dir = os.getcwd()
+    log_dir = os.path.join(current_dir, "log")
     logger.info("创建log目录")
     os.makedirs(log_dir, exist_ok=True)  # 确保log目录存在
     logger.info("创建完成")
@@ -336,6 +356,9 @@ def screenshot_to_excel(test_case_name, path, exception):
     finally:
         if os.path.exists(screenshot_file):
             os.remove(screenshot_file)  # 清理临时文件
+        for proc in psutil.process_iter(['pid', 'name']):
+            if "AOI" in proc.info['name']:
+                proc.terminate()
 
 
 # 装饰器，出问题时截图并保存至excel
@@ -440,9 +463,105 @@ def add_check_window():
     except Exception as e:
         logger.info(f"发生错误: {e}")
 
+# 打开程式
+def open_program():
+    if search_symbol(config.OPEN_PROGRAM, 5):
+        click_by_png(config.OPEN_PROGRAM)
+    # 双击程式
+    if search_symbol(config.OPEN_PROGRAM_CURSOR, 5):
+        click_by_png(config.OPEN_PROGRAM_CURSOR, 2)
+    else:
+        if search_symbol(config.OPEN_PROGRAM_PLUS, 5):
+            click_by_png(config.OPEN_PROGRAM_PLUS, 2)
+    pyautogui.press("enter")
+    
+# 获取最近编辑的一个程式
+def get_topest_program():
+    cursor_positions = list(pyautogui.locateAllOnScreen(config.CURSOR))
+    plus_positions = list(pyautogui.locateAllOnScreen(config.PLUS))
+    all_positions = cursor_positions + plus_positions
+    if all_positions:
+        topest = sorted(all_positions, key=lambda pos: pos.top)[0]
+    else:
+        logger.error("未找到任何cursor或plus的坐标")
+        raise Exception("未找到任何cursor或plus的坐标")
+
+    return topest
+
+# 确保在编辑界面
+def ensure_in_edit_mode():
+    check_and_launch_aoi()
+    # 先查询最直接的 没有的话逻辑再一层层外扩
+    if not click_component():
+        # 没有的话点击程式元件标识
+        if search_symbol(config.PROGRAM_COMPONENT_DARK, 5):
+            click_by_png(config.PROGRAM_COMPONENT_DARK)
+            click_component()
+        # 再没有的话打开程式
+        else:
+            open_program()
+            if search_symbol(config.PROGRAM_COMPONENT_DARK, 5):
+                click_by_png(config.PROGRAM_COMPONENT_DARK)
+            click_component()
+    if not search_symbol(config.EDIT_LIGHT, 5):
+        click_by_png(config.EDIT_DARK)
+    
+# 点击元件
+def click_component():
+    # 看有没有元件标识
+    if search_symbol(config.PROGRAM_COMPONENT_LIGHT, 5):
+        # 几种元件里点一个
+        if search_symbol(config.NO_CHECKED_COMPONENT, 5):
+            click_by_png(config.NO_CHECKED_COMPONENT, 2)
+            return True
+        else: 
+            if search_symbol(config.CHECKED_COMPONENT, 5):
+                click_by_png(config.CHECKED_COMPONENT, 2)
+                return True
+            else:
+                if search_symbol(config.PASS_COMPONENT, 5):
+                    click_by_png(config.PASS_COMPONENT, 2)
+                    return True
+                else:
+                    if search_symbol(config.NO_PASS_COMPONENT, 5):
+                        click_by_png(config.NO_PASS_COMPONENT, 2)
+                        return True
+                    else:
+                        return False
+
+# 勾选共享元件库路径
+def check_share_lib_path(if_checked):
+    # 点开设置--硬件设置--数据导出配置--元件库配置
+    click_by_png(config.SETTING)
+    click_by_png(config.PARAM_DATA_EXPORT_SETTING)
+    # 确保共享元件库路径为非勾选 （用的坐标）
+    is_checked((901,290),(915,304),if_checked)
+    click_by_png(config.PARAM_SETTING_YES)
+    click_by_png(config.PARAM_SETTING_CLOSE)
+
+def modify_component():
+    pyautogui.press("b")
+    pyautogui.press("left")
+
+# 确认是否文件夹下生成了新数据
+def check_new_data(path):
+    a = 0
+    for filename in os.listdir(path):
+        # 获取文件的完整路径
+        file_path = os.path.join(path, filename)
+        # 获取文件的修改时间
+        file_mtime = os.path.getmtime(file_path)
+        # 如果文件在指定的时间内被修改或创建
+        if time.time() - file_mtime < 30:
+            a += 1
+    if a > 0:
+        return True
+    else:
+        return False
+
+
 
 ALL_COMPONENTS = []
-
 
 # 获取程式元件列表
 def get_component_list():
@@ -632,12 +751,24 @@ def random_change_param():
 def image_fit_screen(image_path):
     # 获取当前屏幕分辨率
     screen_width, screen_height = pyautogui.size()
+    if screen_width == 1920 and screen_height == 1080:
+        logger.error(screen_width, screen_height)
+        return image_path
     # 打开图像文件
     img = Image.open(image_path)
     # 调整图像大小到当前屏幕分辨率
     img = img.resize((int(img.width * screen_width / 1920), int(img.height * screen_height / 1080)), Image.Resampling.LANCZOS)
-    # 保存到临时文件
-    temp_image_path = f"temp_{image_path}"
+    # 确定项目根目录
+    project_root = os.path.dirname(os.path.abspath(__file__))  # 假设此脚本位于项目根目录
+    temp_dir = os.path.join(project_root, 'temp')
+    # 如果temp文件夹不存在，则创建它
+    if not os.path.exists(temp_dir):
+        os.makedirs(temp_dir)
+
+    # 构建临时文件路径
+    filename = os.path.basename(image_path)  # 获取原始图像的文件名
+    temp_image_path = os.path.join(temp_dir, f"temp_{filename}")  # 在temp目录下创建新的文件名
+    temp_image_path = os.path.normpath(temp_image_path)
     img.save(temp_image_path)
     return temp_image_path
 
@@ -724,8 +855,7 @@ def get_center_coordinates(coord1, coord2):
     y_center = (coord1[1] + coord2[1]) // 2
     return (x_center, y_center)
 
-
-def read_text(point):
+def read_text(x, y):
     # 获取当前屏幕分辨率
     monitor = get_monitors()[0]
     current_resolution = (monitor.width, monitor.height)
@@ -735,10 +865,11 @@ def read_text(point):
     y_ratio = current_resolution[1] / 1080
 
     # 调整坐标
-    adjusted_point = (int(point[0] * x_ratio), int(point[1] * y_ratio))
+    adjusted_x = int(x * x_ratio)
+    adjusted_y = int(y * y_ratio)
 
     # 单击调整后的坐标
-    pyautogui.click(adjusted_point[0], adjusted_point[1])
+    pyautogui.click(adjusted_x, adjusted_y)
 
     # 全选并复制
     pyautogui.hotkey('ctrl', 'a')
@@ -797,3 +928,14 @@ def read_text_ocr(top_left_point, bottom_right_point):
         text = correct_typos(text)
         logger.info(f"识别的文字: {text}, 置信度: {prob}")
     logger.info("识别结束")
+
+
+# =====================================文件处理=====================================
+# 删除文件夹下所有文件
+def delete_documents(path):
+    for filename in os.listdir(path):
+        file_path = os.path.join(path, filename)
+        if os.path.isfile(file_path) or os.path.islink(file_path):
+            os.unlink(file_path)
+        elif os.path.isdir(file_path):
+            shutil.rmtree(file_path)

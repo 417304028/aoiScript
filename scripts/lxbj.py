@@ -2,12 +2,13 @@ import time
 import pyautogui
 import config
 import utils
+import shutil
 import os
 
 
 # 可以加装饰器，报错则自动导出log
 # 复制元件（离线 写不了）
-# def lxbj_001_01():
+def lxbj_001_01():
 #     utils.check_and_launch_aoi()
 # 新建程式元件 选择保存目录 指定导入文件 输入程式名称，是
 
@@ -24,64 +25,34 @@ import os
 # 运行 程式
 
 # 查看RV，SRC上元件窗口，结果值 正常显示
-
+    pass
 @utils.screenshot_error_to_excel
+
 # 添加待料
-def lxbj_001_02():
-    utils.check_and_launch_aoi()
-    # 检测是否在元器件编辑界面
-    editing_program = utils.ensure_in_specific_window("调色板","dpnlColorFilter")
-    if not editing_program:
-        print("不在元器件编辑界面")
-        raise Exception
-    time.sleep(0.5)
-    # 添加检测窗口 选择含有代料的窗口
-    utils.add_check_window()
-    utils.search_symbol(config.ADD_CHECKED_TOPIC, 5)
-    time.sleep(0.2)
-    utils.click_by_png(config.ADD_CHECKED_SENIOR, 1)
-    time.sleep(0.2)
-    utils.click_by_png(config.COLOR_MATCHING, 1)
-    utils.click_by_png(config.ADD_CHECKED_YES, 1)
-    # 添加标准影像 添加五种随机不同光源的代料（需添加成功）
-    time.sleep(1)
-    utils.search_symbol(config.IMAGE_PROCESS_TOPIC, 5)
-    utils.random_choose_light()
-    utils.click_by_png(config.IMAGE_PROCESS_YES)
-    time.sleep(2)
-    for _ in range(4):
-        utils.click_by_png(config.ADD_STANDARD_IMAGE)
-        utils.search_symbol(config.IMAGE_PROCESS_TOPIC, 5)
-        utils.random_choose_light()
-        utils.click_by_png(config.IMAGE_PROCESS_YES)
-        time.sleep(2)
-    # 修改窗口的算法参数值
-    utils.random_change_param()
-    # 分别点击测试当前窗口/元件/分组/面板
-    utils.click_by_png(config.TEST_WINDOW)
-    time.sleep(2)
-    utils.click_by_png(config.TEST_COMPONENT)
-    time.sleep(2)
-    utils.click_by_png(config.TEST_GROUP)
-    time.sleep(2)
-    utils.click_by_png(config.TEST_BOARD)
+def lxbj_002_01():
+    pass
 
-
-@utils.screenshot_error_to_excel
 # 不良窗口/元件
-def lxbj_001_03():
-    utils.check_and_launch_aoi()
-    # 检查是否在元器件编辑界面(算法参数或者调色板存在)
-    editing = utils.ensure_in_specific_window("调色板", "dpnlColorFilter")
-    if not editing:
-        raise Exception
-    # 选择某一窗口 点击测试当前窗口（检测窗口：缺陷名称）
-    pyautogui.press("b")
-    utils.click_by_png(config.TEST_WINDOW)
-    # 查看提示：通过？红色不通过的话看原因
-    utils.read_text_ocr()
-    # 点击测试当前元件 有不良窗口的话查看提示（左侧窗口缺陷名称默认则取算法参数界面首个不良结果对应的缺陷名）
-    utils.click_by_png(config.TEST_COMPONENT)
+def lxbj_003_01():
+    pass
+
+def lxbj_004_01():
+    pass
+
+def lxbj_004_02():
+    pass
+
+def lxbj_004_03():
+    pass
+
+def lxbj_004_04():
+    pass
+
+def lxbj_004_05():
+    pass
+
+def lxbj_004_06():
+    pass
 
 @utils.screenshot_error_to_excel
 def lxbj_005_01():
@@ -100,8 +71,8 @@ def lxbj_005_01():
         pyautogui.click(utils.get_center_coordinates((659,726),(671,738)))  # 点击【导出元件ok图】的中心坐标
     if export_all_checked:
         pyautogui.click(utils.get_center_coordinates((659,751),(671,763)))  # 点击【导出所有元件ok图】的中心坐标
-    utils.click_by_png(config.PARAM_UI_YES)
-    utils.click_by_png(config.PARAM_UI_CLOSE)
+    utils.click_by_png(config.PARAM_SETTING_YES)
+    utils.click_by_png(config.PARAM_SETTING_CLOSE)
     # 在某一元件【元器件编辑】界面，右击--【导出元件OK图】
     point = (935,445)
     pyautogui.rightClick(point)
@@ -113,15 +84,16 @@ def lxbj_005_01():
     utils.click_by_png(config.EXPORT_COMPONENT_SUCCESS)
     # 弹框提示：生成ok图完成，并可以在F:\DataExport\Job名\OKImage下发现
     utils.click_by_png(config.RUN)
-    program_name = utils.read_text("110,70")
+    program_name = utils.read_text(110,70)
     # 删除目录D:\EYAOI\JOB\Job\Job名.oki
-    os.rmdir(f"D:\\EYAOI\\JOB\\{program_name}\\{program_name}.oki")
+    shutil.rmtree(f"D:\\EYAOI\\JOB\\{program_name}\\{program_name}.oki")
     # 删除目录F:\DataExport\Job名\OKImage
-    os.rmdir(f"F:\\DataExport\\{program_name}\\OKImage")
+    shutil.rmtree(f"F:\\DataExport\\{program_name}\\OKImage")
 
 
 @utils.screenshot_error_to_excel
 def lxbj_005_02():
+    utils.check_and_launch_aoi()
     # 参数配置——ui配置——程序设置
     utils.click_by_png(config.SETTING)
     utils.click_by_png(config.HARDWARE_SETTING)
@@ -136,8 +108,8 @@ def lxbj_005_02():
         pyautogui.click(utils.get_center_coordinates((659,726),(671,738)))  # 点击【导出元件ok图】的中心坐标
     if not export_all_checked:
         pyautogui.click(utils.get_center_coordinates((659,751),(671,763)))  # 点击【导出所有元件ok图】的中心坐标
-    utils.click_by_png(config.PARAM_UI_YES)
-    utils.click_by_png(config.PARAM_UI_CLOSE)
+    utils.click_by_png(config.PARAM_SETTING_YES)
+    utils.click_by_png(config.PARAM_SETTING_CLOSE)
     # 在某一元件【元器件编辑】界面，右击--【导出元件OK图】
     point = (935, 445)
     pyautogui.rightClick(point)
@@ -149,8 +121,135 @@ def lxbj_005_02():
     utils.click_by_png(config.EXPORT_COMPONENT_SUCCESS)
     # 弹框提示：生成ok图完成，并可以在F:\DataExport\Job名\OKImage下发现
     utils.click_by_png(config.RUN)
-    program_name = utils.read_text("110,70")
+    program_name = utils.read_text(110,70)
     # 删除目录D:\EYAOI\JOB\Job\Job名.oki
-    os.rmdir(f"D:\\EYAOI\\JOB\\{program_name}\\{program_name}.oki")
+    shutil.rmtree(f"D:\\EYAOI\\JOB\\{program_name}\\{program_name}.oki")
     # 删除目录F:\DataExport\Job名\OKImage
-    os.rmdir(f"F:\\DataExport\\{program_name}\\OKImage")
+    shutil.rmtree(f"F:\\DataExport\\{program_name}\\OKImage")
+
+# 导出料号ok图
+def lxbj_005_03():
+    pass
+
+def lxbj_005_04():
+    pass
+
+def lxbj_006_01():
+    pass
+
+def lxbj_006_02():
+    pass
+def lxbj_007_01():
+    pass
+
+def lxbj_007_02():
+    pass
+def lxbj_008_01():
+    pass
+
+def lxbj_008_02():
+    pass
+def lxbj_009_01():
+    pass
+
+def lxbj_010_01():
+    pass
+def lxbj_010_02():
+    pass
+
+def lxbj_010_03():
+    pass
+def lxbj_010_04():
+    pass
+
+def lxbj_011_01():
+    pass
+def lxbj_012_01():
+    pass
+
+def lxbj_012_02():
+    pass
+def lxbj_012_03():
+    pass
+
+def lxbj_012_04():
+    pass
+def lxbj_013_01():
+    pass
+
+def lxbj_013_02():
+    pass
+
+def lxbj_013_03():
+    pass
+
+
+def lxbj_014_01():
+    pass
+
+
+def lxbj_014_02():
+    pass
+
+
+def lxbj_014_03():
+    pass
+
+def lxbj_014_04():
+    pass
+def lxbj_014_05():
+    pass
+def lxbj_014_06():
+    pass
+def lxbj_014_07():
+    pass
+def lxbj_014_08():
+    pass
+
+def lxbj_014_09():
+    pass
+
+def lxbj_014_10():
+    pass
+
+def lxbj_014_11():
+    pass
+
+def lxbj_014_12():
+    pass
+
+def lxbj_015_01():
+    pass
+
+def lxbj_016_01():
+    pass
+
+def lxbj_016_02():
+    pass
+
+def lxbj_016_03():
+    pass
+
+def lxbj_016_04():
+    pass
+
+def lxbj_016_05():
+    pass
+
+def lxbj_017_01():
+    pass
+
+def lxbj_018_01():
+    pass
+
+def lxbj_018_02():
+    pass
+
+def lxbj_018_03():
+    pass
+
+def lxbj_018_04():
+    pass
+
+
+
