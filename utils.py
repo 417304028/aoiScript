@@ -51,22 +51,25 @@ def connect_aoi_window():
         windows = Desktop(backend="uia").windows()
         window_found = False
         pattern = re.compile(r".*Sinic-Tek 3D AOI.*")  # 正则表达式匹配包含 "Sinic-Tek 3D AOI" 的标题
-
+        aoi_amount = 0
         for w in windows:
             if pattern.match(w.window_text()):
                 window_properties = w.get_properties()
                 logger.info(f"aoi窗口存在,详细信息：{window_properties}")
                 window_found = True
+                aoi_amount += 1
                 # break
+        logger.info(f"aoi窗口数量: {aoi_amount}")
         if not window_found:  # 如果循环结束后标志仍为False，表示没有找到窗口
             logger.error("aoi窗口不存在")
-        app = Application().connect(title_re=".*Sinic-Tek 3D AOI.*")
-        main_window = app.window(auto_id="MainForm")
-        if main_window.exists(timeout=10):
-            logger.info("成功连接到窗口")
-            return main_window
-        else:
-            logger.info("未找到窗口")
+        if window_found:
+            app = Application().connect(title_re=".*Sinic-Tek 3D AOI.*")
+            main_window = app.window(auto_id="MainForm")
+            if main_window.exists(timeout=10):
+                logger.info("成功连接到窗口")
+                return main_window
+            else:
+                logger.error("未找到窗口")
     except Exception as e:
         logger.error(f"连接窗口时发生错误: {e}")
 
@@ -145,7 +148,9 @@ def click_by_controls(name=None, auto_id=None, control_type=None):
             logger.info("点击时未找到指定的按钮")
     except Exception as e:
         logger.error(f"发生错误: {e}")
-
+# 确认程序无卡顿/闪退
+def caton_or_flashback():
+    pass
 
 # ==============================识别处理===============================
 # 寻找准星
@@ -303,6 +308,8 @@ def search_symbol_erroring(symbol, timeout = 5, region=None):
 
 
 # =========================装饰器=========================
+
+# 报错时截图存至excel，后关闭aoi
 def screenshot_to_excel(test_case_name, path, exception):
     logger.info("开始截图异常情况")
     # 获取当前工作目录
@@ -358,7 +365,7 @@ def screenshot_to_excel(test_case_name, path, exception):
             os.remove(screenshot_file)  # 清理临时文件
         for proc in psutil.process_iter(['pid', 'name']):
             if "AOI" in proc.info['name']:
-                proc.terminate()
+                proc.kill()
 
 
 # 装饰器，出问题时截图并保存至excel
@@ -463,18 +470,20 @@ def add_check_window():
     except Exception as e:
         logger.info(f"发生错误: {e}")
 
-# 打开程式
+# 打开程式(随机)
 def open_program():
-    if search_symbol(config.OPEN_PROGRAM, 5):
-        click_by_png(config.OPEN_PROGRAM)
+    click_by_png(config.OPEN_PROGRAM)
     # 双击程式
+    if search_symbol(config.OPEN_PROGRAM_PLUS, 5):
+        click_by_png(config.OPEN_PROGRAM_PLUS, 2)
+        click_by_png(config.OPEN_PROGRAM_YES)
+        return
+    
     if search_symbol(config.OPEN_PROGRAM_CURSOR, 5):
         click_by_png(config.OPEN_PROGRAM_CURSOR, 2)
-    else:
-        if search_symbol(config.OPEN_PROGRAM_PLUS, 5):
-            click_by_png(config.OPEN_PROGRAM_PLUS, 2)
-    pyautogui.press("enter")
-    
+        click_by_png(config.OPEN_PROGRAM_YES)
+        return
+
 # 获取最近编辑的一个程式
 def get_topest_program():
     cursor_positions = list(pyautogui.locateAllOnScreen(config.CURSOR))
@@ -558,7 +567,51 @@ def check_new_data(path):
         return True
     else:
         return False
+# 计算文件夹内data数量
+def check_data_amount(path):
+    a = 0
+    for filename in os.listdir(path):
+        a += 1
+    return a
+# 将剪切板内的内容与文件夹内内容作对比
+def check_amount_content(coordinate, path):
+    # 读内容至剪切板
+    read_text_choosed(coordinate[0], coordinate[1])
+    clipboard_content = pyperclip.paste()
+    lines = clipboard_content.split('\n')
+    
+    if not lines:
+        raise Exception("剪切板内容为空")
 
+    # 提取第一行的数字
+    try:
+        expected_count = int(lines[0].strip())
+    except Exception:
+        raise Exception("第一行不包含有效的数字")
+
+    # 获取文件夹中的所有文件名
+    files = os.listdir(path)
+    # 过滤掉Default文件夹
+    files = [file for file in files if "Default" not in file]
+    # 检查每一行内容是否存在于文件夹中的某个文件名中(需要忽略Default文件夹)
+    matched_files = []
+    for line in lines[1:]:  # 从第二行开始，因为第一行是数字
+        found = False
+        for file in files:
+            if line in file:
+                matched_files.append(file)
+                found = True
+                break
+        if not found:
+            print(f"没有找到匹配的文件：{line}")
+    
+    # 检查文件总数是否与第一行数字一致
+    actual_count = len(matched_files)
+    
+    if actual_count == expected_count:
+        print("文件数量匹配成功")
+    else:
+        print(f"文件数量不匹配：期望 {expected_count}, 实际 {actual_count}")
 
 
 ALL_COMPONENTS = []
@@ -879,6 +932,19 @@ def read_text(x, y):
     clipboard_text = pyperclip.paste()
 
     return clipboard_text
+
+# 由于部分控件无法直接ctrl+a 被迫用这种方式去读取内容
+def read_text_choosed(x,y):
+    # 左键按住x，y的坐标点
+    pyautogui.moveTo(x, y)
+    pyautogui.mouseDown()
+
+    # 鼠标拖到指定位置后松开
+    pyautogui.moveTo(1900, 1025) 
+    pyautogui.mouseUp()
+
+    # 复制到剪切板
+    pyautogui.hotkey('ctrl', 'c')
 
 # 矫正识别结果的错别字
 def correct_typos(text):

@@ -4,21 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="91d32466-c2f3-43df-8c6a-f51d737a9e85" name="更改" comment="demo0.1">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/rv.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/yjk.py" afterDir="false" />
+    <list default="true" id="91d32466-c2f3-43df-8c6a-f51d737a9e85" name="更改" comment="恐怖周-元件库用例">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/gui/run.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/prompt_box/param_ui_close.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/prompt_box/param_ui_yes.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lxbj_001_02.py" beforeDir="false" afterPath="$PROJECT_DIR$/lxbj_001_02.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lxbj_001_03.py" beforeDir="false" afterPath="$PROJECT_DIR$/lxbj_001_03.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lxbj_005_01.py" beforeDir="false" afterPath="$PROJECT_DIR$/lxbj_005_01.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lxbj_005_02.py" beforeDir="false" afterPath="$PROJECT_DIR$/lxbj_005_02.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/lxbj.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/lxbj.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -255,7 +242,7 @@
       <workItem from="1718951947453" duration="2301000" />
       <workItem from="1720759707339" duration="3689000" />
       <workItem from="1721031291881" duration="3703000" />
-      <workItem from="1721121747462" duration="1022000" />
+      <workItem from="1721121747462" duration="2801000" />
     </task>
     <task id="LOCAL-00001" summary="新增aoi关联脚本的python-qt界面">
       <option name="closed" value="true" />
@@ -337,7 +324,15 @@
       <option name="project" value="LOCAL" />
       <updated>1718875863140</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="恐怖周-元件库用例">
+      <option name="closed" value="true" />
+      <created>1721123135756</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1721123135756</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -365,7 +360,8 @@
     <MESSAGE value="搞完" />
     <MESSAGE value="demo版" />
     <MESSAGE value="demo0.1" />
-    <option name="LAST_COMMIT_MESSAGE" value="demo0.1" />
+    <MESSAGE value="恐怖周-元件库用例" />
+    <option name="LAST_COMMIT_MESSAGE" value="恐怖周-元件库用例" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/aoiScript$main_001_04.coverage" NAME="main_001_04 覆盖结果" MODIFIED="1717658253699" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

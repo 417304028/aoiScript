@@ -29,7 +29,8 @@ WHOLE_BOARD_LIGHT = resource_path('images/whole_board/whole_board_image_light.pn
 
 OPEN_PROGRAM_PLUS = resource_path('images/open_program/plus.png')
 OPEN_PROGRAM_CURSOR = resource_path('images/open_program/cursor.png')
-LOAD_PROGRAM = resource_path('images/open_program/load.png')
+OPEN_PROGRAM_LOAD = resource_path('images/open_program/load.png')
+OPEN_PROGRAM_RECENT = resource_path('images/open_program/recent.png')
 REMOVE_PROGRAM = resource_path('images/open_program/remove.png')
 OPEN_PROGRAM_TOPIC = resource_path('images/open_program/topic.png')
 
@@ -43,6 +44,7 @@ ADD_CHECKED_YES = resource_path('images/prompt_box/add_check_yes.png')
 PROGRAM_LOADING = resource_path('images/prompt_box/program_loading.png')
 IMAGE_PROCESS_YES = resource_path('images/prompt_box/image_process_yes.png')
 PARAM_SETTING_YES = resource_path('images/prompt_box/param_setting_yes.png')
+UI_SHOW_MESSAGE_YES = resource_path('images/prompt_box/ui_show_message_yes.png')
 PARAM_SETTING_CLOSE = resource_path('images/prompt_box/param_setting_close.png')
 EXPORT_PUBLIC_PROGRAM = resource_path('images/prompt_box/export_public_program.png')
 PLEASE_OPEN_PUBLIC_LIBS = resource_path('images/prompt_box/please_open_public_libs.png')
@@ -75,6 +77,8 @@ BOARD_BOARD = resource_path('images/gui/board/auto.png')
 ELEMENTS = resource_path('images/gui/elements/elements.png')
 ELEMENTS_IMPORT_ALL = resource_path('images/gui/elements/import_all.png')
 ELEMENTS_STANDARD_LIBRARY = resource_path('images/gui/elements/standard_library.png')
+PUBLIC_ELEMENTS = resource_path('images/gui/elements/public_elements.png')
+ELEMENTS_DEFAULT = resource_path('images/gui/elements/default.png')
 EDIT_BACK_BUTTON = resource_path('images/gui/edit/back.png')
 GUI_EDIT_LIGHT = resource_path('images/gui/edit/light.png')
 GUI_EDIT_LIGHT_MENU = resource_path('images/gui/edit/light_menu.png')
@@ -88,12 +92,22 @@ SETTING = resource_path('images/gui/setting/setting.png')
 HARDWARE_SETTING = resource_path('images/gui/setting/hardware/hardware_setting.png')
 
 PYQT_ICON = resource_path('gui/resources/sinic_tek.jpg')
+UI_SHOW_MESSAGE = resource_path('images/hodgepodge/ui_show_message.png')
+IF_SYNC_PART_NO = resource_path('images/hodgepodge/if_sync_part_no.png')
+
 
 # ======================================坐标========================================
 SHARE_LIB_PATH_COORDINATE = (1185,295)
-
+UI_SHOW_MESSAGE_COORDINATE = (515,370)
 
 # ======================================绝对路径========================================
 # 参数配置-数据导出配置-共享元件库路径
 SHARE_LIB_PATH = r'D:\EYAOI\PublicCompLibrary'
+
+
+
+# ===================================RV-AI复判========================================
+RV_TOPIC = resource_path('images/rv-ai-test/topic.png')
+RV_SIMULATE_TO_TRAIN = resource_path('images/rv-ai-test/simulate_to_train.png')
+
 
