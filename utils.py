@@ -226,7 +226,7 @@ def is_checked(top_left, bottom_right, expect_checked):
         center_y = (adjusted_top_left[1] + adjusted_bottom_right[1]) // 2
         pyautogui.click(center_x, center_y)
 
-def click_by_png(image_path, times=1, timeout=5):
+def click_by_png(image_path, times=1, timeout=5, if_click_right=0):
     start_time = time.time()
     clicked = False  # 添加一个标志来检测是否成功点击
     image_path = image_fit_screen(image_path)
@@ -235,10 +235,13 @@ def click_by_png(image_path, times=1, timeout=5):
         try:
             location = pyautogui.locateCenterOnScreen(image_path)
             if location:
-                if times == 1:
-                    pyautogui.click(location)
-                elif times == 2:
-                    pyautogui.doubleClick(location)
+                if if_click_right == 1:
+                    pyautogui.click(location, button='right')
+                else:
+                    if times == 1:
+                        pyautogui.click(location)
+                    elif times == 2:
+                        pyautogui.doubleClick(location)
                 logger.info(f"点击{image_path}成功")
                 clicked = True  # 更新标志为True表示成功点击
                 break

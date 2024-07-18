@@ -107,7 +107,15 @@ SHARE_LIB_PATH = r'D:\EYAOI\PublicCompLibrary'
 
 
 # ===================================RV-AI复判========================================
-RV_TOPIC = resource_path('images/rv-ai-test/topic.png')
-RV_SIMULATE_TO_TRAIN = resource_path('images/rv-ai-test/simulate_to_train.png')
-
+RV_TOPIC = resource_path('images/rv_ai_test/topic.png')
+RV_SIMULATE_TO_TRAIN = resource_path('images/rv_ai_test/simulate_to_train.png')
+RV_SIMULATE_TO_EVAL = resource_path('images/rv_ai_test/simulate_to_eval.png')
+RV_TRAIN_SUCCESS = resource_path('images/rv_ai_test/train_success.png')
+RV_EVAL_SUCCESS = resource_path('images/rv_ai_test/eval_success.png')
+RV_MISSION_MANAGE = resource_path('images/rv_ai_test/mission_manage.png')
+RV_CLOSE_MISSION_MANAGE = resource_path('images/rv_ai_test/close_mission_manage.png')
+RV_JOB_NAME = resource_path('images/rv_ai_test/job_name.png')
+RV_TRAIN_STATUS = resource_path('images/rv_ai_test/train_status.png')
+RV_REFRESH_JOB = resource_path('images/rv_ai_test/refresh_job.png')
+RV_DELETE_JOB = resource_path('images/rv_ai_test/delete_job.png')
 
