@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import os
-import scripts.rv as rv
+from scripts.rv import rv_ai_test
 from utils import setup_logger
 
 def submit():
@@ -13,8 +13,7 @@ def submit():
     if not os.path.exists(result_path):
         messagebox.showerror("错误", "结果路径不存在，请重新输入！")
         return
-    
-    status = rv.rv_ai_test(train_eval_path, result_path)
+    status = rv_ai_test(train_eval_path, result_path)
     if status == 0:
         messagebox.showinfo("成功", "程序运行完毕，生成文档在结果文件夹下script_log文件夹内")
     else:

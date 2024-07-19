@@ -226,44 +226,43 @@ def is_checked(top_left, bottom_right, expect_checked):
         center_y = (adjusted_top_left[1] + adjusted_bottom_right[1]) // 2
         pyautogui.click(center_x, center_y)
 
-def click_by_png(image_path, times=1, timeout=5, if_click_right=0):
+def click_by_png(image_path, times=1, timeout=5, if_click_right=0, tolerance=0.8):
     start_time = time.time()
     clicked = False  # 添加一个标志来检测是否成功点击
     image_path = image_fit_screen(image_path)
     logger.info(f"尝试点击图片: {image_path}")
     while time.time() - start_time < timeout:
         try:
-            location = pyautogui.locateCenterOnScreen(image_path)
+            location = pyautogui.locateCenterOnScreen(image_path, confidence=tolerance)
             if location:
                 if if_click_right == 1:
                     pyautogui.click(location, button='right')
                 else:
-                    if times == 1:
-                        pyautogui.click(location)
-                    elif times == 2:
-                        pyautogui.doubleClick(location)
+                    pyautogui.click(location, times=times)
                 logger.info(f"点击{image_path}成功")
                 clicked = True  # 更新标志为True表示成功点击
                 break
         except Exception as e:
-            logger.info(f"尝试点击{image_path}时报错: 错误信息: {e}")
+            pass
         time.sleep(0.5)
     if not clicked:  # 检查是否成功点击
         logger.error(f"超时: 在{timeout}秒内未能点击{image_path}")
         raise Exception(f"超时: 在{timeout}秒内未能点击{image_path}")
 
-
-def search_symbol(symbol, timeout, region=None):
+def search_symbol(symbol, timeout, region=None, tolerance=0.9):
     start_time = time.time()
     symbol = image_fit_screen(symbol)
+    logger.info(f"开始寻找{symbol}")
     if timeout is not None:
         while time.time() - start_time < timeout:
             try:
-                if pyautogui.locateOnScreen(symbol, region=region) is not None:
+                # 使用confidence参数来设置匹配的近似度
+                location = pyautogui.locateOnScreen(symbol, region=region, confidence=tolerance)
+                if location is not None:
                     logger.info("已确认" + symbol + "存在")
                     return True
             except pyautogui.ImageNotFoundException:
-                logger.info("正在识别" + symbol)
+                pass
             except Exception as e:
                 logger.error(f"发生异常: {e}")
                 raise Exception(f"发生异常: {e}")
@@ -271,7 +270,8 @@ def search_symbol(symbol, timeout, region=None):
     else:
         try:
             while True:
-                if pyautogui.locateOnScreen(symbol, region=region) is not None:
+                location = pyautogui.locateOnScreen(symbol, region=region, confidence=tolerance)
+                if location is not None:
                     logger.info("已确认" + symbol + "存在")
                     return True
         except pyautogui.ImageNotFoundException:
@@ -281,9 +281,10 @@ def search_symbol(symbol, timeout, region=None):
             raise Exception(f"发生异常: {e}")
 
 
-def search_symbol_erroring(symbol, timeout = 5, region=None):
+def search_symbol_erroring(symbol, timeout, region=None):
     start_time = time.time()
     symbol = image_fit_screen(symbol)
+    logger.info(f"开始寻找:{symbol}")
     if timeout is not None:
         while time.time() - start_time < timeout:
             try:
@@ -291,12 +292,13 @@ def search_symbol_erroring(symbol, timeout = 5, region=None):
                     logger.info("已确认" + symbol + "存在")
                     return True
             except pyautogui.ImageNotFoundException:
-                logger.info("正在识别" + symbol)
+                pass
             except Exception as e:
                 logger.error(f"发生异常: {e}")
                 raise Exception(f"发生异常: {e}")
         # 如果超时后还没有找到符号，抛出超时异常
-        raise Exception(f"超时: 没找到" + symbol)
+        logger.error(f"超时: 没找到{symbol}")
+        raise Exception(f"超时: 没找到{symbol}")
     else:
         try:
             while True:
@@ -807,8 +809,8 @@ def random_change_param():
 def image_fit_screen(image_path):
     # 获取当前屏幕分辨率
     screen_width, screen_height = pyautogui.size()
-    if screen_width == 1920 and screen_height == 1080:
-        logger.error(screen_width, screen_height)
+    if screen_width != 1920 or screen_height != 1080:
+        logger.error("屏幕宽度: {}, 屏幕高度: {}", screen_width, screen_height)
         return image_path
     # 打开图像文件
     img = Image.open(image_path)
