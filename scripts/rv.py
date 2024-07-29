@@ -1,11 +1,14 @@
 import csv
+import glob
 import time
+import openpyxl
+from openpyxl.styles import Font
+from openpyxl.drawing.image import Image
 import pyperclip
 import utils
 import config
 import re
 import os
-import shutil
 import datetime
 import pyautogui
 import pandas as pd
@@ -22,7 +25,7 @@ def front_rv_window():
         find_topic = False
     if not find_topic:
         logger.info("未搜索到标题，改为搜索窗格")
-        windows = Desktop(backend="uia").windows()
+        windows = Desktop(backend="win32").windows()
         window_found = False
         logger.info("开始寻找程序窗口")
         pattern = re.compile(r".*Sinictek-训练.*")  # 正则表达式匹配包含 "Sinictek-训练" 的标题
@@ -41,7 +44,8 @@ def front_rv_window():
                 logger.info("成功连接到窗口")
                 main_window.wait('ready', timeout=10)
                 main_window.set_focus()
-                main_window.maximize()
+                # main_window.bring_to_front()
+                # main_window.maximize()
                 main_window.wait('ready', timeout=10)
             else:
                 logger.error("未找到窗口")
@@ -67,7 +71,7 @@ def rv_ai_test(train_eval_path, result_path):
     # eval_folders装入所有train_eval_path下名字含eval的文件夹,后装入eval_paths
     for root, dirs, files in os.walk(train_eval_path):
         for d in dirs:
-            if 'eval' in d:
+            if 'test' in d:
                 eval_folder = os.path.join(root, d)
                 if os.path.isdir(eval_folder):
                     eval_paths.add(eval_folder)
@@ -91,7 +95,7 @@ def rv_ai_test(train_eval_path, result_path):
         status = -1
         logger.error(f"在路径 {result_path} 中未找到包含 '{substring}' 的目录")
         raise Exception(f"在路径 {result_path} 中未找到包含 '{substring}' 的目录")
-    
+
     if train_paths:
         logger.info(f"开始遍历{train_paths}")
         # 遍历train_paths集合中的每个元素
@@ -99,36 +103,35 @@ def rv_ai_test(train_eval_path, result_path):
             pyperclip.copy(train_path)
             # 点击训练按钮
             utils.click_by_png(config.RV_SIMULATE_TO_TRAIN)
-            if utils.search_symbol(config.RV_TRAIN_EVAL_YES, timeout = 60, tolerance=0.8):
-                utils.click_by_png(config.RV_TRAIN_EVAL_YES)
-                pyautogui.press('enter')
-            else:
-                logger.error("未找到“确定”")
-                pyautogui.press('enter')
-            # 右击,刷新
             refresh_count = 0
-            while refresh_count < 6:
+            while refresh_count < 7:
+                time.sleep(0.5)
+                pyautogui.press('enter')
                 utils.click_by_png(config.RV_JOB_NAME, timeout=60, if_click_right=1)
+                time.sleep(1)
                 pyautogui.press('down',2)
                 pyautogui.press('enter')
-                time.sleep(10)  # 每隔十秒刷新一次
-
+                logger.info(f"训练刷新第{refresh_count}次")
+                time.sleep(1)
                 # 查看训练状态
                 utils.click_by_png(config.RV_TRAIN_STATUS)
-                pyautogui.press('ctrl', 'c')
+                time.sleep(0.5)
+                pyautogui.hotkey('ctrl', 'a')
+                pyautogui.hotkey('ctrl', 'c')
                 train_result = pyperclip.paste()
-
-                if '待训练' in train_result:
-                    refresh_count += 1
-                    if refresh_count == 6:
-                        train_result = '待训练'
-                        break
-                elif '训练完成' in train_result:
+                logger.info(train_result)
+                if '训练完成' in train_result:
                     train_result = '训练完成'
                     break
                 elif '训练失败' in train_result:
                     train_result = '训练失败'
                     break
+                elif '待训练' in train_result:
+                    refresh_count += 1
+                    time.sleep(10)  # 每隔十秒刷新一次
+                    if refresh_count == 6:
+                        train_result = '待训练'
+                        break
                 else:
                     status = -1
                     logger.error("训练状态未知")
@@ -145,116 +148,236 @@ def rv_ai_test(train_eval_path, result_path):
             with open(csv_file_path, 'a', newline='', encoding='utf-8') as file:
                 writer = csv.writer(file)
                 writer.writerow([train_path, train_result])
-            utils.click_by_png(config.RV_JOB_NAME,if_click_right=1)
-            pyautogui.press('down')
-            pyautogui.press('enter')
-    # 保存并关闭该csv
-    file.close()
+            # 保存并关闭该csv
+            file.close()
+            if eval_paths:
+                logger.info(f"开始遍历{eval_paths}")
+                for eval_path in eval_paths:
+                    logger.info(f"{eval_path}")
+                    # 使用记事本临时存储eval_path
+                    with open("temp_eval_path.txt", "w", encoding='utf-8') as temp_file:
+                        temp_file.write(eval_path)
+                    # 从记事本读取eval_path到剪切板
+                    with open("temp_eval_path.txt", "r", encoding='utf-8') as temp_file:
+                        eval_path_from_file = temp_file.read()
+                        pyperclip.copy('')  # 先清除剪切板内容
+                        time.sleep(0.5)
+                        pyperclip.copy(eval_path_from_file)  # 再把eval_path加入剪切板 
+                    time.sleep(0.5)
+                    logger.info(f"剪切板内容: {pyperclip.paste()}")
+                    # 点击模拟至推理按钮
+                    utils.click_by_png(config.RV_SIMULATE_TO_EVAL)
+                    time.sleep(2)
+                    pyautogui.press('enter')
+                    # time.sleep(1)
+                    # utils.click_by_png(config.RV_JOB_NAME, if_click_right=1)
+                    # time.sleep(0.2)
+                    # pyautogui.press('down',2)
+                    # time.sleep(0.2)
+                    # pyautogui.press('enter')
+                    # 查看状态
+                    retry_count = 0
+                    # 刷新任务列表
+                    utils.click_by_png(config.RV_JOB_NAME, timeout=6, if_click_right=1)
+                    time.sleep(1)
+                    pyautogui.press('down',2)
+                    pyautogui.press('enter')
+                    # 点击重新推理
+                    utils.click_by_png(config.RV_TRAIN_STATUS, if_click_right=1)
+                    if not utils.search_symbol(config.RV_CLICK_RESTART_EVAL, 5):
+                        time.sleep(5)
+                    utils.click_by_png(config.RV_CLICK_RESTART_EVAL)
+                    while retry_count < 6:
+                        logger.info(f"推理刷新第{retry_count}次")
+                        time.sleep(2)
+                        utils.click_by_png(config.RV_MISSION_MANAGE,tolerance=0.7)
+                        time.sleep(0.5)
+                        pyautogui.hotkey('ctrl', 'a')
+                        pyautogui.hotkey('ctrl', 'c')
+                        logger.info("开始解析推理状态")
+                        # 解析剪切板内容为列表，每行一个元素
+                        clipboard_content = pyperclip.paste()
+                        task_lines = clipboard_content.split('\n')
+                        # 初始化变量来存储最近的添加时间和对应的记录
+                        latest_time = None
+                        latest_record = None
+                        # 遍历每行，解析出添加时间和任务状态
+                        for line in task_lines:
+                            parts = line.split('\t')
+                            if len(parts) >= 6:
+                                task_id, task_type, task_status, result, add_time, next_time = parts
+                                # 将添加时间字符串转换为datetime对象
+                                try:
+                                    # 尝试直接解析
+                                    add_time_dt = datetime.datetime.strptime(add_time.strip(), "%Y/%m/%d %H:%M:%S")
+                                except ValueError:
+                                    logger.warning(f"日期解析失败：{add_time}，错误：{ValueError}")
+                                    continue
+                                # 获取当前时间
+                                current_time = datetime.datetime.now()
+                                
+                                # 检查添加时间是否在当前时间的前3分钟内
+                                if current_time - datetime.timedelta(minutes=2) <= add_time_dt <= current_time and "队列" not in task_status:
+                                    # 检查是否是最近的时间
+                                    if latest_time is None or add_time_dt > latest_time and "训练" not in task_type:
+                                        latest_time = add_time_dt
+                                        latest_record = (task_type, result)
+                                        logger.info(f"找到最新记录：任务类型={task_type}，结果={result}，添加时间={add_time}")
+                        if latest_record:
+                            logger.info(f"第{retry_count}次推理,最近2分钟内的记录为：{latest_record}")
+                        else:
+                            logger.error("最近2分钟内没有找到符合条件的记录")
+                        # 检查最近记录是否包含'推理'和'成功'
+                        if latest_record and '推理' in latest_record[0] and '成功' in latest_record[1]:
+                            eval_result = '推理成功'
+                            utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, 5)
+                            break
+                        elif latest_record and '推理' in latest_record[0] and '失败' in latest_record[1]:
+                            eval_result = '推理失败'
+                            utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, 5)
+                            break
+                        else:
+                            utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, 5)
+                            time.sleep(10)  # 等待10秒后再次尝试
+                            retry_count += 1
+                    if retry_count == 6:
+                        eval_result = '推理失败'
+                        eval_image_name = "None"
+                        eval_image_path = "None"
+                    # 推理结束后才去拿数据  
+                    # 取eval_path路径及更底下路径里所有后缀为.bmp的图片路径
+                    eval_image_paths = glob.glob(os.path.join(eval_path, '**/*.bmp'), recursive=True)
+                    logger.info(f"eval_image_paths: {eval_image_paths}")
+                    # 查询出pyd_path下logs文件夹下res_static文件夹下日期为今天的csv文件（格式为 年-月-日.csv），并将路径保存在log_path中
+                    today_date = datetime.datetime.now().strftime("%Y-%m-%d")
+                    log_path = os.path.join(pyd_path, "logs", "res_static", f"{today_date}.csv")
+                    logger.info(f"log_path: {log_path}")
+                    if not os.path.exists(log_path):
+                        logger.error("未找到log文件")
+                        raise Exception("未找到log文件")
+                    # 复制pyd文件下/logs/res_static文件夹内当天的 年-月-日.csv 黏贴到pyd下eval_logs文件夹内(如果该csv和文件夹都没有的话才这么做)
+                    new_log_path = os.path.join(pyd_path, "eval_logs")
+                    os.makedirs(new_log_path, exist_ok=True)
+                    new_xlsx_path = os.path.join(new_log_path, f"{today_date}.xlsx")
+                    logger.info(f"new_xlsx_path: {new_xlsx_path}")
+                    # 预处理部分
+                    if not os.path.exists(new_xlsx_path):
+                        # 读取CSV文件
+                        df_csv = pd.read_csv(log_path)
+                        # 添加新列
+                        df_csv = df_csv.assign(eval路径=None, 定位的图片路径=None, eval图片名称=None, eval结果=None, eval图片=None)
+                        # 重新排序列，将新列放在前面
+                        columns_order = ['eval路径', '定位的图片路径', 'eval图片名称', 'eval结果', 'eval图片'] + [col for col in df_csv.columns if col not in ['eval路径', '定位的图片路径', 'eval图片名称', 'eval结果', 'eval图片']]
+                        df_csv = df_csv[columns_order]
+                        # 保存为XLSX
+                        df_csv.to_excel(new_xlsx_path, index=False, engine='openpyxl')
+                        logger.info("对xlsx作预处理")
+                        # 打开xlsx
+                        df_xlsx = pd.read_excel(new_xlsx_path, engine='openpyxl')
+                        # 去除列名中的空白符
+                        df_xlsx.columns = [col.strip() for col in df_xlsx.columns]
+                        # 使用openpyxl直接加载工作簿以修改列名样式
+                        wb = openpyxl.load_workbook(new_xlsx_path)
+                        ws = wb.active
+                        # 取消列名加粗
+                        for cell in ws[1]:  # 第一行是列名
+                            cell.font = Font(bold=False)
+                        # 保存修改后的工作簿
+                        wb.save(new_xlsx_path)
+                        # 重新加载DataFrame以确保列名更改生效
+                        df_xlsx = pd.read_excel(new_xlsx_path, engine='openpyxl')
+                        # 去除列名中的空白符和其他特殊字符
+                        df_xlsx.columns = [re.sub(r'\s+', '', col) for col in df_xlsx.columns]
+                        logger.info("对xlsx作预处理完成")
+                        
+                    else:
+                        # 直接处理文档
+                        df_xlsx = pd.read_excel(new_xlsx_path, engine='openpyxl')
+                    
+                    # 确保工作簿和工作表被正确初始化
+                    wb = openpyxl.load_workbook(new_xlsx_path)
+                    ws = wb.active  # 确保这是正确的工作表
+                    # 确保id列为字符串类型并去除空格
+                    df_xlsx['id'] = df_xlsx['id'].astype(str).str.strip()
 
-    if eval_paths:
-        logger.info(f"开始遍历{eval_paths}")
-        for eval_path in eval_paths:
-            logger.info(f"{eval_path}")
-            pyperclip.copy(eval_path)
-            # 点击推理按钮
-            utils.click_by_png(config.RV_SIMULATE_TO_EVAL)
-            if utils.search_symbol(config.RV_TRAIN_EVAL_YES, timeout=60):
-                utils.click_by_png(config.RV_TRAIN_EVAL_YES)
-            else:
-                logger.info("未找到确定")
-                pyautogui.press('enter')
-            # 右击,刷新
-            utils.click_by_png(config.RV_JOB_NAME, if_click_right=1)
-            pyautogui.press('down',2)
-            pyautogui.press('enter')
-            # 查看状态
-            retry_count = 0
-            while retry_count < 6:
-                utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE)
-                pyautogui.press('ctrl', 'a')
-                pyautogui.press('ctrl', 'c')
-                logger.info("开始解析推理状态")
-                # 解析剪切板内容为列表，每行一个元素
-                clipboard_content = pyperclip.paste()
-                task_lines = clipboard_content.split('\n')
-                # 初始化变量来存储最近的添加时间和对应的记录
-                latest_time = None
-                latest_record = None
-                # 遍历每行，解析出添加时间和任务状态
-                for line in task_lines:
-                    parts = line.split('\t')
-                    if len(parts) >= 6:
-                        task_id, task_type, task_status, result, add_time, next_time = parts
-                        # 将添加时间字符串转换为datetime对象
-                        try:
-                            add_time_dt = datetime.datetime.strptime(add_time, "%Y/%m/%d %H:%M:%S")
-                            # 检查是否是最近的时间
-                            if latest_time is None or add_time_dt > latest_time:
-                                latest_time = add_time_dt
-                                latest_record = (task_type, result)
-                        except Exception:
-                            continue
-                # 检查最近记录是否包含'推理'和'成功'
-                if latest_record and '推理' in latest_record[0] and '成功' in latest_record[1]:
-                    eval_result = '推理成功'
-                    break
-                else:
-                    utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE)
-                    time.sleep(10)  # 等待10秒后再次尝试
-                    retry_count += 1
-            if retry_count == 6:
-                eval_result = '推理失败'
-                eval_image_name = "None"
-                eval_image_path = "None"
-                utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE)
+                    logger.info("开始处理图片和更新数据...")
+                    for eval_image_path in eval_image_paths:
+                        eval_image_name = os.path.splitext(os.path.basename(eval_image_path))[0]
+                        # 查找匹配的行
+                        df_rows = df_xlsx[df_xlsx['id'] == eval_image_name.strip()]
+                        if df_rows.empty:
+                            logger.error(f"未找到与图片名称 {eval_image_name} 完全匹配的id")
+                        else:
+                            for index, row in df_rows.iterrows():
+                                excel_row = index + 2  # 假设数据从第二行开始
+                                logger.info(f"更新数据：{eval_path}, {eval_image_path}, {eval_image_name}, {eval_result}")
+                                ws.cell(row=excel_row, column=1).value = eval_path
+                                ws.cell(row=excel_row, column=2).value = eval_image_path
+                                ws.cell(row=excel_row, column=3).value = eval_image_name
+                                ws.cell(row=excel_row, column=4).value = eval_result
+
+                                # 打印更新后的行以确认数据
+                                updated_row_values = [cell.value for cell in ws[excel_row]]
+                                logger.info(f"更新后的数据行: {updated_row_values}")
+
+                    df_xlsx.to_excel(new_xlsx_path, index=False, engine='openpyxl')
+                    wb.save(new_xlsx_path)
+                    # 插入图片
+                    logger.info("开始插入图片...")
+                    for eval_image_path in eval_image_paths:
+                        eval_image_name = os.path.splitext(os.path.basename(eval_image_path))[0]
+                        df_rows = df_xlsx[df_xlsx['id'] == eval_image_name.strip()]
+                        if not df_rows.empty:
+                            for index, row in df_rows.iterrows():
+                                try:
+                                    img = Image(eval_image_path)
+                                    cell = ws['E' + str(index + 2)]
+                                    
+                                    # 调整图片大小的比例（根据需要调整）
+                                    img.width, img.height = img.width / 7, img.height / 7
+                                    # 调整行高
+                                    ws.row_dimensions[index + 2].height = img.height * 0.75
+                                    # 调整列宽
+                                    ws.column_dimensions['E'].width = img.width * 0.14
+                                    # 设置图片的锚点
+                                    img.anchor = cell.coordinate
+                                    # 将图片添加到工作表
+                                    ws.add_image(img)
+
+                                    logger.info(f"成功为 {eval_image_name} 添加图片")
+                                except Exception as e:
+                                    logger.error(f"处理图片 {eval_image_name} 时出错: {e}")
+
+                    # 再次保存工作簿
+                    logger.info("正在保存工作簿...")
+                    wb.save(new_xlsx_path)
+
+                    # 重新加载工作簿以验证数据
+                    logger.info("重新加载工作簿以验证数据...")
+                    verify_wb = openpyxl.load_workbook(new_xlsx_path)
+                    verify_ws = verify_wb.active
+                    for row in verify_ws.iter_rows(min_row=2, max_row=6, values_only=True):
+                        logger.info(f"验证行数据: {row}")
+
+                    logger.info("完成图片数据添加，正在保存工作簿...")
+                    preview_df = df_xlsx[['id', 'eval路径', '定位的图片路径', 'eval图片名称', 'eval结果']].head()
+                    logger.info("工作簿数据预览:")
+                    logger.info(f"id: {preview_df['id'].to_list()}")
+                    logger.info(f"eval路径: {preview_df['eval路径'].to_list()}")
+                    logger.info(f"定位的图片路径: {preview_df['定位的图片路径'].to_list()}")
+                    logger.info(f"eval图片名称: {preview_df['eval图片名称'].to_list()}")
+                    logger.info(f"eval结果: {preview_df['eval结果'].to_list()}")
         
-            # 推理成功后才去拿数据
-            if eval_result == '推理成功':
-                # eval图片名称为eval_path下所有图片的名称
-                eval_image_names = os.listdir(eval_path)
-                eval_images = [os.path.join(eval_path, name) for name in eval_image_names]
-            # 查询出result_path下日期为今天的csv文件（格式为 年-月-日.csv），并将路径保存在log_path中
-            today_date = datetime.datetime.now().strftime("%Y-%m-%d")
-            log_path = os.path.join(result_path, f"{today_date}.csv")
-            if not os.path.exists(log_path):
-                logger.error("未找到log文件")
-                raise Exception("未找到log文件")
-            utils.click_by_png(config.RV_JOB_NAME,if_click_right=1)
+            utils.click_by_png(config.RV_JOB_NAME, if_click_right=1)
             pyautogui.press('down')
             pyautogui.press('enter')
-            # 复制pyd文件夹下/logs/res_static文件夹内当天的 年-月-日.csv 黏贴到pyd下eval_logs文件夹内(如果该csv和文件夹都没有的话才这么做)
-            today_date = datetime.datetime.now().strftime("%Y-%m-%d")
-            source_csv_path = os.path.join(pyd_path, "logs", "res_static", f"{today_date}.csv")
-            target_folder_path = os.path.join(pyd_path, "eval_logs")
-            os.makedirs(target_folder_path, exist_ok=True)
-            target_csv_path = os.path.join(target_folder_path, f"{today_date}.csv")
-            if not os.path.exists(target_csv_path):
-                shutil.copy(source_csv_path, target_csv_path)
-            # 打开csv
-            df = pd.read_csv(target_csv_path)
 
-            # 为每个图片名称和图片路径创建一行数据
-            for eval_image_name, eval_image_path in zip(eval_image_names, eval_images):
-                df_row = df[df['id'].astype(str) == eval_image_name.split('.')[0]]  # 假设id和图片名称前缀相同
-                if not df_row.empty:
-                    df.loc[df_row.index, 'eval路径'] = train_eval_path
-                    df.loc[df_row.index, '定位的图片路径'] = result_path
-                    df.loc[df_row.index, 'eval图片名称'] = eval_image_name
-                    with open(eval_image_path, 'rb') as img_file:
-                        df.loc[df_row.index, 'eval图片'] = img_file.read()
-                    df.loc[df_row.index, 'eval结果'] = eval_result
-
-            # 将新列插入到最前面
-            cols = df.columns.tolist()
-            new_cols = cols[-5:] + cols[:-5]
-            df = df[new_cols]
-
-            # 删除id列
-            df.drop('id', axis=1, inplace=True)
-
-            # 保存修改后的CSV文件
-            df.to_csv(target_csv_path, index=False)
-    logger.info(f"ai复判完成")
+    os.remove(temp_file)
     status = 0
-
+    logger.info(f"ai复判完成,status: {status}")
     return status
+
+
+
+
+

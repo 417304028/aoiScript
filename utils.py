@@ -82,11 +82,13 @@ def check_and_launch_aoi():
         app = Application().start(config.AOI_EXE_PATH)
         logger.info("等待AOI程序启动...")
         app.window(title_re=".*AOI.*").wait('ready', timeout=60)
+        search_symbol_erroring(config.AOI_TOPIC, 30)
     else:
         main_window = connect_aoi_window()
         main_window.wait('ready', timeout=10)
         main_window.set_focus()
         main_window.wait('ready', timeout=10)
+        search_symbol_erroring(config.AOI_TOPIC, 20)
         # # 确保窗口未最小化
         # if main_window.is_minimized():
         #     main_window.restore()
@@ -150,7 +152,20 @@ def click_by_controls(name=None, auto_id=None, control_type=None):
         logger.error(f"发生错误: {e}")
 # 确认程序无卡顿/闪退
 def caton_or_flashback():
-    pass
+    try:
+        # 检测主程序窗口是否还存在
+        main_window = connect_aoi_window()
+        if not main_window.is_visible():
+            raise Exception("AOI程序窗口不可见，可能已经崩溃")
+
+        # 检测程序是否响应
+        if not main_window.is_enabled():
+            raise Exception("AOI程序无响应，可能已经卡顿")
+
+        logger.info("AOI程序运行正常，无卡顿或闪退")
+    except Exception as e:
+        logger.error(f"检测到程序异常: {e}")
+        raise
 
 # ==============================识别处理===============================
 # 寻找准星
@@ -194,11 +209,36 @@ def get_crosshair_center():
     else:
         logger.error("未找到准星")
         raise Exception("未找到准星")
+# 检测屏幕是否有大量某个颜色
+def check_color_expand():
+    # 捕获屏幕截图
+    screenshot = ImageGrab.grab()
+    screenshot_np = np.array(screenshot)
 
+    # 定义目标颜色和容差
+    target_color = np.array([190, 156, 159])  # 注意：OpenCV使用BGR格式
+    tolerance = 15  # 容差值
 
-# 打勾框是否打勾
-def is_checked(top_left, bottom_right, expect_checked):
-    pixel_threshold=18
+    # 计算颜色范围
+    lower_bound = target_color - tolerance
+    upper_bound = target_color + tolerance
+
+    # 创建掩码
+    mask = cv2.inRange(screenshot_np, lower_bound, upper_bound)
+
+    # 计算掩码中的白色像素比例
+    coverage = np.sum(mask) / (screenshot_np.shape[0] * screenshot_np.shape[1] * 255)
+
+    # 判断是否有大量的目标颜色
+    if coverage > 0.075:  # 假设我们定义“大量”为覆盖超过7.5%的屏幕
+        logger.info("元件四周遮罩出现大量粉色")
+        return True
+    else:
+        logger.info("元件四周遮罩未出现大量粉色")
+        return False
+        
+def if_checked(top_left, bottom_right):
+    pixel_threshold = 18
     # 调整坐标
     adjusted_top_left, adjusted_bottom_right = adjust_coordinates(top_left, bottom_right)
 
@@ -219,26 +259,35 @@ def is_checked(top_left, bottom_right, expect_checked):
 
     # 判断是否勾选（根据对勾占据的像素点来设置阈值）
     check = white_pixels >= pixel_threshold
+    return check
+
+# 确保打勾框打勾情况
+def is_checked(top_left, bottom_right, expect_checked, times=1):
+    # 使用if_checked函数来检查是否勾选
+    check = if_checked(top_left, bottom_right)
     if check == expect_checked:
         pass
     else:
-        center_x = (adjusted_top_left[0] + adjusted_bottom_right[0]) // 2
-        center_y = (adjusted_top_left[1] + adjusted_bottom_right[1]) // 2
-        pyautogui.click(center_x, center_y)
+        center_x = (top_left[0] + bottom_right[0]) // 2
+        center_y = (top_left[1] + bottom_right[1]) // 2
+        pyautogui.click(center_x, center_y, clicks=times)
 
-def click_by_png(image_path, times=1, timeout=5, if_click_right=0, tolerance=0.8):
+def click_by_png(image_path, times=1, timeout=5, if_click_right=0, tolerance=0.8, region=None):
     start_time = time.time()
     clicked = False  # 添加一个标志来检测是否成功点击
     image_path = image_fit_screen(image_path)
     logger.info(f"尝试点击图片: {image_path}")
     while time.time() - start_time < timeout:
         try:
-            location = pyautogui.locateCenterOnScreen(image_path, confidence=tolerance)
+            location = pyautogui.locateOnScreen(image_path, confidence=tolerance, region=region)
             if location:
+                # 计算中心坐标
+                center_x = location.left + location.width // 2
+                center_y = location.top + location.height // 2
                 if if_click_right == 1:
-                    pyautogui.click(location, button='right')
+                    pyautogui.click(center_x, center_y, button='right')
                 else:
-                    pyautogui.click(location, times=times)
+                    pyautogui.click(center_x, center_y, clicks=times)
                 logger.info(f"点击{image_path}成功")
                 clicked = True  # 更新标志为True表示成功点击
                 break
@@ -248,7 +297,7 @@ def click_by_png(image_path, times=1, timeout=5, if_click_right=0, tolerance=0.8
     if not clicked:  # 检查是否成功点击
         logger.error(f"超时: 在{timeout}秒内未能点击{image_path}")
         raise Exception(f"超时: 在{timeout}秒内未能点击{image_path}")
-
+        
 def search_symbol(symbol, timeout, region=None, tolerance=0.9):
     start_time = time.time()
     symbol = image_fit_screen(symbol)
@@ -368,112 +417,134 @@ def screenshot_to_excel(test_case_name, path, exception):
     finally:
         if os.path.exists(screenshot_file):
             os.remove(screenshot_file)  # 清理临时文件
-        for proc in psutil.process_iter(['pid', 'name']):
-            if "AOI" in proc.info['name']:
-                proc.kill()
 
 
 # 装饰器，出问题时截图并保存至excel
 def screenshot_error_to_excel(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except Exception as e:
-            current_function_name = func.__name__
-            path = sys.executable
-            screenshot_to_excel(current_function_name, path, e)
-            logger.error(f"发生异常: {e}")
-            raise  # 可选：重新抛出异常以便外部也能知道异常发生
+        max_attempts = 2  # 设置最大尝试次数
+        attempts = 0
+        while attempts < max_attempts:
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                attempts += 1
+                current_function_name = func.__name__
+                path = sys.executable
+                screenshot_to_excel(current_function_name, path, e)
+                logger.error(f"发生异常: {e}")
 
+                # 杀死AOI进程
+                for proc in psutil.process_iter(['pid', 'name']):
+                    if "AOI" in proc.info['name']:
+                        proc.kill()
+                        proc.wait()  # 等待进程确实被杀死
+
+                # 确保所有AOI进程都已经关闭
+                aoi_still_running = any("AOI" in p.info['name'] for p in psutil.process_iter(['name']))
+                if not aoi_still_running:
+                    logger.info("所有AOI进程已关闭，准备重启")
+                    check_and_launch_aoi()
+                else:
+                    logger.error("AOI进程关闭失败")
+
+                if attempts >= max_attempts:
+                    raise  # 可选：重新抛出异常以便外部也能知道异常发生
+                else:
+                    time.sleep(10)  # 给系统一点时间来处理进程重启
     return wrapper
 
 
 # ====================业务处理========================
+# 添加待料
+def add_waiting_material():
+    for _ in range(3):
+        click_by_png(config.ADD_STANDARD_IMAGE)
+        click_by_png(config.IMAGE_PROCESS_YES)
+        if search_symbol(config.ADD_IMAGE_CLOSE, 5):
+            click_by_png(config.ADD_IMAGE_CLOSE)
+
 # 画检测窗口
-def add_check_window():
-    try:
-        connect_aoi_window()
-        time.sleep(1.5)
-        crosshair_center = get_crosshair_center()
-        if crosshair_center is None:
-            logger.info("未找到准星中心")
-            return
+def add_window(button = "w"):
+    time.sleep(1.5)
+    crosshair_center = get_crosshair_center()
+    if crosshair_center is None:
+        logger.info("未找到准星中心")
+        return
 
-        nearby_point = (crosshair_center[0] + 3, crosshair_center[1] + 3)
-        logger.info(nearby_point)
-        # 绘制框框（获取准星旁边的颜色，扩大到颜色分界处，截取坐标）
-        target_color = pyautogui.screenshot().getpixel(nearby_point)
-        # 转换颜色到HSV
-        target_color_hsv = cv2.cvtColor(np.uint8([[target_color]]), cv2.COLOR_RGB2HSV)[0][0]
-        # 定义颜色的HSV范围，初始范围
-        hue_variation = 5
-        saturation_variation = 10
-        value_variation = 10
-        found = False
-        last_top_left = None
-        last_bottom_right = None
+    nearby_point = (crosshair_center[0] + 3, crosshair_center[1] + 3)
+    logger.info(nearby_point)
+    # 绘制框框（获取准星旁边的颜色，扩大到颜色分界处，截取坐标）
+    target_color = pyautogui.screenshot().getpixel(nearby_point)
+    # 转换颜色到HSV
+    target_color_hsv = cv2.cvtColor(np.uint8([[target_color]]), cv2.COLOR_RGB2HSV)[0][0]
+    # 定义颜色的HSV范围，初始范围
+    hue_variation = 5
+    saturation_variation = 10
+    value_variation = 10
+    found = False
+    last_top_left = None
+    last_bottom_right = None
 
-        while not found:
-            lower_bound = np.array([target_color_hsv[0] - hue_variation, target_color_hsv[1] - saturation_variation,
-                                    target_color_hsv[2] - value_variation])
-            upper_bound = np.array([target_color_hsv[0] + hue_variation, target_color_hsv[1] + saturation_variation,
-                                    target_color_hsv[2] + value_variation])
-            # 截取整个屏幕图像
-            screenshot = pyautogui.screenshot()
-            screenshot_np = np.array(screenshot)
-            screenshot_hsv = cv2.cvtColor(screenshot_np, cv2.COLOR_RGB2HSV)
-            # 创建颜色掩码
-            mask = cv2.inRange(screenshot_hsv, lower_bound, upper_bound)
+    while not found:
+        lower_bound = np.array([target_color_hsv[0] - hue_variation, target_color_hsv[1] - saturation_variation,
+                                target_color_hsv[2] - value_variation])
+        upper_bound = np.array([target_color_hsv[0] + hue_variation, target_color_hsv[1] + saturation_variation,
+                                target_color_hsv[2] + value_variation])
+        # 截取整个屏幕图像
+        screenshot = pyautogui.screenshot()
+        screenshot_np = np.array(screenshot)
+        screenshot_hsv = cv2.cvtColor(screenshot_np, cv2.COLOR_RGB2HSV)
+        # 创建颜色掩码
+        mask = cv2.inRange(screenshot_hsv, lower_bound, upper_bound)
 
-            # 使用形态学操作增强边界
-            kernel = np.ones((5, 5), np.uint8)
-            mask = cv2.dilate(mask, kernel, iterations=2)
-            mask = cv2.erode(mask, kernel, iterations=2)
+        # 使用形态学操作增强边界
+        kernel = np.ones((5, 5), np.uint8)
+        mask = cv2.dilate(mask, kernel, iterations=2)
+        mask = cv2.erode(mask, kernel, iterations=2)
 
-            # 使用边缘检测
-            edges = cv2.Canny(mask, 100, 200)
+        # 使用边缘检测
+        edges = cv2.Canny(mask, 100, 200)
 
-            # 寻找连贯区域的轮廓
-            contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-            target_contour = None
-            for contour in contours:
-                if cv2.pointPolygonTest(contour, nearby_point, False) >= 0:
-                    target_contour = contour
-                    found = True
-                    break
-                # 如果找到了符合条件的连贯区域
-            if target_contour is not None:
-                x, y, w, h = cv2.boundingRect(target_contour)
-                # 扩大区域
-                expand_margin = 10
-                top_left = (x - expand_margin, y - expand_margin)
-                bottom_right = (x + w + expand_margin, y + h + expand_margin)
-                last_top_left = top_left
-                last_bottom_right = bottom_right
-                logger.info("找到疑似cad区域，左上及右下坐标如下" + str(top_left) + "," + str(bottom_right))
-            else:
-                # 增加HSV范围并重试
-                hue_variation += 1
-                saturation_variation += 2
-                value_variation += 2
-                if hue_variation > 180 or saturation_variation > 255 or value_variation > 255:
-                    logger.info("未识别出cad区域，可能准心不在cad内")
-                    break
-
-        if last_top_left and last_bottom_right:
-            # 使用pyautogui模拟鼠标拖动
-            pyautogui.press("w")
-            pyautogui.moveTo(last_top_left, duration=1)
-            pyautogui.mouseDown()
-            pyautogui.moveTo(last_bottom_right, duration=1)
-            pyautogui.mouseUp()
-            logger.info("cad描边完毕")
+        # 寻找连贯区域的轮廓
+        contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        target_contour = None
+        for contour in contours:
+            if cv2.pointPolygonTest(contour, nearby_point, False) >= 0:
+                target_contour = contour
+                found = True
+                break
+            # 如果找到了符合条件的连贯区域
+        if target_contour is not None:
+            x, y, w, h = cv2.boundingRect(target_contour)
+            # 扩大区域
+            expand_margin = 10
+            top_left = (x - expand_margin, y - expand_margin)
+            bottom_right = (x + w + expand_margin, y + h + expand_margin)
+            last_top_left = top_left
+            last_bottom_right = bottom_right
+            logger.info("找到疑似cad区域，左上及右下坐标如下" + str(top_left) + "," + str(bottom_right))
         else:
-            logger.info("未找到任何区域")
+            # 增加HSV范围并重试
+            hue_variation += 1
+            saturation_variation += 2
+            value_variation += 2
+            if hue_variation > 180 or saturation_variation > 255 or value_variation > 255:
+                logger.info("未识别出cad区域，可能准心不在cad内")
+                break
 
-    except Exception as e:
-        logger.info(f"发生错误: {e}")
+    if last_top_left and last_bottom_right:
+        # 使用pyautogui模拟鼠标拖动
+        pyautogui.press(button)
+        pyautogui.moveTo(last_top_left, duration=1)
+        pyautogui.mouseDown()
+        pyautogui.moveTo(last_bottom_right, duration=1)
+        pyautogui.mouseUp()
+        logger.info("cad描边完毕")
+    else:
+        logger.info("未找到任何区域")
+
 
 # 打开程式(随机)
 def open_program():
@@ -542,17 +613,79 @@ def click_component():
                         return True
                     else:
                         return False
-
+# 检测屏幕区域(362,149)至(1506,739)区域内是否存在(220,20,60)的颜色
+def check_window_relate():
+    # 定义要检测的颜色
+    target_color = (220, 20, 60)
+    # 定义检测区域
+    region = (362, 149, 1506 - 362, 739 - 149)
+    # 在指定区域内搜索颜色
+    found = pyautogui.pixelMatchesColor(region[0], region[1], target_color, region=region)
+    return found
 # 勾选共享元件库路径
 def check_share_lib_path(if_checked):
     # 点开设置--硬件设置--数据导出配置--元件库配置
-    click_by_png(config.SETTING)
+    click_by_png(config.SETTING_DARK)
+    click_by_png(config.PARAM_HARDWARE_SETTING)
     click_by_png(config.PARAM_DATA_EXPORT_SETTING)
     # 确保共享元件库路径为非勾选 （用的坐标）
     is_checked((901,290),(915,304),if_checked)
     click_by_png(config.PARAM_SETTING_YES)
-    click_by_png(config.PARAM_SETTING_CLOSE)
+    click_by_png(config.CLOSE)
 
+# 勾选 允许跨元件复制
+def check_cross_component_copy():
+    # 参数配置-UI配置-软件界面：选择【允许跨元件复制】
+    click_by_png(config.SETTING_DARK)
+    click_by_png(config.PARAM_HARDWARE_SETTING)
+    click_by_png(config.PARAM_UI_SETTING)
+    is_checked((1268,993),(1280,1005),True)
+    click_by_png(config.PARAM_SETTING_YES)
+    click_by_png(config.CLOSE)
+    
+# 允许同步相同的封装,  默认同步封装
+def check_sync_package(if_sync_same_package, if_default_sync_package):
+    # 参数配置--UI配置--程序设置
+    click_by_png(config.SETTING_DARK)
+    click_by_png(config.PARAM_HARDWARE_SETTING)
+    click_by_png(config.PARAM_UI_SETTING)
+    is_checked((659,852),(671,864),if_sync_same_package)
+    is_checked((659,876),(671,888),if_default_sync_package)
+    click_by_png(config.PARAM_SETTING_YES)
+    click_by_png(config.CLOSE)
+
+# 参数配置--演算法配置--关联子框检测模式
+def check_patent_not_NG(type):
+    if search_symbol(config.SETTING_DARK, 1):
+        click_by_png(config.SETTING_DARK)
+    else:
+        search_symbol_erroring(config.SETTING_LIGHT, 1)
+    click_by_png(config.PARAM_HARDWARE_SETTING)
+    click_by_png(config.PARAM_ALGORITHM_SETTING)
+    # 不计算
+    if type == 1:
+        pyautogui.click((935,180))
+        pyautogui.click((935,200))
+    # 继续计算
+    if type == 2:
+        pyautogui.click((935,180))
+        pyautogui.click((935,215))
+    # 继续关联
+    if type == 3:
+        pyautogui.click((935,180))
+        pyautogui.click((935,230))
+    click_by_png(config.PARAM_SETTING_YES)
+    click_by_png(config.CLOSE)
+
+def check_export_ok(if_export_ok, if_export_all_ok):
+    # 参数配置--UI配置--程序设置
+    click_by_png(config.SETTING_DARK)
+    click_by_png(config.PARAM_HARDWARE_SETTING)
+    click_by_png(config.PARAM_UI_SETTING)
+    is_checked((659,726),(671,738),if_export_ok)
+    is_checked((659,751),(671,763),if_export_all_ok)
+    click_by_png(config.PARAM_SETTING_YES)
+    click_by_png(config.CLOSE)
 def modify_component():
     pyautogui.press("b")
     pyautogui.press("left")
@@ -698,7 +831,7 @@ def get_choose_box():
 
 # 调整将CAD框随机变大，再变小
 def adjust_cad_frame():
-    search_symbol(config.EDIT_BACK_BUTTON, 10)
+    search_symbol(config.EDIT_BACK, 10)
     time.sleep(2)
     # 选中框框快捷键
     pyautogui.press('b')
@@ -803,6 +936,16 @@ def random_change_param():
         random_number = random.randint(0, 1000)
         pyautogui.typewrite(str(random_number))
 
+# 随机修改rgb值
+def random_change_rgb():
+    #对(835,825) (835,870) (835,915) (835,950)
+    points = [(835,825), (835,870), (835,915), (835,950)]
+    for point in points:
+        pyautogui.click(point)
+        pyautogui.hotkey('ctrl', 'a')
+        random_number = random.randint(0, 255)
+        pyautogui.typewrite(str(random_number))
+    pyautogui.press('enter')
 
 # ==========================工具类======================
 # 图片适应屏幕分辨率
@@ -912,6 +1055,11 @@ def get_center_coordinates(coord1, coord2):
     x_center = (coord1[0] + coord2[0]) // 2
     y_center = (coord1[1] + coord2[1]) // 2
     return (x_center, y_center)
+
+def write_text(coordinate,text):
+    pyautogui.click(coordinate)
+    pyautogui.hotkey('ctrl','a')
+    pyautogui.write(text)
 
 def read_text(x, y):
     # 获取当前屏幕分辨率
