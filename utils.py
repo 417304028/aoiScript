@@ -8,13 +8,14 @@ import psutil
 import pyperclip
 import cv2
 import numpy as np
+import win32gui
 import pyautogui
 import config
 import functools
 import datetime
 import os
 import re
-from pywinauto import Application,Desktop
+from pywinauto import Application, Desktop
 from PIL import ImageGrab, Image
 from PIL import ImageChops
 from screeninfo import get_monitors
@@ -23,6 +24,8 @@ from openpyxl import Workbook, load_workbook
 from openpyxl.drawing.image import Image as ExcelImage
 
 ctypes.windll.shcore.SetProcessDpiAwareness(0)  # 解决使用pyautowin时缩放问题
+
+
 # ============================日志=======================
 # 设置日志记录器
 def setup_logger():
@@ -30,8 +33,10 @@ def setup_logger():
     print("Log Directory:", log_dir)
     os.makedirs(log_dir, exist_ok=True)
     log_file = os.path.join(log_dir, "script_log_{time:YYYY-MM-DD}.log")
-    logger.add(log_file, rotation="100 MB", retention="10 days", format="{time:YYYY-MM-DD HH:mm:ss.SSS} {level} {message}", level="INFO")
+    logger.add(log_file, rotation="100 MB", retention="10 days",
+               format="{time:YYYY-MM-DD HH:mm:ss.SSS} {level} {message}", level="INFO")
     logger.info("已开启日志记录")
+
 
 # ============================窗格处理===================
 # 连接窗口（好像只能用win32连接窗口,uia不行）
@@ -89,6 +94,27 @@ def check_and_launch_aoi():
         main_window.set_focus()
         main_window.wait('ready', timeout=10)
         search_symbol_erroring(config.AOI_TOPIC, 20)
+        # 确保窗口未最小化并且前置
+        if main_window.is_minimized():
+            main_window.restore()
+        main_window.set_focus()  # 再次确保窗口前置
+        # 获取窗口句柄
+        hwnd = main_window.handle
+        win32gui.SetForegroundWindow(hwnd)
+        # 确保窗口不被最大化或改变大小
+        rect = win32gui.GetWindowRect(hwnd)
+        win32gui.MoveWindow(hwnd, rect[0], rect[1], rect[2] - rect[0], rect[3] - rect[1], True)
+
+
+
+
+
+
+
+
+
+
+
         # # 确保窗口未最小化
         # if main_window.is_minimized():
         #     main_window.restore()
@@ -150,6 +176,8 @@ def click_by_controls(name=None, auto_id=None, control_type=None):
             logger.info("点击时未找到指定的按钮")
     except Exception as e:
         logger.error(f"发生错误: {e}")
+
+
 # 确认程序无卡顿/闪退
 def caton_or_flashback():
     try:
@@ -166,6 +194,7 @@ def caton_or_flashback():
     except Exception as e:
         logger.error(f"检测到程序异常: {e}")
         raise
+
 
 # ==============================识别处理===============================
 # 寻找准星
@@ -209,6 +238,8 @@ def get_crosshair_center():
     else:
         logger.error("未找到准星")
         raise Exception("未找到准星")
+
+
 # 检测屏幕是否有大量某个颜色
 def check_color_expand():
     # 捕获屏幕截图
@@ -236,9 +267,9 @@ def check_color_expand():
     else:
         logger.info("元件四周遮罩未出现大量粉色")
         return False
-        
+
+
 def if_checked(top_left, bottom_right):
-    pixel_threshold = 18
     # 调整坐标
     adjusted_top_left, adjusted_bottom_right = adjust_coordinates(top_left, bottom_right)
 
@@ -251,19 +282,27 @@ def if_checked(top_left, bottom_right):
     # 将图像转换为灰度图
     gray = cv2.cvtColor(screenshot_np, cv2.COLOR_BGR2GRAY)
 
-    # 应用阈值来突出显示勾选区域
-    _, thresh = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY_INV)
+    # 使用自适应阈值方法
+    thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 2)
 
     # 计算白色像素的数量（勾选标记）
     white_pixels = np.sum(thresh == 255)
 
-    # 判断是否勾选（根据对勾占据的像素点来设置阈值）
-    check = white_pixels >= pixel_threshold
+    # 判断是否勾选（根据白色像素是否超过一定阈值）
+    pixel_threshold = 42  # 根据实际情况调整阈值
+    check = (white_pixels >= pixel_threshold)
+
+    # 为了调试，显示处理后的图像
+    # cv2.imshow('Threshold Image', thresh)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+
     return check
 
 # 确保打勾框打勾情况
 def is_checked(top_left, bottom_right, expect_checked, times=1):
     # 使用if_checked函数来检查是否勾选
+    time.sleep(1)
     check = if_checked(top_left, bottom_right)
     if check == expect_checked:
         pass
@@ -272,7 +311,8 @@ def is_checked(top_left, bottom_right, expect_checked, times=1):
         center_y = (top_left[1] + bottom_right[1]) // 2
         pyautogui.click(center_x, center_y, clicks=times)
 
-def click_by_png(image_path, times=1, timeout=5, if_click_right=0, tolerance=0.8, region=None):
+
+def click_by_png(image_path, times=1, timeout=20, if_click_right=0, tolerance=0.8, region=None):
     start_time = time.time()
     clicked = False  # 添加一个标志来检测是否成功点击
     image_path = image_fit_screen(image_path)
@@ -297,12 +337,13 @@ def click_by_png(image_path, times=1, timeout=5, if_click_right=0, tolerance=0.8
     if not clicked:  # 检查是否成功点击
         logger.error(f"超时: 在{timeout}秒内未能点击{image_path}")
         raise Exception(f"超时: 在{timeout}秒内未能点击{image_path}")
-        
-def search_symbol(symbol, timeout, region=None, tolerance=0.9):
+
+
+def search_symbol(symbol, timeout=10, region=None, tolerance=0.9):
     start_time = time.time()
     symbol = image_fit_screen(symbol)
     logger.info(f"开始寻找{symbol}")
-    if timeout is not None:
+    if timeout != 0:
         while time.time() - start_time < timeout:
             try:
                 # 使用confidence参数来设置匹配的近似度
@@ -330,11 +371,11 @@ def search_symbol(symbol, timeout, region=None, tolerance=0.9):
             raise Exception(f"发生异常: {e}")
 
 
-def search_symbol_erroring(symbol, timeout, region=None):
+def search_symbol_erroring(symbol, timeout = 10, region=None):
     start_time = time.time()
     symbol = image_fit_screen(symbol)
     logger.info(f"开始寻找:{symbol}")
-    if timeout is not None:
+    if timeout != 0:
         while time.time() - start_time < timeout:
             try:
                 if pyautogui.locateOnScreen(symbol, region=region) is not None:
@@ -444,15 +485,16 @@ def screenshot_error_to_excel(func):
                 # 确保所有AOI进程都已经关闭
                 aoi_still_running = any("AOI" in p.info['name'] for p in psutil.process_iter(['name']))
                 if not aoi_still_running:
-                    logger.info("所有AOI进程已关闭，准备重启")
-                    check_and_launch_aoi()
+                    logger.info("所有AOI进程已关闭")
+                #     check_and_launch_aoi()
                 else:
                     logger.error("AOI进程关闭失败")
 
-                if attempts >= max_attempts:
-                    raise  # 可选：重新抛出异常以便外部也能知道异常发生
-                else:
-                    time.sleep(10)  # 给系统一点时间来处理进程重启
+                # if attempts >= max_attempts:
+                #     raise  # 可选：重新抛出异常以便外部也能知道异常发生
+                # else:
+                #     time.sleep(10)  # 给系统一点时间来处理进程重启
+
     return wrapper
 
 
@@ -465,8 +507,9 @@ def add_waiting_material():
         if search_symbol(config.ADD_IMAGE_CLOSE, 5):
             click_by_png(config.ADD_IMAGE_CLOSE)
 
+
 # 画检测窗口
-def add_window(button = "w"):
+def add_window(button="w"):
     time.sleep(1.5)
     crosshair_center = get_crosshair_center()
     if crosshair_center is None:
@@ -554,11 +597,11 @@ def open_program():
         click_by_png(config.OPEN_PROGRAM_PLUS, 2)
         click_by_png(config.OPEN_PROGRAM_YES)
         return
-    
     if search_symbol(config.OPEN_PROGRAM_CURSOR, 5):
         click_by_png(config.OPEN_PROGRAM_CURSOR, 2)
         click_by_png(config.OPEN_PROGRAM_YES)
         return
+
 
 # 获取最近编辑的一个程式
 def get_topest_program():
@@ -573,46 +616,69 @@ def get_topest_program():
 
     return topest
 
+
 # 确保在编辑界面
 def ensure_in_edit_mode():
-    check_and_launch_aoi()
-    # 先查询最直接的 没有的话逻辑再一层层外扩
-    if not click_component():
-        # 没有的话点击程式元件标识
-        if search_symbol(config.PROGRAM_COMPONENT_DARK, 5):
+    # 先立刻马上打开程式元件栏
+    found_light = search_symbol(config.PROGRAM_COMPONENT_LIGHT, 0)
+    found_dark = search_symbol(config.PROGRAM_COMPONENT_DARK, 0)
+
+    if found_light or found_dark:
+        if found_dark:
             click_by_png(config.PROGRAM_COMPONENT_DARK)
-            click_component()
-        # 再没有的话打开程式
-        else:
-            open_program()
-            if search_symbol(config.PROGRAM_COMPONENT_DARK, 5):
+        click_component()
+    else:
+        open_program()
+        if search_symbol(config.BOARD_AUTO, 50):
+            if search_symbol(config.PROGRAM_COMPONENT_DARK, 30):
+                time.sleep(3)
                 click_by_png(config.PROGRAM_COMPONENT_DARK)
-            click_component()
-    if not search_symbol(config.EDIT_LIGHT, 5):
-        click_by_png(config.EDIT_DARK)
-    
+        click_component()
+    click_by_png(config.EDIT_DARK)
+    time.sleep(3)
+
+# 确保打开了有多个拼版的job
+def ensure_multiple_collages():
+    check_and_launch_aoi()
+    click_by_png(config.OPEN_PROGRAM)
+    # 搜索并点击屏幕上所有＋
+    plus_positions = list(pyautogui.locateAllOnScreen(config.OPEN_PROGRAM_PLUS))
+    a = 0
+    for pos in plus_positions:
+        pyautogui.doubleClick(pos)
+        time.sleep(0.5)
+        math = read_text_ocr((1055, 748), (1070, 762))
+        if math != 1:
+            a += 1
+            click_by_png(config.OPEN_PROGRAM_LOAD)
+            click_by_png(config.OPEN_PROGRAM_YES)
+            break
+    if a == 0:
+        logger.error("未找到多个拼版的job")
+        raise Exception("未找到多个拼版的job")
+
+
 # 点击元件
 def click_component():
-    # 看有没有元件标识
-    if search_symbol(config.PROGRAM_COMPONENT_LIGHT, 5):
-        # 几种元件里点一个
-        if search_symbol(config.NO_CHECKED_COMPONENT, 5):
-            click_by_png(config.NO_CHECKED_COMPONENT, 2)
+    # 几种元件里点一个
+    if search_symbol(config.NO_CHECKED_COMPONENT, 2):
+        click_by_png(config.NO_CHECKED_COMPONENT, 2)
+        return True
+    else:
+        if search_symbol(config.CHECKED_COMPONENT, 2):
+            click_by_png(config.CHECKED_COMPONENT, 2)
             return True
-        else: 
-            if search_symbol(config.CHECKED_COMPONENT, 5):
-                click_by_png(config.CHECKED_COMPONENT, 2)
+        else:
+            if search_symbol(config.PASS_COMPONENT, 2):
+                click_by_png(config.PASS_COMPONENT, 2)
                 return True
             else:
-                if search_symbol(config.PASS_COMPONENT, 5):
-                    click_by_png(config.PASS_COMPONENT, 2)
+                if search_symbol(config.NO_PASS_COMPONENT, 2):
+                    click_by_png(config.NO_PASS_COMPONENT, 2)
                     return True
                 else:
-                    if search_symbol(config.NO_PASS_COMPONENT, 5):
-                        click_by_png(config.NO_PASS_COMPONENT, 2)
-                        return True
-                    else:
-                        return False
+                    raise
+
 # 检测屏幕区域(362,149)至(1506,739)区域内是否存在(220,20,60)的颜色
 def check_window_relate():
     # 定义要检测的颜色
@@ -622,16 +688,22 @@ def check_window_relate():
     # 在指定区域内搜索颜色
     found = pyautogui.pixelMatchesColor(region[0], region[1], target_color, region=region)
     return found
+
+
 # 勾选共享元件库路径
 def check_share_lib_path(if_checked):
     # 点开设置--硬件设置--数据导出配置--元件库配置
     click_by_png(config.SETTING_DARK)
     click_by_png(config.PARAM_HARDWARE_SETTING)
     click_by_png(config.PARAM_DATA_EXPORT_SETTING)
-    # 确保共享元件库路径为非勾选 （用的坐标）
-    is_checked((901,290),(915,304),if_checked)
-    click_by_png(config.PARAM_SETTING_YES)
+    time.sleep(2)
+    # 确保共享元件库路径为勾选状态 （用的坐标）
+    is_checked((902, 291), (914, 303), if_checked, 1)
+    time.sleep(1)
+    click_by_png(config.PARAM_SETTING_YES,2)
     click_by_png(config.CLOSE)
+    time.sleep(1.5)
+
 
 # 勾选 允许跨元件复制
 def check_cross_component_copy():
@@ -639,20 +711,24 @@ def check_cross_component_copy():
     click_by_png(config.SETTING_DARK)
     click_by_png(config.PARAM_HARDWARE_SETTING)
     click_by_png(config.PARAM_UI_SETTING)
-    is_checked((1268,993),(1280,1005),True)
+    time.sleep(1)
+    is_checked((1268, 993), (1280, 1005), True)
     click_by_png(config.PARAM_SETTING_YES)
     click_by_png(config.CLOSE)
-    
+
+
 # 允许同步相同的封装,  默认同步封装
 def check_sync_package(if_sync_same_package, if_default_sync_package):
     # 参数配置--UI配置--程序设置
     click_by_png(config.SETTING_DARK)
     click_by_png(config.PARAM_HARDWARE_SETTING)
     click_by_png(config.PARAM_UI_SETTING)
-    is_checked((659,852),(671,864),if_sync_same_package)
-    is_checked((659,876),(671,888),if_default_sync_package)
+    time.sleep(1)
+    is_checked((659, 852), (671, 864), if_sync_same_package)
+    is_checked((659, 876), (671, 888), if_default_sync_package)
     click_by_png(config.PARAM_SETTING_YES)
     click_by_png(config.CLOSE)
+
 
 # 参数配置--演算法配置--关联子框检测模式
 def check_patent_not_NG(type):
@@ -664,60 +740,68 @@ def check_patent_not_NG(type):
     click_by_png(config.PARAM_ALGORITHM_SETTING)
     # 不计算
     if type == 1:
-        pyautogui.click((935,180))
-        pyautogui.click((935,200))
+        pyautogui.click((935, 180))
+        pyautogui.click((935, 200))
     # 继续计算
     if type == 2:
-        pyautogui.click((935,180))
-        pyautogui.click((935,215))
+        pyautogui.click((935, 180))
+        pyautogui.click((935, 215))
     # 继续关联
     if type == 3:
-        pyautogui.click((935,180))
-        pyautogui.click((935,230))
+        pyautogui.click((935, 180))
+        pyautogui.click((935, 230))
     click_by_png(config.PARAM_SETTING_YES)
     click_by_png(config.CLOSE)
+
 
 def check_export_ok(if_export_ok, if_export_all_ok):
     # 参数配置--UI配置--程序设置
     click_by_png(config.SETTING_DARK)
     click_by_png(config.PARAM_HARDWARE_SETTING)
     click_by_png(config.PARAM_UI_SETTING)
-    is_checked((659,726),(671,738),if_export_ok)
-    is_checked((659,751),(671,763),if_export_all_ok)
+    time.sleep(1)
+    is_checked((659, 726), (671, 738), if_export_ok)
+    is_checked((659, 751), (671, 763), if_export_all_ok)
     click_by_png(config.PARAM_SETTING_YES)
     click_by_png(config.CLOSE)
+
+
 def modify_component():
     pyautogui.press("b")
-    pyautogui.press("left")
+    pyautogui.keyDown('left')
+    time.sleep(2)
+    pyautogui.keyUp('left')
+
 
 # 确认是否文件夹下生成了新数据
 def check_new_data(path):
-    a = 0
     for filename in os.listdir(path):
         # 获取文件的完整路径
         file_path = os.path.join(path, filename)
         # 获取文件的修改时间
         file_mtime = os.path.getmtime(file_path)
         # 如果文件在指定的时间内被修改或创建
-        if time.time() - file_mtime < 30:
-            a += 1
-    if a > 0:
-        return True
-    else:
-        return False
+        if time.time() - file_mtime < 10:
+            return True
+        else:
+           return False
+
+
 # 计算文件夹内data数量
 def check_data_amount(path):
     a = 0
     for filename in os.listdir(path):
         a += 1
     return a
+
+
 # 将剪切板内的内容与文件夹内内容作对比
 def check_amount_content(coordinate, path):
     # 读内容至剪切板
     read_text_choosed(coordinate[0], coordinate[1])
     clipboard_content = pyperclip.paste()
     lines = clipboard_content.split('\n')
-    
+
     if not lines:
         raise Exception("剪切板内容为空")
 
@@ -742,10 +826,10 @@ def check_amount_content(coordinate, path):
                 break
         if not found:
             print(f"没有找到匹配的文件：{line}")
-    
+
     # 检查文件总数是否与第一行数字一致
     actual_count = len(matched_files)
-    
+
     if actual_count == expected_count:
         print("文件数量匹配成功")
     else:
@@ -753,6 +837,7 @@ def check_amount_content(coordinate, path):
 
 
 ALL_COMPONENTS = []
+
 
 # 获取程式元件列表
 def get_component_list():
@@ -936,16 +1021,18 @@ def random_change_param():
         random_number = random.randint(0, 1000)
         pyautogui.typewrite(str(random_number))
 
+
 # 随机修改rgb值
 def random_change_rgb():
     #对(835,825) (835,870) (835,915) (835,950)
-    points = [(835,825), (835,870), (835,915), (835,950)]
+    points = [(835, 825), (835, 870), (835, 915), (835, 950)]
     for point in points:
         pyautogui.click(point)
         pyautogui.hotkey('ctrl', 'a')
         random_number = random.randint(0, 255)
         pyautogui.typewrite(str(random_number))
     pyautogui.press('enter')
+
 
 # ==========================工具类======================
 # 图片适应屏幕分辨率
@@ -958,7 +1045,8 @@ def image_fit_screen(image_path):
     # 打开图像文件
     img = Image.open(image_path)
     # 调整图像大小到当前屏幕分辨率
-    img = img.resize((int(img.width * screen_width / 1920), int(img.height * screen_height / 1080)), Image.Resampling.LANCZOS)
+    img = img.resize((int(img.width * screen_width / 1920), int(img.height * screen_height / 1080)),
+                     Image.Resampling.LANCZOS)
     # 确定项目根目录
     project_root = os.path.dirname(os.path.abspath(__file__))  # 假设此脚本位于项目根目录
     temp_dir = os.path.join(project_root, 'temp')
@@ -986,6 +1074,7 @@ def filter_green(image):
     else:
         return False, image
 
+
 def filter_red(image):
     # 定义红色的HSV范围
     lower_red1 = np.array([0, 100, 100])
@@ -1001,6 +1090,7 @@ def filter_red(image):
         return True, result
     else:
         return False, image
+
 
 # 确保指定位置内是该文本
 def text_in_bbox(text, bbox):
@@ -1056,10 +1146,12 @@ def get_center_coordinates(coord1, coord2):
     y_center = (coord1[1] + coord2[1]) // 2
     return (x_center, y_center)
 
-def write_text(coordinate,text):
+
+def write_text(coordinate, text):
     pyautogui.click(coordinate)
-    pyautogui.hotkey('ctrl','a')
+    pyautogui.hotkey('ctrl', 'a')
     pyautogui.write(text)
+
 
 def read_text(x, y):
     # 获取当前屏幕分辨率
@@ -1086,18 +1178,20 @@ def read_text(x, y):
 
     return clipboard_text
 
+
 # 由于部分控件无法直接ctrl+a 被迫用这种方式去读取内容
-def read_text_choosed(x,y):
+def read_text_choosed(x, y):
     # 左键按住x，y的坐标点
     pyautogui.moveTo(x, y)
     pyautogui.mouseDown()
 
     # 鼠标拖到指定位置后松开
-    pyautogui.moveTo(1900, 1025) 
+    pyautogui.moveTo(1900, 1025)
     pyautogui.mouseUp()
 
     # 复制到剪切板
     pyautogui.hotkey('ctrl', 'c')
+
 
 # 矫正识别结果的错别字
 def correct_typos(text):
@@ -1112,6 +1206,7 @@ def correct_typos(text):
         if match_count >= 2:
             return target_text
     return text  # 如果没有足够的匹配，返回原始文本
+
 
 # 识别屏幕上指定区域
 def read_text_ocr(top_left_point, bottom_right_point):
@@ -1137,16 +1232,12 @@ def read_text_ocr(top_left_point, bottom_right_point):
     # 在截图上绘制矩形框标记识别区域
     cv2.rectangle(filtered_image, (0, 0), (filtered_image.shape[1], filtered_image.shape[0]), (0, 255, 0), 2)
 
-    # # 显示带有标记的图像
-    # cv2.imshow('Marked Area', filtered_image)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-
     # 输出识别结果
-    for (bbox, text, prob) in results:
-        text = correct_typos(text)
-        logger.info(f"识别的文字: {text}, 置信度: {prob}")
+    recognized_text = ' '.join([correct_typos(text) for (bbox, text, prob) in results])
+    logger.info(f"识别的文字: {recognized_text}")
+
     logger.info("识别结束")
+    return recognized_text
 
 
 # =====================================文件处理=====================================

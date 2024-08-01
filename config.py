@@ -11,23 +11,37 @@ def resource_path(relative_path):
         # 如果没有使用PyInstaller打包，使用当前文件夹
         base_path = os.path.abspath(".")
 
-    return os.path.join(base_path, relative_path)
+        # 构建完整的文件路径
+    full_path = os.path.join(base_path, relative_path)
+    
+    # 获取文件所在的目录路径
+    directory = os.path.dirname(full_path)
+    
+    # 如果目录不存在，则创建它
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    
+    return full_path
 
 
 AOI_EXE_PATH = r'D:\EYAOI\Bin\AOI.exe'
 JOB_PATH = r'D:\EYAOI\JOB\djb'
 
-PROGRAM_COMPONENT_LIGHT = resource_path('images/whole_board/program_component.png')
+PROGRAM_COMPONENT_LIGHT = resource_path('images/whole_board/program_component_light.png')
 PROGRAM_COMPONENT_DARK = resource_path('images/whole_board/program_component_dark.png')
-
-# TODO 这里缺了
+WHOLE_BOARD_DARK = resource_path('images/whole_board/board_dark.png')
+WHOLE_BOARD_LIGHT = resource_path('images/whole_board/board_light.png')
 PASS_COMPONENT = resource_path('images/whole_board/job/pass_component.png')
 NO_PASS_COMPONENT = resource_path('images/whole_board/job/no_pass_component.png')
 NO_CHECKED_COMPONENT = resource_path('images/whole_board/job/no_checked_component.png')
 CHECKED_COMPONENT = resource_path('images/whole_board/job/checked_component.png')
-WHOLE_BOARD_LIGHT = resource_path('images/whole_board/whole_board_image_light.png')
+WHOLE_BOARD_IMAGE_LIGHT = resource_path('images/whole_board/image_light.png')
+WHOLE_BOARD_IMAGE_DARK = resource_path('images/whole_board/image_dark.png')
 FOV_EDIT = resource_path('images/whole_board/fov/fov_edit.png')
 MAGNIFIER = resource_path('images/whole_board/magnifier.png')
+BOARD_BOARD = resource_path('images/whole_board/board_board.png')
+BOARD_ENLARGE = resource_path('images/whole_board/enlarge.png')
+BOARD_REDUCE = resource_path('images/whole_board/reduce.png')
 
 OPEN_PROGRAM_PLUS = resource_path('images/open_program/plus.png')
 OPEN_PROGRAM_CURSOR = resource_path('images/open_program/cursor.png')
@@ -57,11 +71,14 @@ IMAGE_PROCESS_YES = resource_path('images/prompt_box/image_process_yes.png')
 PARAM_SETTING_YES = resource_path('images/prompt_box/param_setting_yes.png')
 UI_SHOW_MESSAGE_YES = resource_path('images/prompt_box/ui_show_message_yes.png')
 CLOSE = resource_path('images/prompt_box/close.png')
+EXPORT_PUBLIC_PROGRAM_GRAY = resource_path('images/prompt_box/export_public_program_gray.png')
 EXPORT_PUBLIC_PROGRAM = resource_path('images/prompt_box/export_public_program.png')
 PLEASE_OPEN_PUBLIC_LIBS = resource_path('images/prompt_box/please_open_public_libs.png')
 EXPORT_COMPONENT_SUCCESS = resource_path('images/prompt_box/export_component_success.png')
 IF_EXPORT_PART_OK = resource_path('images/prompt_box/if_export_part_ok.png')
 IF_EXPORT_ALL_OK = resource_path('images/prompt_box/if_export_all_ok.png')
+IF_DELETE_BOARD = resource_path('images/prompt_box/if_delete_board.png')
+IF_DELETE_BOARD_WARNING = resource_path('images/prompt_box/if_delete_board_warning.png')
 EXPORTING_OK = resource_path('images/prompt_box/exporting_ok.png')
 OCV_EDIT_APPLY = resource_path('images/prompt_box/ocv_edit_apply.png')
 OK_COLLECTION = resource_path('images/prompt_box/ok_collection.png')
@@ -112,7 +129,8 @@ OPEN_PROGRAM = resource_path('images/gui/open_program.png')
 FOV = resource_path('images/gui/board/fov.png')
 BOARD_AUTO = resource_path('images/gui/board/auto.png')
 BOARD_LIGHT = resource_path('images/gui/board/light.png')
-BOARD_DARK = resource_path('images/gui/board/dark.png') # 暂时还没截图
+BOARD_SPLICING_OPERATION = resource_path('images/gui/board/splicing_operation.png')
+BOARD_DELETE_IMPOSITION = resource_path('images/gui/board/delete_imposition.png')
 ELEMENTS = resource_path('images/gui/elements/elements.png')
 IMPORT_CURRENT_PART_NO = resource_path('images/gui/elements/import_current_part_no.png')
 EXPORT_CURRENT_PART_NO = resource_path('images/gui/elements/export_current_part_no.png')
@@ -163,10 +181,13 @@ FOV_SENIOR_COORDINATE = (78,526)
 FOV_EXPAND_COORDINATE = (200,613)
 CENTRE = (935,446)
 PART_POSITION_NO = (180,210)
+RESERVE_COMPONENT_COORDINATE = (885,524)
+RESERVE_BENCHMARK_COORDINATE = (885,549)
 # ======================================区域========================================
 # 编辑区域
 EDIT_REGION = (545, 190, 1715, 940)
-
+BOARD_INFORMATION_REGION = (46, 199, 350, 848)
+COMPONENT_NUM_REGION = (82, 253, 232, 271)
 
 
 

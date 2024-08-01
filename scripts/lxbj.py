@@ -40,13 +40,13 @@ def lxbj_002_01():
     utils.click_by_png(config.ADD_STANDARD_IMAGE)
     # 加五种随机不同光源的待料 需确认添加成功
     utils.random_change_param()
-    utils.click_by_png(config.TEST_CURRENT_WINDOW)
+    utils.click_by_png(config.TEST_WINDOW)
     time.sleep(5)
-    utils.click_by_png(config.TEST_CURRENT_ELEMENT)
+    utils.click_by_png(config.TEST_COMPONENT)
     time.sleep(5)
-    utils.click_by_png(config.TEST_CURRENT_GROUP)
+    utils.click_by_png(config.TEST_GROUP)
     time.sleep(5)
-    utils.click_by_png(config.TEST_CURRENT_BOARD)
+    utils.click_by_png(config.TEST_BOARD)
     time.sleep(5)
     utils.caton_or_flashback()
 
@@ -1360,37 +1360,116 @@ def lxbj_017_01():
     pass
 @utils.screenshot_error_to_excel
 def lxbj_018_01():
+    utils.check_and_launch_aoi()
     # 1、打开一个编辑过的有多个拼版的job
+    utils.ensure_multiple_collages()
+    utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
+    before_num_region = pyautogui.screenshot(region=config.COMPONENT_NUM_REGION)
+    before_edit_region = pyautogui.screenshot(region=config.EDIT_REGION)
+    utils.click_by_png(config.WHOLE_BOARD_DARK)
     # 2、左侧选择板--选择一个拼版右键--删除拼版
+    utils.click_by_png(config.BOARD_BOARD)
+    pyautogui.rightClick()
+    pyautogui.press('up')
+    pyautogui.press('enter')
     # 3、点击【是】
+    utils.search_symbol_erroring(config.IF_DELETE_BOARD)
+    pyautogui.press('enter')
+    utils.search_symbol_erroring(config.IF_DELETE_BOARD_WARNING)
     # 4、勾选保留此拼板下的元件
+    pyautogui.click(config.RESERVE_COMPONENT_COORDINATE)
     # 5、点击【是】
-    pass
+    pyautogui.press('enter')
+    time.sleep(1)
+    now_num_region = pyautogui.screenshot(region=config.COMPONENT_NUM_REGION)
+    now_edit_region = pyautogui.screenshot(region=config.EDIT_REGION)
+    if before_num_region == now_num_region and before_edit_region == now_edit_region:
+        logger.info('拼版被删除且元件保留')
+    else:
+        logger.error('元件未被保留/拼版未被删除')
+        raise Exception('元件未被保留/拼版未被删除')
+
+
 @utils.screenshot_error_to_excel
 def lxbj_018_02():
+    utils.check_and_launch_aoi()
     # 1、打开一个编辑过的有多个拼版的job
-    # 2、点击【拼板操作】并选中一个拼版
-    # 3、点击【删除拼板】
+    utils.ensure_multiple_collages()
+    utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
+    before_num_region = pyautogui.screenshot(region=config.COMPONENT_NUM_REGION)
+    before_edit_region = pyautogui.screenshot(region=config.EDIT_REGION)
+    utils.click_by_png(config.WHOLE_BOARD_DARK)
+    # 2、点击拼版操作 再点击删除拼版
+    utils.click_by_png(config.BOARD_BOARD)
+    utils.click_by_png(config.BOARD_SPLICING_OPERATION)
+    utils.click_by_png(config.BOARD_DELETE_IMPOSITION)
+    # 3、点击【是】
+    utils.search_symbol_erroring(config.IF_DELETE_BOARD_WARNING)
     # 4、勾选保留此拼板下的元件
+    pyautogui.click(config.RESERVE_COMPONENT_COORDINATE)
     # 5、点击【是】
-    pass
+    pyautogui.press('enter')
+    time.sleep(1)
+    now_num_region = pyautogui.screenshot(region=config.COMPONENT_NUM_REGION)
+    now_edit_region = pyautogui.screenshot(region=config.EDIT_REGION)
+    if before_num_region == now_num_region and before_edit_region == now_edit_region:
+        logger.info('拼版被删除且元件保留')
+    else:
+        logger.error('元件未被保留/拼版未被删除')
+        raise Exception('元件未被保留/拼版未被删除')
+
+    
 @utils.screenshot_error_to_excel
 def lxbj_018_03():
+    utils.check_and_launch_aoi()
     # 1、打开一个编辑过的有多个拼版的job
+    utils.ensure_multiple_collages()
+    beford_board_region = pyautogui.screenshot(region=config.BOARD_INFORMATION_REGION)
+    before_edit_region = pyautogui.screenshot(region=config.EDIT_REGION)
     # 2、左侧选择板--选择一个拼版右键--删除拼版
+    utils.click_by_png(config.BOARD_BOARD)
+    pyautogui.rightClick()
+    pyautogui.press('up')
+    pyautogui.press('enter')
     # 3、点击【是】
+    utils.search_symbol_erroring(config.IF_DELETE_BOARD)
+    pyautogui.press('enter')
+    utils.search_symbol_erroring(config.IF_DELETE_BOARD_WARNING)
     # 4、勾选保留基准点
+    pyautogui.click(config.RESERVE_BENCHMARK_COORDINATE)
     # 5、点击【是】
-    pass
+    pyautogui.press('enter')
+    now_board_region = pyautogui.screenshot(region=config.BOARD_INFORMATION_REGION)
+    now_edit_region = pyautogui.screenshot(region=config.EDIT_REGION)
+    if beford_board_region == now_board_region and before_edit_region == now_edit_region:
+        logger.info('拼版被删除且元件保留')
+    else:
+        logger.error('元件未被保留/拼版未被删除')
+        raise Exception('元件未被保留/拼版未被删除')
 # 选择一个拼版删除并保留基准点
 @utils.screenshot_error_to_excel
 def lxbj_018_04():
+    utils.check_and_launch_aoi()
     # 1、打开一个编辑过的有多个拼版的job
-    # 2、点击【拼板操作】并选中一个拼版
-    # 3、点击【删除拼板】
+    utils.ensure_multiple_collages()
+    beford_board_region = pyautogui.screenshot(region=config.BOARD_INFORMATION_REGION)
+    before_edit_region = pyautogui.screenshot(region=config.EDIT_REGION)
+    # 2、点击拼版操作 再点击删除拼版
+    utils.click_by_png(config.BOARD_BOARD)
+    utils.click_by_png(config.BOARD_SPLICING_OPERATION)
+    utils.click_by_png(config.BOARD_DELETE_IMPOSITION)
+    utils.search_symbol_erroring(config.IF_DELETE_BOARD_WARNING)
     # 4、勾选保留基准点
+    pyautogui.click(config.RESERVE_BENCHMARK_COORDINATE)
     # 5、点击【是】
-    pass
+    pyautogui.press('enter')
+    now_board_region = pyautogui.screenshot(region=config.BOARD_INFORMATION_REGION)
+    now_edit_region = pyautogui.screenshot(region=config.EDIT_REGION)
+    if beford_board_region == now_board_region and before_edit_region == now_edit_region:
+        logger.info('拼版被删除且元件保留')
+    else:
+        logger.error('元件未被保留/拼版未被删除')
+        raise Exception('元件未被保留/拼版未被删除')
 
 
 
