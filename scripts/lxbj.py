@@ -34,31 +34,48 @@ def lxbj_002_01():
     utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
     utils.add_window()
+    time.sleep(1)
     # 选择含有待料的窗口 如图像匹配
     utils.click_by_png(config.ADD_CHECKED_SENIOR)
+    utils.click_by_png(config.IMAGE_MATCHING)
+    utils.click_by_png(config.ADD_CHECKED_YES)
+    time.sleep(3)
+    # 图像处理框
+    utils.click_by_png(config.IMAGE_PROCESS_YES)
+    utils.click_by_png(config.IMAGE_CLOSE)
     # 添加标准影像
-    utils.click_by_png(config.ADD_STANDARD_IMAGE)
     # 加五种随机不同光源的待料 需确认添加成功
-    utils.random_change_param()
+    for _ in range(5):
+        utils.click_by_png(config.ADD_STANDARD_IMAGE)
+        utils.random_choose_light()
+        utils.click_by_png(config.IMAGE_PROCESS_YES)
+        utils.click_by_png(config.IMAGE_CLOSE)
+    utils.random_change_image_param()
     utils.click_by_png(config.TEST_WINDOW)
-    time.sleep(5)
+    time.sleep(3)
     utils.click_by_png(config.TEST_COMPONENT)
     time.sleep(5)
     utils.click_by_png(config.TEST_GROUP)
     time.sleep(5)
     utils.click_by_png(config.TEST_BOARD)
+    time.sleep(3)
+    for _ in range(10):
+        if utils.search_symbol(config.TESTING_COMPONENT):
+            time.sleep(3)
+        else:
+            break
     time.sleep(5)
     utils.caton_or_flashback()
 
 # 不良窗口/元件
 @utils.screenshot_error_to_excel
 def lxbj_003_01():
+    utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
+    time.sleep(2)
     pyautogui.press('b')
-    utils.click_by_png(config.TEST_WINDOW)
     # TODO 不良窗口，红字提示：检测窗口 缺陷名称（左侧窗口的缺陷名，如果左侧窗口的缺陷名是默认，取算法参数界面首个不良结果对应的缺陷名）
     utils.click_by_png(config.TEST_WINDOW)
-
     # TODO 不良元件，红字提示：元件 首个不良窗口的缺陷名称（左侧窗口的缺陷名，如果左侧窗口的缺陷名是默认，取算法参数界面首个不良结果对应的缺陷名）
     utils.click_by_png(config.TEST_COMPONENT)
 
@@ -68,9 +85,13 @@ def lxbj_004_01():
     utils.check_and_launch_aoi()
     utils.check_sync_package(False,False)
     utils.ensure_in_edit_mode()
+    utils.add_window()
+    utils.click_by_png(config.SQUARE_POSITIONING)
+    utils.click_by_png(config.ADD_CHECKED_YES)
+    time.sleep(3)
     utils.random_change_param()
-    utils.click_by_png(config.EDIT_DARK)
     utils.click_by_png(config.EDIT_BACK)
+    time.sleep(2)
     # 在提示框，不选【同步到相同的封装类型】，点击【否】
     if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO,1):
         pyautogui.press('right')
@@ -89,8 +110,11 @@ def lxbj_004_02():
     utils.check_and_launch_aoi()
     utils.check_sync_package(False,False)
     utils.ensure_in_edit_mode()
+    utils.add_window()
+    utils.click_by_png(config.SQUARE_POSITIONING)
+    utils.click_by_png(config.ADD_CHECKED_YES)
+    time.sleep(3)
     utils.random_change_param()
-    utils.click_by_png(config.EDIT_DARK)
     utils.click_by_png(config.EDIT_BACK)
     # 在提示框，不选【同步到相同的封装类型】，点击【是】
     if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO,1):
@@ -102,7 +126,6 @@ def lxbj_004_02():
         else:
             raise Exception
     # 相同封装的其他料号的元件窗口参数都相同 TODO 很麻烦 要遍历
-    # 
     utils.check_package_same_param(True)
 # 同步封装
 @utils.screenshot_error_to_excel
@@ -110,8 +133,11 @@ def lxbj_004_03():
     utils.check_and_launch_aoi()
     utils.check_sync_package(False,False)
     utils.ensure_in_edit_mode()
+    utils.add_window()
+    utils.click_by_png(config.SQUARE_POSITIONING)
+    utils.click_by_png(config.ADD_CHECKED_YES)
+    time.sleep(3)
     utils.random_change_param()
-    utils.click_by_png(config.EDIT_DARK)
     utils.click_by_png(config.EDIT_BACK)
     # 在提示框，选择【同步到相同的封装类型】，点击【是】
     if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_YES,1):
@@ -130,8 +156,11 @@ def lxbj_004_04():
     utils.check_and_launch_aoi()
     utils.check_sync_package(True,False)
     utils.ensure_in_edit_mode()
+    utils.add_window()
+    utils.click_by_png(config.SQUARE_POSITIONING)
+    utils.click_by_png(config.ADD_CHECKED_YES)
+    time.sleep(3)
     utils.random_change_param()
-    utils.click_by_png(config.EDIT_DARK)
     utils.click_by_png(config.EDIT_BACK)
     # 在提示框，点击【是】
     pyautogui.press('enter')
@@ -142,8 +171,11 @@ def lxbj_004_05():
     utils.check_and_launch_aoi()
     utils.check_sync_package(True,True)
     utils.ensure_in_edit_mode()
+    utils.add_window()
+    utils.click_by_png(config.SQUARE_POSITIONING)
+    utils.click_by_png(config.ADD_CHECKED_YES)
+    time.sleep(3)
     utils.random_change_param()
-    utils.click_by_png(config.EDIT_DARK)
     utils.click_by_png(config.EDIT_BACK)
     # 在提示框，点击【是】
     pyautogui.press('enter')
@@ -154,8 +186,11 @@ def lxbj_004_06():
     utils.check_and_launch_aoi()
     utils.check_sync_package(False,True)
     utils.ensure_in_edit_mode()
+    utils.add_window()
+    utils.click_by_png(config.SQUARE_POSITIONING)
+    utils.click_by_png(config.ADD_CHECKED_YES)
+    time.sleep(3)
     utils.random_change_param()
-    utils.click_by_png(config.EDIT_DARK)
     utils.click_by_png(config.EDIT_BACK)
     # 在提示框，点击【是】
     # 弹框提示不勾默认选择【同步到相同的封装类型】
@@ -179,11 +214,10 @@ def lxbj_005_01():
     # 删除目录F:\DataExport\Job名\OKImage
     shutil.rmtree(f"F:\\DataExport\\{program_name}\\OKImage", ignore_errors=True)
     # 在某一元件【元器件编辑】界面，右击--【导出元件OK图】
-    point = (935,445)
-    pyautogui.rightClick(point)
+    pyautogui.rightClick(config.CENTRE)
     utils.click_by_png(config.EXPORT_COMPONENT_OK)
     # 在提示框，点击【确定】
-    utils.click_by_png(config.EXPORT_COMPONENT_SUCCESS, timeout = 5)
+    utils.click_by_png(config.EXPORT_COMPONENT_SUCCESS, timeout = 20)
     # 弹框提示：生成ok图完成，并可以在F:\DataExport\Job名\OKImage下发现
     ok_image_path = f"F:\\DataExport\\{program_name}\\OKImage"
     recent_files = [f for f in os.listdir(ok_image_path) if os.path.getctime(os.path.join(ok_image_path, f)) > time.time() - 10]

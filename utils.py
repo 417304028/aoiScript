@@ -634,8 +634,8 @@ def ensure_in_edit_mode():
                 time.sleep(3)
                 click_by_png(config.PROGRAM_COMPONENT_DARK)
         click_component()
+    time.sleep(5)
     click_by_png(config.EDIT_DARK)
-    time.sleep(3)
 
 # 确保打开了有多个拼版的job
 def ensure_multiple_collages():
@@ -1011,16 +1011,22 @@ def random_choose_light():
 def random_change_param():
     # 分为两种改随机的方式:
     # 下拉框为面积内随机选（点击点，输入各个下拉框面积，下拉随机值（限定范围），随机选面积内一点点击，但麻烦）
-
     # 使用for循环点击各个点，输入0-1000随机数字
-    points = [(1720, 398), (1720, 418), (1720, 440), (1720, 460), (1720, 480), (1720, 500), (1720, 630), (1720, 650),
-              (1720, 690), (1720, 715), (1720, 735), (1720, 775), (1720, 840), (1720, 860)]
+    points = config.ALG_PARAM_POINTS
     for point in points:
-        pyautogui.click(point)
-        pyautogui.hotkey('ctrl', 'a')
-        random_number = random.randint(0, 1000)
+        pyautogui.doubleClick(point)
+        random_number = random.randint(0, 500)
         pyautogui.typewrite(str(random_number))
-
+        
+# 添加标准影像的参数面板
+def random_change_image_param():
+    points = config.IMAGE_PARAM_POINTS
+    for point in points:
+        time.sleep(1.5)
+        pyautogui.doubleClick(point)
+        time.sleep(0.5)
+        random_number = random.randint(0, 80)
+        pyautogui.typewrite(str(random_number))
 
 # 随机修改rgb值
 def random_change_rgb():

@@ -71,6 +71,7 @@ IMAGE_PROCESS_YES = resource_path('images/prompt_box/image_process_yes.png')
 PARAM_SETTING_YES = resource_path('images/prompt_box/param_setting_yes.png')
 UI_SHOW_MESSAGE_YES = resource_path('images/prompt_box/ui_show_message_yes.png')
 CLOSE = resource_path('images/prompt_box/close.png')
+IMAGE_CLOSE = resource_path('images/prompt_box/image_close.png')
 EXPORT_PUBLIC_PROGRAM_GRAY = resource_path('images/prompt_box/export_public_program_gray.png')
 EXPORT_PUBLIC_PROGRAM = resource_path('images/prompt_box/export_public_program.png')
 PLEASE_OPEN_PUBLIC_LIBS = resource_path('images/prompt_box/please_open_public_libs.png')
@@ -79,6 +80,7 @@ IF_EXPORT_PART_OK = resource_path('images/prompt_box/if_export_part_ok.png')
 IF_EXPORT_ALL_OK = resource_path('images/prompt_box/if_export_all_ok.png')
 IF_DELETE_BOARD = resource_path('images/prompt_box/if_delete_board.png')
 IF_DELETE_BOARD_WARNING = resource_path('images/prompt_box/if_delete_board_warning.png')
+TESTING_COMPONENT = resource_path('images/prompt_box/testing_component.png')
 EXPORTING_OK = resource_path('images/prompt_box/exporting_ok.png')
 OCV_EDIT_APPLY = resource_path('images/prompt_box/ocv_edit_apply.png')
 OK_COLLECTION = resource_path('images/prompt_box/ok_collection.png')
@@ -183,6 +185,13 @@ CENTRE = (935,446)
 PART_POSITION_NO = (180,210)
 RESERVE_COMPONENT_COORDINATE = (885,524)
 RESERVE_BENCHMARK_COORDINATE = (885,549)
+LIGHT_VIEWS = [(550,315),(685,315),(820,315),
+               (550,455),(685,455),(820,455),
+               (550,580),(685,580),(820,580),
+               (550,710),(685,710)]
+ALG_PARAM_POINTS = [(1720, 398), (1720, 418), (1720, 440), (1720, 460), (1720, 480), (1720, 500), (1720, 630), (1720, 650),
+              (1720, 690), (1720, 715), (1720, 735), (1720, 775), (1720, 840), (1720, 860)]
+IMAGE_PARAM_POINTS = [(1720,355),(1720,375),(1720,545),(1720,565)]
 # ======================================区域========================================
 # 编辑区域
 EDIT_REGION = (545, 190, 1715, 940)

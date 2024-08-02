@@ -190,7 +190,7 @@ def rv_ai_test(train_eval_path, result_path):
             utils.click_by_png(config.RV_MISSION_MANAGE, tolerance=0.7)
             time.sleep(1)
             pyautogui.hotkey('ctrl', 'a')
-            time.sleep(1)
+            time.sleep(1.5)
             pyautogui.hotkey('ctrl', 'c')
             logger.info("开始解析推理状态")
             clipboard_content = pyperclip.paste()
@@ -300,7 +300,7 @@ def rv_ai_test(train_eval_path, result_path):
     df_xlsx['id'] = df_xlsx['id'].astype(str).str.strip()
 
     logger.info("开始处理图片和更新数据...")
-
+    logger.warning(f"eval_results: {eval_results}")
     for eval_path, eval_result in eval_results:
 
         eval_image_paths = glob.glob(os.path.join(eval_path, '**/*.bmp'), recursive=True)
@@ -327,12 +327,16 @@ def rv_ai_test(train_eval_path, result_path):
         wb.save(new_xlsx_path)
         # 插入图片
         logger.info("开始插入图片...")
+        batch_size = 10  # 每批处理的图片数量
+        batch_count = 0  # 当前批次中已处理的图片数量
+
         for eval_image_path in eval_image_paths:
             eval_image_name = os.path.splitext(os.path.basename(eval_image_path))[0]
             df_rows = df_xlsx[df_xlsx['id'] == eval_image_name.strip()]
             if not df_rows.empty:
                 for index, row in df_rows.iterrows():
                     try:
+                        logger.info(f"正在更新行: {index}")
                         img = Image(eval_image_path)
                         cell = ws['E' + str(index + 2)]
                         
@@ -351,15 +355,22 @@ def rv_ai_test(train_eval_path, result_path):
                     except Exception as e:
                         logger.error(f"处理图片 {eval_image_name} 时出错: {e}")
 
-        # 再次保存工作簿
-        logger.info("正在保存工作簿...")
+                    batch_count += 1
+                    if batch_count >= batch_size:
+                        # 达到批次大小，保存工作簿
+                        logger.info("达到批次大小，正在保存工作簿...")
+                        wb.save(new_xlsx_path)
+                        batch_count = 0  # 重置批次计数器
+
+        # 处理完所有图片后再次保存工作簿
+        logger.info("所有图片处理完毕，正在保存工作簿...")
         wb.save(new_xlsx_path)
 
-    # 重新加载工作簿以验证数据
-    logger.info("重新加载工作簿以验证数据...")
-    verify_wb = openpyxl.load_workbook(new_xlsx_path)
-    verify_ws = verify_wb.active
-    for row in verify_ws.iter_rows(min_row=2, max_row=6, values_only=True):
+        # 重新加载工作簿以验证数据
+        logger.info("重新加载工作簿以验证数据...")
+        verify_wb = openpyxl.load_workbook(new_xlsx_path)
+        verify_ws = verify_wb.active
+    for row in verify_ws.iter_rows(min_row=2, max_row=20, values_only=True):
         logger.info(f"验证行数据: {row}")
 
     status = 0

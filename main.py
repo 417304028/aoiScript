@@ -7,10 +7,12 @@ def main():
     # 创建一个函数列表
     lxbj_functions = [
         # lxbj.lxbj_001_01, lxbj.lxbj_002_01, lxbj.lxbj_003_01, lxbj.lxbj_004_04, lxbj.lxbj_004_05, lxbj.lxbj_004_06,
-        # lxbj.lxbj_005_01, lxbj.lxbj_010_01, lxbj.lxbj_010_02, lxbj.lxbj_010_03, lxbj.lxbj_010_04, lxbj.lxbj_011_01,
+        # lxbj.lxbj_005_01, lxbj.lxbj_005_02, lxbj.lxbj_005_03, lxbj.lxbj_005_04,
+        # lxbj.lxbj_007_01, lxbj.lxbj_007_02, lxbj.lxbj_008_01, lxbj.lxbj_008_02,
+        # lxbj.lxbj_010_01, lxbj.lxbj_010_02, lxbj.lxbj_010_03, lxbj.lxbj_010_04, lxbj.lxbj_011_01,
         # lxbj.lxbj_012_03, lxbj.lxbj_012_04, lxbj.lxbj_013_01, lxbj.lxbj_013_02, lxbj.lxbj_013_03
-        lxbj.lxbj_002_01, lxbj.lxbj_003_01, lxbj.lxbj_004_04, lxbj.lxbj_004_05, lxbj.lxbj_004_06,
-        lxbj.lxbj_005_01, lxbj.lxbj_010_01, lxbj.lxbj_010_02, lxbj.lxbj_010_03, lxbj.lxbj_010_04, lxbj.lxbj_011_01,
+        lxbj.lxbj_007_01, lxbj.lxbj_007_02, lxbj.lxbj_008_01, lxbj.lxbj_008_02,
+        lxbj.lxbj_010_01, lxbj.lxbj_010_02, lxbj.lxbj_010_03, lxbj.lxbj_010_04, lxbj.lxbj_011_01,
         lxbj.lxbj_012_03, lxbj.lxbj_012_04, lxbj.lxbj_013_01, lxbj.lxbj_013_02, lxbj.lxbj_013_03
     ]
     # yjk_functions = [
