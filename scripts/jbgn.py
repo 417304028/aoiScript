@@ -111,7 +111,7 @@ def jbgn_001_02():
         plus_exist = utils.check_load_program(config.OPEN_PROGRAM_PLUS, program_bbox, program_loaded_bbox)
         if not plus_exist:
             raise Exception("程式都不存在，可能文件夹下无可识别的程式")
-    utils.click_by_controls(config.OPEN_PROGRAM_YES, 1)
+    utils.click_by_controls(config.YES, 1)
     # 有进度条提示
     utils.search_symbol_erroring(config.PROGRAM_LOADING, 30)
     # 确定加载后
@@ -172,7 +172,7 @@ def jbgn_001_03():
             pyautogui.locateOnScreen(config.OPEN_PROGRAM_PLUS, region=program_loaded_bbox)
         if exist_plus:
             pyautogui.locateOnScreen(config.OPEN_PROGRAM_PLUS, region=program_loaded_bbox)
-    utils.click_by_controls(config.OPEN_PROGRAM_YES, 1)
+    utils.click_by_controls(config.YES, 1)
     # 有进度条提示
     utils.search_symbol_erroring(config.PROGRAM_LOADING, 30)
     # 确定加载后
@@ -217,7 +217,7 @@ def jbgn_001_04():
             print("已确定无闪退")
             time.sleep(0.2)
         else:
-            utils.click_by_controls(config.OPEN_PROGRAM_YES, 1)
+            utils.click_by_controls(config.YES, 1)
             # 有进度条提示
             utils.search_symbol_erroring(config.PROGRAM_LOADING, 30)
             # 确定加载后
