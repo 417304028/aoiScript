@@ -5,8 +5,9 @@ import pyautogui
 import time
 from loguru import logger
 
+
 # monkey test 遍历程式以及元件，测试aoi会不会出问题
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel(max_attempts=None)
 def test_aoi():
     utils.check_and_launch_aoi()
     utils.delete_documents(config.SHARE_LIB_PATH)
@@ -25,16 +26,20 @@ def test_aoi():
 
         # 遍历所有元件，点完五个component并修改参数后滑轮下滑
         component_count = 0
+        fail_count = 0
         while True:
-            a = pyautogui.screenshot(region=config.BOARD_SCROLLBAR_REGION) 
+            a = pyautogui.screenshot(region=config.BOARD_SCROLLBAR_REGION)
             if not utils.click_component():
                 raise Exception("程式元件面板无程式元件")
             if utils.search_symbol(config.IF_MODIFY_COMPONENT_NO, 4):
                 utils.click_by_png(config.IF_MODIFY_COMPONENT_NO, tolerance=0.9)
             # 随机修改参数
             param = random.choice([1, 2, 3, 4])
-            utils.random_change_param(param)
-            # if param != 4:
+            if not utils.random_change_param(param):
+                fail_count += 1
+                if fail_count >= 5:
+                    logger.error("连续五次参数修改失败，开始打开下一个程式")
+                    break
             # 下滑并确认是否到达底部
             component_count += 1
             if component_count >= 5:

@@ -15,6 +15,8 @@ import functools
 import datetime
 import os
 import re
+import tkinter as tk
+from tkinter import messagebox
 from pywinauto import Application, Desktop
 from PIL import ImageGrab, Image
 from PIL import ImageChops
@@ -311,7 +313,7 @@ def check_color_expand():
     coverage = np.sum(mask) / (screenshot_np.shape[0] * screenshot_np.shape[1] * 255)
 
     # 判断是否有大量的目标颜色
-    if coverage > 0.001:  # 假设我们定义“大量”为覆盖超过7.5%的屏幕
+    if coverage > 0.001:  # 假设我们定义"大量"为覆盖超过7.5%的屏幕
         logger.info("元件四周遮罩出现大量粉色")
         return True
     else:
@@ -494,6 +496,54 @@ def search_symbol_erroring(symbol, timeout = 10, region=None,tolerance=0.9):
 
 
 # =========================装饰器=========================
+# 装饰器，出问题时截图并保存至excel，正常运行完毕弹出提示
+def screenshot_error_to_excel(max_attempts=2):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            attempts = 0
+            while max_attempts is None or attempts < max_attempts:
+                try:
+                    result = func(*args, **kwargs)
+                    root = tk.Tk()
+                    root.withdraw()  # 隐藏主窗口
+                    messagebox.showinfo("执行完毕", f"用例 {func.__name__} 已执行完毕，无报错")
+                    root.destroy()
+                    return result
+                except Exception as e:
+                    attempts += 1
+                    if max_attempts is not None and attempts >= max_attempts:
+                        break
+                    current_function_name = func.__name__
+                    path = sys.executable
+                    screenshot_to_excel(current_function_name, path, e)
+                    logger.error(f"发生异常: {e}")
+
+                    # 弹出异常信息窗口
+                    error_root = tk.Tk()
+                    error_root.withdraw()  # 隐藏主窗口
+                    messagebox.showerror("异常发生", f"异常信息: {e}")
+                    error_root.after(10000, error_root.destroy)
+
+                    # 杀死AOI进程及其子进程
+                    for proc in psutil.process_iter(['pid', 'name']):
+                        if "AOI" in proc.info['name']:
+                            parent_proc = psutil.Process(proc.info['pid'])
+                            children = parent_proc.children(recursive=True)
+                            for child in children:
+                                child.kill()
+                            parent_proc.kill()
+                            parent_proc.wait()
+
+                    # 确保所有AOI进程都已经关闭
+                    aoi_still_running = any("AOI" in p.info['name'] for p in psutil.process_iter(['name']))
+                    if not aoi_still_running:
+                        logger.info("所有AOI进程已关闭")
+                    else:
+                        logger.error("AOI进程关闭失败")
+        return wrapper
+    return decorator
+
 # 报错时截图存至excel，后关闭aoi
 def screenshot_to_excel(test_case_name, path, exception):
     logger.info("开始截图异常情况")
@@ -548,42 +598,6 @@ def screenshot_to_excel(test_case_name, path, exception):
     finally:
         if os.path.exists(screenshot_file):
             os.remove(screenshot_file)  # 清理临时文件
-
-
-# 装饰器，出问题时截图并保存至excel
-def screenshot_error_to_excel(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        max_attempts = 2  # 设置最大尝试次数
-        attempts = 0
-        while attempts < max_attempts:
-            try:
-                return func(*args, **kwargs)
-            except Exception as e:
-                attempts += 1
-                current_function_name = func.__name__
-                path = sys.executable
-                screenshot_to_excel(current_function_name, path, e)
-                logger.error(f"发生异常: {e}")
-
-                # 杀死AOI进程及其子进程
-                for proc in psutil.process_iter(['pid', 'name']):
-                    if "AOI" in proc.info['name']:
-                        parent_proc = psutil.Process(proc.info['pid'])
-                        children = parent_proc.children(recursive=True)  # 获取所有子进程
-                        for child in children:
-                            child.kill()
-                        parent_proc.kill()
-                        parent_proc.wait()  # 等待进程确实被杀死
-
-                # 确保所有AOI进程都已经关闭
-                aoi_still_running = any("AOI" in p.info['name'] for p in psutil.process_iter(['name']))
-                if not aoi_still_running:
-                    logger.info("所有AOI进程已关闭")
-                else:
-                    logger.error("AOI进程关闭失败")
-
-    return wrapper
 
 
 # ====================业务处理========================
@@ -896,7 +910,6 @@ def check_share_lib_path(if_checked):
     is_checked((902, 291), (914, 303), if_checked, 1)
     time.sleep(1)
     click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     if search_symbol(config.IF_MODIFY_COMPONENT_NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -920,7 +933,6 @@ def check_default_export_auto_save(if_default_export, if_auto_save):
     is_checked((659, 491), (671, 503), if_auto_save)
     time.sleep(0.5)
     click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     if search_symbol(config.IF_MODIFY_COMPONENT_NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -940,7 +952,6 @@ def check_cross_component_copy():
     click_by_png(config.PARAM_HARDWARE_SETTING)
     time.sleep(2)
     is_checked((1268, 993), (1280, 1005), True)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     if search_symbol(config.IF_MODIFY_COMPONENT_NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
@@ -964,7 +975,6 @@ def check_sync_package(if_sync_same_package, if_default_sync_package):
     is_checked((659, 852), (671, 864), if_sync_same_package)
     is_checked((659, 876), (671, 888), if_default_sync_package)
     click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     if search_symbol(config.IF_MODIFY_COMPONENT_NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -986,7 +996,6 @@ def check_import_filtering_restriction(percent):
     time.sleep(2)
     write_text((1340,225), percent)
     time.sleep(1.5)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     if search_symbol(config.IF_MODIFY_COMPONENT_NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
@@ -1024,7 +1033,6 @@ def check_patent_not_NG(type):
         time.sleep(0.5)
         pyautogui.click((935, 230))
     click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     if search_symbol(config.IF_MODIFY_COMPONENT_NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1045,7 +1053,6 @@ def check_export_ok(if_export_ok, if_export_all_ok):
     time.sleep(2)
     is_checked((659, 726), (671, 738), if_export_ok)
     is_checked((659, 751), (671, 763), if_export_all_ok)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     if search_symbol(config.IF_MODIFY_COMPONENT_NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
@@ -1069,7 +1076,6 @@ def check_export_pn_add_sn(if_export_pn_add_sn):
     is_checked((902, 145), (914, 157), if_export_pn_add_sn)
     time.sleep(1)
     click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     if search_symbol(config.IF_MODIFY_COMPONENT_NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1091,7 +1097,6 @@ def check_import_sync_package(if_import_sync_package):
     time.sleep(2)
     is_checked((1182, 168), (1194, 180), if_import_sync_package)
     time.sleep(1)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     if search_symbol(config.IF_MODIFY_COMPONENT_NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
@@ -1117,7 +1122,6 @@ def check_pn_1_day():
     write_text((1320, 200), '1')
     time.sleep(1)
     click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     if search_symbol(config.IF_MODIFY_COMPONENT_NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1139,7 +1143,6 @@ def check_import_delete_ocv_wm(if_delete):
     time.sleep(2)
     is_checked((700, 243), (712, 255), if_delete)
     time.sleep(1)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     if search_symbol(config.IF_MODIFY_COMPONENT_NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
@@ -1163,7 +1166,6 @@ def check_allow_cad_teach(if_allow):
     is_checked((349, 374), (361, 386), if_allow)
     time.sleep(1)
     click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     if search_symbol(config.IF_MODIFY_COMPONENT_NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1184,7 +1186,6 @@ def check_import_update_height(if_update):
     time.sleep(2)
     is_checked((902, 244), (914, 256), if_update)
     time.sleep(1)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     if search_symbol(config.IF_MODIFY_COMPONENT_NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
@@ -1207,7 +1208,6 @@ def check_import_component_xy(if_update):
     time.sleep(2)
     is_checked((902, 266), (914, 278), if_update)
     time.sleep(1)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     if search_symbol(config.IF_MODIFY_COMPONENT_NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
@@ -1242,7 +1242,6 @@ def filter_auxiliary_window(if_filter):
     is_checked((902, 194), (914, 206), if_filter)
     time.sleep(1)
     click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
     if search_symbol(config.IF_MODIFY_COMPONENT_NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1253,7 +1252,9 @@ def filter_auxiliary_window(if_filter):
         time.sleep(1.5)
 
 def modify_component():
+    time.sleep(2)
     pyautogui.press("b")
+    time.sleep(5)
     pyautogui.keyDown('left')
     time.sleep(2)
     pyautogui.keyUp('left')
@@ -1261,19 +1262,28 @@ def modify_component():
 
 # 确认是否文件夹下生成了新数据
 def check_new_data(path):
-    for filename in os.listdir(path):
-        # 获取文件的完整路径
-        file_path = os.path.join(path, filename)
-        # 获取文件的修改时间
-        file_mtime = os.path.getmtime(file_path)
-        # 如果文件在指定的时间内被修改或创建
-        if time.time() - file_mtime < 10:
-            return True
-        else:
-           return False
-
-
-# 计算文件夹内data数量
+    # 检查文件夹内所有文件和子文件夹
+    recent_creations = []
+    all_files_and_dirs = []
+    for root, dirs, files in os.walk(path):
+        for name in files + dirs:
+            # 获取文件或文件夹的完整路径
+            full_path = os.path.join(root, name)
+            # 获取文件或文件夹的创建时间
+            ctime = os.path.getctime(full_path)
+            # 记录检测到的文件或文件夹及其创建时间
+            logger.debug(f"检测到文件或文件夹：{full_path}，创建时间：{ctime}")
+            all_files_and_dirs.append(full_path)
+            # 如果文件或文件夹在指定的时间内被创建
+            if time.time() - ctime < 300:
+                recent_creations.append(full_path)
+    logger.info(f"路径 {path} 下的所有文件和文件夹: {all_files_and_dirs}")
+    if recent_creations:
+        logger.info(f"最近创建的文件或文件夹: {recent_creations}")
+        return True
+    else:
+        logger.info("没有最近创建的文件或文件夹")
+        return False
 def check_data_amount(path):
     a = 0
     for filename in os.listdir(path):
@@ -1512,7 +1522,9 @@ def random_open_program():
         raise Exception("打开程式界面没有搜索到程式")
     time.sleep(1)
     click_by_png(config.YES)
-    time.sleep(8)
+    while search_symbol(config.PROGRAM_LOADING):
+        time.sleep(5)
+    time.sleep(3)
 
 # 算法参数面板随机改变值(缩小即无效)
 def random_change_param(if_test=0):
@@ -1540,7 +1552,7 @@ def random_change_param(if_test=0):
             break
 
     if not found:
-        return
+        return False
     # 修改参数
     for point in points:
         pyautogui.doubleClick(point)
@@ -1550,7 +1562,7 @@ def random_change_param(if_test=0):
         pyautogui.press('enter')
         time.sleep(0.5)
         pyautogui.press('enter')
-    # 是否点击测试窗口/元件/分组/整版
+    # 点击测试窗口/元件/分组/整版
     start_time = time.time()
     test_config = {
         1: (config.TEST_WINDOW, 3),
@@ -1565,7 +1577,9 @@ def random_change_param(if_test=0):
             while True:
                 if not search_symbol(config.TESTING_COMPONENT, 5, tolerance=0.8):
                     break
-                if time.time() - start_time > 300:  # 超过五分钟
+                if time.time() - start_time > 600:  # 超过十分钟
+                    raise Exception("程序一直处于测试元件中")
+                elif time.time() - start_time > 300:  # 超过五分钟
                     for proc in psutil.process_iter(['name']):
                         if "Sinic-Tek" in proc.info['name'] and "NEW" in proc.info['name']:
                             proc.terminate()  # 关闭进程
@@ -1578,6 +1592,7 @@ def random_change_param(if_test=0):
     pyautogui.press('enter')
     time.sleep(1)
     pyautogui.press('enter')
+    return True
 
     
 # 添加标准影像的参数面板
@@ -1819,3 +1834,4 @@ def delete_documents(path):
             os.unlink(file_path)
         elif os.path.isdir(file_path):
             shutil.rmtree(file_path)
+

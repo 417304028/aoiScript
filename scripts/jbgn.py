@@ -3,7 +3,7 @@ import time
 import pyautogui
 import config
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 # 新建单板程式
 def jbgn_001_01():
     # 新建程式文件：选择保存目录，选择单板CAD文件，输入【程式名称】，【是】         进入整版影像页面
@@ -20,7 +20,7 @@ def jbgn_001_01():
 
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 # 新建单板程式后测试RV复判并在SPC确认数据
 def jbgn_001_02():
 1、使用Job对应的PCB板
@@ -120,7 +120,7 @@ def jbgn_001_02():
     utils.search_symbol_erroring(config.AOI_TOPIC, 5)
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def jbgn_001_03():
     准备4块拼版的CAD文件
 
@@ -181,7 +181,7 @@ def jbgn_001_03():
     utils.search_symbol_erroring(config.AOI_TOPIC, 5)
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def jbgn_001_04():
     for i in range(3):
         # 确保aoi打开

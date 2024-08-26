@@ -1,5 +1,5 @@
-import config, cv2
-from utils import logger, check_chip_coverage, setup_logger, click_by_png
+import config, cv2, time
+from utils import logger, check_chip_coverage, setup_logger, click_by_png, if_checked
 from scripts import yjk
 from scripts import test
 
@@ -21,15 +21,15 @@ def main():
     #     lxbj.lxbj_017_01, lxbj.lxbj_018_01, lxbj.lxbj_018_02, lxbj.lxbj_018_03, lxbj.lxbj_018_04,
     # ]
     yjk_functions = [
-        yjk.yjk_001_42,
-        yjk.yjk_001_43,
-        yjk.yjk_001_44,
-        yjk.yjk_001_45,
-        yjk.yjk_001_46,
-        yjk.yjk_001_47,
-        yjk.yjk_001_48,
-        yjk.yjk_001_49,
-        yjk.yjk_001_50,
+        # yjk.yjk_001_42,
+        # yjk.yjk_001_43,
+        # yjk.yjk_001_44,
+        # yjk.yjk_001_45,
+        # yjk.yjk_001_46,
+        # yjk.yjk_001_47,
+        # yjk.yjk_001_48,
+        # yjk.yjk_001_49,
+        # yjk.yjk_001_50,
         yjk.yjk_001_51,
     ]
     # 依次执行每个函数
@@ -43,7 +43,6 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
     setup_logger()
+    main()
     # test.test_aoi()
-    click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)

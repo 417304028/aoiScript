@@ -42,7 +42,7 @@ if __name__ == '__main__':
     keyboard.wait('esc')  # 使用esc键作为程序运行的终止条件
 """
 
-    output_path = "D:\\work\\output_AAA"
+    output_path = "D:\\work\\output_bbb"
     build_path = "D:\\work\\build"
     temp_path = "D:\\work\\temp"
 

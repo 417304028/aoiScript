@@ -8,7 +8,7 @@ import shutil
 import os
 
 # TODO 需要在线版aoi
-# @utils.screenshot_error_to_excel
+# @utils.screenshot_error_to_excel()
 # # 复制元件
 # def lxbj_001_01():
     # utils.check_and_launch_aoi()
@@ -32,7 +32,7 @@ import os
 
 # 查看RV，SRC上元件窗口，结果值 正常显示
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 # 添加待料
 def lxbj_002_01():
     utils.check_and_launch_aoi()
@@ -73,7 +73,7 @@ def lxbj_002_01():
 
 # TODO 可以识别出提示，但是没办法跟缺陷名对应
 # 不良窗口/元件
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_003_01():
     utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
@@ -87,7 +87,7 @@ def lxbj_003_01():
     time.sleep(3)
 
 # 返回不修改
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_004_01():
     utils.check_and_launch_aoi()
     utils.check_sync_package(False, False)
@@ -114,7 +114,7 @@ def lxbj_004_01():
 
 
 # 不同步封装
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_004_02():
     utils.check_and_launch_aoi()
     utils.check_sync_package(False, False)
@@ -139,7 +139,7 @@ def lxbj_004_02():
 
 
 # 同步封装
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_004_03():
     utils.check_and_launch_aoi()
     utils.check_sync_package(False, False)
@@ -163,7 +163,7 @@ def lxbj_004_03():
 
 
 # 不同步封装 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_004_04():
     utils.check_and_launch_aoi()
     utils.check_sync_package(True, False)
@@ -180,7 +180,7 @@ def lxbj_004_04():
 
 
 # 不同步封装
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_004_05():
     utils.check_and_launch_aoi()
     utils.check_sync_package(True, True)
@@ -197,7 +197,7 @@ def lxbj_004_05():
 
 
 # 同步封装
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_004_06():
     utils.check_and_launch_aoi()
     utils.check_sync_package(False, True)
@@ -217,7 +217,7 @@ def lxbj_004_06():
 
 
 # 导出元件ok图
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_005_01():
     utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
@@ -243,7 +243,7 @@ def lxbj_005_01():
         raise Exception("在指定目录下未找到最近10秒内生成的OK图数据")
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_005_02():
     utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
@@ -270,7 +270,7 @@ def lxbj_005_02():
         raise Exception("在指定目录下未找到最近10秒内生成的OK图数据")
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_005_03():
     utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
@@ -300,7 +300,7 @@ def lxbj_005_03():
         raise Exception("在指定目录下未找到最近10秒内生成的OK图数据")
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_005_04():
     utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
@@ -330,7 +330,7 @@ def lxbj_005_04():
         raise Exception("在指定目录下未找到最近10秒内生成的OK图数据")
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_006_01():
     utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
@@ -360,7 +360,7 @@ def lxbj_006_01():
         raise Exception("在指定目录下未找到最近10秒内生成的OK图数据")
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_006_02():
     utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
@@ -391,7 +391,7 @@ def lxbj_006_02():
 
 
 # 参数配置--演算法配置--关联子框检测模式：选择【父框检测NG不计算】
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_007_01():
     utils.check_and_launch_aoi()
     utils.check_patent_not_NG(1)
@@ -438,7 +438,7 @@ def lxbj_007_01():
 
 # 1、参数配置--演算法配置--关联子框检测模式：选择【父框检测NG不计算】
 # 2、父框检测结果是良好
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_007_02():
     utils.check_and_launch_aoi()
     utils.check_patent_not_NG(1)
@@ -484,7 +484,7 @@ def lxbj_007_02():
 
 
 # 参数配置--演算法配置--关联子框检测模式：选择【父框检测NG继续计算】
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_008_01():
     utils.check_and_launch_aoi()
     utils.check_patent_not_NG(2)
@@ -534,7 +534,7 @@ def lxbj_008_01():
 
 # 1、参数配置--演算法配置--关联子框检测模式：选择【父框检测NG继续计算】
 # 2、父框检测结果是良好
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_008_02():
     utils.check_and_launch_aoi()
     utils.check_patent_not_NG(2)
@@ -580,7 +580,7 @@ def lxbj_008_02():
 
 
 # 参数配置--演算法配置--关联子框检测模式：选择【父框检测NG继续关联】
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_009_01():
     utils.check_and_launch_aoi()
     utils.check_patent_not_NG(3)
@@ -630,7 +630,7 @@ def lxbj_009_01():
 
 # 1、参数配置--演算法配置--关联子框检测模式：选择【父框检测NG继续关联】
 # 2、父框检测结果是良好
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_009_02():
     utils.check_and_launch_aoi()
     utils.check_patent_not_NG(3)
@@ -674,7 +674,7 @@ def lxbj_009_02():
     # TODO 位置不变
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_010_01():
     utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
@@ -711,7 +711,7 @@ def lxbj_010_01():
     utils.click_by_png(config.PACKAGE_CLOSE)
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_010_02():
     utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
@@ -744,7 +744,7 @@ def lxbj_010_02():
     else:
         raise Exception("新的封装类型不包含所有料号")
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_010_03():
     utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
@@ -774,7 +774,7 @@ def lxbj_010_03():
 
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_010_04():
     # 点击两个封装，复制存入a和b，再清除a，b，点复制（c） c与a，b对比
     utils.check_and_launch_aoi()
@@ -809,7 +809,7 @@ def lxbj_010_04():
         raise Exception("删除失败")
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_011_01():
     utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
@@ -858,7 +858,7 @@ def lxbj_011_01():
         raise Exception("元件遮罩（粉红色）未变大")
     utils.click_by_png(config.BOARD_COLOR_FILTER_CLOSE)
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_012_01():
     # 1、在某一元件【元器件编辑】界面，选择元件【图像匹配】窗口
     utils.check_and_launch_aoi()
@@ -889,7 +889,7 @@ def lxbj_012_01():
 
 # 1、元件包含【颜色匹配】窗口
 # 2、【颜色匹配】窗口包含多个代料
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_012_02():
     # 1、在某一元件【元器件编辑】界面，选择元件【颜色匹配】窗口
     utils.check_and_launch_aoi()
@@ -920,7 +920,7 @@ def lxbj_012_02():
 
 # 1、元件包含【引脚相似度匹配】窗口
 # 2、【引脚相似度匹配】窗口包含多个代料
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_012_03():
     # 1、在某一元件【元器件编辑】界面，选择元件【引脚相似度匹配】窗口
     utils.check_and_launch_aoi()
@@ -950,7 +950,7 @@ def lxbj_012_03():
 
 # 1、元件包含【引脚检测】窗口
 # 2、【引脚检测】窗口包含多个代料
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_012_04():
     # 1、在某一元件【元器件编辑】界面，选择元件【引脚检测】窗口
     utils.check_and_launch_aoi()
@@ -984,7 +984,7 @@ def lxbj_012_04():
         logger.info("RGB不相互影响")
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_013_01():
     utils.check_and_launch_aoi()
     # 1、使用快捷键，打开某一包含多个检测窗口的djb文件
@@ -1010,7 +1010,7 @@ def lxbj_013_01():
         raise Exception("打勾框已打勾")
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_013_02():
     utils.check_and_launch_aoi()
     # 1、使用快捷键，打开某一包含多个检测窗口的djb文件
@@ -1038,7 +1038,7 @@ def lxbj_013_02():
         raise Exception("打勾框打勾")
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_013_03():
     utils.check_and_launch_aoi()
     # 1、使用快捷键，打开某一包含多个检测窗口的djb文件
@@ -1066,7 +1066,7 @@ def lxbj_013_03():
 
 
 # 14开头的前置条件：元件带有字符检测窗口
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_014_01():
     utils.check_and_launch_aoi()
     # 1、某一元件的【元器件编辑】界面
@@ -1094,7 +1094,7 @@ def lxbj_014_01():
     utils.caton_or_flashback()
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_014_02():
     utils.check_and_launch_aoi()
     # 1、某一元件的【元器件编辑】界面
@@ -1122,7 +1122,7 @@ def lxbj_014_02():
     utils.caton_or_flashback()
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_014_03():
     utils.check_and_launch_aoi()
     # 1、某一元件的【元器件编辑】界面
@@ -1150,7 +1150,7 @@ def lxbj_014_03():
     utils.caton_or_flashback()
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_014_04():
     utils.check_and_launch_aoi()
     # 1、某一元件的【元器件编辑】界面
@@ -1178,7 +1178,7 @@ def lxbj_014_04():
     utils.caton_or_flashback()
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_014_05():
     utils.check_and_launch_aoi()
     # 1、某一元件的【元器件编辑】界面
@@ -1206,7 +1206,7 @@ def lxbj_014_05():
     utils.caton_or_flashback()
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_014_06():
     utils.check_and_launch_aoi()
     # 1、某一元件的【元器件编辑】界面
@@ -1234,7 +1234,7 @@ def lxbj_014_06():
     utils.caton_or_flashback()
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_014_07():
     utils.check_and_launch_aoi()
     # 1、某一元件的【元器件编辑】界面
@@ -1262,7 +1262,7 @@ def lxbj_014_07():
     utils.caton_or_flashback()
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_014_08():
     utils.check_and_launch_aoi()
     # 1、某一元件的【元器件编辑】界面
@@ -1290,7 +1290,7 @@ def lxbj_014_08():
     utils.caton_or_flashback()
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_014_09():
     utils.check_and_launch_aoi()
     # 1、某一元件的【元器件编辑】界面
@@ -1318,7 +1318,7 @@ def lxbj_014_09():
     utils.caton_or_flashback()
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_014_10():
     utils.check_and_launch_aoi()
     # 1、某一元件的【元器件编辑】界面
@@ -1346,7 +1346,7 @@ def lxbj_014_10():
     utils.caton_or_flashback()
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_014_11():
     utils.check_and_launch_aoi()
     # 1、某一元件的【元器件编辑】界面
@@ -1374,7 +1374,7 @@ def lxbj_014_11():
     utils.caton_or_flashback()
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_014_12():
     utils.check_and_launch_aoi()
     # 1、某一元件的【元器件编辑】界面
@@ -1402,7 +1402,7 @@ def lxbj_014_12():
     utils.caton_or_flashback()
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_015_01():
     utils.check_and_launch_aoi()
     # 1、某一元器件编辑界面，在上方【编辑】--【光源】选择不同光源，如中角度（不选均匀光）；
@@ -1430,7 +1430,7 @@ def lxbj_015_01():
 
 
 # 元件添加参考点关联所有检测框
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_016_01():
     utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
@@ -1478,7 +1478,7 @@ def lxbj_016_01():
 
 
 # 元件添加参考点关联所有检测框
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_016_02():
     utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
@@ -1525,7 +1525,7 @@ def lxbj_016_02():
 
 
 # 元件添加参考点关联所有检测框
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_016_03():
     utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
@@ -1568,7 +1568,7 @@ def lxbj_016_03():
 
 
 # 元件添加参考点关联所有检测框
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_016_04():
     utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
@@ -1612,7 +1612,7 @@ def lxbj_016_04():
 
 
 #元件添加参考点关联所有检测框
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_016_05():
     utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
@@ -1659,7 +1659,7 @@ def lxbj_016_05():
 
 # 客户JOB名称和地址：H898_E1_256G+8G_V1.2_TOP_A2（\\192.168.201.215\f\AOI-JOB\泰衡诺科技）
 # TODO 做个屁 弄不到那边的job
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_017_01():
     # utils.check_and_launch_aoi()
     # utils.ensure_in_edit_mode()
@@ -1674,7 +1674,7 @@ def lxbj_017_01():
     pass
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_018_01():
     utils.check_and_launch_aoi()
     # 1、打开一个编辑过的有多个拼版的job
@@ -1720,7 +1720,7 @@ def lxbj_018_01():
         raise Exception('元件未被保留/拼版未被删除')
 
 
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_018_02():
     utils.check_and_launch_aoi()
     # 1、打开一个编辑过的有多个拼版的job
@@ -1759,7 +1759,7 @@ def lxbj_018_02():
         raise Exception('元件未被保留/拼版未被删除')
 
 # TODO 保留基准点
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_018_03():
     utils.check_and_launch_aoi()
     # 1、打开一个编辑过的有多个拼版的job
@@ -1801,7 +1801,7 @@ def lxbj_018_03():
 
 
 # 选择一个拼版删除并保留基准点
-@utils.screenshot_error_to_excel
+@utils.screenshot_error_to_excel()
 def lxbj_018_04():
     utils.check_and_launch_aoi()
     # 1、打开一个编辑过的有多个拼版的job

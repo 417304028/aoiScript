@@ -150,7 +150,7 @@ def rv_ai_test(train_eval_path, result_path, mode):
         # 查询train_path同级文件夹下名字包含test的文件夹 装入eval_path
         eval_paths = glob.glob(os.path.join(os.path.dirname(train_path), '*test*'))
         if not eval_paths:  # 检查列表是否为空
-            logger.error("未找到推理��路径")
+            logger.error("未找到推理的路径")
             raise Exception("未找到推理的路径")
         else:
             logger.info(f"找到推理路径: {eval_paths}")
@@ -539,10 +539,20 @@ def rv_ai_test(train_eval_path, result_path, mode):
     logger.warning(f"eval_results: {eval_results}")
     for eval_path, eval_result, good_ng in eval_results:
         eval_image_paths = glob.glob(os.path.join(eval_path, '**/*.bmp'), recursive=True)
+        if not eval_image_paths:
+            eval_image_paths = glob.glob(os.path.join(eval_path, '**/*.jpg'), recursive=True)
+        if not eval_image_paths:
+            eval_image_paths = glob.glob(os.path.join(eval_path, '**/*.png'), recursive=True)
+        logger.warning(f"eval_image_paths: {eval_image_paths}")
         for eval_image_path in eval_image_paths:
             eval_image_name = os.path.splitext(os.path.basename(eval_image_path))[0]
             cad_loc_path = os.path.join(pyd_path, 'cad_com_loc', f"{eval_image_name}.bmp")
+            if not os.path.exists(cad_loc_path):
+                cad_loc_path = os.path.join(pyd_path, 'cad_com_loc', f"{eval_image_name}.jpg")
+            if not os.path.exists(cad_loc_path):
+                cad_loc_path = os.path.join(pyd_path, 'cad_com_loc', f"{eval_image_name}.png")
             cad_loc_path = os.path.normpath(cad_loc_path) 
+            logger.warning(f"cad_loc_path: {cad_loc_path}")
             # 查找匹配的行
             df_rows = df_xlsx[df_xlsx['id'] == eval_image_name.strip()]
             if df_rows.empty:
