@@ -3,13 +3,13 @@ import glob
 import time
 import openpyxl
 from openpyxl.styles import Font
-from openpyxl.drawing.image import Image
 import pyperclip
 import utils
 import config
 import re
 import os
 import datetime
+import chardet
 import pyautogui
 import pandas as pd
 from pywinauto import Application, Desktop
@@ -58,13 +58,14 @@ def rv_ai_test(train_eval_path, result_path, mode):
     front_rv_window()
     train_paths = set()
     eval_results = []
-    # 搜索train_eval_path下所有名字含train的文件夹(可能为自身) ,装入train_paths
+    # 搜索train_eval_path下层及更下层文件夹中名字含train的文件夹，忽略train_eval_path该级文件夹下的train文件夹
     for root, dirs, files in os.walk(train_eval_path):
-        for d in dirs:
-            if 'train' in d:
-                train_folder = os.path.join(root, d)
-                if os.path.isdir(train_folder):
-                    train_paths.add(train_folder)
+        if root != train_eval_path:  # 忽略train_eval_path该级文件夹
+            for d in dirs:
+                if 'train' in d:
+                    train_folder = os.path.join(root, d)
+                    if os.path.isdir(train_folder):
+                        train_paths.add(train_folder)
     logger.info(f"train_paths: {train_paths}")
     # 查询pyd目录(后面生成脚本日志文件夹要用)
     # 从提供的路径向上遍历，直到找到包含pyd的目录,用pyd_path保存
@@ -86,9 +87,9 @@ def rv_ai_test(train_eval_path, result_path, mode):
         logger.error(f"在路径 {result_path} 中未找到包含 '{substring}' 的目录")
         raise Exception(f"在路径 {result_path} 中未找到包含 '{substring}' 的目录")
 
-    logger.info(f"开始遍历{train_paths}")
     for train_path in train_paths:
         pyperclip.copy(train_path)
+        logger.info(f"开始遍历{train_path}")
         utils.click_by_png(config.RV_SIMULATE_TO_TRAIN)
         refresh_count = 0
         while refresh_count < 7:
@@ -153,10 +154,10 @@ def rv_ai_test(train_eval_path, result_path, mode):
             logger.error("未找到推理的路径")
             raise Exception("未找到推理的路径")
         else:
-            logger.info(f"找到推理路径: {eval_paths}")
+            logger.info(f"训练路径为:{train_path}, 推理路径为:{eval_paths}")
         for eval_path in eval_paths:
             if mode == "normal":
-                good_ng = ""
+                good_ng = "空"
                 # 复制路径处理
                 with open("temp_eval_path.txt", "w", encoding='utf-8') as temp_file:
                     temp_file.write(eval_path)
@@ -469,7 +470,7 @@ def rv_ai_test(train_eval_path, result_path, mode):
         pyautogui.press('down')
         pyautogui.press('enter')
 
-    logger.info("开始处理数据...")
+    logger.info("复制csv为xlsx...")
     today_date = datetime.datetime.now().strftime("%Y-%m-%d")
     log_path = os.path.join(pyd_path, "logs", "res_static", f"{today_date}.csv")
     logger.info(f"log_path: {log_path}")
@@ -480,62 +481,74 @@ def rv_ai_test(train_eval_path, result_path, mode):
     new_log_path = os.path.join(pyd_path, "eval_logs")
     os.makedirs(new_log_path, exist_ok=True)
     new_xlsx_path = os.path.join(new_log_path, f"{today_date}.xlsx")
-    logger.info(f"new_xlsx_path: {new_xlsx_path}")
+    logger.info(f"推理结果生成路径: {new_xlsx_path}")
+    try:
+        if not os.path.exists(new_xlsx_path):
+            with open(log_path, 'rb') as file:
+                content = file.read()
+                result = chardet.detect(content)
+                encoding = result['encoding'] if result['encoding'] else 'utf-8'
+                # 尝试使用探测到的编码打开文件，如果失败则使用GBK编码尝试
+                try:
+                    content = content.decode(encoding)
+                except UnicodeDecodeError:
+                    content = content.decode('gbk', errors='ignore')
 
-    if not os.path.exists(new_xlsx_path):
-        # 读取CSV文件
-        df_csv = pd.read_csv(log_path)
-        # 添加新列
-        df_csv = df_csv.assign(eval结果=None, good_ng=None, eval图片=None, 定位图片=None, train图片=None)
-        # 重新排序列，将新列放在前面
-        columns_order = ['eval结果', 'good_ng', 'eval图片', '定位图片', 'train图片'] + [col for col in df_csv.columns if col not in ['eval结果', 'good_ng', 'eval图片', '定位图片', 'train图片']]
-        df_csv = df_csv[columns_order]
-        # 保存为XLSX
-        df_csv.to_excel(new_xlsx_path, index=False, engine='openpyxl')
-        logger.info("对xlsx作预处理")
-        # 打开xlsx
-        df_xlsx = pd.read_excel(new_xlsx_path, engine='openpyxl')
-        # 去除列名中的空白符
-        df_xlsx.columns = [col.strip() for col in df_xlsx.columns]
-        # 使用openpyxl直接加载工作簿以修改列名样式
-        wb = openpyxl.load_workbook(new_xlsx_path)
-        ws = wb.active
-        # 取消列名加粗
-        for cell in ws[1]:  # 第一行是列名
-            cell.font = Font(bold=False)
-        # 设置B列和D列的列宽为18字符
-        ws.column_dimensions['C'].width = 18
-        ws.column_dimensions['D'].width = 18
-        ws.column_dimensions['E'].width = 18
-        # 保存修改后的工作簿
-        wb.save(new_xlsx_path)
-        # 重新加载DataFrame以确保列名更改生效
-        df_xlsx = pd.read_excel(new_xlsx_path, engine='openpyxl')
-        # 去除列名中的空白符和其他特殊字符
-        df_xlsx.columns = [re.sub(r'\s+', '', col) for col in df_xlsx.columns]
-        logger.info("对xlsx作预处理完成")
-        
-    else:
-        # 多次调用时需要合并新csv内的数据至xlsx
-        existing_data = pd.read_excel(new_xlsx_path, engine='openpyxl', skiprows=[0])  # 忽略第一行标题行
-        # 读取新的 CSV 数据
-        new_data = pd.read_csv(log_path)
-        # 合并新旧数据
-        combined_data = pd.concat([existing_data, new_data], ignore_index=True)
-        # 去除重复项，假设 'id' 列是用来检查重复的列
-        combined_data.drop_duplicates(subset=['id'], keep='first', inplace=True)
-        # 保存合并后的数据到 XLSX
-        combined_data.to_excel(new_xlsx_path, index=False, engine='openpyxl')
-        logger.info("数据合并完成，已更新 XLSX 文件。")
-        # 加载DataFrame，忽略第一行标题行
-        df_xlsx = pd.read_excel(new_xlsx_path, engine='openpyxl', skiprows=[0])
+            # 使用探测到的编码读取文件
+            df_csv = pd.read_csv(log_path, encoding=encoding)
+            # 添加新列
+            df_csv = df_csv.assign(eval结果=None, good_ng=None, eval图片=None, 定位图片=None, train图片=None, eval路径=None)
+            # 重新排序列，将新列放在前面
+            columns_order = ['eval结果', 'good_ng', 'eval图片', '定位图片', 'train图片', 'eval路径'] + [col for col in df_csv.columns if col not in ['eval结果', 'good_ng', 'eval图片', '定位图片', 'train图片', 'eval路径']]
+            df_csv = df_csv[columns_order]
+            # 保存为XLSX
+            df_csv.to_excel(new_xlsx_path, index=False, engine='openpyxl')
+            logger.info("对xlsx作预处理")
+            # 打开xlsx
+            df_xlsx = pd.read_excel(new_xlsx_path, engine='openpyxl')
+            # 去除列名中的空白符
+            df_xlsx.columns = [col.strip() for col in df_xlsx.columns]
+            # 使用openpyxl直接加载工作簿以修改列名样式
+            wb = openpyxl.load_workbook(new_xlsx_path)
+            ws = wb.active
+            # 取消列名加粗
+            for cell in ws[1]:  # 第一行是列名
+                cell.font = Font(bold=False)
+            # 设置B列和D列的列宽为18字符
+            ws.column_dimensions['C'].width = 18
+            ws.column_dimensions['D'].width = 18
+            ws.column_dimensions['E'].width = 18
+            # 保存修改后的工作簿
+            wb.save(new_xlsx_path)
+            # 重新加载DataFrame以确保列名更改生效
+            df_xlsx = pd.read_excel(new_xlsx_path, engine='openpyxl')
+            # 去除列名中的空白符和其他特殊字符
+            df_xlsx.columns = [re.sub(r'\s+', '', col) for col in df_xlsx.columns]
+            logger.info("对xlsx作预处理完成")
+            
+        else:
+            # 多次调用时需要合并新csv内的数据至xlsx
+            existing_data = pd.read_excel(new_xlsx_path, engine='openpyxl', skiprows=[0])  # 忽略第一行标题行
+            new_data = pd.read_csv(log_path, encoding='utf-8')
+            # 合并新旧数据
+            combined_data = pd.concat([existing_data, new_data], ignore_index=True)
+            # 去除重复项，假设 'id' 列是用来检查重复的列
+            combined_data.drop_duplicates(subset=['id'], keep='first', inplace=True)
+            # 保存合并后的数据到 XLSX
+            combined_data.to_excel(new_xlsx_path, index=False, engine='openpyxl')
+            logger.info("数据合并完成，已更新 XLSX 文件。")
+            # 加载DataFrame，忽略第一行标题行
+            df_xlsx = pd.read_excel(new_xlsx_path, engine='openpyxl', skiprows=[0])
+            logger.info("读取xlsx")
+    except Exception as e:
+        logger.error(f"处理Excel文件时发生错误: {e}")
+        raise Exception(f"处理Excel文件时发生错误: {e}")
     # 确保工作簿和工作表被正确初始化
     wb = openpyxl.load_workbook(new_xlsx_path)
     ws = wb.active  # 确保这是正确的工作表
     # 确保id列为字符串类型并去除空格
     df_xlsx['id'] = df_xlsx['id'].astype(str).str.strip()
-
-    logger.info("开始处理图片和更新数据...")
+    logger.debug("开始处理图片和更新数据...")
     logger.warning(f"eval_results: {eval_results}")
     for eval_path, eval_result, good_ng in eval_results:
         eval_image_paths = glob.glob(os.path.join(eval_path, '**/*.bmp'), recursive=True)
@@ -546,129 +559,100 @@ def rv_ai_test(train_eval_path, result_path, mode):
         logger.warning(f"eval_image_paths: {eval_image_paths}")
         for eval_image_path in eval_image_paths:
             eval_image_name = os.path.splitext(os.path.basename(eval_image_path))[0]
-            cad_loc_path = os.path.join(pyd_path, 'cad_com_loc', f"{eval_image_name}.bmp")
-            if not os.path.exists(cad_loc_path):
-                cad_loc_path = os.path.join(pyd_path, 'cad_com_loc', f"{eval_image_name}.jpg")
-            if not os.path.exists(cad_loc_path):
-                cad_loc_path = os.path.join(pyd_path, 'cad_com_loc', f"{eval_image_name}.png")
-            cad_loc_path = os.path.normpath(cad_loc_path) 
-            logger.warning(f"cad_loc_path: {cad_loc_path}")
             # 查找匹配的行
             df_rows = df_xlsx[df_xlsx['id'] == eval_image_name.strip()]
             if df_rows.empty:
                 logger.error(f"未找到与图片名称 {eval_image_name} 完全匹配的id")
             else:
-                for index, row in df_rows.iterrows():
-                    excel_row = index + 2  # 假设数据从第二行开始
-                    logger.info(f"更新数据：{eval_path}, {eval_image_path}, {eval_image_name}, {eval_result}, {cad_loc_path}")
-                    ws.cell(row=excel_row, column=1).value = eval_result
-                    ws.cell(row=excel_row, column=2).value = good_ng
-                    ws.cell(row=excel_row, column=3).value = eval_image_path 
-                    if os.path.exists(cad_loc_path):
-                        ws.cell(row=excel_row, column=4).value = cad_loc_path
-                    else:
-                        ws.cell(row=excel_row, column=4).value = "空"
-                    ws.cell(row=excel_row, column=5).value = ws.cell(row=excel_row, column=9).value
-                    # 设置首行外其他行的行高为100磅
-                    if excel_row > 1:
-                        ws.row_dimensions[excel_row].height = 75  # 100磅约等于75像素
+                try:
+                    # 给各行赋值
+                    for index, row in df_rows.iterrows():
+                        excel_row = index + 2  # 假设数据从第二行开始
+                        logger.debug(f"更新数据：{eval_path}, {eval_image_path}, {eval_image_name}, {eval_result}")
+                        ws.cell(row=excel_row, column=1).value = eval_result
+                        ws.cell(row=excel_row, column=2).value = good_ng
+                        ws.cell(row=excel_row, column=3).value = eval_image_path 
+                        ws.cell(row=excel_row, column=6).value = eval_image_path 
+                except Exception as e:
+                    logger.error(f"更新数据时发生错误: {e}")
 
-                    # 打印更新后的行以确认数据
-                    updated_row_values = [cell.value for cell in ws[excel_row]]
-                    logger.info(f"更新后的数据行: {updated_row_values}")
-
-        df_xlsx.to_excel(new_xlsx_path, index=False, engine='openpyxl')
-        logger.info("数据行更新完毕")
-        wb.save(new_xlsx_path)
-
-        # 插入图片
-        logger.info("开始插入图片...")
-        batch_size = 10  # 每批处理的图片数量
-        batch_count = 0  # 当前批次中已处理的图片数量
-
-        for eval_image_path in eval_image_paths:
-            eval_image_name = os.path.splitext(os.path.basename(eval_image_path))[0]
-            df_rows = df_xlsx[df_xlsx['id'] == eval_image_name.strip()]
-            if not df_rows.empty:
-                for index, row in df_rows.iterrows():
-                    excel_row = index + 2  # 确保行号正确
-                    try:
-                        logger.info(f"正在更新行: {index}")
-                        # 添加eval图片列的图片
-                        if os.path.exists(eval_image_path):
-                            img = Image(eval_image_path)
-                            eval_cell = ws['C' + str(excel_row)]
-                            img.width = 75
-                            img.height = 75
-                            # 设置图片的锚点
-                            img.anchor = eval_cell.coordinate
-                            # 将图片添加到工作表
-                            ws.add_image(img)
-                            # 清除单元格内容
-                            eval_cell.value = None
-                        else:
-                            eval_cell.value = "空"
-                            logger.error(f"eval图片 {eval_image_name} 不存在")
-                    except Exception as e:
-                        logger.error(f"eval_img处理图片 {eval_image_path} 时出错: {e}")
-                    try:
-                        # 读取该单元格内容为train_image_path
-                        train_image_path = ws['E' + str(excel_row)].value
-                        train_cell = ws['E' + str(excel_row)]  # 提前定义train_cell以避免未定义错误
-                        if train_image_path:
-                            train_image_path = os.path.normpath(train_image_path)
-                            if os.path.exists(train_image_path):
-                                train_img = Image(train_image_path)
-                                train_img.width = 75
-                                train_img.height = 75
-                                train_img.anchor = train_cell.coordinate
-                                ws.add_image(train_img)
-                                train_cell.value = None  # 清除单元格内容，因为图片已经添加
-                            else:
-                                train_cell.value = "空"
-                        else:
-                            train_cell.value = "空"
-                    except Exception as e:
-                        logger.error(f"train_img处理图片 {train_image_path} 时出错: {e}")
-                    try:
-                        # 添加CAD位置图片
-                        cad_cell = ws['D' + str(excel_row)]
-                        if cad_loc_path and os.path.exists(cad_loc_path):
-                            cad_img = Image(cad_loc_path)
-                            cad_img.width = 75
-                            cad_img.height = 75
-                            cad_img.anchor = cad_cell.coordinate
-                            ws.add_image(cad_img)
-                            cad_cell.value = None  # 清除单元格内容，因为图片已经添加
-                        else:
-                            cad_cell.value = "空"
-                            logger.error(f"cad_loc图片路径不存在: {cad_loc_path}")
-                        logger.info(f"成功添加图片")
-                    except Exception as e:
-                        logger.error(f"cad_img处理图片 {cad_loc_path} 时出错: {e}")
-                    batch_count += 1
-                    if batch_count >= batch_size:
-                        # 达到批次大小，保存工作簿
-                        logger.info("达到批次大小，正在保存工作簿...")
-                        wb.save(new_xlsx_path)
-                        batch_count = 0  # 重置批次计数器
-        # 根据id对工作簿进行排序，id位于第六列，忽略标题行
-        ws = wb.active
-        data = list(ws.values)
-        header = data[0]  # 保存标题行
-        sorted_data = sorted(data[1:], key=lambda x: x[5])  # 根据第六列(id)排序，忽略标题行
-        for row_idx, row in enumerate([header] + sorted_data, 1):
-            for col_idx, value in enumerate(row, 1):
+    ws = wb.active
+    data = list(ws.values)
+    header = data[0]  # 保存标题行
+    sorted_data = sorted(data[1:], key=lambda x: x[header.index('id')])  # 根据 id 列名排序，忽略标题行
+    for row_idx, row in enumerate([header] + sorted_data, 1):
+        #  TODO 就这傻逼地方 不判断none的话会导致bug
+        for col_idx, value in enumerate(row, 1):
+            if value is None:
+                ws.cell(row=row_idx, column=col_idx).value = None
+            else:
                 ws.cell(row=row_idx, column=col_idx, value=value)
-        # 处理完所有图片并排序后再次保存工作簿
-        logger.info("所有图片处理完毕，数据已排序，正在保存工作簿...")
-        wb.save(new_xlsx_path)
-        # 重新加载工作簿以验证数据
-        logger.info("重新加载工作簿以验证数据...")
-        verify_wb = openpyxl.load_workbook(new_xlsx_path)
-        verify_ws = verify_wb.active
-    for row in verify_ws.iter_rows(min_row=2, max_row=20, values_only=True):
-        logger.info(f"验证行数据: {row}")
+    logger.info("行数据已排序，正在保存工作簿...")
+    wb.save(new_xlsx_path)
+    # 重新加载工作簿以验证数据
+    logger.info("重新加载工作簿以验证数据...")
+    verify_wb = openpyxl.load_workbook(new_xlsx_path)
+    verify_ws = verify_wb.active
+    logger.debug("开始处理图片")
+    # 单独处理图片
+    for index, row in df_xlsx.iterrows():
+        excel_row = index + 2
+        # 设置首行外其他行的行高为100磅
+        if excel_row > 1:
+            ws.row_dimensions[excel_row].height = 75  # 100磅约等于75像素
+        id = ws.cell(row=excel_row, column=8).value
+
+        # 处理eval图片
+        eval_image_cell = ws.cell(row=excel_row, column=3)  
+        eval_image_path = eval_image_cell.value        
+        try:
+            if eval_image_path:
+                eval_image_path = os.path.normpath(eval_image_path)
+                if os.path.exists(eval_image_path):
+                    utils.insert_image_limited(ws, eval_image_cell, eval_image_path)
+                else:
+                    eval_image_cell.value = "空"
+                    logger.debug(f"id: {id}, eval图片路径不存在: {eval_image_path}")
+            else:
+                eval_image_cell.value = "空"
+        except Exception as e:
+            logger.debug(f"id: {id}, 处理eval图片 {eval_image_path} 时出错: {e}")
+        # 处理定位图片
+        cad_cell = ws.cell(row=excel_row, column=4)
+        cad_loc_path = os.path.join(pyd_path, 'cad_com_loc', f"{id}.bmp")        
+        try:
+            if not os.path.exists(cad_loc_path):
+                cad_loc_path = os.path.join(pyd_path, 'cad_com_loc', f"{id}.jpg")
+            if not os.path.exists(cad_loc_path):
+                cad_loc_path = os.path.join(pyd_path, 'cad_com_loc', f"{id}.png")
+            cad_loc_path = os.path.normpath(cad_loc_path)
+            if cad_loc_path and os.path.exists(cad_loc_path):
+                utils.insert_image_limited(ws, cad_cell, cad_loc_path)
+            else:
+                cad_cell.value = "空"
+                logger.error(f"id: {id}, cad_loc图片路径不存在: {cad_loc_path}")
+        except Exception as e:
+            logger.error(f"id: {id}, cad_img处理图片 {cad_loc_path} 时出错: {e}")
+        # 处理train_img_path
+        if ws.cell(row=excel_row, column=10).value is None:
+            ws.cell(row=excel_row, column=5).value = "空"
+        else:
+            train_image_path = ws.cell(row=excel_row, column=10).value
+            train_cell = ws.cell(row=excel_row, column=5)
+            try:
+                logger.info(f"id: {id}, train_image_path: {train_image_path}")
+                if train_image_path and os.path.exists(train_image_path):
+                    train_image_path = os.path.normpath(train_image_path)
+                    utils.insert_image_limited(ws, train_cell, train_image_path)
+                else:
+                    train_cell.value = "空"
+            except Exception as e:
+                logger.debug(f"id: {id}, train_img处理图片 {train_image_path} 时出错: {e}")
+
+    # 处理完所有图片后再次保存工作簿
+    logger.debug("所有图片处理完毕，正在保存工作簿...")
+    
+    wb.save(new_xlsx_path)
 
     status = 0
     logger.info(f"ai复判完成,status: {status}")

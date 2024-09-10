@@ -38,11 +38,11 @@ def stop_program():
 if __name__ == '__main__':
     setup_logger()
     {function_calls}
-    keyboard.add_hotkey('ctrl+w', stop_program)  # 设置当按下Ctrl+W时调用stop_program函数
-    keyboard.wait('esc')  # 使用esc键作为程序运行的终止条件
+    keyboard.add_hotkey('esc', lambda: (pyautogui.alert('程序已终止'), os._exit(0)))  # 设置当按下Esc时显示提示框并终止程序
+    keyboard.wait()
 """
 
-    output_path = "D:\\work\\output_bbb"
+    output_path = "D:\\work\\output_aoi_work"
     build_path = "D:\\work\\build"
     temp_path = "D:\\work\\temp"
 

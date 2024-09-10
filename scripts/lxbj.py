@@ -57,18 +57,19 @@ def lxbj_002_01():
     utils.random_change_image_param()
     utils.click_by_png(config.TEST_WINDOW)
     time.sleep(3)
+    # TODO 要加个超时时间
     utils.click_by_png(config.TEST_COMPONENT)
-    time.sleep(5)
+    while utils.search_symbol(config.TESTING_COMPONENT):
+        time.sleep(1)
+    time.sleep(1)
     utils.click_by_png(config.TEST_GROUP)
-    time.sleep(5)
+    while utils.search_symbol(config.TESTING_COMPONENT):
+        time.sleep(1)
+    time.sleep(1)
     utils.click_by_png(config.TEST_BOARD)
-    time.sleep(3)
-    for _ in range(10):
-        if utils.search_symbol(config.TESTING_COMPONENT):
-            time.sleep(3)
-        else:
-            break
-    time.sleep(5)
+    while utils.search_symbol(config.TESTING_COMPONENT):
+        time.sleep(1)
+    time.sleep(1)
     utils.caton_or_flashback()
 
 # TODO 可以识别出提示，但是没办法跟缺陷名对应
@@ -412,7 +413,7 @@ def lxbj_007_01():
     # 2、父、子框同时选中后，点击上方【关联】
     pyautogui.hotkey('ctrl', 'a')
     utils.click_by_png(config.RELATE_WINDOW)
-    result = utils.check_window_relate()
+    result = utils.check_color_in_region()
     if not result:
         raise Exception("未检测到红色连接线")
     # 3、选中父框，如向上移动，使之测试结果变成NG 
@@ -459,7 +460,7 @@ def lxbj_007_02():
     # 2、父、子框同时选中后，点击上方【关联】
     pyautogui.hotkey('ctrl', 'a')
     utils.click_by_png(config.RELATE_WINDOW)
-    result = utils.check_window_relate()
+    result = utils.check_color_in_region()
     if not result:
         raise Exception("未检测到红色连接线")
     # 4、选择子框后，点击【测试当前窗口】
@@ -505,7 +506,7 @@ def lxbj_008_01():
     # 2、父、子框同时选中后，点击上方【关联】
     pyautogui.hotkey('ctrl', 'a')
     utils.click_by_png(config.RELATE_WINDOW)
-    result = utils.check_window_relate()
+    result = utils.check_color_in_region()
     if not result:
         raise Exception("未检测到红色连接线")
     # 3、选中父框，如向上移动，使之测试结果变成NG
@@ -556,7 +557,7 @@ def lxbj_008_02():
     pyautogui.hotkey('ctrl', 'a')
     utils.click_by_png(config.RELATE_WINDOW)
     time.sleep(1)
-    result = utils.check_window_relate()
+    result = utils.check_color_in_region()
     if not result:
         raise Exception("未检测到红色连接线")
     # 4、选择子框后，点击【测试当前窗口】
@@ -601,7 +602,7 @@ def lxbj_009_01():
     # 2、父、子框同时选中后，点击上方【关联】
     pyautogui.hotkey('ctrl', 'a')
     utils.click_by_png(config.RELATE_WINDOW)
-    result = utils.check_window_relate()
+    result = utils.check_color_in_region()
     if not result:
         raise Exception("未检测到红色连接线")
     # 3、选中父框，如向上移动，使之测试结果变成NG 
@@ -651,7 +652,7 @@ def lxbj_009_02():
     # 2、父、子框同时选中后，点击上方【关联】
     pyautogui.hotkey('ctrl', 'a')
     utils.click_by_png(config.RELATE_WINDOW)
-    result = utils.check_window_relate()
+    result = utils.check_color_in_region()
     if not result:
         raise Exception("未检测到红色连接线")
     # 4、选择子框后，点击【测试当前窗口】
@@ -1470,10 +1471,10 @@ def lxbj_016_01():
     time.sleep(5)
     pyautogui.hotkey('ctrl', 'a')
     utils.click_by_png(config.RELATE_WINDOW)
-    if not utils.check_window_relate():
+    if not utils.check_color_in_region():
         raise Exception('子框与父框未连接')
     utils.click_by_png(config.CANCEL_RELATE_WINDOW)
-    if utils.check_window_relate():
+    if utils.check_color_in_region():
         raise Exception('检测框取消关联失败')
 
 
@@ -1516,11 +1517,11 @@ def lxbj_016_02():
     utils.click_by_png(config.YES)
     pyautogui.rightClick(config.CENTRE)
     utils.click_by_png(config.CLICK_RELATE)
-    if not utils.check_window_relate():
+    if not utils.check_color_in_region():
         raise Exception('子框与父框未连接')
     pyautogui.rightClick(config.CENTRE)
     utils.click_by_png(config.CLICK_CANCEL_RELATE)
-    if utils.check_window_relate():
+    if utils.check_color_in_region():
         raise Exception('检测框取消关联失败')
 
 
@@ -1563,7 +1564,7 @@ def lxbj_016_03():
     utils.click_by_png(config.YES)
     pyautogui.hotkey('ctrl', 'a')
     pyautogui.press('F5')
-    if not utils.check_window_relate():
+    if not utils.check_color_in_region():
         raise Exception('子框与父框未连接')
 
 
@@ -1607,7 +1608,7 @@ def lxbj_016_04():
     pyautogui.hotkey('ctrl', 'a')
     pyautogui.click(config.CENTRE)
     utils.click_by_png(config.CLICK_AUTO_LINK)
-    if not utils.check_window_relate():
+    if not utils.check_color_in_region():
         raise Exception('子框与父框未连接')
 
 
@@ -1650,10 +1651,10 @@ def lxbj_016_05():
     utils.click_by_png(config.YES)
     pyautogui.hotkey('ctrl', 'a')
     utils.click_by_png(config.RELATE_WINDOW)
-    if not utils.check_window_relate():
+    if not utils.check_color_in_region():
         raise Exception('子框与父框未连接')
     utils.click_by_png(config.CANCEL_RELATE_WINDOW)
-    if utils.check_window_relate():
+    if utils.check_color_in_region():
         raise Exception('检测框取消关联失败')
 
 

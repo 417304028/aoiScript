@@ -33,6 +33,8 @@ PROGRAM_COMPONENT_LIGHT = resource_path('images/whole_board/program_component_li
 PROGRAM_COMPONENT_DARK = resource_path('images/whole_board/program_component_dark.png')
 WHOLE_BOARD_DARK = resource_path('images/whole_board/board_dark.png')
 WHOLE_BOARD_LIGHT = resource_path('images/whole_board/board_light.png')
+# 整版-硬件图标
+BOARD_HARDWARE_ICON = resource_path('images/whole_board/hardware_icon.png')
 PASS_COMPONENT = resource_path('images/whole_board/job/pass_component.png')
 NO_PASS_COMPONENT = resource_path('images/whole_board/job/no_pass_component.png')
 NO_CHECKED_COMPONENT = resource_path('images/whole_board/job/no_checked_component.png')
@@ -46,6 +48,8 @@ CW_COLOR_AREA = resource_path('images/whole_board/component_window/alg/color_are
 CW_COLOR_MATCHING = resource_path('images/whole_board/component_window/alg/color_matching.png')
 CW_COLOR_ANALYSISING = resource_path('images/whole_board/component_window/alg/color_analysising.png')
 CW_PIN_SIMILARITY_MATCHING = resource_path('images/whole_board/component_window/alg/pin_similarity_matching.png')
+CW_REFERENCE_PLANE_3D = resource_path('images/whole_board/component_window/alg/reference_plane_3d.png')
+CW_COPLANARITY_3D = resource_path('images/whole_board/component_window/alg/coplanarity_3d.png')
 
 CHIP_TYPE = resource_path('images/whole_board/chip_type.png')
 FOV_EDIT = resource_path('images/whole_board/fov/fov_edit.png')
@@ -77,6 +81,8 @@ ADD_REFERENCE_POINT = resource_path('images/click_menu/add_reference_point.png')
 BOARD_COLOR_DRAWING = resource_path('images/click_menu/board_color_drawing.png')
 
 YES = resource_path('images/prompt_box/yes.png')
+YES_BLUE = resource_path('images/prompt_box/yes_blue.png')
+CHOOSED_YES = resource_path('images/prompt_box/choosed_yes.png')
 IF_SYNC_PART_NO = resource_path('images/prompt_box/if_sync_part_no.png')
 OPEN_PROGRAM_CANCEL = resource_path('images/prompt_box/cancel.png')
 ADD_IMAGE_CLOSE = resource_path('images/prompt_box/add_image_close.png')
@@ -99,10 +105,15 @@ IF_DELETE_BOARD_WARNING = resource_path('images/prompt_box/if_delete_board_warni
 TESTING_COMPONENT = resource_path('images/prompt_box/testing_component.png')
 EXPORTING_OK = resource_path('images/prompt_box/exporting_ok.png')
 OCV_EDIT_APPLY = resource_path('images/prompt_box/ocv_edit_apply.png')
+SAVING_PROGRAM = resource_path('images/prompt_box/saving_program.png')
 OK_COLLECTION = resource_path('images/prompt_box/ok_collection.png')
+LOADING_ELEMENTS = resource_path('images/prompt_box/loading_elements.png')
 INVALID_PASSWORD = resource_path('images/prompt_box/invalid_password.png')
 LOGINING = resource_path('images/prompt_box/logining.png')
 WINDOW_CANCEL = resource_path('images/prompt_box/window_cancel.png')
+EXPORTING_ELEMENTS = resource_path('images/prompt_box/exporting_elements.png')
+ALL = resource_path('images/prompt_box/all.png')
+CANCEL = resource_path('images/prompt_box/cancel.png')
 
 ADD_CHECKED_TOPIC = resource_path('images/add_check_window/topic.png')
 ADD_CHECKED_SENIOR = resource_path('images/add_check_window/check_type/senior.png')
@@ -122,6 +133,7 @@ DEFAULT = resource_path('images/add_check_window/drawback/ontology/default.png')
 
 IMAGE_PROCESS_TOPIC = resource_path('images/image_process/topic.png')
 
+ALG_W_ = resource_path('images/alg_area/w_.png')
 ALG_W_0 = resource_path('images/alg_area/w_0.png')
 ALG_W_1 = resource_path('images/alg_area/w_1.png')
 ALG_RESULT_0 = resource_path('images/alg_area/result_0.png')
@@ -136,6 +148,8 @@ ALG_TRANSISTOR = resource_path('images/alg_area/transistor.png')
 ALG_CHECK_MODE_PARAMETER = resource_path('images/alg_area/check_mode_parameter.png')
 
 ADD_STANDARD_IMAGE = resource_path('images/palette/add_standard_image.png')
+WAIT_MATERIAL_EMPTY = resource_path('images/palette/wait_material_empty.png')
+WAIT_MATERIAL_ALL_EMPTY = resource_path('images/palette/wait_material_all_empty.png')
 
 PARAM_SETTING_TOPIC = resource_path('images/param_setting/topic.png')
 PARAM_HARDWARE_SETTING = resource_path('images/param_setting/hardware_setting/topic.png')
@@ -164,7 +178,7 @@ MANUAL_SELECT = resource_path('images/gui/elements/manual_select.png')
 IMPORT_CURRENT_PN = resource_path('images/gui/elements/import_current_part_no.png')
 EXPORT_CURRENT_PN = resource_path('images/gui/elements/export_current_part_no.png')
 EXPORT_ALL_PN = resource_path('images/gui/elements/export_all_part_no.png')
-ELEMENTS_IMPORT_ALL = resource_path('images/gui/elements/import_all.png')
+IMPORT_ALL_PN = resource_path('images/gui/elements/import_all_part_no.png')
 ELEMENTS_STANDARD_LIBRARY = resource_path('images/gui/elements/standard_library.png')
 PUBLIC_ELEMENTS = resource_path('images/gui/elements/public_elements.png')
 ELEMENTS_DEFAULT = resource_path('images/gui/elements/default.png')
@@ -190,13 +204,31 @@ EDIT_PACKAGE_TYPE = resource_path('images/hodgepodge/edit_package_type.png')
 CLEAR_PACKAGE_TYPE = resource_path('images/hodgepodge/clear_package_type.png')
 COPY_PACKAGE_TYPE_NAME = resource_path('images/hodgepodge/copy_package_type_name.png')
 COPY_PART_NO_NAME = resource_path('images/hodgepodge/copy_part_no_name.png')
+TYPE_NAME_DEFAULT = resource_path('images/hodgepodge/type_name_default.png')
+TYPE_NAME_C = resource_path('images/hodgepodge/type_name_c.png')
+TEST_PACKAGE_NAME = resource_path('images/hodgepodge/test_package_name.png')
+ELEMENTS_TYPE_NAME = resource_path('images/hodgepodge/elements_type_name.png')
+ELEMENTS_INFORMATION = resource_path('images/hodgepodge/elements_information.png')
+ELEMENTS_VIEW_ABC = resource_path('images/hodgepodge/elements_view_abc.png')
+ELEMENTS_VIEW_TEST = resource_path('images/hodgepodge/elements_view_test.png')
+ELEMENTS_VIEW_SEARCH = resource_path('images/hodgepodge/elements_view_search.png')
+ELEMENTS_VIEW_CANCEL = resource_path('images/hodgepodge/elements_view_cancel.png')
+ELEMENTS_VIEW_PN_EMPTY = resource_path('images/hodgepodge/elements_view_pn_empty.png')
+ELEMENTS_VIEW_PT_EMPTY = resource_path('images/hodgepodge/elements_view_pt_empty.png')
+# 元件库视图-上图为空
+ELEMENTS_VIEW_PICTURE_EMPTY_UP = resource_path('images/hodgepodge/elements_view_picture_empty_up.png')
+# 元件库视图-下图为空
+ELEMENTS_VIEW_PICTURE_EMPTY_DOWN = resource_path('images/hodgepodge/elements_view_picture_empty_down.png')
+ELEMENTS_VIEW_REFRESH = resource_path('images/hodgepodge/elements_view_refresh.png')
 QUERY = resource_path('images/hodgepodge/query.png')
 OPEN_PROGRAM_CHOSED = resource_path('images/hodgepodge/open_program_chosed.png')
 UI_SHOW_MESSAGE = resource_path('images/hodgepodge/ui_show_message.png')
 PACKAGE_CLOSE = resource_path('images/hodgepodge/package_close.png')
 TEST = resource_path('images/hodgepodge/test.png')
+RULER = resource_path('images/hodgepodge/ruler.png')
 IF_SYNC_SAME_PACKAGE_NO = resource_path('images/hodgepodge/if_sync_same_package_no.png')
 IF_SYNC_SAME_PACKAGE_YES = resource_path('images/hodgepodge/if_sync_same_package_yes.png')
+IF_EXPORT_ALL_PN = resource_path('images/hodgepodge/if_export_all_pn.png')
 BOARD_COLOR_FILTER = resource_path('images/hodgepodge/board_color_filter.png')
 BOARD_COLOR_FILTER_CLOSE = resource_path('images/hodgepodge/board_color_filter_close.png')
 OPEN_PROGRAM_SINGLE_BOARD = resource_path('images/hodgepodge/open_program_single_board.png')
@@ -225,6 +257,13 @@ CENTRE = (935, 446)
 PART_POSITION_NO = (180, 210)
 RESERVE_COMPONENT_COORDINATE = (885, 524)
 RESERVE_BENCHMARK_COORDINATE = (885, 549)
+# 选择料号导出库的修改日期坐标
+SELECT_PN_EXPORT_LIB_POINTS_DATES = [
+    {"date": (1000, 360), "checkbox": ((1112, 352), (1124, 364))},
+    {"date": (1000, 380), "checkbox": ((1112, 375), (1124, 387))},
+    {"date": (1000, 405), "checkbox": ((1112, 398), (1124, 410))},
+    {"date": (1000, 430), "checkbox": ((1112, 421), (1124, 433))},    
+]
 LIGHT_VIEWS = [(550, 315), (685, 315), (820, 315),
                (550, 455), (685, 455), (820, 455),
                (550, 580), (685, 580), (820, 580),
@@ -250,14 +289,18 @@ def convert_region(region):
     width = right_bottom_x - left
     height = right_bottom_y - top
     return (left, top, width, height)
-
-
+# 元件库视图
+ELEMENTS_VIEW_REGION = convert_region((362, 149, 796, 758))
 # 芯片板区域
 BOARD_REGION = convert_region((712, 152, 1535, 962))
 # 元件编辑区域
 COMPONENT_REGION = convert_region((545, 190, 1715, 940))
+# 调色板区域
+PALETTE_REGION = convert_region((362, 765, 1521, 1004))
 # 编辑界面封装类型区域
 PACKAGE_TYPE_REGION = convert_region((1380, 165, 1505, 180))
+# 料号导入库分类下拉框
+PN_IMPORT_DROPDOWN_BOX_REGION = convert_region((888, 536, 1085, 649))
 # 算法参数区域
 ALG_PARAM_REGION = convert_region((1530, 193, 1895, 620))
 # 料号区域
@@ -271,14 +314,22 @@ COMPONENT_WINDOW_REGION = convert_region((45, 640, 350, 850))
 COMPONENT_NUM_REGION = convert_region((82, 253, 232, 271))
 # 程式信息区域
 PROGRAM_INFORMATION_REGION = convert_region((994, 586, 1381, 828))
+# 元件库视图搜索下拉框
+ELEMENTS_VIEW_DROPDOWN_BOX_REGION = convert_region((372, 244, 572, 312))
 # 芯片区域(用的是bbox。不是pyautogui，不需要转换)
 CHIP_SCROLLBAR_REGION = (777, 230, 792, 648)
 # 整版区域的滚动条
 BOARD_SCROLLBAR_REGION = convert_region((333, 253, 350, 603))
+# 元件库视图的元件图片
+ELEMENTS_VIEW_IMAGE_REGION = convert_region((569, 243, 748, 417))
+# 元件库视图的元件编辑界面
+ELEMENTS_VIEW_COMPONENT_REGION = convert_region((560, 150, 1450, 738))
 
 # ======================================绝对路径========================================
 # 参数配置-数据导出配置-共享元件库路径
 SHARE_LIB_PATH = r'D:\EYAOI\PublicCompLibrary'
+# 参数配置-数据导出配置-元件库路径
+ELEMENTS_LIB_PATH = r'D:\EYAOI\CompLibrary'
 
 # ===================================RV-AI复判========================================
 RV_TOPIC = resource_path('images/rv_ai_test/topic.png')

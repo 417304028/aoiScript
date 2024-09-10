@@ -24,8 +24,9 @@ def submit():
     elif mode == "存在good/ng":
         status = rv_ai_test(train_eval_path, result_path, "good_ng")
     if status == 0:
-        root.attributes('-topmost', True)  # 窗口置顶
         messagebox.showinfo("成功", "程序运行完毕，生成文档在结果文件夹下script_log文件夹内", parent=root)
+        root.attributes('-topmost', True)  # 窗口置顶
+        root.update()  # 确保UI更新
         root.attributes('-topmost', False)  # 恢复正常
     else:
         root.attributes('-topmost', True)  # 窗口置顶

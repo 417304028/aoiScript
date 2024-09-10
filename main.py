@@ -1,8 +1,8 @@
 import config, cv2, time
-from utils import logger, check_chip_coverage, setup_logger, click_by_png, if_checked
+from utils import logger, search_symbol, setup_logger, click_by_png, add_window
 from scripts import yjk
 from scripts import test
-
+import importlib
 import pyautogui
 
 
@@ -20,18 +20,12 @@ def main():
     #     lxbj.lxbj_016_01, lxbj.lxbj_016_02, lxbj.lxbj_016_03, lxbj.lxbj_016_04, lxbj.lxbj_016_05,
     #     lxbj.lxbj_017_01, lxbj.lxbj_018_01, lxbj.lxbj_018_02, lxbj.lxbj_018_03, lxbj.lxbj_018_04,
     # ]
-    yjk_functions = [
-        # yjk.yjk_001_42,
-        # yjk.yjk_001_43,
-        # yjk.yjk_001_44,
-        # yjk.yjk_001_45,
-        # yjk.yjk_001_46,
-        # yjk.yjk_001_47,
-        # yjk.yjk_001_48,
-        # yjk.yjk_001_49,
-        # yjk.yjk_001_50,
-        yjk.yjk_001_51,
-    ]
+
+
+
+    yjk_module = importlib.import_module('scripts.yjk')
+    yjk_functions = [getattr(yjk_module, func) for func in dir(yjk_module) if callable(getattr(yjk_module, func)) and func.startswith('yjk_')]
+    
     # 依次执行每个函数
     for func in yjk_functions:
         try:
@@ -44,5 +38,8 @@ def main():
 
 if __name__ == "__main__":
     setup_logger()
-    main()
+    # main()
+    # logger.info(read_text_ocr((364,273),(551,411)))
+    add_window()
     # test.test_aoi()
+
