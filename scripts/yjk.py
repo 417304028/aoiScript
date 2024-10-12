@@ -33,7 +33,10 @@ def yjk_001_01():
     # 4、上方菜单栏点击【元件库】--【手动选择】--【元件库视图】，
     utils.click_by_png(config.MANUAL_SELECT)
     utils.click_by_png(config.ELEMENTS_VIEW_REFRESH, region=config.ELEMENTS_VIEW_REGION,tolerance=0.95)
-    # 1）下拉框查找所选的元件库 没有新增的话找个屁 很麻烦啊 要判断 然后考虑点一下还是多下
+    # 1）下拉框查找所选的元件库
+    pyautogui.click((546,232))
+    utils.is_checked((375,246),(387,258),True)
+    pyautogui.press("enter")
     utils.search_symbol_erroring(config.TYPE_NAME_DEFAULT)
     # 2）点击所选的元件库 扩展 （元件库->芯片类型->封装类型->料号）
     utils.click_by_png(config.BOARD_ENLARGE, region=config.ELEMENTS_VIEW_REGION, tolerance=0.95)
@@ -381,6 +384,9 @@ def yjk_001_06():
     utils.click_by_png(config.MANUAL_SELECT)
     utils.click_by_png(config.ELEMENTS_VIEW_REFRESH, region=config.ELEMENTS_VIEW_REGION,tolerance=0.95)
     # 1）下拉框查找所选的元件库
+    pyautogui.click((546,232))
+    utils.is_checked((375,246),(387,258),True)
+    pyautogui.press("enter")
     utils.search_symbol_erroring(config.TYPE_NAME_DEFAULT)
     # 2）点击所选的元件库 扩展 （元件库->芯片类型->封装类型->料号）
     utils.click_by_png(config.BOARD_ENLARGE, region=config.ELEMENTS_VIEW_REGION, tolerance=0.95)
@@ -460,7 +466,7 @@ def yjk_001_07():
     # 3、弹框 设置默认，点击取消。
     utils.search_symbol_erroring(config.TYPE_NAME_DEFAULT)
     utils.search_symbol_erroring(config.IF_EXPORT_ALL_PN)
-    utils.click_by_png(config.IF_MODIFY_COMPONENT_NO)
+    utils.click_by_png(config.NO)
     # 4、上方菜单栏点击【元件库】--【手动选择】--【元件库视图】和元件库路径，查看是否有导出
     utils.click_by_png(config.MANUAL_SELECT)
     utils.click_by_png(config.BOARD_ENLARGE, region=config.ELEMENTS_VIEW_REGION, tolerance=0.95)
@@ -502,6 +508,9 @@ def yjk_001_08():
     utils.click_by_png(config.ELEMENTS_VIEW_REFRESH, region=config.ELEMENTS_VIEW_REGION,tolerance=0.95)
     time.sleep(1)
     # 1）下拉框查找所选的元件库
+    pyautogui.click((546,232))
+    utils.is_checked((375,246),(387,258),True)
+    pyautogui.press("enter")
     utils.search_symbol_erroring(config.TYPE_NAME_DEFAULT)
     # 2）点击所选的元件库 扩展 （元件库->芯片类型->封装类型->料号）
     utils.click_by_png(config.BOARD_ENLARGE,region=config.ELEMENTS_VIEW_REGION, tolerance=0.95)
@@ -874,7 +883,7 @@ def yjk_001_15():
     time.sleep(0.5)
     # 4、上方菜单栏点击【元件库】--【手动选择】--【元件库视图】
     utils.click_by_png(config.MANUAL_SELECT)
-    # ，点击刷新（循环标志）
+    # 点击刷新（循环标志）
     utils.click_by_png(config.ELEMENTS_VIEW_REFRESH)
     # 5、点击最上方的元件库 扩展 （元件库->芯片类型->封装类型->料号），查看导出的元件库料号，是否都显示
     time.sleep(2)
@@ -1051,7 +1060,7 @@ def yjk_001_19():
     # 4、编辑界面，点击【菜单栏】--【编辑】--【检测窗口】，多个元件，新增窗口
     for _ in range(3):
         utils.click_component()
-        if utils.search_symbol(config.IF_SYNC_PART_NO, 3):
+        if utils.search_symbol(config.QUESTION_MARK, 3):
             time.sleep(1)
             pyautogui.press("enter")
             time.sleep(5)
@@ -1074,7 +1083,7 @@ def yjk_001_19():
     # 7、弹出是否覆盖弹框，点击所有
     while utils.search_symbol(config.EXPORTING_ELEMENTS):
         time.sleep(1.5)
-    utils.search_symbol_erroring(config.IF_SYNC_PART_NO)
+    utils.search_symbol_erroring(config.QUESTION_MARK)
     utils.click_by_png(config.ALL)
     while utils.search_symbol(config.EXPORTING_ELEMENTS):
         time.sleep(1.5)
@@ -1166,7 +1175,7 @@ def yjk_001_20():
     # 7、是否覆盖弹框，点击是
     while utils.search_symbol(config.EXPORTING_ELEMENTS):
         time.sleep(0.2)
-    utils.search_symbol_erroring(config.IF_SYNC_PART_NO)
+    utils.search_symbol_erroring(config.QUESTION_MARK)
     utils.click_by_png(config.CHOOSED_YES)
     while utils.search_symbol(config.EXPORTING_ELEMENTS):
         time.sleep(1.5)
@@ -1248,8 +1257,8 @@ def yjk_001_21():
     # 7、弹出覆盖弹框,点否
     while utils.search_symbol(config.EXPORTING_ELEMENTS):
         time.sleep(1.5)
-    utils.search_symbol_erroring(config.IF_MODIFY_COMPONENT_NO)
-    utils.click_by_png(config.IF_MODIFY_COMPONENT_NO)
+    utils.search_symbol_erroring(config.NO)
+    utils.click_by_png(config.NO)
     while utils.search_symbol(config.EXPORTING_ELEMENTS):
         time.sleep(1.5)
     export_time = datetime.datetime.now().strftime("%H:%M")
@@ -1320,7 +1329,7 @@ def yjk_001_22():
     for _ in range(3):
         logger.error(1)
         utils.click_component()
-        if utils.search_symbol(config.IF_SYNC_PART_NO, 3):
+        if utils.search_symbol(config.QUESTION_MARK, 3):
             time.sleep(1)
             pyautogui.press("enter")
             if utils.search_symbol(config.SAVING_PROGRAM):
@@ -1343,7 +1352,7 @@ def yjk_001_22():
     # 7、是否弹出覆盖弹框 (不弹)
     while utils.search_symbol(config.EXPORTING_ELEMENTS, 2):
         time.sleep(1.5)
-    if utils.search_symbol(config.IF_SYNC_PART_NO, 3):
+    if utils.search_symbol(config.QUESTION_MARK, 3):
         raise Exception("弹出覆盖弹框")
     export_time = datetime.datetime.now().strftime("%H:%M")
     # 8、上方菜单栏点击【元件库】--【手动选择】--【元件库视图】
@@ -1425,7 +1434,7 @@ def yjk_001_23():
     # 7、是否弹出覆盖弹框 (不弹)
     while utils.search_symbol(config.EXPORTING_ELEMENTS, 2):
         time.sleep(1.5)
-    if utils.search_symbol(config.IF_SYNC_PART_NO, 3):
+    if utils.search_symbol(config.QUESTION_MARK, 3):
         raise Exception("弹出覆盖弹框")
     export_time = datetime.datetime.now().strftime("%H:%M")
     # 8、上方菜单栏点击【元件库】--【手动选择】--【元件库视图】
@@ -1480,7 +1489,7 @@ def yjk_001_24():
     pyautogui.press("enter")
     while utils.search_symbol(config.EXPORTING_ELEMENTS, 2):
         time.sleep(0.5)
-    if utils.search_symbol(config.IF_SYNC_PART_NO, 3):
+    if utils.search_symbol(config.QUESTION_MARK, 3):
         pyautogui.press("enter")
     time.sleep(1)
     utils.click_by_png(config.MANUAL_SELECT)
@@ -1515,7 +1524,7 @@ def yjk_001_25():
     pyautogui.press("enter")
     while utils.search_symbol(config.EXPORTING_ELEMENTS, 2):
         time.sleep(0.5)
-    if utils.search_symbol(config.IF_SYNC_PART_NO, 3):
+    if utils.search_symbol(config.QUESTION_MARK, 3):
         pyautogui.press("enter")
     time.sleep(1)
     utils.click_by_png(config.MANUAL_SELECT)
@@ -1882,7 +1891,7 @@ def yjk_001_32():
         time.sleep(1)
     utils.click_component()
     time.sleep(1)
-    if utils.search_symbol(config.IF_SYNC_PART_NO, 3):
+    if utils.search_symbol(config.QUESTION_MARK, 3):
         pyautogui.press("enter")
     time.sleep(1)
     while utils.search_symbol(config.SAVING_PROGRAM):
@@ -2548,7 +2557,7 @@ def yjk_001_45():
     utils.modify_component()
     utils.click_component()
     time.sleep(1)
-    if utils.search_symbol(config.IF_SYNC_PART_NO, 3):
+    if utils.search_symbol(config.QUESTION_MARK, 3):
         pyautogui.press("enter")
     utils.click_by_png(config.SAVE)
     # 再次确认默认勾选（切换元件后点击保存）
@@ -2607,7 +2616,7 @@ def yjk_001_46():
         pyautogui.press('down')
         time.sleep(0.5)
     utils.click_component()
-    if utils.search_symbol(config.IF_SYNC_PART_NO, 3):
+    if utils.search_symbol(config.QUESTION_MARK, 3):
         time.sleep(1)
         pyautogui.press("enter")
         if utils.search_symbol(config.SAVING_PROGRAM):
@@ -2702,7 +2711,7 @@ def yjk_001_48():
         time.sleep(0.5)
     utils.click_by_png(config.SAVE)
     time.sleep(2)
-    if utils.search_symbol(config.IF_SYNC_PART_NO):
+    if utils.search_symbol(config.QUESTION_MARK):
         pyautogui.press("enter")
     time.sleep(1)
     utils.click_by_png(config.EXPORT_PUBLIC_PROGRAM)
@@ -2782,14 +2791,14 @@ def yjk_001_49():
         if i == 1:
             pyautogui.press('tab',8)
         utils.click_by_png(config.OPEN_PROGRAM_CHOSED)
-        utils.click_by_png(config.OPEN_PROGRAM_LOAD)
+        utils.click_by_png(config.OPEN_PROGRAM_LOAD_1)
         time.sleep(2)
         pyautogui.press("enter")
         time.sleep(2)
         utils.click_by_png(config.YES)
         logger.error(i)
         # 否，检测是否生成新数据
-        utils.click_by_png(config.IF_SYNC_PART_NO)
+        utils.click_by_png(config.QUESTION_MARK)
         if i == 0:
             pyautogui.press("left")
             pyautogui.press("enter")
@@ -2832,10 +2841,10 @@ def yjk_001_50():
     time.sleep(1)
     pyautogui.press('tab',4)
     utils.click_by_png(config.OPEN_PROGRAM_CHOSED)
-    utils.click_by_png(config.OPEN_PROGRAM_LOAD, 2)
+    utils.click_by_png(config.OPEN_PROGRAM_LOAD_1, 2)
     utils.click_by_png(config.YES)
     # 检测是否生成新数据
-    if utils.search_symbol(config.IF_SYNC_PART_NO):
+    if utils.search_symbol(config.QUESTION_MARK):
         raise Exception("有弹框")
     else:
         logger.info("没有弹框")

@@ -1,505 +1,354 @@
+import os
 import utils
 import time
 import pyautogui
 import config
 
-@utils.screenshot_error_to_excel()
+# @utils.screenshot_error_to_excel()
 # 新建单板程式
-def jbgn_001_01():
-    # 新建程式文件：选择保存目录，选择单板CAD文件，输入【程式名称】，【是】         进入整版影像页面
-    # 点击进版
-    # 待页面上方绿色方块到中间位置，点击【移到板边】，将版右下角位置移到屏幕中心十字线，点击【右下角标记位】
-    # 将版左上角移动到屏幕中心十字线，点击【左上角标记位】
-    # 点击【扫描整版】          出现扫版参数提示框
-    # 点击【是】                开始扫描整版，有等待FOV数据保存完成提示框，整版扫描完成后弹出：确认基板颜色提示框
-    # 确认基板颜色提示框，根据实际情况点击【是】或【否】    出现导入默认库提示框
-    # 弹出导入库提示框，选择【Default】后点击是             
-    # 选中MARK点附近的空元件：Designator，右键选择【标记点操作】--【转换为标记点】--【是】
-    # 选中标记点--右键选择【标记点操作】--【根据标记点矫正元件】    正常矫正整板坐标，无报错
-    pass
+# def jbgn_001_01():
+    # 1、新建程式文件：选择保存目录，选择单板CAD文件，输入【程式名称】，【是】
+    # 2、点击进版
+    # 3、待页面上方绿色方块到中间位置，点击【移到板边】，将版右下角位置移到屏幕中心十字线，点击【右下角标记位】
+    # 4、点击操作镜头的字母让其变成EG再点击左上箭头
+    # 5、将版左上角移动到屏幕中心十字线，点击【左上角标记位】
+    # 6、点击【扫描整版】
+    # 7、点击【是】
+    # 8、确认基板颜色提示框，根据实际情况点击【是】或【否】
+    # 9、弹出导入库提示框，选择【Default】后点击是
+    # 10、选中MARK点附近的空元件：Designator，右键选择【标记点操作】--【转换为标记点】--【是】
+    # 11、选中标记点--右键选择【标记点操作】--【根据标记点矫正元件】
+
+
+    # pass
 
 
 
-@utils.screenshot_error_to_excel()
+# @utils.screenshot_error_to_excel()
 # 新建单板程式后测试RV复判并在SPC确认数据
-def jbgn_001_02():
-1、使用Job对应的PCB板
-2、Ctrl+Shift+L删除日志
-3、UI:参数配置--应用配置--硬件配置：不选【打开左右循环】、选择【左进左出】
-4、UI:参数配置--流程配置：
-（1）缺陷视图：不选【打开DV复判模式】、不选【DV自动确认】按钮
-（2）数据流向：选择【允许中间层转发数据】
-5、UI:参数配置--演算法配置：
-（1）强制操作：不选【基准点NG继续矫正位置】、
-（2）算法日志：只选【计算时间】
-6、UI:参数配置--数据导出配置：
-（1）不选【使用Good/NG分开传输】、不选【只导出NG】
-（2）FOV影像输出：选择【所有】
-（3）元件输出影像：选择【所有】，Good/Pass/NG元件数量限制：选择【所有】
-（4）RV输出：选择【输出检测数据到RV】
-7、UI:参数配置--条码--条码读取设定：选择【允许填充条码时间戳】
-8、RV:手动确认
+# def jbgn_001_02():
+    # 1、接上条用例，新建JOB后
+    # 2、点击【运行】开始测试
+    # 3、点击【是】按钮
+    # 4、检查FOV，元件数
+    # 5、检测过程，观察界面右上角【测试状态】--【FOVs】和【元件】的进度条
+    # 6、测试完成后打开RV确认
+    # 7、在RV对当前测试数据进行复判
+    # 8、到SPC查看RV复判的数据
 
 
 
 
 
+# @utils.screenshot_error_to_excel()
+# def jbgn_001_03():
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    utils.check_and_launch_aoi()
-    utils.click_by_controls(config.OPEN_PROGRAM, 1)
-    directory = r"D:\EYAOI\JOB"
-    bbox = (640, 190, 719, 203)
-    time.sleep(0.2)
-    utils.text_in_bbox(directory, bbox)
-    time.sleep(0.2)
-    # 把最近打开程式收起来
-    pyautogui.click(544, 292)
-    program_bbox = (535, 300, 920, 555)
-    program_loaded_bbox = (1000, 280, 1380, 550)
-    # 双击任意程式
-    cursor_exist = utils.check_load_program(config.OPEN_PROGRAM_CURSOR, program_bbox, program_loaded_bbox)
-    if not cursor_exist:
-        plus_exist = utils.check_load_program(config.OPEN_PROGRAM_PLUS, program_bbox, program_loaded_bbox)
-        if not plus_exist:
-            raise Exception("程式都不存在，可能文件夹下无可识别的程式")
-    utils.click_by_controls(config.YES, 1)
-    # 有进度条提示
-    utils.search_symbol_erroring(config.PROGRAM_LOADING, 30)
-    # 确定加载后
-    utils.search_symbol_erroring(config.PROGRAM_COMPONENT_DARK, 5)
-    # 无闪退
-    utils.search_symbol_erroring(config.AOI_TOPIC, 5)
-
-
-@utils.screenshot_error_to_excel()
-def jbgn_001_03():
-    准备4块拼版的CAD文件
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    utils.check_and_launch_aoi()
-    utils.click_by_controls(config.OPEN_PROGRAM, 1)
-    directory = r"D:\EYAOI\JOB"
-    bbox = (640, 190, 719, 203)
-    time.sleep(0.2)
-    utils.text_in_bbox(directory, bbox)
-    time.sleep(0.2)
-    # 把最近打开程式收起来
-    pyautogui.click(544, 292)
-    program_bbox = (535, 300, 920, 555)
-    program_loaded_bbox = (1000, 280, 1380, 550)
-    # 找到左侧所有程式图标
-    program_list = []
-    exist_cursor = utils.search_symbol(config.OPEN_PROGRAM_CURSOR, None, program_bbox)
-    exist_plus = utils.search_symbol(config.OPEN_PROGRAM_PLUS, None,program_bbox)
-    if exist_cursor:
-        program_list += list(pyautogui.locateAllOnScreen(config.OPEN_PROGRAM_CURSOR, region=program_bbox))
-    if exist_plus:
-        program_list += list(pyautogui.locateAllOnScreen(config.OPEN_PROGRAM_PLUS, region=program_bbox))
-    if not program_list:
-        raise Exception("疑似程式文件夹/程式文件未加载")
-    for program in program_list:
-        time.sleep(0.5)
-        # 双击程式图标
-        pyautogui.doubleClick(program)
-        time.sleep(2)  # 等待加载
-        # 检查右侧是否加载了相应的程式, 找不到自然会报错
-        if exist_cursor:
-            pyautogui.locateOnScreen(config.OPEN_PROGRAM_PLUS, region=program_loaded_bbox)
-        if exist_plus:
-            pyautogui.locateOnScreen(config.OPEN_PROGRAM_PLUS, region=program_loaded_bbox)
-    utils.click_by_controls(config.YES, 1)
-    # 有进度条提示
-    utils.search_symbol_erroring(config.PROGRAM_LOADING, 30)
-    # 确定加载后
-    utils.search_symbol_erroring(config.PROGRAM_COMPONENT_DARK, 5)
-    # 无闪退
-    utils.search_symbol_erroring(config.AOI_TOPIC, 5)
 
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_04():
-    for i in range(3):
-        # 确保aoi打开
-        utils.check_and_launch_aoi()
-        # 打开程式
-        utils.click_by_controls(config.OPEN_PROGRAM, 1)
-        directory = r"D:\EYAOI\JOB"
-        bbox = (640, 190, 719, 203)
-        time.sleep(0.2)
-        utils.text_in_bbox(directory, bbox)
-        time.sleep(0.2)
-        # 把最近打开程式收起来
-        pyautogui.click(544, 292)
-        program_bbox = (535, 300, 920, 555)
-        program_loaded_bbox = (1000, 280, 1380, 550)
-        # 双击任意程式
-        cursor_exist = utils.check_load_program(config.OPEN_PROGRAM_CURSOR, program_bbox, program_loaded_bbox)
-        if not cursor_exist:
-            plus_exist = utils.check_load_program(config.OPEN_PROGRAM_PLUS, program_bbox, program_loaded_bbox)
-            if not plus_exist:
-                raise Exception("程式都不存在，可能文件夹下无可识别的程式")
-
-        # 重复步骤 打开——至——取消 三次后 点击确定按钮
-        if i < 2:
-            # 确定弹窗存在
-            utils.search_symbol_erroring(config.OPEN_PROGRAM_TOPIC, 5)
-            # 点击取消
-            utils.click_by_controls(config.OPEN_PROGRAM_CANCEL, 1)
-            time.sleep(0.2)
-            print("开始确定无闪退")
-            # 确定返回之前的整版视图
-            utils.click_by_controls(config.WHOLE_BOARD_LIGHT, 1)
-            print("已确定无闪退")
-            time.sleep(0.2)
-        else:
-            utils.click_by_controls(config.YES, 1)
-            # 有进度条提示
-            utils.search_symbol_erroring(config.PROGRAM_LOADING, 30)
-            # 确定加载后
-            utils.search_symbol_erroring(config.PROGRAM_COMPONENT_DARK, 5)
-            # 无闪退
-            utils.search_symbol_erroring(config.AOI_TOPIC, 5)
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    # 1、打开AOI软件，软件点击左上角【打开程式】按钮
     utils.check_and_launch_aoi()
-    utils.click_by_controls(config.OPEN_PROGRAM, 1)
+    utils.click_by_png(config.OPEN_PROGRAM)
+    # 2、在弹窗中的【程式主目录】，选择程式的目录或输入程式目录，例：D:\EYAOI\JOB，回车
     directory = r"D:\EYAOI\JOB"
-    bbox = (640, 190, 719, 203)
-    program_loaded_bbox = (1000, 280, 1380, 550)
-    time.sleep(0.2)
-    utils.text_in_bbox(directory, bbox)
-    time.sleep(0.2)
-    # 把最近打开程式收起来
-    pyautogui.click(544, 292)
-    program_bbox = (535, 300, 920, 555)
-    program_loaded_bbox = (1000, 280, 1380, 550)
-    # 双击任一指针程式，确保在右边之后，点击右边的程式，点击移除
-    cursor_load = utils.check_load_program(config.OPEN_PROGRAM_CURSOR, program_bbox, program_loaded_bbox)
-    if cursor_load:
-        loaded_cursor = pyautogui.locateCenterOnScreen(config.OPEN_PROGRAM_CURSOR, region=program_loaded_bbox)
-        pyautogui.click(loaded_cursor)
-        utils.click_by_controls(config.REMOVE_PROGRAM, 1)
-        if utils.search_symbol(config.OPEN_PROGRAM_CURSOR, None, program_loaded_bbox):
-            raise Exception("指针程式移除失败")
-        else:
-            print("移除指针程式成功")
-    # 左边没指针程式，尝试处理＋号程式
-    elif not cursor_load:
-        cursor_load = utils.check_load_program(config.OPEN_PROGRAM_PLUS, program_bbox, program_loaded_bbox)
-        if cursor_load:
-            loaded_plus = pyautogui.locateCenterOnScreen(config.OPEN_PROGRAM_PLUS, region=program_loaded_bbox)
-            pyautogui.click(loaded_plus)
-            utils.click_by_controls(config.REMOVE_PROGRAM, 1)
-            if utils.search_symbol(config.OPEN_PROGRAM_PLUS, None, program_loaded_bbox):
-                raise Exception("＋号程式移除失败")
-            else:
-                print("移除＋号程式成功")
-        else:
-            raise Exception("左边没有任何程式")
-    else:
-        raise Exception("程式都不存在，可能文件夹下无可识别的程式")
-打开任一程式
+    utils.write_text((660,195),directory)
+    pyautogui.press("enter")
+    # 3、在【程式列表】--【主目录程式】，双击任一准备测试的程式
+    symbols = [config.OPEN_PROGRAM_PLUS, config.OPEN_PROGRAM_CURSOR]
+    found = False
+    for symbol in symbols:
+        if utils.search_symbol(symbol, 3):
+            utils.click_by_png(symbol, 2)
+            utils.search_symbol_erroring(symbol, 3,region=config.SELECTED_PROGRAM_REGION)
+            found = True
+            break
+    if not found:
+        raise Exception("找不到程式")
+
+    # 4、点击【取消】按钮
+    utils.click_by_png(config.CANCEL)
+    time.sleep(1)
+    if utils.search_symbol(config.OPEN_PROGRAM_TOPIC):
+        raise Exception("关闭打开程式弹窗失败")
+    utils.search_symbol_erroring(config.AOI_TOPIC, 3)
+    utils.close_aoi()
+    time.sleep(5)
+    # 5、重复步骤1-3，点击【是】按钮
+    utils.check_and_launch_aoi()
+    utils.click_by_png(config.OPEN_PROGRAM)
+    directory = r"D:\EYAOI\JOB"
+    utils.write_text((660,195),directory)  
+    pyautogui.press("enter")
+    symbols = [config.OPEN_PROGRAM_PLUS, config.OPEN_PROGRAM_CURSOR]
+    found = False
+    for symbol in symbols:
+        if utils.search_symbol(symbol, 3):
+            utils.click_by_png(symbol, 2)
+            found = True
+            break
+    if not found:
+        raise Exception("找不到程式")
+    utils.click_by_png(config.YES)
+    utils.search_symbol_erroring(config.PROGRAM_LOADING, 5)
+    while utils.search_symbol(config.PROGRAM_LOADING, 5):
+        time.sleep(5)
+    if utils.search_symbol(config.OPEN_PROGRAM_TOPIC, 2):
+        raise Exception("打开程式后还存在打开程式弹窗")
+    utils.search_symbol_erroring(config.AOI_TOPIC, 3)
+    utils.caton_or_flashback()
+    utils.close_aoi()        
+@utils.screenshot_error_to_excel()
 def jbgn_001_05():
-    pass
-打开多个程式
+    # 1、打开AOI软件，点击左上角【打开程式】按钮
+    utils.check_and_launch_aoi()
+    utils.click_by_png(config.OPEN_PROGRAM)
+    # 2、在弹窗中的【程式主目录】，选择程式的目录或输入程式目录，例：D:\EYAOI\JOB，回车
+    directory = r"D:\EYAOI\JOB"
+    utils.write_text((660,195),directory)
+    pyautogui.press("enter")
+
+    program_count = 0
+    for symbol in symbols:
+        try:
+            program_count += len(list(pyautogui.locateAllOnScreen(symbol, region=config.SELECTED_PROGRAM_REGION)))
+        except pyautogui.ImageNotFoundException:
+            continue
+
+    if program_count == 0:
+        raise Exception("未发现任何程式")
+    # 计算D:\EYAOI\JOB内文件夹个数
+    directory = r"D:\EYAOI\JOB"
+    folder_count = len([name for name in os.listdir(directory) if os.path.isdir(os.path.join(directory, name))])
+
+    # 比较数量是否相同
+    if program_count != folder_count:
+        raise Exception("未能显示目录下所有程式")
+
+    # 3、在【程式列表】--【主目录程式】，选中任一程式(压缩的程式图标变成带有箭头)，点击【轨1】（如果是双轨机台在轨2打开，显示【轨2】）
+    symbols = [config.OPEN_PROGRAM_PLUS, config.OPEN_PROGRAM_CURSOR]
+    found = False
+    for symbol in symbols:
+        if utils.search_symbol(symbol, 3):
+            utils.click_by_png(symbol, 2)
+            utils.search_symbol_erroring(symbol, 3,region=config.SELECTED_PROGRAM_REGION)
+            found = True
+            break
+    if not found:
+        raise Exception("找不到程式")
+    # 4、点击【是】按钮
+    utils.click_by_png(config.YES)
+    utils.search_symbol_erroring(config.PROGRAM_LOADING, 5)
+    while utils.search_symbol(config.PROGRAM_LOADING, 5):
+        time.sleep(5)
+    if utils.search_symbol(config.OPEN_PROGRAM_TOPIC, 2):
+        raise Exception("打开程式后还存在打开程式弹窗")
+    utils.search_symbol_erroring(config.AOI_TOPIC, 3)
+    utils.caton_or_flashback()
+    utils.close_aoi()  
+@utils.screenshot_error_to_excel()  
 def jbgn_001_06():
-    pass
-移除程式
+    # 1、打开AOI软件，点击左上角【打开程式】按钮
+    utils.check_and_launch_aoi()
+    utils.click_by_png(config.OPEN_PROGRAM)
+    # 2、在弹窗中的【程式主目录】，选择程式的目录或输入程式目录，例：D:\EYAOI\JOB，回车
+    directory = r"D:\EYAOI\JOB"
+    utils.write_text((660,195),directory)
+    pyautogui.press("enter")
+    # 3、在【程式列表】--【主目录程式】，选中某一程式，点击【轨1】（如果是双轨机台在轨2打开，显示【轨2】）。按此操作，多次选择不同程式。
+    # 先识别总共有多少个程式
+    symbols = [config.OPEN_PROGRAM_PLUS, config.OPEN_PROGRAM_CURSOR]
+    initial_count = 0
+    for symbol in symbols:
+        try:
+            initial_count += len(list(pyautogui.locateAllOnScreen(symbol, region=config.SELECTED_PROGRAM_REGION)))
+        except pyautogui.ImageNotFoundException:
+            continue
+    if initial_count == 0:
+        raise Exception("未发现任何程式")
+    # 一个个去点加载
+    for symbol in symbols:
+        try:
+            locations = list(pyautogui.locateAllOnScreen(symbol, region=config.SELECTED_PROGRAM_REGION))
+            for location in locations:
+                utils.click_by_png(symbol)
+                utils.click_by_png(config.OPEN_PROGRAM_LOAD_1)
+                time.sleep(1)
+        except pyautogui.ImageNotFoundException:
+            continue
+
+    final_count = 0
+    for symbol in symbols:
+        final_count += len(list(pyautogui.locateAllOnScreen(symbol, region=config.SELECTED_PROGRAM_REGION)))
+    if initial_count != final_count:
+        raise Exception("程式未完全出现再被选程式列表中")
+    # 4、点击【是】按钮
+    utils.click_by_png(config.YES)
+    utils.search_symbol_erroring(config.PROGRAM_LOADING, 5)
+    while utils.search_symbol(config.PROGRAM_LOADING, 5):
+        time.sleep(5)
+    if utils.search_symbol(config.OPEN_PROGRAM_TOPIC, 2):
+        raise Exception("打开程式后还存在打开程式弹窗")
+    utils.search_symbol_erroring(config.AOI_TOPIC, 3)
+    utils.caton_or_flashback()
+    utils.close_aoi()    
+@utils.screenshot_error_to_excel()
 def jbgn_001_07():
-    pass
-打开指定程式
-def jbgn_001_08():
-    1、参数配置--UI配置--软件界面：不选【自动加载程式】
-    pass
-打开指定程式
-def jbgn_001_09():
-    pass
-打开指定程式
-def jbgn_001_10():
-    pass
-保存程式
+    # 1、打开AOI软件，点击左上角【打开程式】按钮
+    utils.check_and_launch_aoi()
+    utils.click_by_png(config.OPEN_PROGRAM)
+    # 2、在弹窗中的【程式主目录】，选择程式的目录或输入程式目录，例：D:\EYAOI\JOB，回车
+    directory = r"D:\EYAOI\JOB"
+    utils.write_text((660,195),directory)
+    pyautogui.press("enter")
+    # 3、在【程式列表】--【主目录程式】，选中任一程式，点击【轨1】（如果是双轨机台在轨2打开，显示【轨2】）
+    symbols = [config.OPEN_PROGRAM_PLUS, config.OPEN_PROGRAM_CURSOR]
+    found = False
+    temp = None
+    for symbol in symbols:
+        if utils.search_symbol(symbol, 3):
+            temp = symbol
+            utils.click_by_png(symbol, 2)
+            utils.search_symbol_erroring(symbol, 3,region=config.SELECTED_PROGRAM_REGION)
+            found = True
+            break
+    if not found:
+        raise Exception("找不到程式")
+    # 4、选中【被选程式列表】--【轨一被选程式】列表中的程式后，点击【移除】
+    utils.click_by_png(temp, region=config.SELECTED_PROGRAM_REGION)
+    utils.click_by_png(config.OPEN_PROGRAM_REMOVE)
+    if utils.search_symbol(temp, 3, region=config.SELECTED_PROGRAM_REGION):
+        raise Exception("移除程式失败")
+    utils.close_aoi()
+# def jbgn_001_08():
+#     pass
+# def jbgn_001_09():
+#     pass
+# def jbgn_001_10():
+#     pass
+@utils.screenshot_error_to_excel()
 def jbgn_001_11():
-    pass
-另存程式
+    # 1、打开AOI软件，点击左上角【打开程式】按钮
+    utils.check_and_launch_aoi()
+    # 2、在弹窗中的【程式主目录】，选择程式的目录：任意选择一个JOB
+    # 3、点击【是】按钮
+    utils.open_program()
+    # 4、点击左上角【save to Job File】
+    utils.click_by_png(config.SAVE_AS_JOB)
+    time.sleep(1)
+    pyautogui.press("enter")
+    while utils.search_symbol(config.SAVING_PROGRAM):
+        time.sleep(3)
+    latest_folder = max([os.path.join(r"D:\EYAOI\JOB", d) for d in os.listdir(r"D:\EYAOI\JOB")], key=os.path.getmtime)
+    if time.time() - os.path.getmtime(latest_folder) > 60:
+        raise Exception("非当前保存时间")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
 def jbgn_001_12():
-    pass
-运行指定程式
-def jbgn_001_13():
-    1、使用Job对应的PCB板
-2、Ctrl+Shift+L删除日志
-3、UI:参数配置--应用配置--硬件配置：不选【打开左右循环】
-4、UI:参数配置--流程配置：
-（1）缺陷视图：不选【打开DV复判模式】、不选【DV自动确认】按钮
-（2）数据流向：选择【允许中间层转发数据】
-5、UI:参数配置--演算法配置：
-（1）强制操作：不选【基准点NG继续矫正位置】、
-（2）算法日志：只选【计算时间】
-6、UI:参数配置--数据导出配置：
-（1）不选【使用Good/NG分开传输】、不选【只导出NG】
-（2）FOV影像输出：选择【所有】
-（3）元件输出影像：选择【所有】，Good/Pass/NG元件数量限制：选择【所有】
-（4）RV输出：选择【输出检测数据到RV】
-7、UI:参数配置--条码--条码读取设定：选择【允许填充条码时间戳】
-8、RV:手动确认
+    # 1、打开AOI软件，点击左上角【打开程式】按钮
+    utils.check_and_launch_aoi()
+    # 2、在弹窗中的【程式主目录】，选择程式的目录：任意选择一个JOB
+    # 3、点击【是】按钮
+    utils.open_program()
+    # 4、点击左上角【save As To Job File】
+    utils.click_by_png(config.SAVE_AS_JOB)
+    time.sleep(1)
+    # 5、选择文件夹并重新命名程式名称后点击【是】
+    utils.write_text((815,480),"save_test")
+    utils.click_by_png(config.YES)
 
-
-    pass
-检查运行相关时间
-def jbgn_001_14():
-    1、程式运行结束
-    pass
-检查RV概览数据
-def jbgn_001_15():
+    while utils.search_symbol(config.SAVING_PROGRAM):
+        time.sleep(3)
+    if not os.path.exists(r"D:\EYAOI\JOB\save_test"):
+        raise Exception("未发现另存为的程式名")
+    utils.close_aoi()
+# def jbgn_001_13():
+#     pass
+# def jbgn_001_14():
+#     pass
+# def jbgn_001_15():
+#     pass
+# def jbgn_001_16():
+#     pass
+# def jbgn_001_17():
+#     pass
+# def jbgn_001_18():
+#     pass
+# def jbgn_001_19():
+#     pass
+# def jbgn_001_20():
+#     pass
+# def jbgn_001_21():
+#     pass
+# def jbgn_001_22():
+#     pass
+# def jbgn_001_23():
+#     pass
+# def jbgn_001_24():
+#     pass
+# def jbgn_001_25():
+#     pass
+# # 参数控制限定
+# def jbgn_001_26():
+#     pass
+# # 定位元件
+# def jbgn_001_27():
+#     pass
+# # 大元件测试
+# def jbgn_001_28():
+#     pass
+# # 整板量测
+# def jbgn_001_29():
+#     pass
+# # 整板异物检测
+# def jbgn_001_30():
     
-1、UI整板视图左上方【板】-【FOV】-【FOV检测】-【异物】：选择所有选项
-2、程式运行结束
-    pass
-检查RV算法数据
-def jbgn_001_16():
-    1、程式运行结束
-    pass
-RV确认
-def jbgn_001_17():
-    1、程式运行结束
-2、检查RV算法数据结束
-    pass
-检查SPC数据
-def jbgn_001_18():
-    1、UI:参数配置--流程配置--缺陷视图：不选【打开DV复判模式】、不选【DV自动确认】按钮
-2、UI:参数配置--数据导出配置：
-（1）不选【使用Good/NG分开传输】、不选【只导出NG】
-（2）FOV影像输出：选择【所有】
-（3）元件输出影像：选择【所有】，Good/Pass/NG元件数量限制：选择【所有】
-3、RV:复判后
-    pass
-良率更新
-def jbgn_001_19():
-    1、程式运行结束
-2、RV复判后
-    pass
-元件拍照类型
-def jbgn_001_20():
-    1、程式已设置：料号47UF_6.3*7.7mm拍照类型设置Quad12mm
-    pass
-抽测元件
-def jbgn_001_21():
-    1、程式已设置：元件LVC1设置抽测元件：1/3测试
-    pass
-抽测窗口1/3
-def jbgn_001_22():
-    1、程式已设置：抽测窗口1/3忽略， 元件：epcos1、epcos2，窗口： 颜色匹配
-    pass
-拍照高度设置
-def jbgn_001_23():
-    1、程式已设置：元件G6K-2F-Y(J3,J2)拍照高度设置10mm
-    pass
-元件缺陷锁定
-def jbgn_001_24():
-    1、程式已设置：元件缺陷锁定：7343TAN-100uf
-2、UI不启用单料号模式，须将D:\EYUI\BIN\config\SinglePartNo.cfg重命名
-    pass
-强制导出DJB
-def jbgn_001_25():
-    1、程式已设置：强制导出料号4D03-100R
-    pass
-# 参数控制限定
-def jbgn_001_26():
-    1、程式已设置：料号R6322-2512-470E的X偏移：100-500
-    pass
-# 定位元件
-def jbgn_001_27():
-    1、程式已设置：定位元件： Designator3+r60 r58 r56 r54
+#     pass
+# # 整板离散度
+# def jbgn_001_31():
+#     pass
+# # 运行坏板程式
+# def jbgn_001_32():
+#     pass
+# # 坏板RV信息
+# def jbgn_001_33():
 
-    pass
-# 大元件测试
-def jbgn_001_28():
-    1、程式运行结束
-    pass
-# 整板量测
-def jbgn_001_29():
-    1、程式已设置：整板量测【123】
-    pass
-# 整板异物检测
-def jbgn_001_30():
-    
-1、UI整板视图左上方【板】-【FOV】-【FOV检测】-【异物】：选择所有选项
-2、程式运行结束
-    pass
-# 整板离散度
-def jbgn_001_31():
-    1、整板离散度--半径：100mm
-    pass
-# 运行坏板程式
-def jbgn_001_32():
-    1、使用Job对应的PCB板，坏的拼板放在左上角位置
-    pass
-# 坏板RV信息
-def jbgn_001_33():
-    1、使用Job对应的PCB板，坏的拼板放在左上角位置
-2、程式运行停止后
+#     pass
+# # 坏板SPC信息
+# def jbgn_001_34():
+
+#     pass
+# # 坏板良率信息
+# def jbgn_001_35():
 
 
-    pass
-# 坏板SPC信息
-def jbgn_001_34():
-    1、使用Job对应的PCB板，坏的拼板放在左上角位置
-2、RV复判后
+#     pass
+# # 运行坏板程式
+# def jbgn_001_36():
+#     pass
+# # 坏板RV信息
+# def jbgn_001_37():
+#     pass
+# # 坏板SPC信息
+# def jbgn_001_38():
+#     pass
+# # 坏板良率信息
+# def jbgn_001_39():
 
 
-    pass
-# 坏板良率信息
-def jbgn_001_35():
-    1、使用Job对应的PCB板，坏的拼板放在左上角位置
-2、程式运行、复判后
-
-
-    pass
-# 运行坏板程式
-def jbgn_001_36():
-    1、使用Job对应的PCB板，坏的拼板放在左上角位置
-    pass
-# 坏板RV信息
-def jbgn_001_37():
-    1、使用Job对应的PCB板，坏的拼板放在左上角位置
-2、程式运行停止后
-    pass
-# 坏板SPC信息
-def jbgn_001_38():
-    1、使用Job对应的PCB板，坏的拼板放在左上角位置
-2、RV复判后
-    pass
-# 坏板良率信息
-def jbgn_001_39():
-    1、使用Job对应的PCB板，坏的拼板放在左上角位置
-2、RV复判后
-
-
-    pass
-# 检查细调算法
+#     pass
+# # 检查细调算法
 def jbgn_001_40():
-    1、程式运行停止后
     pass
 # 细调元件切换
 def jbgn_001_41():
-    1、程式运行停止后
     pass
 # 搜索范围变化
 def jbgn_001_42():
-    1、程式运行停止后
     pass
 # 调整检测框
 def jbgn_001_43():
-    1、程式运行停止后
     pass
 # 停止响应
 def jbgn_001_44():
@@ -509,13 +358,9 @@ def jbgn_001_45():
     pass
 # SPC数据保存
 def jbgn_001_46():
-    1、参数配置--流程配置--缺陷视图：不勾选【打开DV复判模式】、不勾选【DV自动确认】按钮
-2、RV：手工确认
     pass
 # SPC数据保存
 def jbgn_001_47():
-    1、参数配置--流程配置--缺陷视图:勾选【打开DV复判模式】
-2、RV：手工确认
     pass
 # SPC数据保存
 def jbgn_001_48():
@@ -528,26 +373,26 @@ def jbgn_001_49():
     # 2、删除目录D:\EYAOI\JOB\Job名\Job名.oki
     # 3、删除目录F:\DataExport\Job名\OKImage
     pass
-# 离线调整参数
-def jbgn_001_50():
-    #1、接案例JBGN-001-01，做好job并矫正
-    #2、选择任一元件，双金进入离线编辑界面
-    # 3、修改任一算法参数，切换到同料号其它元件，弹框选择【是】 参数已修改，窗口位置不会变
-    # 4、调整任一算法窗口，切换到同料号其它元件，弹框选择【是】 窗口位置已修改，其它窗口位置不会变
-    pass
+# # 离线调整参数
+# def jbgn_001_50():
+#     #1、接案例JBGN-001-01，做好job并矫正
+#     #2、选择任一元件，双金进入离线编辑界面
+#     # 3、修改任一算法参数，切换到同料号其它元件，弹框选择【是】 参数已修改，窗口位置不会变
+#     # 4、调整任一算法窗口，切换到同料号其它元件，弹框选择【是】 窗口位置已修改，其它窗口位置不会变
+#     pass
 
-# 细调调整参数
-def jbgn_001_51():
-    # 1、接案例JBGN-001-01，做好job并矫正
-    # 2、点【测试】按钮开始测试，测试完成后，点【停止】按钮，点击右下角【进入细调界面】
-    # 3、选择任一元件，修改任一算法参数，切换到同料号其它元件，弹框选择【是】   参数已修改，窗口位置不会变
+# # 细调调整参数
+# def jbgn_001_51():
+#     # 1、接案例JBGN-001-01，做好job并矫正
+#     # 2、点【测试】按钮开始测试，测试完成后，点【停止】按钮，点击右下角【进入细调界面】
+#     # 3、选择任一元件，修改任一算法参数，切换到同料号其它元件，弹框选择【是】   参数已修改，窗口位置不会变
 
-    # 4、调整任一算法窗口，切换到同料号其它元件，弹框选择【是】     窗口位置已修改，其它窗口位置不会变
-    pass
+#     # 4、调整任一算法窗口，切换到同料号其它元件，弹框选择【是】     窗口位置已修改，其它窗口位置不会变
+#     pass
 
-# 量测测试
-def jbgn_001_52():
-    # 1.打开这个名为量测的job
-    # 2.检查板--整板信息--量测-点对点量测是否为勾上状态
-    # 3.点击左上角运行  不出错
-    pass
+# # 量测测试
+# def jbgn_001_52():
+#     # 1.打开这个名为量测的job
+#     # 2.检查板--整板信息--量测-点对点量测是否为勾上状态
+#     # 3.点击左上角运行  不出错
+#     pass

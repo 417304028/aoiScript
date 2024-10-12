@@ -9,16 +9,16 @@ def submit():
     train_eval_path = entry_train_eval_path.get()
     result_path = entry_result_path.get()
     mode = mode_var.get()
-    if not os.path.exists(train_eval_path):
-        root.attributes('-topmost', True)  # 窗口置顶
-        messagebox.showerror("错误", "训练评估路径不存在，请重新输入！", parent=root)
-        root.attributes('-topmost', False)  # 恢复正常
-        return
-    if not os.path.exists(result_path):
-        root.attributes('-topmost', True)  # 窗口置顶
-        messagebox.showerror("错误", "结果路径不存在，请重新输入！", parent=root)
-        root.attributes('-topmost', False)  # 恢复正常
-        return
+    # if not os.path.exists(train_eval_path):
+    #     root.attributes('-topmost', True)  # 窗口置顶
+    #     messagebox.showerror("错误", "训练评估路径不存在，请重新输入！", parent=root)
+    #     root.attributes('-topmost', False)  # 恢复正常
+    #     return
+    # if not os.path.exists(result_path):
+    #     root.attributes('-topmost', True)  # 窗口置顶
+    #     messagebox.showerror("错误", "结果路径不存在，请重新输入！", parent=root)
+    #     root.attributes('-topmost', False)  # 恢复正常
+    #     return
     if mode == "正常":
         status = rv_ai_test(train_eval_path, result_path, "normal")
     elif mode == "存在good/ng":
@@ -63,7 +63,9 @@ if __name__ == '__main__':
     mode_combobox = ttk.Combobox(root, textvariable=mode_var, values=mode_options, state="readonly")
     mode_combobox.pack(fill='x', padx=10)
 
-    submit_button = tk.Button(root, text="执行", command=submit)
+    submit_button = tk.Button(root, text="执行脚本", command=submit)
     submit_button.place(x=window_width-80, y=window_height-50)  # 调整按钮位置
+
+    tk.Label(root, text="Tips：总路径为空，结果路径非空，则根据csv获取图片", wraplength=280).pack(anchor='sw', fill='x', padx=10, pady=10)
 
     root.mainloop()

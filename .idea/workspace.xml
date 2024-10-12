@@ -4,18 +4,38 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="91d32466-c2f3-43df-8c6a-f51d737a9e85" name="更改" comment="eval的逻辑理解错误 大改前备份">
+    <list default="true" id="91d32466-c2f3-43df-8c6a-f51d737a9e85" name="更改" comment="备份">
+      <change afterPath="$PROJECT_DIR$/.idea/webResources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/aoiScript.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/aoiScript.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aoi_test.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/prompt_box/param_setting_close.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/rv_ai_test/mission_message.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/rv_ai_test/simulate_to_train.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/rv_ai_test/simulate_to_train.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/rv_ai_test/topic_dark.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/rv_ai_test/train_eval_yes.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/rv_ai_test/train_eval_yes.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/add_check_window/check_type/senior.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/add_check_window/check_type/senior.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/alg_area/result_0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/alg_area/w_.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/alg_area/w_.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/click_menu/add_reference_point.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/click_menu/add_reference_point.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/click_menu/relate.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/click_menu/relate.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/gui/board/auto.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/gui/board/auto.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/gui/topic.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/gui/topic.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/hodgepodge/copy_package_type_name.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/hodgepodge/copy_package_type_name.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/hodgepodge/if_sync_part_yes.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/hodgepodge/package_close.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/image_process/topic.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/image_process/topic.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/open_program/load.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/prompt_box/if_modify_component_no.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/prompt_box/if_sync_part_no.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lxbj_001_03.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lxbj_005_01.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lxbj_005_02.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rv_ai_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/rv_ai_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/jbgn.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/jbgn.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/lxbj.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/lxbj.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/rv.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/rv.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/temp/temp_simulate_to_train.png" beforeDir="false" afterPath="$PROJECT_DIR$/temp/temp_simulate_to_train.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/yjk.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/yjk.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -54,7 +74,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/417304028/aoiScript.git&quot;,
-    &quot;accountId&quot;: &quot;dd76dc6c-f521-4cad-9b5d-60b9df84d1fd&quot;
+    &quot;accountId&quot;: &quot;ba64dd80-c290-4302-8fc2-8fff860bdea3&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -70,15 +90,20 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;Python.aoi_test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.build.executor&quot;: &quot;Run&quot;,
     &quot;Python.lxbj_001_02.executor&quot;: &quot;Run&quot;,
     &quot;Python.lxbj_005_01.executor&quot;: &quot;Debug&quot;,
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
     &quot;Python.main_001_02.executor&quot;: &quot;Run&quot;,
     &quot;Python.main_001_03.executor&quot;: &quot;Run&quot;,
     &quot;Python.main_001_04.executor&quot;: &quot;Run&quot;,
+    &quot;Python.rv.executor&quot;: &quot;Run&quot;,
     &quot;Python.rv_ai_test.executor&quot;: &quot;Run&quot;,
     &quot;Python.utils.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.yjk.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;last_opened_file_path&quot;: &quot;D:/work/aoiScript&quot;,
@@ -87,11 +112,11 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.intellij.pycharm.community.ide.impl.configuration.PythonContentEntriesConfigurable&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="Python.main">
+  <component name="RunManager" selected="Python.lxbj_001_02">
     <configuration name="lxbj_001_02" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="aoiScript" />
       <option name="ENV_FILES" value="" />
@@ -211,17 +236,17 @@
       <list>
         <item itemvalue="Python.main" />
         <item itemvalue="Python.rv_ai_test" />
-        <item itemvalue="Python.lxbj_001_02" />
         <item itemvalue="Python.main_001_04" />
         <item itemvalue="Python.main_001_03" />
+        <item itemvalue="Python.lxbj_001_02" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-PY-241.14494.241" />
-        <option value="bundled-python-sdk-0509580d9d50-28c9f5db9ffe-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.14494.241" />
+        <option value="bundled-js-predefined-d6986cc7102b-410509235cf1-JavaScript-PY-242.20224.347" />
+        <option value="bundled-python-sdk-c2d6afa66fbe-39cff9de6eef-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-242.20224.347" />
       </set>
     </attachedChunks>
   </component>
@@ -271,7 +296,22 @@
       <workItem from="1721302037684" duration="530000" />
       <workItem from="1721357032109" duration="10971000" />
       <workItem from="1721379875220" duration="51974000" />
-      <workItem from="1721786546205" duration="78668000" />
+      <workItem from="1721786546205" duration="111741000" />
+      <workItem from="1722416868405" duration="195118000" />
+      <workItem from="1723454449220" duration="15456000" />
+      <workItem from="1723710498221" duration="58989000" />
+      <workItem from="1724074298754" duration="42934000" />
+      <workItem from="1724228166061" duration="20280000" />
+      <workItem from="1724322805750" duration="12000" />
+      <workItem from="1724322913720" duration="33000" />
+      <workItem from="1724323679967" duration="161000" />
+      <workItem from="1724323859675" duration="51895000" />
+      <workItem from="1724660635545" duration="153000" />
+      <workItem from="1725240885211" duration="44511000" />
+      <workItem from="1725932228404" duration="12942000" />
+      <workItem from="1728612826975" duration="724000" />
+      <workItem from="1728634030665" duration="1489000" />
+      <workItem from="1728712209806" duration="375000" />
     </task>
     <task id="LOCAL-00001" summary="新增aoi关联脚本的python-qt界面">
       <option name="closed" value="true" />
@@ -377,7 +417,55 @@
       <option name="project" value="LOCAL" />
       <updated>1721382442583</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="eval的逻辑理解错误 大改前备份">
+      <option name="closed" value="true" />
+      <created>1722244148101</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1722244148101</updated>
+    </task>
+    <task id="LOCAL-00015" summary="元件库用例基本测完">
+      <option name="closed" value="true" />
+      <created>1722505354992</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1722505354992</updated>
+    </task>
+    <task id="LOCAL-00016" summary="烦">
+      <option name="closed" value="true" />
+      <created>1722593514567</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1722593514567</updated>
+    </task>
+    <task id="LOCAL-00017" summary="测试">
+      <option name="closed" value="true" />
+      <created>1724313837100</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1724313837100</updated>
+    </task>
+    <task id="LOCAL-00018" summary="满意 开测">
+      <option name="closed" value="true" />
+      <created>1724638421879</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1724638421879</updated>
+    </task>
+    <task id="LOCAL-00019" summary="元件库用例测完">
+      <option name="closed" value="true" />
+      <created>1725934252569</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1725934252569</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -409,16 +497,26 @@
     <MESSAGE value="恐怖周-元件库用例完善，rv复判用例编写。rv复判优先级改为最高，aoi自动化脚本推后" />
     <MESSAGE value="一堆测试问题" />
     <MESSAGE value="eval的逻辑理解错误 大改前备份" />
-    <option name="LAST_COMMIT_MESSAGE" value="eval的逻辑理解错误 大改前备份" />
+    <MESSAGE value="元件库用例基本测完" />
+    <MESSAGE value="烦" />
+    <MESSAGE value="测试" />
+    <MESSAGE value="满意 开测" />
+    <MESSAGE value="元件库用例测完" />
+    <MESSAGE value="备份" />
+    <option name="LAST_COMMIT_MESSAGE" value="备份" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/aoiScript$main_001_04.coverage" NAME="main_001_04 覆盖结果" MODIFIED="1717658253699" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/aoiScript$aoi_test.coverage" NAME="aoi_test 覆盖结果" MODIFIED="1725951967770" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/aoiScript$rv.coverage" NAME="rv 覆盖结果" MODIFIED="1725429968708" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/aoiScript$lxbj_001_02.coverage" NAME="lxbj_001_02 覆盖结果" MODIFIED="1718944728951" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/aoiScript$main_001_02.coverage" NAME="main_001_02 覆盖结果" MODIFIED="1717652607365" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/aoiScript$rv_ai_test.coverage" NAME="rv_ai_test 覆盖结果" MODIFIED="1723741693259" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/aoiScript$main_001_03.coverage" NAME="main_001_03 覆盖结果" MODIFIED="1717653994692" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/aoiScript$main.coverage" NAME="main 覆盖结果" MODIFIED="1721984320918" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/aoiScript$utils.coverage" NAME="utils 覆盖结果" MODIFIED="1718935817039" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/aoiScript$lxbj_005_01.coverage" NAME="lxbj_005_01 覆盖结果" MODIFIED="1718935826408" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/aoiScript$rv_ai_test.coverage" NAME="rv_ai_test 覆盖结果" MODIFIED="1721618072912" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/aoiScript$main_001_04.coverage" NAME="main_001_04 覆盖结果" MODIFIED="1717658253699" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/aoiScript$build.coverage" NAME="build 覆盖结果" MODIFIED="1723994964777" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/aoiScript$yjk.coverage" NAME="yjk 覆盖结果" MODIFIED="1725350322959" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
+    <SUITE FILE_PATH="coverage/aoiScript$utils.coverage" NAME="utils 覆盖结果" MODIFIED="1718935817039" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/aoiScript$main_001_02.coverage" NAME="main_001_02 覆盖结果" MODIFIED="1717652607365" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/aoiScript$main.coverage" NAME="main 覆盖结果" MODIFIED="1725441179889" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

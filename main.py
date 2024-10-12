@@ -1,5 +1,5 @@
 import config, cv2, time
-from utils import logger, search_symbol, setup_logger, click_by_png, add_window
+from utils import logger, search_symbol, setup_logger, click_color, count_color_in_range, read_text_ocr, get_frame_points
 from scripts import yjk
 from scripts import test
 import importlib
@@ -38,8 +38,26 @@ def main():
 
 if __name__ == "__main__":
     setup_logger()
-    # main()
-    # logger.info(read_text_ocr((364,273),(551,411)))
-    add_window()
-    # test.test_aoi()
 
+    pyautogui.click(config.CENTRE)
+    pyautogui.hotkey("ctrl", "a")
+    a = count_color_in_range(config.CENTRE, 100, (0,0,255))
+    pyautogui.hotkey("ctrl", "b")
+    time.sleep(1)
+    b = count_color_in_range(config.CENTRE, 100, (0,0,255))
+    if b == a:
+        raise Exception("切换本体(引脚)/窗口快捷键疑似无效")
+    # black_pixel_count = 0
+    # total_pixels = 0
+    # screenshot = pyautogui.screenshot(region=config.COMPONENT_REGION)
+    # for x in range(screenshot.width):
+    #     for y in range(screenshot.height):
+    #         if screenshot.getpixel((x, y)) == (0, 0, 0):
+    #             black_pixel_count += 1
+    #         total_pixels += 1
+    # if total_pixels > 0:
+    #     black_pixel_ratio = black_pixel_count / total_pixels * 100
+    #     if black_pixel_ratio < 40:
+    #         raise Exception("config.component_region内颜色为（0，0，0）的比例低于30%")
+    #     else:
+    #         logger.info(f"config.component_region内颜色为（0，0，0）的比例为{black_pixel_ratio}%")

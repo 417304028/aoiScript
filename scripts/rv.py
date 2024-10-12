@@ -55,6 +55,131 @@ def front_rv_window():
 # ai复判 总路径(包含train,test文件夹),结果路径（含定位图片及输出数据文档）
 def rv_ai_test(train_eval_path, result_path, mode):
     status = 1
+    if not train_eval_path and result_path:
+        # 从提供的路径向上遍历，直到找到包含pyd的目录,用pyd_path保存
+        logger.info(f"查询pyd路径")
+        pyd_path = result_path
+        substring = 'py'
+        root_path = os.path.abspath(os.sep)
+        found = False  # 用于标记是否找到包含子字符串的目录
+
+        while pyd_path != root_path:
+            if substring in os.path.basename(pyd_path):
+                found = True  # 找到了包含子字符串的目录
+                logger.info(f"找到pyd路径: {pyd_path}")
+                break
+            pyd_path = os.path.dirname(pyd_path)
+
+        if not found:
+            status = -1
+            logger.error(f"在路径 {result_path} 中未找到包含 '{substring}' 的目录")
+            raise Exception(f"在路径 {result_path} 中未找到包含 '{substring}' 的目录")
+        logger.debug("训练推理为空，结果路径非空，开始处理结果路径下的.csv文件")
+        csv_files = glob.glob(os.path.join(result_path, '*.csv'))
+        if not csv_files:
+            logger.error("未找到任何.csv文件")
+            raise Exception("未找到任何.csv文件")
+        
+        for csv_file in csv_files:
+            logger.info(f"处理文件: {csv_file}")
+            csv_file_name = os.path.splitext(os.path.basename(csv_file))[0]
+            new_xlsx_path = os.path.join(result_path, f"{csv_file_name}.xlsx")
+            try:
+                with open(csv_file, 'rb') as file:
+                    content = file.read()
+                    result = chardet.detect(content)
+                    encoding = result['encoding'] if result['encoding'] else 'utf-8'
+                    try:
+                        content = content.decode(encoding)
+                    except UnicodeDecodeError:
+                        content = content.decode('gbk', errors='ignore')
+
+                df_csv = pd.read_csv(csv_file, encoding=encoding)
+                # 添加新列
+                df_csv = df_csv.assign(eval结果=None, good_ng=None, eval图片=None, 定位图片=None, train图片=None, eval路径=None)
+                # 重新排序列，将新列放在前面
+                columns_order = ['eval结果', 'good_ng', 'eval图片', '定位图片', 'train图片', 'eval路径'] + [col for col in df_csv.columns if col not in ['eval结果', 'good_ng', 'eval图片', '定位图片', 'train图片', 'eval路径']]
+                df_csv = df_csv[columns_order]
+                df_csv.to_excel(new_xlsx_path, index=False, engine='openpyxl')
+                logger.info("对xlsx作预处理")
+                df_xlsx = pd.read_excel(new_xlsx_path, engine='openpyxl')
+                df_xlsx.columns = [col.strip() for col in df_xlsx.columns]
+                wb = openpyxl.load_workbook(new_xlsx_path)
+                ws = wb.active
+                for cell in ws[1]:
+                    cell.font = Font(bold=False)
+                ws.column_dimensions['C'].width = 18
+                ws.column_dimensions['D'].width = 18
+                ws.column_dimensions['E'].width = 18
+                wb.save(new_xlsx_path)
+                df_xlsx = pd.read_excel(new_xlsx_path, engine='openpyxl')
+                df_xlsx.columns = [re.sub(r'\s+', '', col) for col in df_xlsx.columns]
+                logger.info("对xlsx作预处理完成")
+                
+                wb = openpyxl.load_workbook(new_xlsx_path)
+                ws = wb.active
+                for index, row in df_xlsx.iterrows():
+                    excel_row = index + 2
+                    if excel_row > 1:
+                        ws.row_dimensions[excel_row].height = 75
+                    id = ws.cell(row=excel_row, column=8).value
+
+                    eval_image_cell = ws.cell(row=excel_row, column=3)
+                    eval_image_path = ws.cell(row=excel_row, column=9).value        
+                    try:
+                        if eval_image_path:
+                            eval_image_path = os.path.normpath(eval_image_path)
+                            if os.path.exists(eval_image_path):
+                                utils.insert_image_limited(ws, eval_image_cell, eval_image_path)
+                            else:
+                                eval_image_cell.value = "空"
+                                logger.debug(f"id: {id}, eval图片路径不存在: {eval_image_path}")
+                        else:
+                            eval_image_cell.value = "空"
+                    except Exception as e:
+                        logger.debug(f"id: {id}, 处理eval图片 {eval_image_path} 时出错: {e}")
+
+                    cad_cell = ws.cell(row=excel_row, column=4)
+                    cad_loc_path = os.path.join(pyd_path, 'cad_com_loc', f"{id}.bmp")        
+                    try:
+                        if not os.path.exists(cad_loc_path):
+                            cad_loc_path = os.path.join(pyd_path, 'cad_com_loc', f"{id}.jpg")
+                        if not os.path.exists(cad_loc_path):
+                            cad_loc_path = os.path.join(pyd_path, 'cad_com_loc', f"{id}.png")
+                        cad_loc_path = os.path.normpath(cad_loc_path)
+                        if cad_loc_path and os.path.exists(cad_loc_path):
+                            utils.insert_image_limited(ws, cad_cell, cad_loc_path)
+                        else:
+                            cad_cell.value = "空"
+                            logger.error(f"id: {id}, cad_loc图片路径不存在: {cad_loc_path}")
+                    except Exception as e:
+                        logger.error(f"id: {id}, cad_img处理图片 {cad_loc_path} 时出错: {e}")
+
+                    if ws.cell(row=excel_row, column=10).value is None:
+                        ws.cell(row=excel_row, column=5).value = "空"
+                    else:
+                        train_image_path = ws.cell(row=excel_row, column=10).value
+                        train_cell = ws.cell(row=excel_row, column=5)
+                        try:
+                            logger.info(f"id: {id}, train_image_path: {train_image_path}")
+                            if train_image_path and os.path.exists(train_image_path):
+                                train_image_path = os.path.normpath(train_image_path)
+                                utils.insert_image_limited(ws, train_cell, train_image_path)
+                            else:
+                                train_cell.value = "空"
+                        except Exception as e:
+                            logger.debug(f"id: {id}, train_img处理图片 {train_image_path} 时出错: {e}")
+
+                logger.debug("所有图片处理完毕，正在保存工作簿...")
+                wb.save(new_xlsx_path)
+                logger.info(f"处理完成: {new_xlsx_path}")
+            except Exception as e:
+                logger.error(f"处理文件 {csv_file} 时发生错误: {e}")
+                raise Exception(f"处理文件 {csv_file} 时发生错误: {e}")
+        status = 0
+        logger.info(f"处理完成,status: {status}")
+        return status
+
     front_rv_window()
     train_paths = set()
     eval_results = []
@@ -88,195 +213,112 @@ def rv_ai_test(train_eval_path, result_path, mode):
         raise Exception(f"在路径 {result_path} 中未找到包含 '{substring}' 的目录")
 
     for train_path in train_paths:
-        pyperclip.copy(train_path)
-        logger.info(f"开始遍历{train_path}")
-        utils.click_by_png(config.RV_SIMULATE_TO_TRAIN)
-        refresh_count = 0
-        while refresh_count < 7:
-            time.sleep(2)
-            pyautogui.press('enter')
-            if refresh_count == 1:
-                utils.click_by_png(config.RV_TRAIN_STATUS, timeout=60, if_click_right=1)
-                time.sleep(1)
-                pyautogui.press('down', 3)
-                time.sleep(1)
-                pyautogui.press('enter')
-                time.sleep(3)
-            utils.click_by_png(config.RV_JOB_NAME, timeout=60, if_click_right=1)
-            time.sleep(1)
-            pyautogui.press('down', 2)
-            pyautogui.press('enter')
-            logger.info(f"训练刷新第{refresh_count}次")
-            time.sleep(1)
-            # 查看训练状态
-            utils.click_by_png(config.RV_TRAIN_STATUS)
-            time.sleep(1)
-            pyautogui.hotkey('ctrl', 'a')
-            time.sleep(1.5)
-            pyautogui.hotkey('ctrl', 'c')
-            train_result = pyperclip.paste()
-            logger.info(train_result)
-            if '训练完成' in train_result:
-                train_result = '训练完成'
-                break
-            elif '训练失败' in train_result:
-                train_result = '训练失败'
-                break
-            elif '待训练' in train_result:
-                refresh_count += 1
-                time.sleep(10)
-                if refresh_count == 6:
-                    train_result = '待训练'
-                    break
-            else:
-                status = -1
-                logger.error("训练状态未知")
-        # 检测pyd_path下是否有train_logs的文件夹,没有的话创建该文件夹,在文件夹内创建 年-月-日.csv(若不存在的话) 
-        train_logs_path = os.path.join(pyd_path, 'train_logs')
-        os.makedirs(train_logs_path, exist_ok=True)
-        today_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        csv_file_path = os.path.join(train_logs_path, f"{today_date}.csv")
-        # 处理train.csv
-        if not os.path.exists(csv_file_path):
-            with open(csv_file_path, 'w', newline='', encoding='utf-8') as file:
-                writer = csv.writer(file)
-                writer.writerow(['train路径', 'train状态'])
-        with open(csv_file_path, 'a', newline='', encoding='utf-8') as file:
-            writer = csv.writer(file)
-            writer.writerow([train_path, train_result])
-        # 保存并关闭该csv
-        file.close()
-        logger.info("训练完毕，开始推理")
-        
-        # 查询train_path同级文件夹下名字包含test的文件夹 装入eval_path
-        eval_paths = glob.glob(os.path.join(os.path.dirname(train_path), '*test*'))
-        if not eval_paths:  # 检查列表是否为空
-            logger.error("未找到推理的路径")
-            raise Exception("未找到推理的路径")
-        else:
-            logger.info(f"训练路径为:{train_path}, 推理路径为:{eval_paths}")
-        for eval_path in eval_paths:
-            if mode == "normal":
-                good_ng = "空"
-                # 复制路径处理
-                with open("temp_eval_path.txt", "w", encoding='utf-8') as temp_file:
-                    temp_file.write(eval_path)
-                # 从记事本读取eval_path到剪切板
-                with open("temp_eval_path.txt", "r", encoding='utf-8') as temp_file:
-                    eval_path_from_txt = temp_file.read()
-                    pyperclip.copy('')
-                    time.sleep(0.5)
-                    pyperclip.copy(eval_path)
-                    pyperclip.copy(eval_path_from_txt)
-                clipboard_content = pyperclip.paste()
-                logger.info(f"剪切板内容: {clipboard_content}")
-                time.sleep(2)
-                utils.click_by_png(config.RV_SIMULATE_TO_EVAL, tolerance=0.95)
-                time.sleep(2)
-                os.remove("temp_eval_path.txt")
-                pyautogui.press('enter')
-                # 刷新任务状态并提取结果
-                utils.click_by_png(config.RV_JOB_NAME, timeout=6, if_click_right=1)
+        try:
+            pyperclip.copy(train_path)
+            logger.info(f"开始遍历{train_path}")
+            utils.click_by_png(config.RV_SIMULATE_TO_TRAIN)
+            refresh_count = 0
+            while refresh_count < 8:
+                if refresh_count == 0:
+                    if utils.search_symbol_erroring(config.RV_TRAIN_SUCCESS, 30):
+                        time.sleep(2)
+                        pyautogui.press('enter')
+                    time.sleep(1)
+                # 为1时开始刷新
+                if refresh_count == 1:
+                    utils.click_by_png(config.RV_TRAIN_STATUS, timeout=60, if_click_right=1)
+                    time.sleep(1)
+                    pyautogui.press('down', 3)
+                    time.sleep(1)
+                    pyautogui.press('enter')
+                    time.sleep(3)
+                utils.click_by_png(config.RV_JOB_NAME, timeout=60, if_click_right=1)
                 time.sleep(1)
                 pyautogui.press('down', 2)
                 pyautogui.press('enter')
+                logger.info(f"训练刷新第{refresh_count}次")
                 time.sleep(1)
-                utils.click_by_png(config.RV_TRAIN_STATUS, if_click_right=1)
+                # 查看训练状态
+                utils.click_by_png(config.RV_TRAIN_STATUS)
                 time.sleep(1)
-                if not utils.search_symbol(config.RV_CLICK_RESTART_EVAL, 5):
-                    time.sleep(5)
-                utils.click_by_png(config.RV_CLICK_RESTART_EVAL)
-                click_time = datetime.datetime.now()
-                logger.info(f"点击重新推理时间: {click_time.strftime('%Y-%m-%d %H:%M:%S')}")
-                retry_count = 0
-                while retry_count < 6:
-                    logger.info(f"推理刷新第{retry_count}次")
-                    time.sleep(5)
-                    utils.click_by_png(config.RV_MISSION_MANAGE, tolerance=0.7)
-                    time.sleep(1)
-                    pyautogui.hotkey('ctrl', 'a')
-                    time.sleep(1.5)
-                    pyautogui.hotkey('ctrl', 'c')
-                    logger.info("开始解析推理状态")
-                    clipboard_content = pyperclip.paste()
-                    task_lines = clipboard_content.split('\n')
-                    latest_time = None
-                    latest_record = None
-                    for line in task_lines[1:]:
-                        parts = line.split('\t')
-                        if len(parts) >= 6:
-                            task_id, task_type, task_status, result, add_time, next_time = parts
-                            # 将添加时间字符串转换为datetime对象
-                            try:
-                                add_time_dt = datetime.datetime.strptime(add_time.strip(), '%Y/%m/%d %H:%M:%S')
-                            except ValueError as e:
-                                logger.warning(f"日期解析失败：{add_time}，错误：{e}")
-                            # 检查添加时间是否在click_time的前后2分钟内
-                            if click_time - datetime.timedelta(minutes=2) <= add_time_dt <= click_time + datetime.timedelta(minutes=2):
-                                # 检查是否是最近的时间
-                                if latest_time is None or add_time_dt > latest_time:
-                                    latest_time = add_time_dt
-                                    latest_record = (task_type, task_status, result)
-                                    logger.info(f"task_type = {task_type},task_status = {task_status},task_result = {result}")
-                    if latest_record:
-                        logger.info(f"第{retry_count}次推理,记录为：{latest_record}")
-                        logger.info(f"找到最新记录：任务类型={task_type}，任务状态={task_status}，结果={result}，添加时间={add_time}")
-                    else:
-                        logger.error("没有找到符合条件的记录")
-                    # 取两分钟内的记录，如果在队列中的话，则记录其task_id，3分钟后如果还是显示队列中则
-                    if latest_record and '推理' in latest_record[0] and '成功' in latest_record[2]:
-                        eval_result = '推理成功'
-                        utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, timeout=5)
+                pyautogui.hotkey('ctrl', 'a')
+                time.sleep(1.5)
+                pyautogui.hotkey('ctrl', 'c')
+                train_result = pyperclip.paste()
+                logger.info(train_result)
+                if re.search(r'训练完成', train_result):
+                    train_result = '训练完成'
+                    logger.info("训练状态: 训练完成")
+                    break
+                elif re.search(r'训练失败', train_result):
+                    train_result = '训练失败'
+                    logger.info("训练状态: 训练失败")
+                    break
+                elif re.search(r'待训练', train_result):
+                    refresh_count += 1
+                    logger.info(f"训练状态: 待训练, 刷新次数: {refresh_count}")
+                    time.sleep(10)
+                    if refresh_count == 7:
+                        train_result = '待训练'
+                        logger.info("训练状态: 待训练, 达到最大刷新次数")
                         break
-                    elif latest_record and '推理' in latest_record[0] and '失败' in latest_record[2]:
-                        eval_result = '推理失败'
-                        utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, timeout=5)
-                        break
-                    elif "队列" in latest_record[1]:
-                        retry_count += 0.5
-                        logger.debug(f"推理处于队列中")
-                        utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, timeout=5)
-                    else:
-                        utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, timeout=5)
-                        time.sleep(10)  # 等待10秒后再次尝试
-                        retry_count += 1
-                if retry_count == 6:
-                    eval_result = '推理失败'
-                time.sleep(1)
-                eval_results.append((eval_path, eval_result, good_ng))
-            elif mode == "good_ng":
-                # 获取eval_path下的good和ng文件夹路径
-                good_path = os.path.join(eval_path, 'good')
-                ng_path = os.path.join(eval_path, 'ng')
-                # 分为good和ng两种情况
-                if os.path.exists(good_path):
-                    logger.info(f"good存在: {good_path}")
-                    good_ng = "good"
+                else:
+                    status = -1
+                    logger.error("训练状态未知")
+
+            # 检测pyd_path下是否有train_logs的文件夹,没有的话创建该文件夹,在文件夹内创建 年-月-日.csv(若不存在的话) 
+            logger.info("开始记录训练结果")
+            train_logs_path = os.path.join(pyd_path, 'train_logs')
+            os.makedirs(train_logs_path, exist_ok=True)
+            today_date = datetime.datetime.now().strftime("%Y-%m-%d")
+            csv_file_path = os.path.join(train_logs_path, f"{today_date}.csv")
+            # 处理train.csv
+            if not os.path.exists(csv_file_path):
+                with open(csv_file_path, 'w', newline='', encoding='utf-8') as file:
+                    writer = csv.writer(file)
+                    writer.writerow(['train路径', 'train状态'])
+            with open(csv_file_path, 'a', newline='', encoding='utf-8') as file:
+                writer = csv.writer(file)
+                writer.writerow([train_path, train_result])
+            # 保存并关闭该csv
+            file.close()
+            logger.info("训练完毕，开始推理")
+            
+            # 查询train_path同级文件夹下名字包含test的文件夹 装入eval_path
+            eval_paths = glob.glob(os.path.join(os.path.dirname(train_path), '*test*'))
+            if not eval_paths:  # 检查列表是否为空
+                logger.error("未找到推理的路径")
+                raise Exception("未找到推理的路径")
+            else:
+                logger.info(f"训练路径为:{train_path}, 推理路径为:{eval_paths}")
+            for eval_path in eval_paths:
+                if mode == "normal":
+                    good_ng = "空"
                     # 复制路径处理
-                    with open("temp_good_path.txt", "w", encoding='utf-8') as temp_file:
-                        temp_file.write(good_path)
+                    with open("temp_eval_path.txt", "w", encoding='utf-8') as temp_file:
+                        temp_file.write(eval_path)
                     # 从记事本读取eval_path到剪切板
-                    with open("temp_good_path.txt", "r", encoding='utf-8') as temp_file:
-                        good_path_from_txt = temp_file.read()
+                    with open("temp_eval_path.txt", "r", encoding='utf-8') as temp_file:
+                        eval_path_from_txt = temp_file.read()
                         pyperclip.copy('')
                         time.sleep(0.5)
-                        pyperclip.copy(good_path)
-                        pyperclip.copy(good_path_from_txt)
+                        pyperclip.copy(eval_path)
+                        pyperclip.copy(eval_path_from_txt)
                     clipboard_content = pyperclip.paste()
-                    logger.info(f"推理前剪切板内容: {clipboard_content}")
+                    logger.info(f"剪切板内容: {clipboard_content}")
                     time.sleep(2)
-                    # 开始推理
                     utils.click_by_png(config.RV_SIMULATE_TO_EVAL, tolerance=0.95)
                     time.sleep(2)
-                    os.remove("temp_good_path.txt")
+                    os.remove("temp_eval_path.txt")
+                    utils.search_symbol_erroring(config.RV_EVAL_SUCCESS, 30)
+                    time.sleep(2)
                     pyautogui.press('enter')
-                    # 刷新任务状态
+                    # 刷新任务状态并提取结果
                     utils.click_by_png(config.RV_JOB_NAME, timeout=6, if_click_right=1)
                     time.sleep(1)
-                    pyautogui.press('down',2)
+                    pyautogui.press('down', 2)
                     pyautogui.press('enter')
-                    # 点击重新推理 推理完成后再去点手动筛选
-                    time.sleep(3)
+                    time.sleep(1)
                     utils.click_by_png(config.RV_TRAIN_STATUS, if_click_right=1)
                     time.sleep(1)
                     if not utils.search_symbol(config.RV_CLICK_RESTART_EVAL, 5):
@@ -284,7 +326,6 @@ def rv_ai_test(train_eval_path, result_path, mode):
                     utils.click_by_png(config.RV_CLICK_RESTART_EVAL)
                     click_time = datetime.datetime.now()
                     logger.info(f"点击重新推理时间: {click_time.strftime('%Y-%m-%d %H:%M:%S')}")
-                    # 重新推理，点击任务状态，获取eval_result
                     retry_count = 0
                     while retry_count < 6:
                         logger.info(f"推理刷新第{retry_count}次")
@@ -299,8 +340,7 @@ def rv_ai_test(train_eval_path, result_path, mode):
                         task_lines = clipboard_content.split('\n')
                         latest_time = None
                         latest_record = None
-                        # 解析任务状态
-                        for line in task_lines[1:]:  # 忽略第一行标题
+                        for line in task_lines[1:]:
                             parts = line.split('\t')
                             if len(parts) >= 6:
                                 task_id, task_type, task_status, result, add_time, next_time = parts
@@ -324,10 +364,14 @@ def rv_ai_test(train_eval_path, result_path, mode):
                         # 取两分钟内的记录，如果在队列中的话，则记录其task_id，3分钟后如果还是显示队列中则
                         if latest_record and '推理' in latest_record[0] and '成功' in latest_record[2]:
                             eval_result = '推理成功'
+                            if train_result == '待训练':
+                                eval_result = f"{train_result}, {eval_result}"
                             utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, timeout=5)
                             break
                         elif latest_record and '推理' in latest_record[0] and '失败' in latest_record[2]:
                             eval_result = '推理失败'
+                            if train_result == '待训练':
+                                eval_result = f"{train_result}, {eval_result}"
                             utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, timeout=5)
                             break
                         elif "队列" in latest_record[1]:
@@ -340,130 +384,254 @@ def rv_ai_test(train_eval_path, result_path, mode):
                             retry_count += 1
                     if retry_count == 6:
                         eval_result = '推理失败'
-                    eval_results.append((good_path, eval_result, good_ng))
-                    time.sleep(3)
-                    # 手动筛选，本页pass
-                    utils.click_by_png(config.RV_JOB_NAME, if_click_right=1)
+                        if train_result == '待训练':
+                            eval_result = f"{train_result}, {eval_result}"
                     time.sleep(1)
-                    utils.click_by_png(config.RV_MANUAL_FILTER)
-                    time.sleep(1)
-                    # 不断pass 直到没图片
-                    while True:
-                        if utils.search_symbol(config.RV_IMAGE_ZERO, 5, tolerance=0.95):
-                            utils.click_by_png(config.RV_CURRENT_CLOSE, tolerance=0.99)
-                            break
-                        utils.click_by_png(config.RV_PASS, tolerance=0.9)
-                        time.sleep(1)
-                        pyautogui.press('enter')
-                        time.sleep(3)
-                if os.path.exists(ng_path):
-                    logger.info(f"ng存在: {ng_path}")
-                    good_ng = "ng"
-                    # 复制路径处理
-                    with open("temp_ng_path.txt", "w", encoding='utf-8') as temp_file:
-                        temp_file.write(ng_path)
-                    # 从记事本读取eval_path到剪切板
-                    with open("temp_ng_path.txt", "r", encoding='utf-8') as temp_file:
-                        ng_path_from_txt = temp_file.read()
-                        pyperclip.copy('')
-                        time.sleep(0.5)
-                        pyperclip.copy(ng_path)
-                        pyperclip.copy(ng_path_from_txt)
-                    clipboard_content = pyperclip.paste()
-                    logger.info(f"推理前剪切板内容: {clipboard_content}")
-                    time.sleep(2)
-                    # 开始推理
-                    utils.click_by_png(config.RV_SIMULATE_TO_EVAL, tolerance=0.95)
-                    time.sleep(2)
-                    os.remove("temp_ng_path.txt")
-                    pyautogui.press('enter')
-                    # 刷新任务状态
-                    utils.click_by_png(config.RV_JOB_NAME, timeout=6, if_click_right=1)
-                    time.sleep(1)
-                    pyautogui.press('down',2)
-                    pyautogui.press('enter')
-                    # 点击重新推理
-                    time.sleep(3)
-                    utils.click_by_png(config.RV_TRAIN_STATUS, if_click_right=1)
-                    time.sleep(1)
-                    if not utils.search_symbol(config.RV_CLICK_RESTART_EVAL, 5):
-                        time.sleep(5)
-                    utils.click_by_png(config.RV_CLICK_RESTART_EVAL)
-                    click_time = datetime.datetime.now()
-                    logger.info(f"点击重新推理时间: {click_time.strftime('%Y-%m-%d %H:%M:%S')}")
-                    # 获取eval_result
-                    retry_count = 0
-                    while retry_count < 6:
-                        logger.info(f"推理刷新第{retry_count}次")
-                        time.sleep(5)
-                        utils.click_by_png(config.RV_MISSION_MANAGE, tolerance=0.7)
-                        time.sleep(1)
-                        pyautogui.hotkey('ctrl', 'a')
-                        time.sleep(1.5)
-                        pyautogui.hotkey('ctrl', 'c')
-                        logger.info("开始解析推理状态")
+                    eval_results.append((eval_path, eval_result, good_ng))
+                elif mode == "good_ng":
+                    # 获取eval_path下的good和ng文件夹路径
+                    good_path = os.path.join(eval_path, 'good')
+                    ng_path = os.path.join(eval_path, 'ng')
+                    # 分为good和ng两种情况
+                    if os.path.exists(good_path):
+                        logger.info(f"good存在: {good_path}")
+                        good_ng = "good"
+                        # 复制路径处理
+                        with open("temp_good_path.txt", "w", encoding='utf-8') as temp_file:
+                            temp_file.write(good_path)
+                        # 从记事本读取eval_path到剪切板
+                        with open("temp_good_path.txt", "r", encoding='utf-8') as temp_file:
+                            good_path_from_txt = temp_file.read()
+                            pyperclip.copy('')
+                            time.sleep(0.5)
+                            pyperclip.copy(good_path)
+                            pyperclip.copy(good_path_from_txt)
                         clipboard_content = pyperclip.paste()
-                        task_lines = clipboard_content.split('\n')
-                        latest_time = None
-                        latest_record = None
-                        # 解析任务状态
-                        for line in task_lines[1:]:  # 忽略第一行标题
-                            parts = line.split('\t')
-                            if len(parts) >= 6:
-                                task_id, task_type, task_status, result, add_time, next_time = parts
-                                # 将添加时间字符串转换为datetime对象
-                                try:
-                                    add_time_dt = datetime.datetime.strptime(add_time.strip(), '%Y/%m/%d %H:%M:%S')
-                                except ValueError as e:
-                                    logger.warning(f"日期解析失败：{add_time}，错误：{e}")
-                                # 检查添加时间是否在click_time的前后2分钟内
-                                if click_time - datetime.timedelta(minutes=2) <= add_time_dt <= click_time + datetime.timedelta(minutes=2):
-                                    # 检查是否是最近的时间
-                                    if latest_time is None or add_time_dt > latest_time:
-                                        latest_time = add_time_dt
-                                        latest_record = (task_type, task_status, result)
-                                        logger.info(f"task_type = {task_type},task_status = {task_status},task_result = {result}")
-                        if latest_record:
-                            logger.info(f"第{retry_count}次推理,记录为：{latest_record}")
-                            logger.info(f"找到最新记录：任务类型={task_type}，任务状态={task_status}，结果={result}，添加时间={add_time}")
-                        else:
-                            logger.error("没有找到符合条件的记录")
-                        # 取两分钟内的记录，如果在队列中的话，则记录其task_id，3分钟后如果还是显示队列中则
-                        if latest_record and '推理' in latest_record[0] and '成功' in latest_record[2]:
-                            eval_result = '推理成功'
-                            utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, timeout=5)
-                            break
-                        elif latest_record and '推理' in latest_record[0] and '失败' in latest_record[2]:
-                            eval_result = '推理失败'
-                            utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, timeout=5)
-                            break
-                        elif "队列" in latest_record[1]:
-                            retry_count += 0.5
-                            logger.debug(f"推理处于队列中")
-                            utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, timeout=5)
-                        else:
-                            utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, timeout=5)
-                            time.sleep(10)  # 等待10秒后再次尝试
-                            retry_count += 1
-                    if retry_count == 6:
-                        eval_result = '推理失败'
-                    eval_results.append((ng_path, eval_result, good_ng))
-                    time.sleep(3)
-                    # 手动筛选，本页ng
-                    utils.click_by_png(config.RV_JOB_NAME, if_click_right=1)
-                    time.sleep(1)
-                    utils.click_by_png(config.RV_MANUAL_FILTER)
-                    time.sleep(1)
-                    # 搜是否图片为0 没搜到的话不断ng 直到没图片
-                    while True:
-                        if utils.search_symbol(config.RV_IMAGE_ZERO, 5, tolerance=0.95):
-                            utils.click_by_png(config.RV_CURRENT_CLOSE, tolerance=0.99)
-                            break
-                        utils.click_by_png(config.RV_NG, tolerance=0.9)
-                        time.sleep(1)
+                        logger.info(f"推理前剪切板内容: {clipboard_content}")
+                        time.sleep(2)
+                        # 开始推理
+                        utils.click_by_png(config.RV_SIMULATE_TO_EVAL, tolerance=0.95)
+                        time.sleep(2)
+                        os.remove("temp_good_path.txt")
+                        utils.search_symbol_erroring(config.RV_EVAL_SUCCESS, 30)
+                        time.sleep(2)
                         pyautogui.press('enter')
+                        # 刷新任务状态
+                        utils.click_by_png(config.RV_JOB_NAME, timeout=6, if_click_right=1)
+                        time.sleep(1)
+                        pyautogui.press('down',2)
+                        pyautogui.press('enter')
+                        # 点击重新推理 推理完成后再去点手动筛选
                         time.sleep(3)
-                        
+                        utils.click_by_png(config.RV_TRAIN_STATUS, if_click_right=1)
+                        time.sleep(1)
+                        if not utils.search_symbol(config.RV_CLICK_RESTART_EVAL, 5):
+                            time.sleep(5)
+                        utils.click_by_png(config.RV_CLICK_RESTART_EVAL)
+                        click_time = datetime.datetime.now()
+                        logger.info(f"点击重新推理时间: {click_time.strftime('%Y-%m-%d %H:%M:%S')}")
+                        # 重新推理，点击任务状态，获取eval_result
+                        retry_count = 0
+                        while retry_count < 6:
+                            logger.info(f"推理刷新第{retry_count}次")
+                            time.sleep(5)
+                            utils.click_by_png(config.RV_MISSION_MANAGE, tolerance=0.7)
+                            time.sleep(1)
+                            pyautogui.hotkey('ctrl', 'a')
+                            time.sleep(1.5)
+                            pyautogui.hotkey('ctrl', 'c')
+                            logger.info("开始解析推理状态")
+                            clipboard_content = pyperclip.paste()
+                            task_lines = clipboard_content.split('\n')
+                            latest_time = None
+                            latest_record = None
+                            # 解析任务状态
+                            for line in task_lines[1:]:  # 忽略第一行标题
+                                parts = line.split('\t')
+                                if len(parts) >= 6:
+                                    task_id, task_type, task_status, result, add_time, next_time = parts
+                                    # 将添加时间字符串转换为datetime对象
+                                    try:
+                                        add_time_dt = datetime.datetime.strptime(add_time.strip(), '%Y/%m/%d %H:%M:%S')
+                                    except ValueError as e:
+                                        logger.warning(f"日期解析失败：{add_time}，错误：{e}")
+                                    # 检查添加时间是否在click_time的前后2分钟内
+                                    if click_time - datetime.timedelta(minutes=2) <= add_time_dt <= click_time + datetime.timedelta(minutes=2):
+                                        # 检查是否是最近的时间
+                                        if latest_time is None or add_time_dt > latest_time:
+                                            latest_time = add_time_dt
+                                            latest_record = (task_type, task_status, result)
+                                            logger.info(f"task_type = {task_type},task_status = {task_status},task_result = {result}")
+                            if latest_record:
+                                logger.info(f"第{retry_count}次推理,记录为：{latest_record}")
+                                logger.info(f"找到最新记录：任务类型={task_type}，任务状态={task_status}，结果={result}，添加时间={add_time}")
+                            else:
+                                logger.error("没有找到符合条件的记录")
+                            # 取两分钟内的记录，如果在队列中的话，则记录其task_id，3分钟后如果还是显示队列中则
+                            if latest_record and '推理' in latest_record[0] and '成功' in latest_record[2]:
+                                eval_result = '推理成功'
+                                if train_result == '待训练':
+                                    eval_result = f"{train_result}, {eval_result}"
+                                utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, timeout=5)
+                                break
+                            elif latest_record and '推理' in latest_record[0] and '失败' in latest_record[2]:
+                                eval_result = '推理失败'
+                                if train_result == '待训练':
+                                    eval_result = f"{train_result}, {eval_result}"
+                                utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, timeout=5)
+                                break
+                            elif "队列" in latest_record[1]:
+                                retry_count += 0.5
+                                logger.debug(f"推理处于队列中")
+                                utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, timeout=5)
+                            else:
+                                utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, timeout=5)
+                                time.sleep(10)  # 等待10秒后再次尝试
+                                retry_count += 1
+                        if retry_count == 6:
+                            eval_result = '推理失败'
+                            if train_result == '待训练':
+                                eval_result = f"{train_result}, {eval_result}"
+                        eval_results.append((good_path, eval_result, good_ng))
+                        time.sleep(3)
+                        # 手动筛选，本页pass
+                        utils.click_by_png(config.RV_JOB_NAME, if_click_right=1)
+                        time.sleep(1)
+                        utils.click_by_png(config.RV_MANUAL_FILTER)
+                        time.sleep(1)
+                        # 不断pass 直到没图片
+                        while True:
+                            if utils.search_symbol(config.RV_IMAGE_ZERO, 5, tolerance=0.95):
+                                utils.click_by_png(config.RV_CURRENT_CLOSE, tolerance=0.99)
+                                break
+                            utils.click_by_png(config.RV_PASS, tolerance=0.9)
+                            time.sleep(1)
+                            pyautogui.press('enter')
+                            time.sleep(3)
+                    if os.path.exists(ng_path):
+                        logger.info(f"ng存在: {ng_path}")
+                        good_ng = "ng"
+                        # 复制路径处理
+                        with open("temp_ng_path.txt", "w", encoding='utf-8') as temp_file:
+                            temp_file.write(ng_path)
+                        # 从记事本读取eval_path到剪切板
+                        with open("temp_ng_path.txt", "r", encoding='utf-8') as temp_file:
+                            ng_path_from_txt = temp_file.read()
+                            pyperclip.copy('')
+                            time.sleep(0.5)
+                            pyperclip.copy(ng_path)
+                            pyperclip.copy(ng_path_from_txt)
+                        clipboard_content = pyperclip.paste()
+                        logger.info(f"推理前剪切板内容: {clipboard_content}")
+                        time.sleep(2)
+                        # 开始推理
+                        utils.click_by_png(config.RV_SIMULATE_TO_EVAL, tolerance=0.95)
+                        time.sleep(2)
+                        os.remove("temp_ng_path.txt")
+                        utils.search_symbol_erroring(config.RV_EVAL_SUCCESS, 30)
+                        time.sleep(2)
+                        pyautogui.press('enter')
+                        # 刷新任务状态
+                        utils.click_by_png(config.RV_JOB_NAME, timeout=6, if_click_right=1)
+                        time.sleep(1)
+                        pyautogui.press('down',2)
+                        pyautogui.press('enter')
+                        # 点击重新推理
+                        time.sleep(3)
+                        utils.click_by_png(config.RV_TRAIN_STATUS, if_click_right=1)
+                        time.sleep(1)
+                        if not utils.search_symbol(config.RV_CLICK_RESTART_EVAL, 5):
+                            time.sleep(5)
+                        utils.click_by_png(config.RV_CLICK_RESTART_EVAL)
+                        click_time = datetime.datetime.now()
+                        logger.info(f"点击重新推理时间: {click_time.strftime('%Y-%m-%d %H:%M:%S')}")
+                        # 获取eval_result
+                        retry_count = 0
+                        while retry_count < 6:
+                            logger.info(f"推理刷新第{retry_count}次")
+                            time.sleep(5)
+                            utils.click_by_png(config.RV_MISSION_MANAGE, tolerance=0.7)
+                            time.sleep(1)
+                            pyautogui.hotkey('ctrl', 'a')
+                            time.sleep(1.5)
+                            pyautogui.hotkey('ctrl', 'c')
+                            logger.info("开始解析推理状态")
+                            clipboard_content = pyperclip.paste()
+                            task_lines = clipboard_content.split('\n')
+                            latest_time = None
+                            latest_record = None
+                            # 解析任务状态
+                            for line in task_lines[1:]:  # 忽略第一行标题
+                                parts = line.split('\t')
+                                if len(parts) >= 6:
+                                    task_id, task_type, task_status, result, add_time, next_time = parts
+                                    # 将添加时间字符串转换为datetime对象
+                                    try:
+                                        add_time_dt = datetime.datetime.strptime(add_time.strip(), '%Y/%m/%d %H:%M:%S')
+                                    except ValueError as e:
+                                        logger.warning(f"日期解析失败：{add_time}，错误：{e}")
+                                    # 检查添加时间是否在click_time的前后2分钟内
+                                    if click_time - datetime.timedelta(minutes=2) <= add_time_dt <= click_time + datetime.timedelta(minutes=2):
+                                        # 检查是否是最近的时间
+                                        if latest_time is None or add_time_dt > latest_time:
+                                            latest_time = add_time_dt
+                                            latest_record = (task_type, task_status, result)
+                                            logger.info(f"task_type = {task_type},task_status = {task_status},task_result = {result}")
+                            if latest_record:
+                                logger.info(f"第{retry_count}次推理,记录为：{latest_record}")
+                                logger.info(f"找到最新记录：任务类型={task_type}，任务状态={task_status}，结果={result}，添加时间={add_time}")
+                            else:
+                                logger.error("没有找到符合条件的记录")
+                            # 取两分钟内的记录，如果在队列中的话，则记录其task_id，3分钟后如果还是显示队列中则
+                            if latest_record and '推理' in latest_record[0] and '成功' in latest_record[2]:
+                                eval_result = '推理成功'
+                                if train_result == '待训练':
+                                    eval_result = f"{train_result}, {eval_result}"
+                                utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, timeout=5)
+                                break
+                            elif latest_record and '推理' in latest_record[0] and '失败' in latest_record[2]:
+                                eval_result = '推理失败'
+                                if train_result == '待训练':
+                                    eval_result = f"{train_result}, {eval_result}"
+                                utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, timeout=5)
+                                break
+                            elif "队列" in latest_record[1]:
+                                retry_count += 0.5
+                                logger.debug(f"推理处于队列中")
+                                utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, timeout=5)
+                            else:
+                                utils.click_by_png(config.RV_CLOSE_MISSION_MANAGE, timeout=5)
+                                time.sleep(10)  # 等待10秒后再次尝试
+                                retry_count += 1
+                        if retry_count == 6:
+                            eval_result = '推理失败'
+                            if train_result == '待训练':
+                                eval_result = f"{train_result}, {eval_result}"
+                        eval_results.append((ng_path, eval_result, good_ng))
+                        time.sleep(3)
+                        # 手动筛选，本页ng
+                        utils.click_by_png(config.RV_JOB_NAME, if_click_right=1)
+                        time.sleep(1)
+                        utils.click_by_png(config.RV_MANUAL_FILTER)
+                        time.sleep(1)
+                        # 搜是否图片为0 没搜到的话不断ng 直到没图片
+                        while True:
+                            if utils.search_symbol(config.RV_IMAGE_ZERO, 5, tolerance=0.95):
+                                utils.click_by_png(config.RV_CURRENT_CLOSE, tolerance=0.99)
+                                break
+                            utils.click_by_png(config.RV_NG, tolerance=0.9)
+                            time.sleep(1)
+                            pyautogui.press('enter')
+                            time.sleep(3)
+        except Exception as e:
+            logger.error(f"在处理{train_path}时发生错误: {e}")
+            # 记录错误的train_path到script_error_path_log
+            script_error_path_log = os.path.join(pyd_path, 'script_error_path_log')
+            os.makedirs(script_error_path_log, exist_ok=True)
+            error_log_file = os.path.join(script_error_path_log, 'error_log.txt')
+            with open(error_log_file, 'a', encoding='utf-8') as log_file:
+                log_file.write(f"在处理{train_path}时发生错误: {e}\n")
+            raise Exception(f"在处理{train_path}时发生错误: {e}")                    
 
         # 删除job
         utils.click_by_png(config.RV_JOB_NAME, if_click_right=1)

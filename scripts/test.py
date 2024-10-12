@@ -31,8 +31,8 @@ def test_aoi():
             a = pyautogui.screenshot(region=config.BOARD_SCROLLBAR_REGION)
             if not utils.click_component():
                 raise Exception("程式元件面板无程式元件")
-            if utils.search_symbol(config.IF_MODIFY_COMPONENT_NO, 4):
-                utils.click_by_png(config.IF_MODIFY_COMPONENT_NO, tolerance=0.9)
+            if utils.search_symbol(config.NO, 4):
+                utils.click_by_png(config.NO, tolerance=0.9)
             # 随机修改参数
             param = random.choice([1, 2, 3, 4])
             if not utils.random_change_param(param):
