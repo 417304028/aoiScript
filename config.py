@@ -30,6 +30,8 @@ AOI_EXE_PATH = r'D:\EYAOI\Bin\AOI.exe'
 SPC_EXE_PATH = r'D:\AOI_SPC\SPCViewMain.exe'
 # job路径
 JOB_PATH = r'D:\EYAOI\JOB\djb'
+# SPC密码
+SPC_PASSWORD = "000"
 
 SPC_TOPIC = resource_path('images/spc/topic.png')
 SPC_PROGRAM_VIEW = resource_path('images/spc/program_view.png')
@@ -46,6 +48,10 @@ SPC_ONE_MONTH = resource_path('images/spc/data_filtering/one_month.png')
 SPC_EXPORT = resource_path('images/spc/data_filtering/export.png')
 SPC_CPK_ANALYSIS = resource_path('images/spc/cpk_analysis.png')
 SPC_GRR_ANALYSIS = resource_path('images/spc/grr_analysis.png')
+SPC_LOGIN_USERNAME = resource_path('images/spc/login_name.png')
+SPC_LOGIN_PASSWORD = resource_path('images/spc/login_password.png')
+SPC_USER_ADMIN = resource_path('images/spc/user_admin.png')
+SPC_LOGIN = resource_path('images/spc/login.png')
 
 PROGRAM_COMPONENT_LIGHT = resource_path('images/whole_board/program_component_light.png')
 PROGRAM_COMPONENT_DARK = resource_path('images/whole_board/program_component_dark.png')
@@ -72,6 +78,9 @@ CW_COPLANARITY_3D = resource_path('images/whole_board/component_window/alg/copla
 
 CHIP_TYPE = resource_path('images/whole_board/chip_type.png')
 MARK_POINT = resource_path('images/whole_board/mark_point.png')
+BOARD_EYE = resource_path('images/whole_board/eye.png')
+REFRESH = resource_path('images/whole_board/refresh.png')
+BOARD_PACKAGE_TEST = resource_path('images/whole_board/package_test.png')
 FOV_EDIT = resource_path('images/whole_board/fov/fov_edit.png')
 MAGNIFIER = resource_path('images/whole_board/magnifier.png')
 BOARD_BOARD = resource_path('images/whole_board/board_board.png')
@@ -84,6 +93,7 @@ OPEN_PROGRAM_REMOVE = resource_path('images/open_program/remove.png')
 OPEN_PROGRAM_LOAD_1 = resource_path('images/open_program/load_1.png')
 OPEN_PROGRAM_RECENT = resource_path('images/open_program/recent.png')
 REMOVE_PROGRAM = resource_path('images/open_program/remove.png')
+OPEN_PROGRAM_ALL_ALGS = resource_path('images/open_program/all_algs.png')
 OPEN_PROGRAM_TOPIC = resource_path('images/open_program/topic.png')
 
 ALG2D = resource_path('images/alg_param/alg2d.png')
@@ -104,6 +114,7 @@ CLICK_MENU_RELATE = resource_path('images/click_menu/relate.png')
 EDIT_THIS_COMPONENT = resource_path('images/click_menu/edit_this_component.png')
 CLICK_CANCEL_RELATE = resource_path('images/click_menu/cancel_relate.png')
 ADD_OBJECT = resource_path('images/click_menu/add_object.png')
+BAD_BOARD_MARK = resource_path('images/click_menu/bad_board_mark.png')
 ADD_SAME_CHECK_WINDOW = resource_path('images/click_menu/add_same_check_window.png')
 EXPORT_COMPONENT_OK = resource_path('images/click_menu/export_component_ok.png')
 EXPORT_PART_OK = resource_path('images/click_menu/export_part_ok.png')
@@ -113,7 +124,15 @@ ADD_REFERENCE_POINT = resource_path('images/click_menu/add_reference_point.png')
 BOARD_COLOR_DRAWING = resource_path('images/click_menu/board_color_drawing.png')
 PASTE_TO_COMPONENT = resource_path('images/click_menu/paste_to_component.png')
 
+DEVELOPER_OPTIONS_SAVE_3D_DATA_YES = resource_path('images/developer_options/save_3d_data_yes.png')
+DEVELOPER_OPTIONS_SAVE_3D_DATA_NO = resource_path('images/developer_options/save_3d_data_no.png')
+DEVELOPER_OPTIONS_SAVE_CHECK_DATA_YES = resource_path('images/developer_options/save_check_data_yes.png')
+DEVELOPER_OPTIONS_SAVE_CHECK_DATA_NO = resource_path('images/developer_options/save_check_data_no.png')
+
+
 YES = resource_path('images/prompt_box/yes.png')
+SELECT_FOLDER = resource_path('images/prompt_box/select_folder.png')
+DEVELOPER_OPTIONS_YES = resource_path('images/prompt_box/developer_options_yes.png')
 YES_BLUE = resource_path('images/prompt_box/yes_blue.png')
 CHOOSED_YES = resource_path('images/prompt_box/choosed_yes.png')
 QUESTION_MARK = resource_path('images/prompt_box/question_mark.png')
@@ -121,7 +140,7 @@ OPEN_PROGRAM_CANCEL = resource_path('images/prompt_box/cancel.png')
 ADD_IMAGE_CLOSE = resource_path('images/prompt_box/add_image_close.png')
 NO = resource_path('images/prompt_box/no.png')
 PROGRAM_LOADING = resource_path('images/prompt_box/program_loading.png')
-PARAM_SETTING_YES = resource_path('images/prompt_box/param_setting_yes.png')
+APPLY = resource_path('images/prompt_box/apply.png')
 UI_SHOW_MESSAGE_YES = resource_path('images/prompt_box/ui_show_message_yes.png')
 PROGRAM_ATTRIBUTE_CLOSE = resource_path('images/prompt_box/program_attribute_close.png')
 CLOSE = resource_path('images/prompt_box/close.png')
@@ -195,11 +214,26 @@ WAIT_MATERIAL_ALL_EMPTY = resource_path('images/palette/wait_material_all_empty.
 PARAM_SETTING_TOPIC = resource_path('images/param_setting/topic.png')
 PARAM_HARDWARE_SETTING = resource_path('images/param_setting/hardware_setting/topic.png')
 PARAM_DATA_EXPORT_SETTING = resource_path('images/param_setting/data_export_setting/topic.png')
+PARAM_KEEP_THE_LAST_PCB_NUMBER = resource_path('images/param_setting/data_export_setting/keep_the_last_pcb_number.png')
+PARAM_TRACK_1 = resource_path('images/param_setting/data_export_setting/track_1.png')
+PARAM_TRACK_2 = resource_path('images/param_setting/data_export_setting/track_2.png')
+PARAM_ONLINE_ALL_YES = resource_path('images/param_setting/data_export_setting/online_all_yes.png')
+PARAM_ONLINE_ALL_NO = resource_path('images/param_setting/data_export_setting/online_all_no.png')
+
+PARAM_GOOD_COMPONENT_LIMIT = resource_path('images/param_setting/data_export_setting/good_component_limit.png')
+PARAM_NG_COMPONENT_LIMIT = resource_path('images/param_setting/data_export_setting/ng_component_limit.png')
+PARAM_AMOUNT_LIMIT_ALL_YES = resource_path('images/param_setting/data_export_setting/amount_limit_all_yes.png')
+PARAM_AMOUNT_LIMIT_ALL_NO = resource_path('images/param_setting/data_export_setting/amount_limit_all_no.png')
 PARAM_UI_SETTING = resource_path('images/param_setting/ui_setting/topic.png')
 PARAM_ALGORITHM_SETTING = resource_path('images/param_setting/algorithm_setting/topic.png')
 PARAM_SHORTCUT_KEY_SETTING = resource_path('images/param_setting/shortcut_key_setting/topic.png')
+PARAM_ONLINE_PARAMETER_DISPLAY_SYNC_PACKAGE = resource_path('images/param_setting/shortcut_key_setting/online_parameter_tuning_display_sync_package.png')
+PARAM_ALGORITHM_DEVELOPER_OPTIONS = resource_path('images/param_setting/algorithm_setting/developer_options.png')
+
+FOV_BAD_MARK_FOV_FIRST_NO = resource_path('images/fov/bad_mark_fov_first_no.png')
 
 SAVE = resource_path('images/gui/save.png')
+PLAY = resource_path('images/gui/play.png')
 SAVE_AS_JOB = resource_path('images/gui/save_as_job.png')
 AOI_TOPIC = resource_path('images/gui/topic.png')
 SYSTEM_DARK = resource_path('images/gui/system/system_dark.png')
@@ -208,6 +242,7 @@ RUN_DARK = resource_path('images/gui/run/run_dark.png')
 RUN_LIGHT = resource_path('images/gui/run/run_light.png')
 CHANGE_PARAM_ONLINE = resource_path('images/gui/run/change_param_online.png')
 GUI_LOGIN = resource_path('images/gui/run/login.png')
+STOP = resource_path('images/gui/run/stop.png')
 TOOL = resource_path('images/gui/tools/tool.png')
 TOOL_DARK = resource_path('images/gui/tools/tool_dark.png')
 PACKAGE_TYPE_MANAGE = resource_path('images/gui/tools/package_type_manage.png')
@@ -231,7 +266,9 @@ ELEMENTS_DEFAULT = resource_path('images/gui/elements/default.png')
 IMPORTING_ELEMENTS = resource_path('images/gui/elements/importing_elements.png')
 EDIT_BACK = resource_path('images/gui/edit/back.png')
 GUI_EDIT_LIGHT = resource_path('images/gui/edit/light.png')
+COMPONENT_3D_IMAGE = resource_path('images/gui/edit/component_3d_image.png')
 GUI_EDIT_LIGHT_MENU = resource_path('images/gui/edit/light_menu.png')
+SEARCH_RANGE = resource_path('images/gui/edit/search_range.png')
 GUI_EDIT_DELETE = resource_path('images/gui/edit/delete.png')
 TEST_WINDOW = resource_path('images/gui/edit/test_window.png')
 RELATE_WINDOW = resource_path('images/gui/edit/relate.png')
@@ -265,7 +302,37 @@ ELEMENTS_VIEW_PT_EMPTY = resource_path('images/hodgepodge/elements_view_pt_empty
 ALG_PARAM_EMPTY = resource_path('images/hodgepodge/alg_param_empty.png')
 SAVE_AS_TOPIC = resource_path('images/hodgepodge/save_as_topic.png')
 OPEN_DJB_TOPIC = resource_path('images/hodgepodge/open_djb_topic.png')
-LOG_SAVE_SUCCESS = resource_path('images/hodgepodge/log_save_program_success.png')
+LOG_SAVE_SUCCESS = resource_path('images/hodgepodge/log_save_success.png')
+# 点击运行后的测试界面
+TESTING_INTERFACE_INFORMATION = resource_path('images/testing_interface/information.png')
+TESTING_INTERFACE_GOOD = resource_path('images/testing_interface/good.png')
+TESTING_INTERFACE_CIRCLE_1 = resource_path('images/testing_interface/circle_1.png')
+TESTING_INTERFACE_CIRCLE_20 = resource_path('images/testing_interface/circle_20.png')
+TESTING_INTERFACE_STOP = resource_path('images/testing_interface/stop.png')
+TESTING_INTERFACE_IGNORE = resource_path('images/testing_interface/ignore.png')
+TESTING_INTERFACE_ENTER_DETAIL_INTERFACE = resource_path('images/testing_interface/enter_detail_interface.png')
+# 参数配置-ui配置
+# 自动加载程式
+SETTING_UI_AUTO_LOAD_PROGRAM_YES = resource_path('images/setting/ui/auto_load_program_yes.png')
+SETTING_UI_AUTO_LOAD_PROGRAM_NO = resource_path('images/setting/ui/auto_load_program_no.png')
+# 演算法配置-保存DJB文件
+SETTING_ALGORITHM_SAVE_DJB_YES = resource_path('images/setting/algorithm/save_djb_yes.png')
+SETTING_ALGORITHM_SAVE_DJB_NO = resource_path('images/setting/algorithm/save_djb_no.png')
+SETTING_ALGORITHM_MARK_MATCHING_YES = resource_path('images/setting/algorithm/mark_matching_yes.png')
+SETTING_ALGORITHM_MARK_MATCHING_NO = resource_path('images/setting/algorithm/mark_matching_no.png')
+SETTING_ALGORITHM_BARCODE_DETECTION_YES = resource_path('images/setting/algorithm/barcode_detection_yes.png')
+SETTING_ALGORITHM_BARCODE_DETECTION_NO = resource_path('images/setting/algorithm/barcode_detection_no.png')
+SETTING_ALGORITHM_COLOR_ANALYSE_YES = resource_path('images/setting/algorithm/color_analyse_yes.png')
+SETTING_ALGORITHM_COLOR_ANALYSE_NO = resource_path('images/setting/algorithm/color_analyse_no.png')
+
+
+# 演算法配置-勾选所有算法
+SETTING_ALGORITHM_ALL_ALGS_YES = resource_path('images/setting/algorithm/all_algs_yes.png')
+SETTING_ALGORITHM_ALL_ALGS_NO = resource_path('images/setting/algorithm/all_algs_no.png')
+
+# 文件夹-左
+OFFSET_LEFT_1 = resource_path('images/offset/left_1.png')
+
 # 元件库视图-上图为空
 ELEMENTS_VIEW_PICTURE_EMPTY_UP = resource_path('images/hodgepodge/elements_view_picture_empty_up.png')
 # 元件库视图-下图为空
@@ -355,6 +422,8 @@ ELEMENTS_VIEW_REGION = convert_region((362, 149, 796, 758))
 BOARD_REGION = convert_region((712, 152, 1535, 962))
 # 元件编辑区域
 COMPONENT_REGION = convert_region((545, 190, 1507, 740))
+# 快捷键设置-元件编辑区域
+SHORTCUT_KEY_COMPONENT_EDIT_REGION = convert_region((380, 250, 1521, 1004))
 # 调色板区域
 PALETTE_REGION = convert_region((362, 765, 1521, 1004))
 # 编辑界面封装类型区域
@@ -367,6 +436,8 @@ ALG_PARAM_REGION = convert_region((1530, 193, 1895, 620))
 PACKAGE_PART_NO_REGION = convert_region((958, 354, 1170, 680))
 # 被选程式列表区域
 SELECTED_PROGRAM_REGION = convert_region((994, 239, 1383, 556))
+# 程式列表区域
+PROGRAM_LIST_REGION = convert_region((458, 238, 923, 558))
 # 单个料号
 SINGLE_PART_NO_REGION = convert_region((958, 354, 1095, 366))
 # 整板信息区域
@@ -376,6 +447,8 @@ BOARD_COMPONENTS_REGION = convert_region((45, 252, 352, 604))
 # 元件窗口区域
 COMPONENT_WINDOW_REGION = convert_region((45, 640, 350, 850))
 COMPONENT_NUM_REGION = convert_region((82, 253, 232, 271))
+# 元件操作区域（屏幕中央区域）
+COMPONENT_OPERATION_REGION = convert_region((555, 190, 1300, 710))
 # 程式信息区域
 PROGRAM_INFORMATION_REGION = convert_region((994, 586, 1381, 828))
 # 元件库视图搜索下拉框

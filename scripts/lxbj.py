@@ -120,7 +120,7 @@ def lxbj_003_01():
 @utils.screenshot_error_to_excel()
 def lxbj_004_01():
     utils.check_and_launch_aoi()
-    utils.check_sync_package(False, False)
+    utils.check_not_sync_same_and_default_package(False, False)
     utils.ensure_in_edit_mode()
     utils.add_window()
     utils.click_by_png(config.SQUARE_POSITIONING)
@@ -146,7 +146,7 @@ def lxbj_004_01():
 @utils.screenshot_error_to_excel()
 def lxbj_004_02():
     utils.check_and_launch_aoi()
-    utils.check_sync_package(False, False)
+    utils.check_not_sync_same_and_default_package(False, False)
     utils.ensure_in_edit_mode()
     utils.add_window()
     utils.click_by_png(config.SQUARE_POSITIONING)
@@ -173,7 +173,7 @@ def lxbj_004_02():
 @utils.screenshot_error_to_excel()
 def lxbj_004_03():
     utils.check_and_launch_aoi()
-    utils.check_sync_package(False, False)
+    utils.check_not_sync_same_and_default_package(False, False)
     utils.ensure_in_edit_mode()
     utils.add_window()
     utils.click_by_png(config.SQUARE_POSITIONING)
@@ -199,7 +199,7 @@ def lxbj_004_03():
 @utils.screenshot_error_to_excel()
 def lxbj_004_04():
     utils.check_and_launch_aoi()
-    utils.check_sync_package(True, False)
+    utils.check_not_sync_same_and_default_package(True, False)
     utils.ensure_in_edit_mode()
     utils.add_window()
     utils.click_by_png(config.SQUARE_POSITIONING)
@@ -218,7 +218,7 @@ def lxbj_004_04():
 @utils.screenshot_error_to_excel()
 def lxbj_004_05():
     utils.check_and_launch_aoi()
-    utils.check_sync_package(True, True)
+    utils.check_not_sync_same_and_default_package(True, True)
     utils.ensure_in_edit_mode()
     utils.add_window()
     utils.click_by_png(config.SQUARE_POSITIONING)
@@ -237,7 +237,7 @@ def lxbj_004_05():
 @utils.screenshot_error_to_excel()
 def lxbj_004_06():
     utils.check_and_launch_aoi()
-    utils.check_sync_package(False, True)
+    utils.check_not_sync_same_and_default_package(False, True)
     utils.ensure_in_edit_mode()
     utils.add_window()
     utils.click_by_png(config.SQUARE_POSITIONING)
@@ -534,8 +534,7 @@ def lxbj_007_01():
     father_frame, child_frame = find_frames()
     time.sleep(10)
     while not father_frame or not child_frame:
-        if not utils.scroll_down((200, 410), region=config.BOARD_COMPONENTS_REGION):
-            break
+        utils.scroll_down((200, 410), region=config.BOARD_COMPONENTS_REGION)
         father_frame, child_frame = find_frames()
 
     if not father_frame or not child_frame:
@@ -652,8 +651,7 @@ def lxbj_007_02():
     father_frame, child_frame = find_frames()
     time.sleep(10)
     while not father_frame or not child_frame:
-        if not utils.scroll_down((200, 410), region=config.BOARD_COMPONENTS_REGION):
-            break
+        utils.scroll_down((200, 410), region=config.BOARD_COMPONENTS_REGION)
         father_frame, child_frame = find_frames()
 
     if not father_frame or not child_frame:
@@ -765,8 +763,7 @@ def lxbj_008_01():
     father_frame, child_frame = find_frames()
     time.sleep(10)
     while not father_frame or not child_frame:
-        if not utils.scroll_down((200, 410), region=config.BOARD_COMPONENTS_REGION):
-            break
+        utils.scroll_down((200, 410), region=config.BOARD_COMPONENTS_REGION)
         father_frame, child_frame = find_frames()
 
     if not father_frame or not child_frame:
@@ -883,8 +880,7 @@ def lxbj_008_02():
     father_frame, child_frame = find_frames()
     time.sleep(10)
     while not father_frame or not child_frame:
-        if not utils.scroll_down((200, 410), region=config.BOARD_COMPONENTS_REGION):
-            break
+        utils.scroll_down((200, 410), region=config.BOARD_COMPONENTS_REGION)
         father_frame, child_frame = find_frames()
 
     if not father_frame or not child_frame:
@@ -996,8 +992,7 @@ def lxbj_009_01():
     father_frame, child_frame = find_frames()
     time.sleep(10)
     while not father_frame or not child_frame:
-        if not utils.scroll_down((200, 410), region=config.BOARD_COMPONENTS_REGION):
-            break
+        utils.scroll_down((200, 410), region=config.BOARD_COMPONENTS_REGION)
         father_frame, child_frame = find_frames()
 
     if not father_frame or not child_frame:
@@ -1114,8 +1109,7 @@ def lxbj_009_02():
     father_frame, child_frame = find_frames()
     time.sleep(10)
     while not father_frame or not child_frame:
-        if not utils.scroll_down((200, 410), region=config.BOARD_COMPONENTS_REGION):
-            break
+        utils.scroll_down((200, 410), region=config.BOARD_COMPONENTS_REGION)
         father_frame, child_frame = find_frames()
 
     if not father_frame or not child_frame:
@@ -3081,3 +3075,4568 @@ def lxbj_020_16():
 #     # 2、整板图上，右键点击元件信息，改变元件角度为315°-0°范围任一角度
 #     # 3、点击引脚或引脚上的算法，右键点击新增对象，新增相同大小检测框，或手动添加算法
 #     # 4、查看检测框方向大小 是否与步骤3的参照框一致
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_01():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_package(True)
+    utils.ensure_in_edit_mode()
+
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--返回-选是
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    utils.click_by_png(config.EDIT_BACK)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    time.sleep(1)
+    pyautogui.press("enter")
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_02():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_package(True)
+    utils.ensure_in_edit_mode()
+    
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--返回-选是
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    utils.click_by_png(config.EDIT_BACK)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    pyautogui.press("enter")
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    time.sleep(1)
+    pyautogui.press("enter")
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_03():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_package(True)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--切换元件-选是
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    pyautogui.press("enter")
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+    
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_04():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_package(True)
+    utils.ensure_in_edit_mode()
+
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--切换元件-选是
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    time.sleep(1)
+    pyautogui.press("enter")
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 400)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_05():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_package(True)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--测试当前分组--切换到同料号下其他元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 测试当前分组
+    utils.is_checked((66,255),(78,267), True)
+    utils.click_by_png(config.TEST_GROUP)
+    while utils.search_symbol(config.TESTING_COMPONENT):
+        time.sleep(3)
+    time.sleep(7)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("不应出现弹框")    
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)    
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_06():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_package(True)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--测试当前分组--切换到同料号下其他元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)    
+
+    # 测试当前分组
+    utils.is_checked((66,255),(78,267), True)
+    utils.click_by_png(config.TEST_GROUP)
+    while utils.search_symbol(config.TESTING_COMPONENT):
+        time.sleep(3)
+    time.sleep(7)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        time.sleep(1)
+        pyautogui.press("enter")
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_07():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_package(True)
+    utils.ensure_in_edit_mode()
+
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--测试当前整板--切换到同料号下其他元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 测试当前整版
+    utils.is_checked((66,255),(78,267), True)
+    utils.click_by_png(config.TEST_BOARD)
+    while utils.search_symbol(config.TESTING_COMPONENT):
+        time.sleep(3)
+    time.sleep(7)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("不应出现弹框")    
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_08():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_package(True)
+    utils.ensure_in_edit_mode()
+
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--测试当前整板--切换到同料号下其他元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.QUESTION_MARK):
+        pyautogui.press("enter")
+        time.sleep(7)    
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_09():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_package(True)
+    utils.ensure_in_edit_mode()
+
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--返回
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    utils.click_by_png(config.EDIT_BACK)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.选否
+    utils.click_by_png(config.NO)
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+   
+    # 4.再次进入元件编辑界面，查看此元件参数
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_10():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_package(True)
+    utils.ensure_in_edit_mode()
+
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--返回
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    utils.click_by_png(config.EDIT_BACK)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.选否
+    utils.click_by_png(config.NO)
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+   
+    # 4.再次进入元件编辑界面，查看此元件算法框
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_11():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_package(True)
+    utils.ensure_in_edit_mode()
+
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--左侧列表选择某个元件切换
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.选否
+    utils.click_by_png(config.NO)
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+
+    # 4.再次回到修改那个元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_12():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_package(True)
+    utils.ensure_in_edit_mode()
+
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--左侧列表选择某个元件切换
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.选否
+    utils.click_by_png(config.NO)
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_13():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装+勾选默认同步封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(True,True)
+    utils.ensure_in_edit_mode()
+    
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--返回-选是
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    utils.click_by_png(config.EDIT_BACK)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    time.sleep(1)
+    pyautogui.press("enter")
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_14():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装+勾选默认同步封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(True,True)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--返回-选是
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    utils.click_by_png(config.EDIT_BACK)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    time.sleep(1)
+    pyautogui.press("enter")
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    time.sleep(1)
+    pyautogui.press("enter")
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_15():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装+勾选默认同步封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(True,True)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--切换元件-选是
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    time.sleep(1)
+    pyautogui.press("enter")
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_16():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装+勾选默认同步封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(True,True)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--切换元件-选是
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    time.sleep(1)
+    pyautogui.press("enter")
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_17():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装+勾选默认同步封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(True,True)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--测试当前分组--切换到同料号下其他元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 测试当前分组
+    utils.is_checked((66,255),(78,267), True)
+    utils.click_by_png(config.TEST_GROUP)
+    while utils.search_symbol(config.TESTING_COMPONENT):
+        time.sleep(3)
+    time.sleep(7)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("不应出现弹框")      
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)    
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_18():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装+勾选默认同步封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(True,True)
+    utils.ensure_in_edit_mode()
+
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--测试当前分组--切换到同料号下其他元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)    
+
+    # 测试当前分组
+    utils.is_checked((66,255),(78,267), True)
+    utils.click_by_png(config.TEST_GROUP)
+    while utils.search_symbol(config.TESTING_COMPONENT):
+        time.sleep(3)
+    time.sleep(7)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("不应出现弹框")   
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 3.切换到同封装下其他元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_19():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装+勾选默认同步封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(True,True)
+    utils.ensure_in_edit_mode()
+
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--测试当前整板--切换到同料号下其他元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 测试当前整版
+    utils.is_checked((66,255),(78,267), True)
+    utils.click_by_png(config.TEST_BOARD)
+    while utils.search_symbol(config.TESTING_COMPONENT):
+        time.sleep(3)
+    time.sleep(7)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("不应出现弹框")    
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)    
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 3.切换到同封装下其他料号元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_20():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装+勾选默认同步封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(True,True)
+    utils.ensure_in_edit_mode()
+
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--测试当前整板--切换到同料号下其他元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("不应出现弹框") 
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 3.切换到同封装下其他元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_21():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装+勾选默认同步封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(True,True)
+    utils.ensure_in_edit_mode()
+
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--返回
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    utils.click_by_png(config.EDIT_BACK)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.选否
+    utils.click_by_png(config.NO)
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+   
+    # 4.再次进入元件编辑界面，查看此元件参数
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+ 
+@utils.screenshot_error_to_excel()
+def lxbj_021_22():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装+勾选默认同步封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(True,True)
+    utils.ensure_in_edit_mode()
+
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--返回
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    utils.click_by_png(config.EDIT_BACK)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.选否
+    utils.click_by_png(config.NO)
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+   
+    # 4.再次进入元件编辑界面，查看此元件参数
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_23():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装+勾选默认同步封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(True,True)
+    utils.ensure_in_edit_mode()
+
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--左侧列表选择某个元件切换
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.选否
+    utils.click_by_png(config.NO)
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+
+    # 4.再次回到修改那个元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+    # 3.选否
+    utils.select_no()
+    # 4.再次回到修改那个元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_24():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-勾选不允许同步相同的封装+勾选默认同步封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(True,True)
+    utils.ensure_in_edit_mode()
+
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--左侧列表选择某个元件切换
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.选否
+    utils.click_by_png(config.NO)
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+   
+    # 4.再次进入修改元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_25():
+    # 1.【设置】-【硬件设置】-【UI配置】-【程序设置】-不勾不允许同步相同的封装+不勾选默认同步封装
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--返回
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    utils.click_by_png(config.EDIT_BACK)
+    if not utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，未出现可选项")
+    # 3.不勾选可选项，弹框选是
+    pyautogui.press("enter")
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未被同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_26():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--返回
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    utils.click_by_png(config.EDIT_BACK)
+    if not utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，未出现可选项")
+    # 3.不勾选可选项，弹框选是
+    pyautogui.press("enter")
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未被同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_27():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--返回
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    utils.click_by_png(config.EDIT_BACK)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.勾选可选项，弹框选是
+    utils.click_by_png(config.IF_SYNC_SAME_PACKAGE_NO)
+    pyautogui.press("enter")
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未被同步修改")
+   
+    # 4.再次进入元件编辑界面，查看此元件参数
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件未被同步修改")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_28():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--返回
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    utils.click_by_png(config.EDIT_BACK)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.勾选可选项，弹框选是
+    utils.click_by_png(config.IF_SYNC_SAME_PACKAGE_NO)
+    pyautogui.press("enter")
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未被同步修改")
+   
+    # 4.再次进入元件编辑界面，查看此元件参数
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件未被同步修改")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_29():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--切换元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if not utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，未出现可选项")
+    # 3.不勾选可选项-选是
+    pyautogui.press("enter")
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+
+    # 4.再次回到修改那个元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_30():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--切换元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.不勾选可选项-选是
+    pyautogui.press("enter")
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未被同步修改")
+
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件未被同步修改")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_31():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--切换元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.勾选可选项-选是
+    utils.click_by_png(config.IF_SYNC_SAME_PACKAGE_NO)
+    pyautogui.press("enter")
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未被同步修改")
+
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件未被同步修改")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_32():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--切换元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+
+    # 3.勾选可选项-选是
+    utils.click_by_png(config.IF_SYNC_SAME_PACKAGE_NO)
+    pyautogui.press("enter")
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未被同步修改")
+
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件未被同步修改")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_33():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--测试当前分组--切换到同料号下其他元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 测试当前分组
+    utils.is_checked((66,255),(78,267), True)
+    utils.click_by_png(config.TEST_GROUP)
+    while utils.search_symbol(config.TESTING_COMPONENT):
+        time.sleep(3)
+    time.sleep(7)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("不应出现弹框")    
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)    
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_34():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--测试当前分组--切换到同料号下其他元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)    
+
+    # 测试当前分组
+    utils.is_checked((66,255),(78,267), True)
+    utils.click_by_png(config.TEST_GROUP)
+    while utils.search_symbol(config.TESTING_COMPONENT):
+        time.sleep(3)
+    time.sleep(7)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("不应出现弹框")
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 3.切换到同封装下其他元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_35():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--测试当前整板--切换到同料号下其他元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 测试当前整版
+    utils.is_checked((66,255),(78,267), True)
+    utils.click_by_png(config.TEST_BOARD)
+    while utils.search_symbol(config.TESTING_COMPONENT):
+        time.sleep(3)
+    time.sleep(7)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("不应出现弹框")    
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)    
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 3.切换到同封装下其他料号元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+   
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_36():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--测试当前整板--切换到同料号下其他元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    # 测试当前整版
+    utils.is_checked((66,255),(78,267), True)
+    utils.click_by_png(config.TEST_BOARD)
+    while utils.search_symbol(config.TESTING_COMPONENT):
+        time.sleep(3)
+    time.sleep(7)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("不应出现弹框")
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 3.切换到同封装下其他元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_37():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--返回
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    utils.click_by_png(config.EDIT_BACK)
+    if not utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，未出现可选项")
+    # 3.不勾选可选项-选否
+    utils.click_by_png(config.NO)
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+   
+    # 4.再次进入元件编辑界面，查看此元件参数
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_38():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--返回
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    utils.click_by_png(config.EDIT_BACK)
+    if not utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，未出现可选项")
+    # 3.不勾选可选项-选否
+    utils.click_by_png(config.NO)
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+    # 4.再次进入元件编辑界面，查看此元件算法框
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_39():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--返回
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    utils.click_by_png(config.EDIT_BACK)
+    if not utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，未出现可选项")
+    # 3.勾选可选项-选否
+    utils.click_by_png(config.IF_SYNC_SAME_PACKAGE_NO)
+    utils.click_by_png(config.NO)
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+   
+    # 4.再次进入元件编辑界面，查看此元件参数
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_40():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--返回
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    utils.click_by_png(config.EDIT_BACK)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if not utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，未出现可选项")
+    # 3.勾选可选项--选否
+    utils.click_by_png(config.IF_SYNC_SAME_PACKAGE_NO)
+    utils.click_by_png(config.NO)
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+    
+    # 4.再次进入元件编辑界面，查看此元件算法框
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_41():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--左侧列表选择某个元件切换
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if not utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，未出现可选项")
+    # 3.不勾选可选项-选否
+    utils.click_by_png(config.NO)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+
+    # 4.再次回到修改那个元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_42():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--左侧列表选择某个元件切换
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if not utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，未出现可选项")
+    # 3.不勾选可选项-选否
+    utils.click_by_png(config.NO)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_43():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--左侧列表选择某个元件切换
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if not utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，未出现可选项")
+
+    # 3.勾选可选项--选否
+    utils.click_by_png(config.IF_SYNC_SAME_PACKAGE_NO)
+    utils.click_by_png(config.NO)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+    # 4.再次回到修改元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_44():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--左侧列表选择某个元件切换
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.勾选可选项--选否
+    utils.click_by_png(config.IF_SYNC_SAME_PACKAGE_NO)
+    utils.click_by_png(config.NO)
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_45():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--返回
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    utils.click_by_png(config.EDIT_BACK)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.取消勾选可选项，弹框选是
+    pyautogui.press("enter")
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未被同步修改")
+   
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_46():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--返回
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    utils.click_by_png(config.EDIT_BACK)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if not utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，未出现可选项")
+    # 3.取消勾选可选项，弹框选是
+    pyautogui.press("enter")
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未被同步修改")
+   
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_47():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--返回
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    utils.click_by_png(config.EDIT_BACK)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.选否
+    utils.click_by_png(config.NO)
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+   
+    # 4.再次进入元件编辑界面，查看此元件参数
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+    # 3.可选项勾选状态，弹框选是
+    utils.click_by_png(config.IF_SYNC_SAME_PACKAGE_NO)
+    pyautogui.press("enter")
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未被同步修改")
+
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件未被同步修改")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_48():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--返回
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    utils.click_by_png(config.EDIT_BACK)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.可选项勾选状态，弹框选是
+    utils.click_by_png(config.IF_SYNC_SAME_PACKAGE_NO)
+    pyautogui.press("enter")
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未被同步修改")
+
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件未被同步修改")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_49():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--切换元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.选否
+    utils.click_by_png(config.NO)
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+
+    # 4.再次回到修改那个元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+    # 3.取消勾选可选项-选是
+    utils.uncheck_optional_item()
+    utils.confirm_popup("是")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_50():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--切换元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.选否
+    utils.click_by_png(config.NO)
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+    # 3.取消勾选可选项-选是
+    utils.uncheck_optional_item()
+    utils.confirm_popup("是")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_51():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--切换元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.选否
+    utils.click_by_png(config.NO)
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+
+    # 4.再次回到修改那个元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+    # 3.选是
+    utils.confirm_popup("是")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_52():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--切换元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.选否
+    utils.click_by_png(config.NO)
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+    # 3.选是
+    utils.confirm_popup("是")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_53():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--测试当前分组--切换到同料号下其他元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 测试当前分组
+    utils.is_checked((66,255),(78,267), True)
+    utils.click_by_png(config.TEST_GROUP)
+    while utils.search_symbol(config.TESTING_COMPONENT):
+        time.sleep(3)
+    time.sleep(7)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("不应出现弹框")    
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)    
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+    # 3.切换到同封装下其他料号元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_54():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--测试当前分组--切换到同料号下其他元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)    
+
+    # 测试当前分组
+    utils.is_checked((66,255),(78,267), True)
+    utils.click_by_png(config.TEST_GROUP)
+    while utils.search_symbol(config.TESTING_COMPONENT):
+        time.sleep(3)
+    time.sleep(7)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        time.sleep(1)
+        pyautogui.press("enter")
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+    utils.open_job_with_multiple_parts()
+    utils.modify_algorithm_box_size()
+    utils.test_current_group()
+    utils.switch_to_other_component_in_same_part()
+    # 3.切换到同封装下其他元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_55():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--测试当前整板--切换到同料号下其他元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 测试当前分组
+    utils.is_checked((66,255),(78,267), True)
+    utils.click_by_png(config.TEST_GROUP)
+    while utils.search_symbol(config.TESTING_COMPONENT):
+        time.sleep(3)
+    time.sleep(7)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("不应出现弹框")    
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)    
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+    # 3.切换到同封装下其他料号元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_56():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--测试当前整板--切换到同料号下其他元件
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if utils.search_symbol(config.QUESTION_MARK):
+        pyautogui.press("enter")
+        time.sleep(7)    
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数未同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+    # 3.切换到同封装下其他元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_57():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--返回
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    utils.click_by_png(config.EDIT_BACK)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.选否
+    utils.click_by_png(config.NO)
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+   
+    # 4.再次进入元件编辑界面，查看此元件参数
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+    utils.click_by_png(config.NO)
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+    # 4.再次进入元件编辑界面，查看此元件参数
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_58():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--返回
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    utils.click_by_png(config.EDIT_BACK)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.取消勾选可选项--选否
+    utils.uncheck_optional_item()
+    utils.confirm_popup("否")
+    # 4.再次进入元件编辑界面，查看此元件算法框
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_59():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--返回
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    utils.click_by_png(config.EDIT_BACK)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.选否
+    utils.click_by_png(config.NO)
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
+        raise Exception("疑似未返回整版界面")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+   
+    # 4.再次进入元件编辑界面，查看此元件参数
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+    # 3.可选项勾选状态-选否
+    utils.check_optional_item()
+    utils.confirm_popup("否")
+    # 4.再次进入元件编辑界面，查看此元件参数
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_60():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--返回
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    utils.click_by_png(config.EDIT_BACK)
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.可选项勾选状态--选否
+    utils.check_optional_item()
+    utils.confirm_popup("否")
+    # 4.再次进入元件编辑界面，查看此元件算法框
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_61():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--左侧列表选择某个元件切换
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.选否
+    utils.click_by_png(config.NO)
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+
+    # 4.再次回到修改那个元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+    # 3.取消勾选可选项--选否
+    utils.uncheck_optional_item()
+    utils.confirm_popup("否")
+    # 4.再次回到修改那个元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_62():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--左侧列表选择某个元件切换
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.选否
+    utils.click_by_png(config.NO)
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+    # 3.取消勾选可选项--选否
+    utils.uncheck_optional_item()
+    utils.confirm_popup("否")
+    # 4.再次进入修改元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_63():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的参数--左侧列表选择某个元件切换
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    time.sleep(7)
+
+    # 修改元件参数
+    pyautogui.hotkey("ctrl", "a")
+    time.sleep(3)
+    pyautogui.press("delete")
+    time.sleep(3)
+    pyautogui.press("enter")
+    time.sleep(3)
+    utils.add_window()
+    utils.click_by_png(config.COLOR_AREA)
+    utils.click_by_png(config.YES)
+    time.sleep(7)
+    pyautogui.press("escape")
+    time.sleep(3)
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.选否
+    utils.click_by_png(config.NO)
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+
+    # 4.再次回到修改那个元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+    # 3.可选项勾选状态--选否
+    utils.check_optional_item()
+    utils.confirm_popup("否")
+    # 4.再次回到修改那个元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def lxbj_021_64():
+    utils.check_and_launch_aoi()
+    utils.check_not_sync_same_and_default_package(False,False)
+    utils.ensure_in_edit_mode()
+    # 2.打开一个job(一个封装下有多料号的)--修改其中一个料号的元件的算法框的大小--左侧列表选择某个元件切换
+    # 自己制造封装
+    package_a,package_b = utils.make_package()
+    logger.info(f"封装a: {package_a}, 封装b: {package_b}")
+    if utils.search_symbol(config.BOARD_EYE, 2, region=config.BOARD_INFORMATION_REGION):
+        utils.click_by_png(config.BOARD_EYE, region=config.BOARD_INFORMATION_REGION)
+    # 操作封装a 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_a)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的首个料号 截取原图 用于确保封装下其他料号修改情况
+    utils.write_text((135,210),package_b)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+    package_b1_before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    # 操作封装b的第二个料号 用于确保同料号下其他元件修改情况
+    utils.click_component(click_index=2)
+    if utils.search_symbol(config.QUESTION_MARK, 5):
+        pyautogui.press("enter")
+    time.sleep(7)
+
+    # 修改框大小
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.COLOR_AREA)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(3)
+
+    pyautogui.hotkey("ctrl", "tab")
+    time.sleep(3)
+    utils.expand_choose_box()
+    pyautogui.press("escape")
+    time.sleep(3)   
+
+    # 回到封装b的第一个料号
+    utils.click_component(click_index=1)
+    if not utils.search_symbol(config.QUESTION_MARK):
+        raise Exception("出现未知错误，未出现弹框")
+    if utils.search_symbol(config.IF_SYNC_SAME_PACKAGE_NO):
+        raise Exception("设置疑似失效，仍出现可选项")
+    # 3.选否
+    utils.click_by_png(config.NO)
+    time.sleep(5)
+    package_b1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_b1_after_screenshot, package_b1_before_screenshot):
+        raise Exception("同料号下其他元件参数被同步修改")
+   
+    # 封装下其他料号元件未修改
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()
+    # 3.可选项勾选状态--选否
+    utils.check_optional_item()
+    utils.confirm_popup("否")
+    # 4.再次进入修改元件
+    utils.write_text((135,210),package_a)
+    utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION, 800)
+    utils.click_component(click_index=1)
+    time.sleep(7)
+    package_a1_after_screenshot = pyautogui.screenshot(region=config.COMPONENT_WINDOW_REGION)
+    if not utils.compare_images(package_a1_after_screenshot, package_a1_before_screenshot):
+        raise Exception("封装下其他料号元件也被同步修改了")
+    utils.close_aoi()

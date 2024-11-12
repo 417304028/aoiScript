@@ -15,7 +15,7 @@ import functools
 import datetime
 import threading
 import os
-import re
+from difflib import SequenceMatcher
 import tkinter as tk
 from tkinter import messagebox
 from threading import Event
@@ -154,6 +154,9 @@ def window_interactive(title_re=None, auto_id=None, class_name=None, control_typ
         raise Exception(error_message)
 # 处理登录时的一系列预处理（有可能为打开程式的界面）
 def login_process():
+    logger.warning("开始登录预处理")
+    if search_symbol(config.LOGINING, 2):
+        time.sleep(3)
     delete_documents(config.SHARE_LIB_PATH)
     delete_documents(config.ELEMENTS_LIB_PATH)
     try:
@@ -221,7 +224,7 @@ def login_process():
         click_by_png(config.WINDOW_CANCEL, tolerance=0.8)
     # 关闭打开程式窗口
     if search_symbol(config.OPEN_PROGRAM_TOPIC, 1.5, tolerance=0.8):
-        click_by_png(config.PROGRAM_ATTRIBUTE_CLOSE, tolerance=0.9)
+        click_by_png(config.CANCEL, tolerance=0.8)
     # 确保登录时没有开在线调参功能
     if search_symbol(config.RUN_DARK, 1.5):
         click_by_png(config.RUN_DARK, timeout=1.5)
@@ -229,7 +232,12 @@ def login_process():
     if search_symbol(config.CHANGE_PARAM_ONLINE, 1.5):
         click_by_png(config.CHANGE_PARAM_ONLINE, timeout=1.5)
         time.sleep(0.5)
-
+    if search_symbol(config.QUESTION_MARK, 5, tolerance=0.75):
+        if search_symbol(config.NO,2):
+            click_by_png(config.NO,timeout=2)
+        else:
+            pyautogui.press("enter")
+    logger.warning("登录预处理完成")
 
 # 确保spc打开并前置
 def check_and_launch_spc():
@@ -239,7 +247,15 @@ def check_and_launch_spc():
         app = Application().start(config.SPC_EXE_PATH)
         logger.info("等待SPC程序启动...")
         app.window(title_re=".*SPC.*").wait('ready', timeout=60)
-        time.sleep(5)
+        if search_symbol(config.SPC_LOGIN_USERNAME):
+            pyautogui.click(1141, 448)
+            click_by_png(config.SPC_USER_ADMIN)
+            write_text((845,495),config.SPC_PASSWORD)
+            click_by_png(config.SPC_LOGIN)
+            time.sleep(3)
+            if not search_symbol(config.SPC_SYSTEM_SETTING):
+                raise Exception("SPC疑似登录失败,未检测到SPC界面")
+        
     else:
         if search_symbol(config.SPC_TOPIC):
             click_by_png(config.SPC_TOPIC, type="right")
@@ -248,25 +264,44 @@ def check_and_launch_spc():
 
 # 确保aoi打开并前置
 def check_and_launch_aoi():
+    # 先检测并杀掉有关的进程
+    for proc in psutil.process_iter(['pid', 'name']):
+        if any(name in proc.info['name'] for name in ["AOI", "SPCView"]):
+            try:
+                parent_proc = psutil.Process(proc.info['pid'])
+                children = parent_proc.children(recursive=True)
+                for child in children:
+                    child.kill()
+                parent_proc.kill()
+                parent_proc.wait()
+                logger.info(f"进程 {proc.info['name']} (PID: {proc.info['pid']}) 已被杀死")
+            except Exception as kill_error:
+                logger.error(f"无法杀掉进程 {proc.info['name']} (PID: {proc.info['pid']}): {kill_error}")
+
+    
     aoi_running = any("AOI.exe" == p.name() for p in psutil.process_iter())
     if not aoi_running:
         logger.info("AOI程序未运行,正在启动...")
         app = Application().start(config.AOI_EXE_PATH)
         logger.info("等待AOI程序启动...")
-        app.window(title_re=".*AOI.*").wait('ready', timeout=60)
+        # app.window(title_re=".*AOI.*").wait('ready', timeout=60)
         # 发现程序在加载的话等30秒
-        if search_symbol(config.LOGINING, tolerance=0.8):
-            for proc in psutil.process_iter():
-                if "aoi_memory" in proc.name():
-                    logger.info(f"正在杀死进程 {proc.name()}...")
-                    proc.kill()
-                    proc.wait()
-                    logger.info(f"进程 {proc.name()} 已被杀死")
-            time.sleep(30)
-        search_symbol_erroring(config.AOI_TOPIC, 60,tolerance=0.8)
-        
-        # 登录操作
-        login_process()
+        timeout = time.time() + 60
+        while time.time() < timeout:
+            if search_symbol(config.WARNING, 5,tolerance=0.75):
+                pyautogui.press("enter")
+            if search_symbol(config.LOGINING, tolerance=0.8):
+                for proc in psutil.process_iter():
+                    if "aoi_memory" in proc.name():
+                        logger.info(f"正在杀死进程 {proc.name()}...")
+                        proc.kill()
+                        proc.wait()
+                        logger.info(f"进程 {proc.name()} 已被杀死")
+                break
+            time.sleep(5)
+        while search_symbol(config.LOGINING, 2,tolerance=0.8):
+            time.sleep(3)
+        search_symbol_erroring(config.AOI_TOPIC, 60,tolerance=0.75)
     else:
         for proc in psutil.process_iter():
             if "aoi_memory" in proc.name():
@@ -274,16 +309,17 @@ def check_and_launch_aoi():
                 proc.kill()
                 proc.wait()
                 logger.info(f"进程 {proc.name()} 已被杀死")
-        login_process()
         # 优先点击标题置顶，用窗口置顶容易出问题
-        if search_symbol(config.AOI_TOPIC, 3, tolerance=0.8):
+        while search_symbol(config.LOGINING, 2):
+            time.sleep(3)
+        if search_symbol(config.AOI_TOPIC, 2, tolerance=0.75):
             click_by_png(config.AOI_TOPIC, tolerance=0.8, type="bottom")
         else:
+            logger.warning("AOI窗口标题未找到，尝试通过窗口句柄前置")
             main_window = connect_aoi_window()
             main_window.wait('ready', timeout=10)
             main_window.set_focus()
             main_window.wait('ready', timeout=10)
-            search_symbol_erroring(config.AOI_TOPIC, 20)
             # 确保窗口未最小化并且前置
             if main_window.is_minimized():
                 main_window.restore()
@@ -295,8 +331,8 @@ def check_and_launch_aoi():
             win32gui.SetForegroundWindow(hwnd)  # 前置窗口
             win32gui.BringWindowToTop(hwnd)  # 确保窗口在最前
             win32gui.MoveWindow(hwnd, rect[0], rect[1], rect[2] - rect[0], rect[3] - rect[1], True)
-
             logger.info("AOI窗口已前置并保持原大小。")
+    login_process()
 def close_aoi():
     for proc in psutil.process_iter():
         if "AOI.exe" == proc.name():
@@ -525,11 +561,12 @@ def filter_color(image, target_color):
     filtered_image = cv2.bitwise_and(image_np, image_np, mask=mask)
     return PILImage.fromarray(filtered_image)
 
-def click_by_png(image_path, times=1, timeout=20, if_click_right=0, tolerance=0.8, region=None, instance=1, use_random=0, type="default"):
+# 识别图片并点击
+def click_by_png(image_path, times=1, timeout=20, if_click_right=0, tolerance=0.8, region=None, instance=1, use_random=0, type="default", click_index=None, preference=None):
     start_time = time.time()
     clicked = False  # 添加一个标志来检测是否成功点击
     image_path = image_fit_screen(image_path)
-    logger.info(f"尝试点击图片: {image_path}")
+    logger.info(f"正在识别并点击图片……图片路径为: {image_path}")
     
     # 读取目标图像并计算其平均颜色
     target_image = cv2.imread(image_path)
@@ -539,7 +576,6 @@ def click_by_png(image_path, times=1, timeout=20, if_click_right=0, tolerance=0.
         try:
             screenshot = pyautogui.screenshot(region=region)
             screenshot_np = np.array(screenshot)
-            screenshot_avg_color = cv2.mean(screenshot_np)[:3]
             
             # 过滤颜色
             filtered_screenshot = filter_color(screenshot, target_avg_color)
@@ -547,10 +583,26 @@ def click_by_png(image_path, times=1, timeout=20, if_click_right=0, tolerance=0.
             
             locations = list(pyautogui.locateAllOnScreen(image_path, confidence=tolerance, region=region))
             if locations and len(locations) >= instance:
-                if use_random == 1:
+                if click_index is not None:
+                    if click_index <= len(locations):
+                        location = locations[click_index - 1]  # 获取第click_index个匹配的图片
+                    else:
+                        logger.error(f"click_index超出范围: {click_index}")
+                        raise Exception(f"click_index超出范围: {click_index}")
+                elif use_random == 1:
                     location = random.choice(locations)  # 随机选择一个匹配的图片
+                elif preference:
+                    if preference == "top":
+                        location = min(locations, key=lambda loc: loc.top)
+                    elif preference == "bottom":
+                        location = max(locations, key=lambda loc: loc.top)
+                    elif preference == "left":
+                        location = min(locations, key=lambda loc: loc.left)
+                    elif preference == "right":
+                        location = max(locations, key=lambda loc: loc.left)
                 else:
                     location = locations[instance - 1]  # 获取第instance个匹配的图片
+                
                 # 计算中心坐标
                 center_x = location.left + location.width // 2
                 if type == "bottom":
@@ -558,13 +610,16 @@ def click_by_png(image_path, times=1, timeout=20, if_click_right=0, tolerance=0.
                 elif type == "right":
                     center_x = location.left + location.width  # 点击右边中间点
                     center_y = location.top + location.height // 2
+                elif type == "left":
+                    center_x = location.left  # 点击左边中间点
+                    center_y = location.top + location.height // 2
                 else:
                     center_y = location.top + location.height // 2
                 if if_click_right == 1:
                     pyautogui.click(center_x, center_y, button='right')
                 else:
                     pyautogui.click(center_x, center_y, clicks=times)
-                logger.info(f"点击{image_path}成功，坐标为({center_x}, {center_y})")
+                logger.info(f"点击图片成功，图片路径为{image_path}，坐标为({center_x}, {center_y})")
                 clicked = True  # 更新标志为True表示成功点击
                 break
             elif not locations:
@@ -574,13 +629,13 @@ def click_by_png(image_path, times=1, timeout=20, if_click_right=0, tolerance=0.
             pass
         time.sleep(1)
     if not clicked:  # 检查是否成功点击
-        logger.error(f"超时: 在{timeout}秒内未能点击{image_path}")
-        raise Exception(f"超时: 在{timeout}秒内未能点击{image_path}")
+        logger.error(f"超时: 在{timeout}秒内未能点击图片，图片路径为{image_path}")
+        raise Exception(f"超时: 在{timeout}秒内未能点击图片，图片路径为{image_path}")
 
 def search_symbol(symbol, timeout=10, region=None, tolerance=0.9):
     start_time = time.time()
     symbol = image_fit_screen(symbol)
-    logger.info(f"开始寻找{symbol}")
+    logger.info(f"在{timeout}秒内识别图片，要求准确度系数为{tolerance}，图片路径为{symbol}")
     
     # 读取目标图像并计算其平均颜色
     target_image = cv2.imread(symbol)
@@ -637,7 +692,7 @@ def search_symbol(symbol, timeout=10, region=None, tolerance=0.9):
 def search_symbol_erroring(symbol, timeout=10, region=None, tolerance=0.9):
     start_time = time.time()
     symbol = image_fit_screen(symbol)
-    logger.info(f"开始寻找:{symbol}")
+    logger.info(f"在{timeout}秒内识别图片，要求准确度系数为{tolerance}，图片路径为{symbol}，识别不到自动报错")
     
     # 读取目标图像并计算其平均颜色
     target_image = cv2.imread(symbol)
@@ -684,11 +739,11 @@ def search_symbol_erroring(symbol, timeout=10, region=None, tolerance=0.9):
                 if location is not None:
                     center_x = location.left + location.width // 2
                     center_y = location.top + location.height // 2
-                    logger.info(f"已确认{symbol}存在，坐标为({center_x}, {center_y})")
+                    logger.info(f"已确认图片存在，识别到的坐标为({center_x}, {center_y})")
                     time.sleep(0.5)
                     return True
         except pyautogui.ImageNotFoundException:
-            raise Exception(f"没找到图片: {symbol}")
+            raise Exception(f"没找到图片: 图片路径为{symbol}")
         except Exception as e:
             logger.error(f"发生异常: {e}")
             raise Exception(f"发生异常: {e}")
@@ -767,13 +822,16 @@ def screenshot_error_to_excel(max_attempts=2, running_event=None):
                     if attempt < max_attempts - 1:
                         logger.warning(f"准备重试 {func.__name__}")
                         for proc in psutil.process_iter(['pid', 'name']):
-                            if "AOI" in proc.info['name'] or "SPCView" in proc.info['name']:
-                                parent_proc = psutil.Process(proc.info['pid'])
-                                children = parent_proc.children(recursive=True)
-                                for child in children:
-                                    child.kill()
-                                parent_proc.kill()
-                                parent_proc.wait()
+                            if any(name in proc.info['name'] for name in ["AOI", "SPCView"]):
+                                try:
+                                    parent_proc = psutil.Process(proc.info['pid'])
+                                    children = parent_proc.children(recursive=True)
+                                    for child in children:
+                                        child.kill()
+                                    parent_proc.kill()
+                                    parent_proc.wait()
+                                except Exception as kill_error:
+                                    logger.error(f"无法杀掉进程 {proc.info['name']} (PID: {proc.info['pid']}): {kill_error}")
                         
                         aoi_still_running = any("AOI" in p.info['name'] for p in psutil.process_iter(['name']))
                         spcview_still_running = any("SPCView" in p.info['name'] for p in psutil.process_iter(['name']))
@@ -860,6 +918,37 @@ def screenshot_to_excel(test_case_name, path, exception):
 
 
 # ====================业务处理========================
+
+def make_package():
+    logger.info("开始制造封装")
+    if search_symbol(config.TOOL_DARK, timeout=2):
+        click_by_png(config.TOOL_DARK)
+    click_by_png(config.PACKAGE_TYPE_MANAGE)
+    pyautogui.keyDown('shift')
+    pyautogui.click(730, 375)
+    pyautogui.keyUp('shift')
+
+    click_by_png(config.EDIT_PACKAGE_TYPE)
+    write_text((900,525),"test")
+    click_by_png(config.YES)
+    write_text((820,290),'test')
+    click_by_png(config.QUERY)
+    # 读取封装a
+    pyautogui.click((980,360))
+    click_by_png(config.COPY_PART_NO_NAME)
+    package_a = pyperclip.paste()
+    # 读取封装b
+    pyautogui.click((980,375))
+    click_by_png(config.COPY_PART_NO_NAME)
+    package_b = pyperclip.paste()
+    time.sleep(1)
+
+    click_by_png(config.CLOSE_BUTTON)
+    logger.info("封装制造完毕")
+    click_by_png(config.EDIT_DARK)
+
+    return package_a,package_b
+
 
 # 整版界面处理元件
 def board_component_process(menu_choice):
@@ -1056,7 +1145,8 @@ def add_window(button="w"):
 
     if found:
         # 使用pyautogui模拟鼠标拖动
-        pyautogui.press(button)
+        if button:
+            pyautogui.press(button)
         pyautogui.moveTo(top_left, duration=1)
         pyautogui.mouseDown()
         pyautogui.moveTo(bottom_right, duration=1)
@@ -1064,10 +1154,11 @@ def add_window(button="w"):
         logger.info("cad描边完毕")
     else:
         logger.info("未找到任何区域,开始瞎画")
-        pyautogui.press(button)
-        pyautogui.moveTo(872, 362, duration=1)
+        if button:
+            pyautogui.press(button)
+        pyautogui.moveTo(872 + random.randint(-5, 5), 362 + random.randint(-5, 5), duration=1)
         pyautogui.mouseDown()
-        pyautogui.moveTo(1000, 528, duration=1)
+        pyautogui.moveTo(1000 + random.randint(-5, 5), 528 + random.randint(-5, 5), duration=1)
         pyautogui.mouseUp()
         logger.info("瞎画完成")
 # 打开程式(随机) 
@@ -1225,17 +1316,21 @@ def ensure_multiple_collages():
 
 
 # 点击元件
-def click_component():
-    # 几种元件里点一个
-    components = [config.NO_CHECKED_COMPONENT, config.CHECKED_COMPONENT, config.PASS_COMPONENT, config.NO_PASS_COMPONENT]
-    random.shuffle(components)  # 随机排序元件列表
-    for component in components:
-        if search_symbol(component, 2, tolerance=0.95, region=config.BOARD_INFORMATION_REGION):
-            time.sleep(1)
-            click_by_png(component, 2, use_random=1, tolerance=0.8, region=config.BOARD_INFORMATION_REGION)
-            time.sleep(5)
-            return True
-    return False
+def click_component(click_index=None):
+    try:
+        # 几种元件里点一个
+        components = [config.NO_CHECKED_COMPONENT, config.CHECKED_COMPONENT, config.PASS_COMPONENT, config.NO_PASS_COMPONENT]
+        # random.shuffle(components)  # 随机排序元件列表
+        for component in components:
+            if search_symbol(component, 2, tolerance=0.95, region=config.BOARD_INFORMATION_REGION):
+                time.sleep(1)
+                click_by_png(component, 2, use_random=1, tolerance=0.8, region=config.BOARD_INFORMATION_REGION, click_index=click_index)
+                time.sleep(5)
+                return True
+        return False
+    except Exception as e:
+        logger.error(f"点击元件时出错: {e}")
+        return False
 
 # 检测该料号的窗口算法参数都已编辑完成，相同封装类型的其他料号的元件的窗口算法参数编辑情况        
 def check_same_package_same_param(if_same_param):
@@ -1333,7 +1428,112 @@ def check_color_in_region(target_color=(220, 20, 60), region=(862, 344, 1010 - 8
         return False
     else:
         raise ValueError("region参数格式不正确，应为(x, y)、(x, y, width, height)")
+    
+# ===================================设置快捷键====================================
+def shortcut_key_online_parameter_display_sync_package():
+    # UI设置--快捷键设置--元件编辑，【在线调参显示同步封装】设置快捷键K
+    if search_symbol(config.SETTING_DARK, 1):
+        click_by_png(config.SETTING_DARK)
+    else:
+        search_symbol_erroring(config.SETTING_LIGHT, 1)
+    click_by_png(config.PARAM_HARDWARE_SETTING)
+    time.sleep(2)
+    click_by_png(config.PARAM_SHORTCUT_KEY_SETTING)
+    time.sleep(2)
+
+    scroll_down((380, 250), config.SHORTCUT_KEY_COMPONENT_EDIT_REGION)
+    write_text_textbox(config.PARAM_ONLINE_PARAMETER_DISPLAY_SYNC_PACKAGE, "K", if_select_all=False)
+    time.sleep(1)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
+    if search_symbol(config.NO, 1.5, tolerance=0.95):
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
+    else:
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
+    time.sleep(0.5)
+    pyautogui.press('enter')
+    while search_symbol(config.PARAM_SETTING_TOPIC):
+        time.sleep(1.5)
 # ====================================设置勾选====================================
+
+# 参数设置--数据导出配置--在线调参，【保留最后PCB板数】设置N
+def param_keep_the_last_pcb_number():
+    if search_symbol(config.SETTING_DARK, 1):
+        click_by_png(config.SETTING_DARK)
+    else:
+        search_symbol_erroring(config.SETTING_LIGHT, 1)
+    click_by_png(config.PARAM_HARDWARE_SETTING)
+    time.sleep(2)
+    click_by_png(config.PARAM_DATA_EXPORT_SETTING)
+    time.sleep(2)
+    # 注意 轨道1/2不选的话会有问题
+    if search_symbol(config.PARAM_TRACK_1, 2) and search_symbol(config.PARAM_TRACK_2, 2):
+        click_by_png(config.PARAM_TRACK_1)
+
+    write_text_textbox(config.PARAM_KEEP_THE_LAST_PCB_NUMBER, "N")
+    time.sleep(1)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
+    if search_symbol(config.NO, 1.5, tolerance=0.95):
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
+    else:
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
+    time.sleep(0.5)
+    pyautogui.press('enter')
+    while search_symbol(config.PARAM_SETTING_TOPIC):
+        time.sleep(1.5)
+
+# 参数设置--数据导出配置--在线调参，勾选【Good元件】、【NG元件】，或勾选【所有】
+def param_good_and_ng_component_limits(good_limit, ng_limit):
+    if search_symbol(config.SETTING_DARK, 1):
+        click_by_png(config.SETTING_DARK)
+    else:
+        search_symbol_erroring(config.SETTING_LIGHT, 1)
+    click_by_png(config.PARAM_HARDWARE_SETTING)
+    time.sleep(2)
+    click_by_png(config.PARAM_DATA_EXPORT_SETTING)
+    time.sleep(2)
+
+    # 先确定轨道1/2选了
+    if search_symbol(config.PARAM_TRACK_1, 2) and search_symbol(config.PARAM_TRACK_2, 2):
+        click_by_png(config.PARAM_TRACK_1)
+
+    # 再确定没有勾选所有
+    if search_symbol(config.PARAM_ONLINE_ALL_YES, 2):
+        click_by_png(config.PARAM_ONLINE_ALL_YES,type="bottom")
+
+    if good_limit is not None:
+        if search_symbol(config.PARAM_GOOD_COMPONENT_LIMIT, 2):
+            click_by_png(config.PARAM_GOOD_COMPONENT_LIMIT)
+        while search_symbol(config.PARAM_AMOUNT_LIMIT_ALL_YES, 2, tolerance=0.95):
+            click_by_png(config.PARAM_AMOUNT_LIMIT_ALL_YES,timeout=2,tolerance=0.95,type="right")
+        write_text((1275, 730), good_limit)
+    if ng_limit is not None:
+        if search_symbol(config.PARAM_NG_COMPONENT_LIMIT, 2):
+            click_by_png(config.PARAM_NG_COMPONENT_LIMIT)
+        while search_symbol(config.PARAM_AMOUNT_LIMIT_ALL_YES, 2, tolerance=0.95):
+            click_by_png(config.PARAM_AMOUNT_LIMIT_ALL_YES,timeout=2,tolerance=0.95,type="right")
+        write_text((1275, 755), ng_limit)
+    # 无传参则勾所有
+    if good_limit is None and ng_limit is None:
+        if search_symbol(config.PARAM_GOOD_COMPONENT_LIMIT, 2):
+            click_by_png(config.PARAM_GOOD_COMPONENT_LIMIT)
+        if search_symbol(config.PARAM_NG_COMPONENT_LIMIT, 2):
+            click_by_png(config.PARAM_NG_COMPONENT_LIMIT)
+        while search_symbol(config.PARAM_AMOUNT_LIMIT_ALL_NO, 2, tolerance=0.95):
+            click_by_png(config.PARAM_AMOUNT_LIMIT_ALL_NO,timeout=2,tolerance=0.95,type="right")
+
+    time.sleep(1)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
+    if search_symbol(config.NO, 1.5, tolerance=0.95):
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
+    else:
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
+    time.sleep(0.5)
+    pyautogui.press('enter')
+    while search_symbol(config.PARAM_SETTING_TOPIC):
+        time.sleep(1.5)
+
+
+
 # 勾选共享元件库路径
 def check_share_lib_path(if_checked):
     # 点开设置--硬件设置--数据导出配置--元件库配置
@@ -1348,7 +1548,7 @@ def check_share_lib_path(if_checked):
     # 确保共享元件库路径为勾选状态 （用的坐标）
     is_checked((902, 291), (914, 303), if_checked, 1)
     time.sleep(1)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1371,7 +1571,7 @@ def check_default_export_auto_save(if_default_export, if_auto_save):
     is_checked((659, 699), (671, 711), if_default_export)
     is_checked((659, 491), (671, 503), if_auto_save)
     time.sleep(0.5)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1380,6 +1580,37 @@ def check_default_export_auto_save(if_default_export, if_auto_save):
     pyautogui.press('enter')
     while search_symbol(config.PARAM_SETTING_TOPIC):
         time.sleep(1.5)
+# 参数配置--UI配置--软件界面：不选【自动加载程式】 TODO 这边用图的 后面需改
+def check_auto_load_program(if_auto_load_program):
+    if search_symbol(config.SETTING_DARK, 1):
+        click_by_png(config.SETTING_DARK)
+    else:
+        search_symbol_erroring(config.SETTING_LIGHT, 1)
+    click_by_png(config.PARAM_HARDWARE_SETTING)
+    time.sleep(2)
+    click_by_png(config.PARAM_UI_SETTING)
+    time.sleep(1)
+    if if_auto_load_program:
+        if search_symbol(config.SETTING_UI_AUTO_LOAD_PROGRAM_NO, 2):
+            click_by_png(config.SETTING_UI_AUTO_LOAD_PROGRAM_NO)
+    else:
+        if search_symbol(config.SETTING_UI_AUTO_LOAD_PROGRAM_YES, 2):
+            click_by_png(config.SETTING_UI_AUTO_LOAD_PROGRAM_YES)
+    time.sleep(0.5)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
+    if search_symbol(config.NO, 1.5, tolerance=0.95):
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
+    else:
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
+    time.sleep(0.5)
+    pyautogui.press('enter')
+    while search_symbol(config.PARAM_SETTING_TOPIC):
+        time.sleep(1.5)
+
+
+        
+
+
 
 # 【设置】-【硬件设置】-【UI配置】-【图像设置】搜索范围xy最大扩展： 最小设置0.8，搜索范围扩展x y:设置100%
 def check_xy_max_extension():
@@ -1396,7 +1627,7 @@ def check_xy_max_extension():
     write_text((530, 145), "0.8")
     write_text((530, 170), "0.8")
     time.sleep(0.5)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1415,7 +1646,7 @@ def check_not_allow_paste_component_to_component(if_not_allow):
     click_by_png(config.PARAM_HARDWARE_SETTING)
     time.sleep(2)
     is_checked((1268, 846), (1280, 1005), if_not_allow)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1434,7 +1665,7 @@ def check_not_allow_paste_component_to_blank(if_not_allow):
     click_by_png(config.PARAM_HARDWARE_SETTING)
     time.sleep(2)
     is_checked((1268, 872), (1280, 884), if_not_allow)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1454,7 +1685,7 @@ def check_cross_component_copy():
     click_by_png(config.PARAM_HARDWARE_SETTING)
     time.sleep(2)
     is_checked((1268, 993), (1280, 1005), True)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1466,7 +1697,7 @@ def check_cross_component_copy():
 
 
 # 允许同步相同的封装,  默认同步封装
-def check_sync_package(if_sync_same_package, if_default_sync_package):
+def check_not_sync_same_and_default_package(if_not_sync_same_package, if_default_sync_package):
     # 参数配置--UI配置--程序设置
     if search_symbol(config.SETTING_DARK, 1):
         click_by_png(config.SETTING_DARK)
@@ -1474,9 +1705,11 @@ def check_sync_package(if_sync_same_package, if_default_sync_package):
         search_symbol_erroring(config.SETTING_LIGHT, 1)
     click_by_png(config.PARAM_HARDWARE_SETTING)
     time.sleep(2)
-    is_checked((659, 852), (671, 864), if_sync_same_package)
-    is_checked((659, 876), (671, 888), if_default_sync_package)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.PARAM_UI_SETTING)
+    time.sleep(2)
+    is_checked((659, 825), (671, 837), if_not_sync_same_package)
+    is_checked((659, 849), (671, 861), if_default_sync_package)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1485,6 +1718,28 @@ def check_sync_package(if_sync_same_package, if_default_sync_package):
     pyautogui.press('enter')
     while search_symbol(config.PARAM_SETTING_TOPIC):
         time.sleep(1.5)
+
+def check_not_sync_same_package(if_not_sync_same_package):
+    # 参数配置--UI配置--程序设置
+    if search_symbol(config.SETTING_DARK, 1):
+        click_by_png(config.SETTING_DARK)
+    else:
+        search_symbol_erroring(config.SETTING_LIGHT, 1)
+    click_by_png(config.PARAM_HARDWARE_SETTING)
+    time.sleep(2)
+    click_by_png(config.PARAM_UI_SETTING)
+    time.sleep(2)
+    is_checked((659, 825), (671, 837), if_not_sync_same_package)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
+    if search_symbol(config.NO, 1.5, tolerance=0.95):
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
+    else:
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
+    time.sleep(0.5)
+    pyautogui.press('enter')
+    while search_symbol(config.PARAM_SETTING_TOPIC):
+        time.sleep(1.5)
+
 
 # 参数配置--硬件设置--数据导出配置--元件库--导入筛选限制
 def check_import_filtering_restriction(percent):
@@ -1498,7 +1753,7 @@ def check_import_filtering_restriction(percent):
     time.sleep(2)
     write_text((1340,225), percent)
     time.sleep(1.5)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1521,7 +1776,7 @@ def check_refresh_tree(if_fresh):
     time.sleep(2)
     is_checked((1182, 123), (1194, 135), if_fresh)
     time.sleep(1)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1531,6 +1786,45 @@ def check_refresh_tree(if_fresh):
     while search_symbol(config.PARAM_SETTING_TOPIC):
         time.sleep(1.5)
 
+# UI设置，演算法配置-点击开发者选项，输入密码：devsinictekaoi
+def check_open_developer_options(type=None):
+    if search_symbol(config.SETTING_DARK, 1):
+        click_by_png(config.SETTING_DARK)
+    else:
+        search_symbol_erroring(config.SETTING_LIGHT, 1)
+    click_by_png(config.PARAM_HARDWARE_SETTING)
+    time.sleep(2)
+    click_by_png(config.PARAM_ALGORITHM_SETTING)
+    time.sleep(2)
+    click_by_png(config.PARAM_ALGORITHM_DEVELOPER_OPTIONS)
+    time.sleep(2)
+    pyautogui.write("devsinictekaoi")
+    pyautogui.press('enter')
+
+    if type == "save_3d_data_yes":
+        if search_symbol(config.DEVELOPER_OPTIONS_SAVE_3D_DATA_NO, 3):
+            click_by_png(config.DEVELOPER_OPTIONS_SAVE_3D_DATA_NO)
+    elif type == "save_3d_data_no":
+        if search_symbol(config.DEVELOPER_OPTIONS_SAVE_3D_DATA_YES, 3):
+            click_by_png(config.DEVELOPER_OPTIONS_SAVE_3D_DATA_YES)
+    elif type == "save_check_data_yes":
+        if search_symbol(config.DEVELOPER_OPTIONS_SAVE_CHECK_DATA_NO, 3):
+            click_by_png(config.DEVELOPER_OPTIONS_SAVE_CHECK_DATA_NO)
+    elif type == "save_check_data_no":
+        if search_symbol(config.DEVELOPER_OPTIONS_SAVE_CHECK_DATA_YES, 3):
+            click_by_png(config.DEVELOPER_OPTIONS_SAVE_CHECK_DATA_YES)
+
+    click_by_png(config.DEVELOPER_OPTIONS_YES)
+    time.sleep(1)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
+    if search_symbol(config.NO, 1.5, tolerance=0.95):
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
+    else:
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
+    time.sleep(0.5)
+    pyautogui.press('enter')
+    while search_symbol(config.PARAM_SETTING_TOPIC):
+        time.sleep(1.5)
 
 
 # 参数配置--演算法配置--关联子框检测模式
@@ -1558,7 +1852,67 @@ def check_patent_not_NG(type):
         pyautogui.click((935, 180))
         time.sleep(0.5)
         pyautogui.click((935, 230))
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
+    if search_symbol(config.NO, 1.5, tolerance=0.95):
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
+    else:
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
+    time.sleep(0.5)
+    pyautogui.press('enter')
+    while search_symbol(config.PARAM_SETTING_TOPIC):
+        time.sleep(1.5)
+
+# 设置-硬件设置-演算法配置-勾选保存DJB文件
+def check_save_djb(if_save_djb):
+    if search_symbol(config.SETTING_DARK, 1):
+        click_by_png(config.SETTING_DARK)
+    else:
+        search_symbol_erroring(config.SETTING_LIGHT, 1)
+    click_by_png(config.PARAM_HARDWARE_SETTING)
+    time.sleep(2)
+    click_by_png(config.PARAM_ALGORITHM_SETTING)
+    time.sleep(2)
+    if if_save_djb:
+        if search_symbol(config.SETTING_ALGORITHM_SAVE_DJB_NO):
+            click_by_png(config.SETTING_ALGORITHM_SAVE_DJB_NO)
+    else:
+        if search_symbol(config.SETTING_ALGORITHM_SAVE_DJB_YES):
+            click_by_png(config.SETTING_ALGORITHM_SAVE_DJB_YES)
+
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
+    if search_symbol(config.NO, 1.5, tolerance=0.95):
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
+    else:
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
+    time.sleep(0.5)
+    pyautogui.press('enter')
+    while search_symbol(config.PARAM_SETTING_TOPIC):
+        time.sleep(1.5)
+
+# 设置-硬件设置-演算法配置-勾选所有算法（关闭所有算法）
+def check_all_algs():
+    if search_symbol(config.SETTING_DARK, 1):
+        click_by_png(config.SETTING_DARK)
+    else:
+        search_symbol_erroring(config.SETTING_LIGHT, 1)
+    click_by_png(config.PARAM_HARDWARE_SETTING)
+    time.sleep(2)
+    click_by_png(config.PARAM_ALGORITHM_SETTING)
+    time.sleep(2)
+    if search_symbol(config.SETTING_ALGORITHM_ALL_ALGS_NO, 3):
+        click_by_png(config.SETTING_ALGORITHM_ALL_ALGS_NO)
+        click_by_png(config.SETTING_ALGORITHM_MARK_MATCHING_YES)
+        click_by_png(config.SETTING_ALGORITHM_BARCODE_DETECTION_YES)
+    else:
+        if search_symbol(config.SETTING_ALGORITHM_MARK_MATCHING_YES, 3):
+            click_by_png(config.SETTING_ALGORITHM_MARK_MATCHING_YES)
+        if search_symbol(config.SETTING_ALGORITHM_BARCODE_DETECTION_YES, 3):
+            click_by_png(config.SETTING_ALGORITHM_BARCODE_DETECTION_YES)
+    # 为了方便 勾选一下颜色分析
+    if search_symbol(config.SETTING_ALGORITHM_COLOR_ANALYSE_NO, 3):
+        click_by_png(config.SETTING_ALGORITHM_COLOR_ANALYSE_NO)
+
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1579,7 +1933,7 @@ def check_auto_choose_window(if_auto_choose):
     click_by_png(config.PARAM_UI_SETTING)
     time.sleep(2)
     is_checked((1268, 921), (1280, 933), if_auto_choose)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1602,7 +1956,7 @@ def check_export_ok(if_export_ok, if_export_all_ok):
     time.sleep(2)
     is_checked((659, 726), (671, 738), if_export_ok)
     is_checked((659, 751), (671, 763), if_export_all_ok)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1624,7 +1978,7 @@ def check_export_pn_add_sn(if_export_pn_add_sn):
     time.sleep(2)
     is_checked((902, 145), (914, 157), if_export_pn_add_sn)
     time.sleep(1)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1645,7 +1999,7 @@ def check_allow_preview(if_allow):
     time.sleep(2)
     is_checked((1182, 145), (1194, 157), if_allow)
     time.sleep(1)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1667,7 +2021,7 @@ def check_allow_fallback(if_allow):
     time.sleep(2)
     is_checked((333, 541), (345, 553), if_allow)
     time.sleep(1)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1691,7 +2045,7 @@ def check_allow_copy_cross_component(if_allow):
     time.sleep(2)
     is_checked((1268, 993), (1280, 1005), if_allow)
     time.sleep(1)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1712,7 +2066,7 @@ def check_export_wm_img_1():
     time.sleep(2)
     write_text((1070, 225), '1')
     time.sleep(1)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1736,7 +2090,7 @@ def check_export_wm_img_1_all(if_export_wm_img_1_all):
     time.sleep(1)
     is_checked((1131, 221), (1143, 233), if_export_wm_img_1_all)
     time.sleep(1)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1759,7 +2113,7 @@ def check_import_sync_package(if_import_sync_package):
     time.sleep(2)
     is_checked((1182, 168), (1194, 180), if_import_sync_package)
     time.sleep(1)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1783,7 +2137,7 @@ def check_pn_1_day():
     time.sleep(1)
     write_text((1320, 200), '1')
     time.sleep(1)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1805,7 +2159,7 @@ def check_import_delete_ocv_wm(if_delete):
     time.sleep(2)
     is_checked((700, 243), (712, 255), if_delete)
     time.sleep(1)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1827,7 +2181,7 @@ def check_allow_cad_teach(if_allow):
     time.sleep(2)
     is_checked((349, 374), (361, 386), if_allow)
     time.sleep(1)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1848,7 +2202,7 @@ def check_import_update_height(if_update):
     time.sleep(2)
     is_checked((902, 244), (914, 256), if_update)
     time.sleep(1)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1870,7 +2224,7 @@ def check_import_component_xy(if_update):
     time.sleep(2)
     is_checked((902, 266), (914, 278), if_update)
     time.sleep(1)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1903,7 +2257,7 @@ def check_export_image_libs(if_export):
     time.sleep(2)
     is_checked((902, 123), (914, 157), if_export)
     time.sleep(1)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -1925,7 +2279,7 @@ def filter_auxiliary_window(if_filter):
     time.sleep(2)
     is_checked((902, 194), (914, 206), if_filter)
     time.sleep(1)
-    click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -2055,6 +2409,7 @@ def get_component_list():
 
 # 获取选择框
 def get_choose_box():
+    logger.info("开始获取选择框")
     # 定位中心点附近的黄色方块
     center_x, center_y = 935, 445
     search_region = (center_x - 393, center_y - 148, 786, 296)  # 更新搜索区域
@@ -2085,8 +2440,22 @@ def get_choose_box():
         target_block = yellow_blocks[4]  # 选择第五个最近的方块，索引为4
         target_x = target_block[0] + target_block[2] // 2 + search_region[0]
         target_y = target_block[1] + target_block[3] // 2 + search_region[1]
-        target = (target_x, target_y)
-        logger.info(target_x, target_y)
+        screen_width, screen_height = pyautogui.size()
+        screen_target_x = target_x * screen_width / 1920
+        screen_target_y = target_y * screen_height / 1080
+        target = (screen_target_x, screen_target_y)
+        logger.debug(target)
+        return True, target
+    elif len(yellow_blocks) == 4:
+        # 随机选择一个方块
+        target_block = random.choice(yellow_blocks)
+        target_x = target_block[0] + target_block[2] // 2 + search_region[0]
+        target_y = target_block[1] + target_block[3] // 2 + search_region[1]
+        screen_width, screen_height = pyautogui.size()
+        screen_target_x = target_x * screen_width / 1920
+        screen_target_y = target_y * screen_height / 1080
+        target = (screen_target_x, screen_target_y)
+        logger.debug(target)
         return True, target
     elif len(yellow_blocks) > 0:
         return True, None
@@ -2094,74 +2463,145 @@ def get_choose_box():
         return False, None
 
 # 扩大算法框
-def expend_choose_box():
+def expand_choose_box(point=config.CENTRE):
     # 获取选择框
     success, target = get_choose_box()
     if success and target is not None:
         # 左键点击按住方块中心点
         pyautogui.mouseDown(target)
         time.sleep(0.5)
-        # 往屏幕边缘拖拽50单位
-        pyautogui.moveRel(50, 0, duration=0.5)
+        # 计算拖拽方向，远离中心点
+        direction_x = target[0] - point[0]
+        direction_y = target[1] - point[1]
+        move_x = 50 if direction_x >= 0 else -50
+        move_y = 50 if direction_y >= 0 else -50
+        # 往远离中心点的方向拖拽50单位
+        pyautogui.moveRel(move_x, move_y, duration=1)
         time.sleep(0.5)
         # 松开鼠标
         pyautogui.mouseUp()
     else:
-        logger.error("未能成功获取选择框")
-
-# 获取color颜色在某个区域最靠某个方向的像素点的坐标点
+        logger.debug(f"Success: {success}, Target: {target}")
+        logger.error("未能成功获取选择框，随机选择一个黄色点拖曳")
+        # 选择region.COMPONENT_OPERATION_REGION内任一rgb为（255，255，0)的点
+        yellow_point = get_color_direction_coordinate((255, 255, 0), config.COMPONENT_OPERATION_REGION, 'left')
+        if yellow_point is not None:
+            # 左键点击按住黄色点
+            pyautogui.mouseDown(yellow_point)
+            time.sleep(0.5)
+            # 计算拖拽方向，远离中心点
+            direction_x = yellow_point[0] - point[0]
+            direction_y = yellow_point[1] - point[1]
+            move_x = 50 if direction_x >= 0 else -50
+            move_y = 50 if direction_y >= 0 else -50
+            # 往远离中心点的方向拖拽50单位
+            pyautogui.moveRel(move_x, move_y, duration=1)
+            time.sleep(0.5)
+            # 松开鼠标
+            pyautogui.mouseUp()
+        else:
+            logger.error("未能找到黄色点")
+# 获取color颜色在某个区域最靠某个方向的像素点的基于全屏的坐标点
 def get_color_direction_coordinate(color, region, direction):
+    # 截取指定区域的屏幕 (保留RGB格式)
     screenshot = pyautogui.screenshot(region=region)
     screenshot = np.array(screenshot)
-    screenshot = cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGR)
-    lower_color = np.array(color)
-    upper_color = np.array(color)
+    
+    # 精确颜色匹配（可以增加一点点容差进行调试）
+    lower_color = np.array([color[0] - 1, color[1] - 1, color[2] - 1])
+    upper_color = np.array([color[0] + 1, color[1] + 1, color[2] + 1])
+    
+    # 生成颜色掩码
     mask = cv2.inRange(screenshot, lower_color, upper_color)
-    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
+    # 获取非零像素点的坐标
+    coords = cv2.findNonZero(mask)
+    
+    if coords is None:
+        logger.error("未找到指定颜色的像素点")
+        return None
+    
+    # 根据方向选择最靠近的像素点
     if direction == 'left':
-        min_x = region[0] + region[2]
-        for contour in contours:
-            x, y, w, h = cv2.boundingRect(contour)
-            if x < min_x:
-                min_x = x
-        return min_x + region[0], y + h // 2 + region[1]
+        target_coord = min(coords, key=lambda x: x[0][0])
     elif direction == 'right':
-        max_x = region[0]
-        for contour in contours:
-            x, y, w, h = cv2.boundingRect(contour)
-            if x + w > max_x:
-                max_x = x + w
-        return max_x + region[0], y + h // 2 + region[1]
+        target_coord = max(coords, key=lambda x: x[0][0])
     elif direction == 'up':
-        min_y = region[1] + region[3]
-        for contour in contours:
-            x, y, w, h = cv2.boundingRect(contour)
-            if y < min_y:
-                min_y = y
-        return x + w // 2 + region[0], min_y + region[1]
+        target_coord = min(coords, key=lambda x: x[0][1])
     elif direction == 'down':
-        max_y = region[1]
-        for contour in contours:
-            x, y, w, h = cv2.boundingRect(contour)
-            if y + h > max_y:
-                max_y = y + h
-        return x + w // 2 + region[0], max_y + region[1]
+        target_coord = max(coords, key=lambda x: x[0][1])
     else:
         raise Exception("get_color_direction_coordinate传参有问题")
-# 计算区域内color的像素点数量
+    
+    # 返回全屏的坐标 (直接加上区域的起始坐标)
+    screen_x = target_coord[0][0] + region[0]
+    screen_y = target_coord[0][1] + region[1]
+    
+    return screen_x, screen_y
+# 计算该区域内颜色为rgb的像素点的数量
 def get_color_in_region(color, region):
+    # 截取指定区域的屏幕
     screenshot = pyautogui.screenshot(region=region)
     screenshot = np.array(screenshot)
-    screenshot = cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGR)
-    lower_color = np.array(color)
-    upper_color = np.array(color)
+    
+    # 不需要颜色空间转换，直接处理RGB颜色
+    # screenshot = cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGR) # 可以省略这一行
+    
+    # 设置颜色范围，增加小容差 ±1
+    lower_color = np.array([color[0] - 1, color[1] - 1, color[2] - 1])
+    upper_color = np.array([color[0] + 1, color[1] + 1, color[2] + 1])
+    
+    # 生成颜色掩码，只有匹配的像素值会被设置为255，其他为0
     mask = cv2.inRange(screenshot, lower_color, upper_color)
-    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    pixel_count = 0
-    for contour in contours:
-        area = cv2.contourArea(contour)
-        pixel_count += area
+    
+    # 计算匹配颜色的像素点数量
+    pixel_count = cv2.countNonZero(mask)
+    
     return pixel_count
+
+# 识别屏幕上是否存在指定文字
+def detect_text(target_text):
+    # 截取屏幕
+    screenshot = pyautogui.screenshot()
+
+    # 将截图转换为OpenCV格式
+    screenshot_cv = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
+
+    # 使用EasyOCR识别文字
+    reader = easyocr.Reader(['ch_sim'])
+    result = reader.readtext(screenshot_cv, detail=0)
+
+    # 检查是否包含目标文字
+    for text in result:
+        similarity = SequenceMatcher(None, target_text, text).ratio()
+        if similarity >= 0.66:
+            logger.info(f"识别到与“{target_text}”相似的文字：{text}")
+            return text  # 返回识别到的文字
+
+    logger.info(f"未识别到与“{target_text}”相似的文字")
+    return None
+
+# 检查文字前面的勾选框状态 TODO
+def check_checkbox_status_before_text(target_text):
+    # 截取屏幕
+    screenshot = pyautogui.screenshot()
+
+    # 将截图转换为OpenCV格式
+    screenshot_cv = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
+
+    # 使用EasyOCR识别文字
+    reader = easyocr.Reader(['ch_sim'])
+    result = reader.readtext(screenshot_cv, detail=0)
+
+    # 检查是否包含目标文字
+    for text in result:
+        similarity = SequenceMatcher(None, target_text, text).ratio()
+        if similarity >= 0.66:
+            logger.info(f"识别到与“{target_text}”相似的文字：{text}")
+            return True
+
+    logger.info(f"未识别到与“{target_text}”相似的文字")
+    return False
 
 # 调整将CAD框随机变大，再变小
 def adjust_cad_frame():
@@ -2585,15 +3025,33 @@ def get_frame_points(region, color):
         logger.error(f"获取框的坐标时发生错误: {e}")
         raise
 
-def write_text(coordinate, text):
+# # 获取文本位置并确认其左侧勾选框勾选状态并作勾选操作
+# def get_text_and_check_checkbox(image_path, text, checkbox_image_path, checkbox_checked_image_path=None):
+#
+#
+#
+
+
+
+
+
+
+
+
+
+
+def write_text(coordinate, text, if_select_all=True):
+    
     pyautogui.click(coordinate)
     time.sleep(0.5)
-    pyautogui.hotkey('ctrl', 'a')
-    time.sleep(1)
-    pyautogui.click(coordinate, clicks=2, interval=0.1)
-    time.sleep(0.5)
-    pyautogui.write(text)
-def write_text_textbox(image_path, text, color=(255, 255, 255), direction="right", locate_direction="left"):
+    if if_select_all:   
+        pyautogui.click(coordinate, clicks=2, interval=0.1)
+        time.sleep(1)
+        pyautogui.hotkey('ctrl', 'a')
+        time.sleep(0.5)
+    pyperclip.copy(text)
+    pyautogui.hotkey('ctrl', 'v')
+def write_text_textbox(image_path, text, color=(255, 255, 255), direction="right", locate_direction="left", if_select_all=True):
     try:
         logger.debug(f"开始处理图片: {image_path}, 方向: {direction}, 颜色: {color}, 识别方向: {locate_direction}")
         time.sleep(2)
@@ -2687,7 +3145,7 @@ def write_text_textbox(image_path, text, color=(255, 255, 255), direction="right
 
         # 查找离中心点300范围内的颜色区域
         if direction in ["right", "left"]:
-            valid_contours = [c for c in contours if abs(x + get_distance_to_center(c)[0] - center_x) <= 300]
+            valid_contours = [c for c in contours if abs(x + get_distance_to_center(c)[0] - center_x) <= 300 and abs(x + get_distance_to_center(c)[0] - center_x) > 15]
             if not valid_contours:
                 raise Exception("未找到300范围内的颜色区域")
             if direction == "right":
@@ -2697,7 +3155,7 @@ def write_text_textbox(image_path, text, color=(255, 255, 255), direction="right
             distance = abs(x + get_distance_to_center(closest_contour)[0] - center_x)
             logger.debug(f"基于X轴中心点判断，距离为: {distance}")
         elif direction in ["above", "below"]:
-            valid_contours = [c for c in contours if abs(y + get_distance_to_center(c)[1] - center_y) <= 300]
+            valid_contours = [c for c in contours if abs(y + get_distance_to_center(c)[1] - center_y) <= 300 and abs(y + get_distance_to_center(c)[1] - center_y) > 15]
             if not valid_contours:
                 raise Exception("未找到300范围内的颜色区域")
             if direction == "above":
@@ -2707,6 +3165,7 @@ def write_text_textbox(image_path, text, color=(255, 255, 255), direction="right
             distance = abs(y + get_distance_to_center(closest_contour)[1] - center_y)
             logger.debug(f"基于Y轴中心点判断，距离为: {distance}")
 
+        # 获取轮廓B的中心点
         M = cv2.moments(closest_contour)
         if M["m00"] != 0:
             contour_center_x = int(M["m10"] / M["m00"])
@@ -2718,10 +3177,10 @@ def write_text_textbox(image_path, text, color=(255, 255, 255), direction="right
             logger.info(f"识别到的轮廓中心点的全屏坐标: ({full_screen_center_x}, {full_screen_center_y})")
 
             # 可视化调试：在屏幕上显示选择的轮廓
-            # debug_image_selected = screenshot_np.copy()
-            # cv2.drawContours(debug_image_selected, [closest_contour], -1, (255, 0, 0), 2)
-            # cv2.imshow("Selected Contour", debug_image_selected)
-            # cv2.waitKey(0)
+            debug_image_selected = screenshot_np.copy()
+            cv2.drawContours(debug_image_selected, [closest_contour], -1, (255, 0, 0), 2)
+            cv2.imshow("Selected Contour", debug_image_selected)
+            cv2.waitKey(0)
 
             # 检查距离是否超过200
             if distance > 200:
@@ -2729,8 +3188,8 @@ def write_text_textbox(image_path, text, color=(255, 255, 255), direction="right
                 logger.error(f"找到的区域与标识距离超过200, 坐标: ({full_screen_center_x}, {full_screen_center_y}), 颜色: {detected_color}")
                 raise Exception("找到的区域与标识距离超过200")
 
-            # 将文本写入该区域
-            write_text((full_screen_center_x, full_screen_center_y), text)
+            # 将文本写入该区域B的中心点
+            write_text((full_screen_center_x, full_screen_center_y), text, if_select_all)
             logger.info(f"写入完毕，内容为：{text}")
         else:
             raise Exception("未找到合适的颜色区域")
@@ -2828,6 +3287,18 @@ def get_mouse_color(mouse_coordinate):
     target_color_rgb = screenshot_np[mouse_coordinate[1], mouse_coordinate[0]]
     return target_color_rgb
 
+# 比较两张图片是否相同（转为灰度图像）
+def compare_images(image1, image2):
+    # 将截图转换为灰度图像
+    image1_gray = image1.convert('L')
+    image2_gray = image2.convert('L')
+
+    # 使用ImageChops.difference来比较图像差异
+    diff = ImageChops.difference(image1_gray, image2_gray)
+
+    # 如果差异图像的极值为0，说明两张图像相同
+    return diff.getbbox() is None
+
 # 矫正识别结果的错别字，并处理冒号后的文本
 def correct_typos(text):
     target_texts = ["检测窗口", "未完待续", "错件"]
@@ -2896,21 +3367,28 @@ def read_text_ocr(top_left_point, bottom_right_point):
     return corrected_text
 
 # 在区域内下滚，直到滚到底（鼠标位置，识别区域）
-def scroll_down(coordinate, region, scroll_amount=-800):
-    # 截取初始区域截图
-    region_last_time = pyautogui.screenshot(region=region)
-    # 下滚指定单位
-    pyautogui.moveTo(coordinate)
-    pyautogui.scroll(scroll_amount)
-    time.sleep(1)  # 等待滚动完成
-    
-    # 截取当前区域截图
-    region_current_time = pyautogui.screenshot(region=region)
-    if region_current_time == region_last_time:
-        return False
+def scroll_down(coordinate, region, scroll_amount=None):
+    if scroll_amount is not None:
+        # 如果有传入入参，滑动入参的值后就停止
+        pyautogui.moveTo(coordinate)
+        pyautogui.scroll(scroll_amount)
+        return
     else:
-        region_last_time = region_current_time
-        return True
+        scroll_amount = -400
+        while True:
+            # 截取初始区域截图
+            region_last_time = pyautogui.screenshot(region=region)
+            # 下滚指定单位
+            pyautogui.moveTo(coordinate)
+            pyautogui.scroll(scroll_amount)
+            time.sleep(1)  # 等待滚动完成
+            
+            # 截取当前区域截图
+            region_current_time = pyautogui.screenshot(region=region)
+            if compare_images(region_current_time, region_last_time):
+                return True
+            else:
+                region_last_time = region_current_time
 
 
 

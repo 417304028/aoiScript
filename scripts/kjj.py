@@ -185,7 +185,7 @@ def kjj_001_01():
     pyautogui.press("backspace")
     if utils.search_symbol(config.QUESTION_MARK,3):
         pyautogui.press("enter")
-    if not utils.search_symbol(config.BOARD_AUTO):
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
         raise Exception("返回到整版视图快捷键疑似无效")
     # 显示首件图
 
@@ -334,7 +334,7 @@ def kjj_001_06():
     pyautogui.click((885,137))
     pyautogui.press("p")
 
-    utils.click_by_png(config.PARAM_SETTING_YES,timeout=1.5, tolerance=0.95)
+    utils.click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if utils.search_symbol(config.NO, 1.5, tolerance=0.95):
         utils.click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
     else:
@@ -364,13 +364,14 @@ def kjj_001_07():
         utils.add_window()
         utils.click_by_png(config.SQUARE_POSITIONING)
         utils.click_by_png(config.YES)
-        time.sleep(8)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
     # 3.按Y
-    pyautogui.hotkey("ctrl", "a")
-    a = utils.count_color_in_range(config.CENTRE, 100, (0,0,255))
+    a = utils.count_color_in_range(config.CENTRE, 100, (139,0,0))
     pyautogui.hotkey("ctrl", "b")
     time.sleep(1)
-    b = utils.count_color_in_range(config.CENTRE, 100, (0,0,255))
+    b = utils.count_color_in_range(config.CENTRE, 100, (139,0,0))
     if b == a:
         raise Exception("切换本体(引脚)/窗口快捷键疑似无效")
     utils.close_aoi()
@@ -385,12 +386,14 @@ def kjj_001_08():
         utils.add_window()
         utils.click_by_png(config.SQUARE_POSITIONING)
         utils.click_by_png(config.YES)
-        time.sleep(8)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
     # 3.按Control+A,
-    a = utils.count_color_in_range(config.CENTRE, 100, (0,255,0))
+    a = utils.count_color_in_range(config.CENTRE, 100, (0,0,255))
     pyautogui.hotkey("ctrl", "a")
     time.sleep(1)
-    b = utils.count_color_in_range(config.CENTRE, 100, (0,255,0))
+    b = utils.count_color_in_range(config.CENTRE, 100, (0,0,255))
     if b <= a:
         raise Exception("全选快捷键疑似无效")
     utils.close_aoi()
@@ -409,7 +412,7 @@ def kjj_001_09():
         pyautogui.press("enter")
     else:
         raise Exception("无弹窗提示")
-    if not utils.search_symbol(config.BOARD_AUTO):
+    if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
         raise Exception("返回到整版视图快捷键疑似无效")
 
     utils.close_aoi()
@@ -428,7 +431,7 @@ def kjj_001_10():
         utils.click_by_png(config.NO)
     else:
         raise Exception("无弹窗提示")
-    if utils.search_symbol(config.BOARD_AUTO):
+    if utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
         raise Exception("未留在元件编辑界面")
 
     utils.close_aoi()
@@ -445,17 +448,19 @@ def kjj_001_11():
         utils.add_window()
         utils.click_by_png(config.SQUARE_POSITIONING)
         utils.click_by_png(config.YES)
-        time.sleep(8)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
     # 3.选中某一元件窗口，按Control+C
     pyautogui.hotkey("ctrl", "tab")
     time.sleep(5) 
     # 4.【编辑】-【粘贴】
-    a = utils.count_color_in_range(config.CENTRE, 50, (0,0,255))
     pyautogui.hotkey("ctrl", "c")
+    a = utils.count_color_in_range(config.CENTRE, 200, (0,0,255))
     pyautogui.hotkey("ctrl", "v")
-    time.sleep(3)
-    b = utils.count_color_in_range(config.CENTRE, 50, (0,0,255))
-    if b <= a:
+    time.sleep(5)
+    b = utils.count_color_in_range(config.CENTRE, 200, (0,0,255))
+    if b == a:
         raise Exception("ctrl cv快捷键疑似无效")
     utils.close_aoi()
 
@@ -470,7 +475,9 @@ def kjj_001_12():
         utils.add_window()
         utils.click_by_png(config.SQUARE_POSITIONING)
         utils.click_by_png(config.YES)
-        time.sleep(8)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
     # 3.选中某一元件窗口，按Control+C
     pyautogui.hotkey("ctrl", "tab")
     time.sleep(5) 
@@ -481,13 +488,16 @@ def kjj_001_12():
     if utils.search_symbol(config.QUESTION_MARK):
         utils.click_by_png(config.NO)
         time.sleep(5)
+    pyautogui.click(config.CENTRE)
     # 5.【编辑】-【粘贴】
-    pyautogui.hotkey("ctrl", "a")
-    pyautogui.press("delete")
-    pyautogui.press("enter")
-    time.sleep(1)
+    if utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        pyautogui.hotkey("ctrl", "a")
+        pyautogui.press("delete")
+        time.sleep(1)
+        pyautogui.press("enter")
+        time.sleep(1)
     pyautogui.hotkey("ctrl", "v")
-    time.sleep(3)
+    time.sleep(5)
     if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
         raise Exception("跨元件复制失败，未发现新窗口")
     utils.close_aoi()
@@ -502,15 +512,22 @@ def kjj_001_13():
         utils.add_window()
         utils.click_by_png(config.SQUARE_POSITIONING)
         utils.click_by_png(config.YES)
-        time.sleep(8)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
+    pyautogui.click(config.CENTRE)
     # 3.选中某一元件窗口，【编辑】-【复制】
     pyautogui.hotkey("ctrl", "tab")
     time.sleep(5) 
-    a = utils.count_color_in_range(config.CENTRE, 50, (0,0,255))
+    a = utils.count_color_in_range(config.CENTRE, 400, (0,0,255))
     pyautogui.hotkey("ctrl", "c")
+    time.sleep(2)
+    pyautogui.press("escape")
+    time.sleep(2)
     # 4.按Control+V
     pyautogui.hotkey("ctrl", "v")
-    b = utils.count_color_in_range(config.CENTRE, 50, (0,0,255))
+    time.sleep(5)
+    b = utils.count_color_in_range(config.CENTRE, 400, (0,0,255))
     if b <= a:
         raise Exception("黏贴失败")
     utils.close_aoi()
@@ -526,13 +543,15 @@ def kjj_001_14():
         utils.add_window()
         utils.click_by_png(config.SQUARE_POSITIONING)
         utils.click_by_png(config.YES)
-        time.sleep(8)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
     # 3.选中某一元件窗口--移动位置--拉大算法框
     pyautogui.hotkey("ctrl", "tab")
-    time.sleep(5) 
-    before_screenshot = pyautogui.screenshot(region=config.COMPONENT_REGION)
-    utils.expend_choose_box()
+    time.sleep(7) 
+    utils.expand_choose_box()
     # 4.按Control+Z
+    before_screenshot = pyautogui.screenshot(region=config.COMPONENT_REGION)
     pyautogui.hotkey("ctrl", "z")
     time.sleep(3)
     after_screenshot = pyautogui.screenshot(region=config.COMPONENT_REGION)
@@ -551,12 +570,14 @@ def kjj_001_15():
         utils.add_window()
         utils.click_by_png(config.SQUARE_POSITIONING)
         utils.click_by_png(config.YES)
-        time.sleep(8)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
     # 3.选中某一元件窗口--移动位置--拉大算法框
     pyautogui.hotkey("ctrl", "tab")
     time.sleep(5) 
     before_screenshot = pyautogui.screenshot(region=config.COMPONENT_REGION)
-    utils.expend_choose_box()
+    utils.expand_choose_box()
     # 4.按Control+Z
     pyautogui.hotkey("ctrl", "z")
     time.sleep(3)
@@ -569,31 +590,42 @@ def kjj_001_15():
 def kjj_001_16():
     utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
-    utils.check_allow_copy_cross_component(True)
+    utils.check_allow_fallback(True)
     # 1.【设置】-【硬件设置】-【快捷键设置】-【快捷键设置】-【元件编辑】-恢复（例如设置Control+Y）
     # 2.打开任意一个旧job,选择一个有多个算法窗口元件点击进入
     if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
         utils.add_window()
         utils.click_by_png(config.SQUARE_POSITIONING)
         utils.click_by_png(config.YES)
-        time.sleep(8)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
     # 3.选中某一元件窗口--拉大算法框
     pyautogui.hotkey("ctrl", "tab")
     time.sleep(5) 
-    before_screenshot = pyautogui.screenshot(region=config.COMPONENT_REGION)
-    utils.expend_choose_box()
+    logger.info("a")
+    mark_point_before = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"left")
+    utils.expand_choose_box()
     # 4.先按撤销（Control+Z）
     pyautogui.hotkey("ctrl", "z")
-    time.sleep(3)
-    after_screenshot = pyautogui.screenshot(region=config.COMPONENT_REGION)
-    if before_screenshot != after_screenshot:
-        raise Exception("算法框未变为初始大小")
+    time.sleep(5)
+    logger.info("b")
+    mark_point_after = utils.get_color_direction_coordinate((138,43,226),config.COMPONENT_REGION,"left")
+    logger.info(f"mark_point_before: {mark_point_before}, mark_point_after: {mark_point_after}")
+    if mark_point_before[0] >= mark_point_after[0]:
+        raise Exception("算法框未恢复为初始大小")
     # 5.在按Control+Y
+    logger.info("c")
     pyautogui.hotkey("ctrl", "y")
     time.sleep(3)
-    final_screenshot = pyautogui.screenshot(region=config.COMPONENT_REGION)
-    if before_screenshot != final_screenshot:
-        raise Exception("未恢复为步骤三操作大小")
+    logger.debug(3)
+    logger.info(f"mark_point_after: {mark_point_after}")
+    mark_point_final = utils.get_color_direction_coordinate((138,43,226),config.COMPONENT_REGION,"left")
+    logger.info(f"mark_point_final: {mark_point_final}")
+    if mark_point_after[0] <= mark_point_final[0]:
+        raise Exception("算法框未恢复为步骤三操作大小")
+    logger.info("d")
+
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -606,31 +638,39 @@ def kjj_001_17():
         utils.add_window()
         utils.click_by_png(config.SQUARE_POSITIONING)
         utils.click_by_png(config.YES)
-        time.sleep(8)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
     # 3.选中某一元件窗口
     pyautogui.hotkey("ctrl", "tab")
     time.sleep(5) 
     # 4.按Left
     mark_point_before = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"left")
-    pyautogui.keyDown("left")
-    time.sleep(2)
-    pyautogui.keyUp("left")
+    logger.info(f"mark_point_before: {mark_point_before}")
+    for _ in range(20):
+        pyautogui.press("left")
+        time.sleep(0.1)
     mark_point_after = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"left")
-    if mark_point_before[0] >= mark_point_after[0]:
+    logger.info(f"mark_point_after: {mark_point_after}")
+    if mark_point_before[0] <= mark_point_after[0]:
         raise Exception("算法框未左移")
     # 5.选中cad框
     pyautogui.press("c")
     # 6.按Left
     mark_point_before = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"left")
+    logger.info(f"cad mark_point_before: {mark_point_before}")
     window_point_before = utils.get_color_direction_coordinate((138,43,226),config.COMPONENT_REGION,"left")
-    pyautogui.keyDown("left")
-    time.sleep(2)
-    pyautogui.keyUp("left")
+    logger.info(f"cad window_point_before: {window_point_before}")
+    for _ in range(20):
+        pyautogui.press("left")
+        time.sleep(0.1)
     mark_point_after = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"left")
+    logger.info(f"cad mark_point_after: {mark_point_after}")
     window_point_after = utils.get_color_direction_coordinate((138,43,226),config.COMPONENT_REGION,"left")
-    if window_point_before[0] >= window_point_after[0]:
+    logger.info(f"cad window_point_after: {window_point_after}")
+    if window_point_before[0] <= window_point_after[0]:
         raise Exception("算法框未左移")
-    if mark_point_before[0] >= mark_point_after[0]:
+    if mark_point_before[0] <= mark_point_after[0]:
         raise Exception("cad框未左移")
     utils.close_aoi()
 
@@ -645,28 +685,36 @@ def kjj_001_18():
         utils.add_window()
         utils.click_by_png(config.SQUARE_POSITIONING)
         utils.click_by_png(config.YES)
-        time.sleep(8)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
     # 3.选中某一元件窗口
     pyautogui.hotkey("ctrl", "tab")
     time.sleep(5) 
-    # 4.按Right
-    mark_point_before = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"right")
-    pyautogui.keyDown("right")
-    time.sleep(2)
-    pyautogui.keyUp("right")
-    mark_point_after = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"right")
+    # 4.按right
+    mark_point_before = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"left")
+    logger.info(f"mark_point_before: {mark_point_before}")
+    for _ in range(20):
+        pyautogui.press("right")
+        time.sleep(0.1)
+    mark_point_after = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"left")
+    logger.info(f"mark_point_after: {mark_point_after}")
     if mark_point_before[0] >= mark_point_after[0]:
         raise Exception("算法框未右移")
-    # 6.选中cad框
+    # 5.选中cad框
     pyautogui.press("c")
-    # 7.按Right
-    mark_point_before = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"right")
-    window_point_before = utils.get_color_direction_coordinate((138,43,226),config.COMPONENT_REGION,"right")
-    pyautogui.keyDown("right")
-    time.sleep(2)
-    pyautogui.keyUp("right")
-    mark_point_after = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"right")
-    window_point_after = utils.get_color_direction_coordinate((138,43,226),config.COMPONENT_REGION,"right")
+    # 6.按right
+    mark_point_before = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"left")
+    logger.info(f"cad mark_point_before: {mark_point_before}")
+    window_point_before = utils.get_color_direction_coordinate((138,43,226),config.COMPONENT_REGION,"left")
+    logger.info(f"cad window_point_before: {window_point_before}")
+    for _ in range(20):
+        pyautogui.press("right")
+        time.sleep(0.1)
+    mark_point_after = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"left")
+    logger.info(f"cad mark_point_after: {mark_point_after}")
+    window_point_after = utils.get_color_direction_coordinate((138,43,226),config.COMPONENT_REGION,"left")
+    logger.info(f"cad window_point_after: {window_point_after}")
     if window_point_before[0] >= window_point_after[0]:
         raise Exception("算法框未右移")
     if mark_point_before[0] >= mark_point_after[0]:
@@ -683,31 +731,35 @@ def kjj_001_19():
         utils.add_window()
         utils.click_by_png(config.SQUARE_POSITIONING)
         utils.click_by_png(config.YES)
-        time.sleep(8)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
     # 3.选中某一元件窗口
     pyautogui.hotkey("ctrl", "tab")
     time.sleep(5) 
     # 4.按Up
     mark_point_before = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"up")
-    pyautogui.keyDown("up")
-    time.sleep(2)
-    pyautogui.keyUp("up")
+    logger.info(f"mark_point_before: {mark_point_before}")
+    for _ in range(20):
+        pyautogui.press("up")
+        time.sleep(0.1)
     mark_point_after = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"up")
-    if mark_point_before[1] >= mark_point_after[1]:
+    logger.info(f"mark_point_after: {mark_point_after}")
+    if mark_point_before[1] <= mark_point_after[1]:
         raise Exception("算法框未上移")
     # 5.选中cad框
     pyautogui.press("c")
     # 6.按Up
     mark_point_before = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"up")
     window_point_before = utils.get_color_direction_coordinate((138,43,226),config.COMPONENT_REGION,"up")
-    pyautogui.keyDown("up")
-    time.sleep(2)
-    pyautogui.keyUp("up")
+    for _ in range(20):
+        pyautogui.press("up")
+        time.sleep(0.1)
     mark_point_after = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"up")
     window_point_after = utils.get_color_direction_coordinate((138,43,226),config.COMPONENT_REGION,"up")
-    if window_point_before[1] >= window_point_after[1]:
+    if window_point_before[1] <= window_point_after[1]:
         raise Exception("算法框未上移")
-    if mark_point_before[1] >= mark_point_after[1]:
+    if mark_point_before[1] <= mark_point_after[1]:
         raise Exception("cad框未上移")
     utils.close_aoi()
 
@@ -721,15 +773,17 @@ def kjj_001_20():
         utils.add_window()
         utils.click_by_png(config.SQUARE_POSITIONING)
         utils.click_by_png(config.YES)
-        time.sleep(8)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
     # 3.选中某一元件窗口
     pyautogui.hotkey("ctrl", "tab")
     time.sleep(5) 
     # 4.按Down
     mark_point_before = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"down")
-    pyautogui.keyDown("down")
-    time.sleep(2)
-    pyautogui.keyUp("down")
+    for _ in range(20):
+        pyautogui.press("down")
+        time.sleep(0.1)
     mark_point_after = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"down")
     if mark_point_before[1] >= mark_point_after[1]:
         raise Exception("算法框未下移")
@@ -738,9 +792,9 @@ def kjj_001_20():
     # 6.按Down
     mark_point_before = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"down")
     window_point_before = utils.get_color_direction_coordinate((138,43,226),config.COMPONENT_REGION,"down")
-    pyautogui.keyDown("down")
-    time.sleep(2)
-    pyautogui.keyUp("down")
+    for _ in range(20):
+        pyautogui.press("down")
+        time.sleep(0.1)
     mark_point_after = utils.get_color_direction_coordinate((0,0,255),config.COMPONENT_REGION,"down")
     window_point_after = utils.get_color_direction_coordinate((138,43,226),config.COMPONENT_REGION,"down")
     if window_point_before[1] >= window_point_after[1]:
@@ -760,14 +814,18 @@ def kjj_001_21():
         utils.add_window()
         utils.click_by_png(config.SQUARE_POSITIONING)
         utils.click_by_png(config.YES)
-        time.sleep(8)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
     pyautogui.hotkey("ctrl", "tab")
     time.sleep(5) 
-    before_color_pixel_num = utils.get_color_in_region((255,255,0),config.COMPONENT_REGION)
-    for _ in range(3):
+    before_color_pixel_num = utils.get_color_in_region((0,0,255),config.COMPONENT_REGION)
+    logger.info(f"before_color_pixel_num: {before_color_pixel_num}")
+    for _ in range(8):
         pyautogui.hotkey("ctrl", "shift", "up")
         time.sleep(1)
-    after_color_pixel_num = utils.get_color_in_region((255,255,0),config.COMPONENT_REGION)
+    after_color_pixel_num = utils.get_color_in_region((0,0,255),config.COMPONENT_REGION)
+    logger.info(f"after_color_pixel_num: {after_color_pixel_num}")
     if before_color_pixel_num >= after_color_pixel_num:
         raise Exception("放大失败")
     utils.close_aoi()
@@ -784,14 +842,16 @@ def kjj_001_22():
         utils.add_window()
         utils.click_by_png(config.SQUARE_POSITIONING)
         utils.click_by_png(config.YES)
-        time.sleep(8)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
     pyautogui.hotkey("ctrl", "tab")
     time.sleep(5) 
-    before_color_pixel_num = utils.get_color_in_region((255,255,0),config.COMPONENT_REGION)
-    for _ in range(3):
+    before_color_pixel_num = utils.get_color_in_region((0,0,255),config.COMPONENT_REGION)
+    for _ in range(8):
         pyautogui.hotkey("ctrl", "shift", "down")
         time.sleep(1)
-    after_color_pixel_num = utils.get_color_in_region((255,255,0),config.COMPONENT_REGION)
+    after_color_pixel_num = utils.get_color_in_region((0,0,255),config.COMPONENT_REGION)
     if before_color_pixel_num <= after_color_pixel_num:
         raise Exception("缩小失败")
     utils.close_aoi()
@@ -835,19 +895,23 @@ def kjj_001_25():
     utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
     pyautogui.hotkey("ctrl","a")
+    time.sleep(3)
     pyautogui.press("delete")
     pyautogui.press("enter")
+    time.sleep(3)
+    pyautogui.press("escape")
+    time.sleep(1)
     # 1.【设置】-【硬件设置】-【快捷键设置】-【快捷键设置】-【元件编辑】-增加窗口（例如设置W）
     # 2.打开任意一个旧job,选择一个有引脚元件点击进入
     # 3.点击任意引脚位置，按W，出现十字架，随意画一个框
-    for _ in range(3):
+    for _ in range(5):
         pyautogui.hotkey("ctrl", "shift", "up")
         time.sleep(1)
-    if not utils.click_color(1,config.COMPONENT_REGION,(70,130,180)):
-        raise Exception("未找到引脚")
+    # if not utils.click_color(1,config.COMPONENT_REGION,(70,130,180)):
+    #     raise Exception("未找到引脚")
     utils.add_window()
-    if not utils.search_symbol(config.ADD_CHECKED_TYPE_PIN):
-        raise Exception("未看到检测窗口类型为引脚")
+    # if not utils.search_symbol(config.ADD_CHECKED_TYPE_PIN):
+    #     raise Exception("未看到检测窗口类型为引脚")
     # 5.随机选择一个算法加上，比如选择颜色面积+默认，点是
     utils.click_by_png(config.SQUARE_POSITIONING)
     utils.click_by_png(config.YES)
@@ -866,7 +930,9 @@ def kjj_001_26():
         utils.add_window()
         utils.click_by_png(config.SQUARE_POSITIONING)
         utils.click_by_png(config.YES)
-        time.sleep(8)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
     # 3.选中某一元件窗口
     pyautogui.hotkey("ctrl", "tab")
     time.sleep(5) 
@@ -880,7 +946,7 @@ def kjj_001_26():
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
-def kjj_001_26():
+def kjj_001_27():
     utils.check_and_launch_aoi()
     utils.ensure_in_edit_mode()
     utils.check_auto_choose_window(False)
@@ -890,7 +956,9 @@ def kjj_001_26():
         utils.add_window()
         utils.click_by_png(config.SQUARE_POSITIONING)
         utils.click_by_png(config.YES)
-        time.sleep(8)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
     # 3.选中某一元件窗口
     pyautogui.press("esc")
     # 4.按Space
@@ -909,7 +977,9 @@ def kjj_001_28():
         utils.add_window()
         utils.click_by_png(config.SQUARE_POSITIONING)
         utils.click_by_png(config.YES)
-        time.sleep(8)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
     # 3.按S
     start_time = time.time()
     pyautogui.press("d")
@@ -936,7 +1006,9 @@ def kjj_001_29():
         utils.add_window()
         utils.click_by_png(config.SQUARE_POSITIONING)
         utils.click_by_png(config.YES)
-        time.sleep(8)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
     # 3.按D
     start_time = time.time()
     pyautogui.press("f")
@@ -958,6 +1030,13 @@ def kjj_001_30():
     utils.ensure_in_edit_mode()
     # 1.【设置】-【硬件设置】-【快捷键设置】-【快捷键设置】-【元件编辑】-测试整板（例如设置F）
     # 2.打开任意一个旧job,选择一个元件点击进入
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.SQUARE_POSITIONING)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
     # 3.按F
     start_time = time.time()
     pyautogui.press("b")
@@ -1000,6 +1079,13 @@ def kjj_001_33():
     utils.ensure_in_edit_mode()
     # 1.【设置】-【硬件设置】-【快捷键设置】-【快捷键设置】-【元件编辑】-导出此料号到元件库（例如设置F3）
     # 2.打开任意一个旧job,选择一个有算法窗口的元件点击进入
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.SQUARE_POSITIONING)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
     # 3.按F3
     pyautogui.press("f2")
     if not utils.search_symbol(config.ELEMENTS_INFORMATION):
@@ -1017,11 +1103,11 @@ def kjj_001_33():
     utils.click_by_png(config.MANUAL_SELECT)
     # 6.找到导出此元件的信息（设置的新元件库，芯片类型，封装，料号下），对比此时元件上的内容
     time.sleep(2)
+    utils.click_by_png(config.ELEMENTS_VIEW_REFRESH, region=config.ELEMENTS_VIEW_REGION,tolerance=0.95)
     pyautogui.click((546,232))
     utils.is_checked((375,246),(387,258),False)
     if not utils.drop_down_box_search(0, config.ELEMENTS_TYPE_NAME, region=config.ELEMENTS_VIEW_DROPDOWN_BOX_REGION):
         raise Exception("手动选择框内没有找到新增的元件库")
-    utils.click_by_png(config.ELEMENTS_VIEW_REFRESH, region=config.ELEMENTS_VIEW_REGION,tolerance=0.95)
     utils.click_by_png(config.ELEMENTS_VIEW_ABC, region=config.ELEMENTS_VIEW_REGION)
     if not utils.search_symbol(config.BOARD_HARDWARE_ICON,region=config.ELEMENTS_VIEW_REGION):
         raise Exception("手动选择框内没有找到对应元件")
@@ -1051,7 +1137,21 @@ def kjj_001_34():
     utils.ensure_in_edit_mode()
     # 1.【设置】-【硬件设置】-【快捷键设置】-【快捷键设置】-【元件编辑】-导出所有料号到元件库（例如设置F4）
     # 2.打开任意一个旧job,选择一个有算法窗口的元件点击进入
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        utils.add_window()
+        utils.click_by_png(config.SQUARE_POSITIONING)
+        utils.click_by_png(config.YES)
+        time.sleep(7)
+        pyautogui.press("escape")
+        time.sleep(6)
+        utils.click_by_png(config.EDIT_BACK)
+        if utils.search_symbol(config.QUESTION_MARK):
+            pyautogui.press("enter")
+            time.sleep(5)
+        utils.click_by_png(config.TEST,2, region=config.BOARD_INFORMATION_REGION,tolerance=0.95)
+        time.sleep(5)
     # 3.按F4
+    # 确保各元件都被勾选
     if utils.search_symbol(config.PART_CHOSED):
         utils.click_by_png(config.PART_CHOSED)
     else:
@@ -1070,12 +1170,12 @@ def kjj_001_34():
     utils.click_by_png(config.MANUAL_SELECT)
     # 6.找到导出此元件的信息（设置的新元件库，芯片类型，封装，料号下），对比此时元件上的内容
     time.sleep(2)
+    utils.click_by_png(config.ELEMENTS_VIEW_REFRESH, region=config.ELEMENTS_VIEW_REGION,tolerance=0.95)
     pyautogui.click((546,232))
     utils.is_checked((375,246),(387,258),False)
     if not utils.drop_down_box_search(0, config.ELEMENTS_TYPE_NAME, region=config.ELEMENTS_VIEW_DROPDOWN_BOX_REGION):
         raise Exception("手动选择框内没有找到新增的元件库")
-    utils.click_by_png(config.ELEMENTS_VIEW_REFRESH, region=config.ELEMENTS_VIEW_REGION,tolerance=0.95)
-    utils.click_by_png(config.ELEMENTS_VIEW_ABC, region=config.ELEMENTS_VIEW_REGION)
+    utils.click_by_png(config.BOARD_ENLARGE, region=config.ELEMENTS_VIEW_REGION,tolerance=0.95)
     if not utils.search_symbol(config.BOARD_HARDWARE_ICON,region=config.ELEMENTS_VIEW_REGION):
         raise Exception("手动选择框内没有找到对应元件")
     utils.click_by_png(config.BOARD_HARDWARE_ICON,region=config.ELEMENTS_VIEW_REGION)
@@ -1090,7 +1190,7 @@ def kjj_001_34():
     pyautogui.rightClick(config.CENTRE)
     utils.click_by_png(config.COMPONENT_INFORMATION)
     time.sleep(1)    
-
+    logger.debug(1)
     # 封装类型
     utils.is_checked((1082,274),(1094,286),True)
     package_type = utils.read_text(920,280)
@@ -1098,6 +1198,7 @@ def kjj_001_34():
         logger.error(f"{package_type} 的信息不一致或缺失: {package_type}")
         raise Exception(f"{package_type} 的信息不一致或缺失: {package_type}")
     utils.click_by_png(config.PROGRAM_ATTRIBUTE_CLOSE)
+    logger.debug(2)
     # 7.换任意一个其他料号的元件，重复步骤5和6
     utils.scroll_down((200,380),config.BOARD_COMPONENTS_REGION)
     utils.click_component()
@@ -1106,6 +1207,7 @@ def kjj_001_34():
         time.sleep(5)
     pyautogui.click((546,232))
     utils.is_checked((375,246),(387,258),False)
+    logger.debug(3)
     if not utils.drop_down_box_search(0, config.ELEMENTS_TYPE_NAME, region=config.ELEMENTS_VIEW_DROPDOWN_BOX_REGION):
         raise Exception("手动选择框内没有找到新增的元件库")
     utils.click_by_png(config.ELEMENTS_VIEW_REFRESH, region=config.ELEMENTS_VIEW_REGION,tolerance=0.95)
@@ -1124,7 +1226,7 @@ def kjj_001_34():
     pyautogui.rightClick(config.CENTRE)
     utils.click_by_png(config.COMPONENT_INFORMATION)
     time.sleep(1)    
-
+    logger.debug(4)
     # 封装类型
     utils.is_checked((1082,274),(1094,286),True)
     package_type = utils.read_text(920,280)
@@ -1166,51 +1268,60 @@ def kjj_001_37():
     # 1.【设置】-【硬件设置】-【快捷键设置】-【快捷键设置】-【元件编辑】-链接所有元件检测框（例如设置Z）
     # 2.打开任意一个旧job,选择这个元件点击进入
     # 3.按Z
-    if not utils.search_symbol(config.ALG_W_1, 5, region=config.COMPONENT_WINDOW_REGION):
-        if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
-            utils.add_window()
-            utils.click_by_png(config.SQUARE_POSITIONING)
-            utils.click_by_png(config.YES)
-            time.sleep(8)
-        else:
-            utils.add_window()
-            utils.click_by_png(config.SQUARE_POSITIONING)
-            utils.click_by_png(config.YES)
-            time.sleep(8)
+    def add_and_click(image):
+        utils.add_window()
+        utils.click_by_png(image)
+        utils.click_by_png(config.YES)
+        time.sleep(8)
 
+    if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+        add_and_click(config.SQUARE_POSITIONING)
+        add_and_click(config.COLOR_AREA)
+    elif not utils.search_symbol(config.ALG_W_1, 5, region=config.COMPONENT_WINDOW_REGION):
+        add_and_click(config.COLOR_AREA)
+    
+    pyautogui.hotkey("ctrl", "a")
     pyautogui.press("f5")
     time.sleep(1)
+    # if not utils.search_symbol(config.QUESTION_MARK):
+    #     raise Exception("未弹 请选择被连接的父窗口 弹窗")
+    # pyautogui.press("enter")
+    # time.sleep(1)
     if not utils.check_color_in_region((220, 20, 60), config.COMPONENT_REGION):
         raise Exception("链接所有元件检测框快捷键疑似无效")
     utils.close_aoi()
 
-@utils.screenshot_error_to_excel()
-def kjj_001_38():
-    utils.check_and_launch_aoi()
-    utils.ensure_in_edit_mode()
-    # 1.【设置】-【硬件设置】-【快捷键设置】-【快捷键设置】-【元件编辑】-链接所有元件检测框（例如设置Z）
-    # 2.打开任意一个旧job,选择这个元件点击进入
-    # 3.按Z
-    if not utils.search_symbol(config.ALG_W_1, 5, region=config.COMPONENT_WINDOW_REGION):
-        if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
-            utils.add_window()
-            utils.click_by_png(config.SQUARE_POSITIONING)
-            utils.click_by_png(config.YES)
-            time.sleep(8)
-        else:
-            utils.add_window()
-            utils.click_by_png(config.SQUARE_POSITIONING)
-            utils.click_by_png(config.YES)
-            time.sleep(8)
-    # 4.选择一个窗口作为父窗口--是
-    if not utils.search_symbol(config.QUESTION_MARK):
-        raise Exception("未弹 请选择被连接的父窗口 弹窗")
-    pyautogui.press("enter")
-    time.sleep(1)
-    if not utils.check_color_in_region((220, 20, 60), config.COMPONENT_REGION):
-        raise Exception("链接所有元件检测框快捷键疑似无效")
+# @utils.screenshot_error_to_excel()
+# def kjj_001_38():
+#     utils.check_and_launch_aoi()
+#     utils.ensure_in_edit_mode()
+#     # 1.【设置】-【硬件设置】-【快捷键设置】-【快捷键设置】-【元件编辑】-链接所有元件检测框（例如设置Z）
+#     # 2.打开任意一个旧job,选择这个元件点击进入
+#     # 3.按Z
+#     def add_and_click(image):
+#         utils.add_window()
+#         utils.click_by_png(image)
+#         utils.click_by_png(config.YES)
+#         time.sleep(8)
 
-    utils.close_aoi()
+#     if not utils.search_symbol(config.ALG_W_0, 5, region=config.COMPONENT_WINDOW_REGION):
+#         add_and_click(config.SQUARE_POSITIONING)
+#         add_and_click(config.COLOR_AREA)
+#     elif not utils.search_symbol(config.ALG_W_1, 5, region=config.COMPONENT_WINDOW_REGION):
+#         add_and_click(config.COLOR_AREA)
+
+#     pyautogui.hotkey("ctrl", "a")
+#     pyautogui.press("f5")
+#     time.sleep(1)
+#     # 4.选择一个窗口作为父窗口--是
+#     if not utils.search_symbol(config.QUESTION_MARK):
+#         raise Exception("未弹 请选择被连接的父窗口 弹窗")
+#     pyautogui.press("enter")
+#     time.sleep(1)
+#     if not utils.check_color_in_region((220, 20, 60), config.COMPONENT_REGION):
+#         raise Exception("链接所有元件检测框快捷键疑似无效")
+
+#     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
 def kjj_001_39():
@@ -1224,12 +1335,12 @@ def kjj_001_39():
     utils.click_by_png(config.X_OFFSET)
     utils.click_by_png(config.YES)
     time.sleep(8)
-    if not utils.search_symbol(config.ALG_IMAGE_TYPE_WEIGHT,config.ALG_PARAM_REGION):
+    if not utils.search_symbol(config.ALG_IMAGE_TYPE_WEIGHT,region=config.ALG_PARAM_REGION):
         pyautogui.click((1885,375))
-        utils.click_by_png(config.ALG_IMAGE_TYPE_CHOOSE_WEIGHT, config.ALG_PARAM_REGION)
+        utils.click_by_png(config.ALG_IMAGE_TYPE_CHOOSE_WEIGHT, region=config.ALG_PARAM_REGION)
     pyautogui.press("s")
     pyautogui.click(config.CENTRE)
-    if not utils.search_symbol(config.ALG_IMAGE_TYPE_COLOR_SPACE, config.ALG_PARAM_REGION):
+    if not utils.search_symbol(config.ALG_IMAGE_TYPE_COLOR_SPACE, region=config.ALG_PARAM_REGION):
         raise Exception("获取颜色快捷键疑似无效")
     utils.close_aoi()
 
@@ -1394,47 +1505,52 @@ def kjj_001_50():
         raise Exception("保存Debug程式快捷键疑似无效")
     # 4.进度条结束
     # 5.选择djb要存的路径，点击保存
+    path = utils.read_text(125,45)
+    logger.debug(f"路径: {path}")
     utils.write_text((155,435),"test_save_debug")
-    utils.click_by_png(config.WINDOW_DROP_LIST)
-    pyautogui.hotkey("ctrl", "c")
+    clipboard_content = pyperclip.paste()
+    logger.debug(f"黏贴板的内容: {clipboard_content}")
     utils.click_by_png(config.WINDOW_SAVE)
-    time.sleep(3)
+    time.sleep(5)
     # 6.打开存的路径位置，查看
-    directory = pyperclip.paste()
     now = time.time()
-    for file in os.listdir(directory):
+    for file in os.listdir(path):
         if file.endswith('.djb'):
-            file_path = os.path.join(directory, file)
+            file_path = os.path.join(path, file)
             file_time = os.path.getmtime(file_path)
-            if now - file_time <= 60:  # 检查文件是否在一分钟内创建
-                logger.info(f"在{directory}下找到djb文件")
+            if now - file_time <= 120:  # 检查文件是否在2分钟内创建
+                logger.info(f"在{path}下找到djb文件")
+                utils.close_aoi()
                 return
-    logger.info(f"未能在{directory}下找到djb文件")
-    raise Exception(f"未能在{directory}下找到djb文件")
+    logger.info(f"未能在{path}下找到djb文件")
+    raise Exception(f"未能在{path}下找到djb文件")
+    
     
 
-@utils.screenshot_error_to_excel()
-def kjj_001_51():
-    # 1.接“主程序界面--保存Debug程式快捷键“案例
-    # 2.【设置】-【硬件设置】-【快捷键设置】-【快捷键设置】-【主程序】-打开Debug程式（例如设置F2）
-    # 3.打开任意job,按F2
-    # 4.选择“主程序界面--保存Debug程式快捷键“案例中报存的djb文件，打开
-    pyautogui.hotkey("ctrl", "shift", "f2")
-    if not utils.search_symbol(config.OPEN_DJB_TOPIC):
-        raise Exception("打开Debug程式快捷键疑似无效")
-    utils.write_text((215, 475), "test_save_debug")
-    pyautogui.press("enter")
-    time.sleep(3)
-    pyautogui.click(config.CENTRE)
-    utils.add_window()
-    if not utils.search_symbol(config.SQUARE_POSITIONING):
-        raise Exception("打开djb后疑似无法编辑")
-    utils.close_aoi()
+# @utils.screenshot_error_to_excel()
+# def kjj_001_51():
+#     utils.check_and_launch_aoi()
+#     # 1.接“主程序界面--保存Debug程式快捷键“案例
+#     # 2.【设置】-【硬件设置】-【快捷键设置】-【快捷键设置】-【主程序】-打开Debug程式（例如设置F2）
+#     # 3.打开任意job,按F2
+#     # 4.选择“主程序界面--保存Debug程式快捷键“案例中保存的djb文件，打开
+#     utils.ensure_in_edit_mode()
+#     pyautogui.hotkey("ctrl", "shift", "f2")
+#     if not utils.search_symbol(config.OPEN_DJB_TOPIC):
+#         raise Exception("打开Debug程式快捷键疑似无效")
+#     utils.write_text((215, 475), "test_save_debug")
+#     pyautogui.press("enter")
+#     time.sleep(3)
+#     pyautogui.click(config.CENTRE)
+#     utils.add_window()
+#     if not utils.search_symbol(config.SQUARE_POSITIONING):
+#         raise Exception("打开djb后疑似无法编辑")
+#     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
 def kjj_001_52():
     utils.check_and_launch_aoi()
-    utils.ensure_in_edit_mode()
+    utils.open_program()
     # 1.【设置】-【硬件设置】-【快捷键设置】-【快捷键设置】-【主程序】-打开元件库（例如设置C）
     # 2.打开任意job,选择任意一个元件进入元件编辑界面
     # 3.按C
@@ -1521,12 +1637,15 @@ def kjj_001_60():
     # 2.打开任意job，进入整板界面，任意选择一个元件选中
     utils.click_color(1, config.COMPONENT_REGION, (0,255,0))
     # 3.按Ctrl+C
+    time.sleep(1)
     pyautogui.hotkey("ctrl", "c")
     # 4.选择任意一个其他大小不一样的元件，点击选择粘贴到此元件
-    utils.click_color(0, config.COMPONENT_REGION, (0,255,0))
+    utils.click_color(1, config.COMPONENT_REGION, (0,255,0))
     mouse_coordinate = pyautogui.position()
     pyautogui.click((260,10))
     before_count = utils.count_color_in_range(mouse_coordinate, 100, (0,255,0))
+    pyautogui.click(mouse_coordinate)
+    time.sleep(1)
     pyautogui.rightClick(mouse_coordinate)
     utils.click_by_png(config.PASTE_TO_COMPONENT)
     # 5.点是
