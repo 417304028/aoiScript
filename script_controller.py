@@ -3,18 +3,30 @@ from tkinter import ttk
 from threading import Thread, current_thread
 from loguru import logger
 import importlib
-from scripts import yjk, lxbj, jbgn, kjj, spc
+from scripts import yjk, lxbj, jbgn, kjj, spc, tccs
 from utils import running_event, test_case_status
 import ctypes
 import inspect
 from utils import setup_logger
+import sys
+import win32event
+import win32api
+import winerror
+
+# 创建一个全局的命名互斥体，确保同一时间只能有一个脚本控制器窗口打开
+mutex = win32event.CreateMutex(None, False, "Global\\ScriptControllerMutex")
+if win32api.GetLastError() == winerror.ERROR_ALREADY_EXISTS:
+    logger.error("脚本控制器窗口已经在运行，不能同时打开多个实例。")
+    sys.exit(0)
 
 module_names = {
     "scripts.yjk": "元件库用例",
     "scripts.lxbj": "离线编辑用例",
     "scripts.jbgn": "基本功能用例",
     "scripts.kjj": "快捷键用例",
-    "scripts.spc": "SPC用例"
+    "scripts.spc": "SPC用例",
+    "scripts.tccs": "调参测试用例",
+    "scripts.zxtc": "在线调参用例"
 }
 
 def _async_raise(tid, exctype):
@@ -144,10 +156,10 @@ def start_selected():
 def terminate_execution():
     global thread, current_thread
     running_event.clear()
-    if current_thread.is_alive():
+    if current_thread and current_thread.is_alive():
         logger.info("正在终止当前运行的用例函数")
         stop_thread(current_thread)  # 强制终止当前线程
-    if thread.is_alive():
+    if thread and thread.is_alive():
         thread.join(timeout=5)  # 等待线程结束，设置超时时间为5秒
         if thread.is_alive():
             logger.error("线程未能在预期时间内结束")
@@ -158,10 +170,21 @@ def update_status(message):
     status_var.set(message)
     root.update()
 
+def on_closing():
+    """Handle the window closing event to ensure all threads are terminated."""
+    terminate_execution()  # Terminate all running threads
+    # 确保释放所有资源
+    # 例如，关闭所有打开的文件句柄或其他资源
+    root.quit()  # 退出主循环
+    root.destroy()  # 关闭Tkinter窗口
+
 # 创建主窗口
 root = tk.Tk()
 root.title("脚本控制器")
 root.geometry("510x555")  # 调整窗口大小以确保完全显示
+
+# 捕获窗口关闭事件
+root.protocol("WM_DELETE_WINDOW", on_closing)
 
 # 配置样式
 style = ttk.Style()

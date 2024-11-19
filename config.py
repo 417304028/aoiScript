@@ -27,13 +27,18 @@ def resource_path(relative_path):
 # AOI路径
 AOI_EXE_PATH = r'D:\EYAOI\Bin\AOI.exe'
 # SPC路径
-SPC_EXE_PATH = r'D:\AOI_SPC\SPCViewMain.exe'
+SPC_EXE_PATH = r'D:\EYAOI\AOI_SPC\SPCViewMain.exe'
+# RV路径
+RV_EXE_PATH = r'D:\EYAOI\AOI_RV\DVPro.UI.exe'
 # job路径
 JOB_PATH = r'D:\EYAOI\JOB\djb'
+# SPC用户名
+SPC_USER_NAME = "sinictek"
 # SPC密码
-SPC_PASSWORD = "000"
+SPC_PASSWORD, RV_PASSWORD_TEXT = "000", "000"
 
 SPC_TOPIC = resource_path('images/spc/topic.png')
+SPC_TASKBAR = resource_path('images/spc/taskbar.png')
 SPC_PROGRAM_VIEW = resource_path('images/spc/program_view.png')
 SPC_DEFECT_STATISTICS = resource_path('images/spc/defect_statistics.png')
 SPC_YIELD_ANALYSIS = resource_path('images/spc/yield_analysis.png')
@@ -48,10 +53,14 @@ SPC_ONE_MONTH = resource_path('images/spc/data_filtering/one_month.png')
 SPC_EXPORT = resource_path('images/spc/data_filtering/export.png')
 SPC_CPK_ANALYSIS = resource_path('images/spc/cpk_analysis.png')
 SPC_GRR_ANALYSIS = resource_path('images/spc/grr_analysis.png')
-SPC_LOGIN_USERNAME = resource_path('images/spc/login_name.png')
-SPC_LOGIN_PASSWORD = resource_path('images/spc/login_password.png')
+SPC_LOGIN_USERNAME_CHINESE = resource_path('images/spc/login_name_chinese.png')
+SPC_LOGIN_USERNAME_ENGLISH = resource_path('images/spc/login_name_english.png')
+SPC_LOGIN_PASSWORD_CHINESE = resource_path('images/spc/login_password_chinese.png')
+SPC_LOGIN_PASSWORD_ENGLISH = resource_path('images/spc/login_password_english.png')
 SPC_USER_ADMIN = resource_path('images/spc/user_admin.png')
-SPC_LOGIN = resource_path('images/spc/login.png')
+SPC_LOGIN_CHINESE = resource_path('images/spc/login_chinese.png')
+SPC_LOGIN_ENGLISH = resource_path('images/spc/login_english.png')
+SPC_PCB_VIEW = resource_path('images/spc/pcb_view.png')
 
 PROGRAM_COMPONENT_LIGHT = resource_path('images/whole_board/program_component_light.png')
 PROGRAM_COMPONENT_DARK = resource_path('images/whole_board/program_component_dark.png')
@@ -70,6 +79,7 @@ WHOLE_BOARD_IMAGE_DARK = resource_path('images/whole_board/image_dark.png')
 CW_SQUARE_POSITIONING = resource_path('images/whole_board/component_window/alg/square_positioning.png')
 CW_IMAGE_MATCHING = resource_path('images/whole_board/component_window/alg/image_matching.png')
 CW_COLOR_AREA = resource_path('images/whole_board/component_window/alg/color_area.png')
+CW_BODY_CHECK = resource_path('images/whole_board/component_window/alg/body_check.png')
 CW_COLOR_MATCHING = resource_path('images/whole_board/component_window/alg/color_matching.png')
 CW_COLOR_ANALYSISING = resource_path('images/whole_board/component_window/alg/color_analysising.png')
 CW_PIN_SIMILARITY_MATCHING = resource_path('images/whole_board/component_window/alg/pin_similarity_matching.png')
@@ -208,11 +218,17 @@ ALG_TRANSISTOR = resource_path('images/alg_area/transistor.png')
 ALG_CHECK_MODE_PARAMETER = resource_path('images/alg_area/check_mode_parameter.png')
 
 ADD_STANDARD_IMAGE = resource_path('images/palette/add_standard_image.png')
+DISPLAY_FILTERED_IMAGE = resource_path('images/palette/display_filtered_image.png')
 WAIT_MATERIAL_EMPTY = resource_path('images/palette/wait_material_empty.png')
 WAIT_MATERIAL_ALL_EMPTY = resource_path('images/palette/wait_material_all_empty.png')
 
 PARAM_SETTING_TOPIC = resource_path('images/param_setting/topic.png')
 PARAM_HARDWARE_SETTING = resource_path('images/param_setting/hardware_setting/topic.png')
+PARAM_PROCESS_SETTING = resource_path('images/param_setting/process_setting/topic.png')
+PARAM_DV_MODE_NO = resource_path('images/param_setting/process_setting/dv_mode_no.png')
+PARAM_DV_MODE_YES = resource_path('images/param_setting/process_setting/dv_mode_yes.png')
+PARAM_DV_AUTO_CHECK_NO = resource_path('images/param_setting/process_setting/dv_auto_check_no.png')
+PARAM_DV_AUTO_CHECK_YES = resource_path('images/param_setting/process_setting/dv_auto_check_yes.png')
 PARAM_DATA_EXPORT_SETTING = resource_path('images/param_setting/data_export_setting/topic.png')
 PARAM_KEEP_THE_LAST_PCB_NUMBER = resource_path('images/param_setting/data_export_setting/keep_the_last_pcb_number.png')
 PARAM_TRACK_1 = resource_path('images/param_setting/data_export_setting/track_1.png')
@@ -241,6 +257,8 @@ RENAME_PROGRAM = resource_path('images/gui/system/rename_program.png')
 RUN_DARK = resource_path('images/gui/run/run_dark.png')
 RUN_LIGHT = resource_path('images/gui/run/run_light.png')
 CHANGE_PARAM_ONLINE = resource_path('images/gui/run/change_param_online.png')
+CHANGE_PARAM_ONLINE_OPENED = resource_path('images/gui/run/change_param_online_opened.png')
+CHANGE_PARAM_ONLINE_CLOSED = resource_path('images/gui/run/change_param_online_closed.png')
 GUI_LOGIN = resource_path('images/gui/run/login.png')
 STOP = resource_path('images/gui/run/stop.png')
 TOOL = resource_path('images/gui/tools/tool.png')
@@ -283,6 +301,8 @@ SETTING_LIGHT = resource_path('images/gui/setting/setting_light.png')
 HARDWARE_SETTING = resource_path('images/gui/setting/hardware/hardware_setting.png')
 
 PYQT_ICON = resource_path('gui/resources/sinic_tek.jpg')
+BLACK = resource_path('images/hodgepodge/black.png')
+CHANGE_PARAM_ONLINE_TASKBAR = resource_path('images/gui/run/change_param_online_taskbar.png')
 EDIT_PACKAGE_TYPE = resource_path('images/hodgepodge/edit_package_type.png')
 CLEAR_PACKAGE_TYPE = resource_path('images/hodgepodge/clear_package_type.png')
 COPY_PACKAGE_TYPE_NAME = resource_path('images/hodgepodge/copy_package_type_name.png')
@@ -308,6 +328,7 @@ TESTING_INTERFACE_INFORMATION = resource_path('images/testing_interface/informat
 TESTING_INTERFACE_GOOD = resource_path('images/testing_interface/good.png')
 TESTING_INTERFACE_CIRCLE_1 = resource_path('images/testing_interface/circle_1.png')
 TESTING_INTERFACE_CIRCLE_20 = resource_path('images/testing_interface/circle_20.png')
+TESTING_INTERFACE_PERCENT_100 = resource_path('images/testing_interface/percent_100.png')
 TESTING_INTERFACE_STOP = resource_path('images/testing_interface/stop.png')
 TESTING_INTERFACE_IGNORE = resource_path('images/testing_interface/ignore.png')
 TESTING_INTERFACE_ENTER_DETAIL_INTERFACE = resource_path('images/testing_interface/enter_detail_interface.png')
@@ -315,6 +336,10 @@ TESTING_INTERFACE_ENTER_DETAIL_INTERFACE = resource_path('images/testing_interfa
 # 自动加载程式
 SETTING_UI_AUTO_LOAD_PROGRAM_YES = resource_path('images/setting/ui/auto_load_program_yes.png')
 SETTING_UI_AUTO_LOAD_PROGRAM_NO = resource_path('images/setting/ui/auto_load_program_no.png')
+SETTING_UI_EXPORT_ALL_OK_YES = resource_path('images/setting/ui/export_all_ok_yes.png')
+SETTING_UI_EXPORT_ALL_OK_NO = resource_path('images/setting/ui/export_all_ok_no.png')
+SETTING_UI_EXPORT_OK_YES = resource_path('images/setting/ui/export_ok_yes.png')
+SETTING_UI_EXPORT_OK_NO = resource_path('images/setting/ui/export_ok_no.png')
 # 演算法配置-保存DJB文件
 SETTING_ALGORITHM_SAVE_DJB_YES = resource_path('images/setting/algorithm/save_djb_yes.png')
 SETTING_ALGORITHM_SAVE_DJB_NO = resource_path('images/setting/algorithm/save_djb_no.png')
@@ -330,8 +355,10 @@ SETTING_ALGORITHM_COLOR_ANALYSE_NO = resource_path('images/setting/algorithm/col
 SETTING_ALGORITHM_ALL_ALGS_YES = resource_path('images/setting/algorithm/all_algs_yes.png')
 SETTING_ALGORITHM_ALL_ALGS_NO = resource_path('images/setting/algorithm/all_algs_no.png')
 
+
 # 文件夹-左
 OFFSET_LEFT_1 = resource_path('images/offset/left_1.png')
+OUTPUT_DELAY_TIME = resource_path('images/offset/output_delay_time.png')
 
 # 元件库视图-上图为空
 ELEMENTS_VIEW_PICTURE_EMPTY_UP = resource_path('images/hodgepodge/elements_view_picture_empty_up.png')
@@ -363,12 +390,30 @@ FRM_OK = resource_path('images/frm/ok.png')
 
 ROTATION_ANGLE = resource_path('images/component_attribute/rotation_angle.png')
 
+PCB_VIEW_BLACK_MEDIUM = resource_path('images/pcb_view/black_medium.png')
+PCB_VIEW_TOPIC = resource_path('images/pcb_view/topic.png')
+PCB_VIEW_BOARD_DISCRET = resource_path('images/pcb_view/board_discret.png')
+
+# 在线调参界面
+
+
+
+
+
+
+
+
+
+
+
+
 # ======================================坐标========================================
 SHARE_LIB_PATH_COORDINATE = (1185, 295)
 UI_SHOW_MESSAGE_COORDINATE = (515, 370)
 FOV_FOV_COORDINATE = (701, 694)
 W_0_COORDINATE = (100, 690)
 W_1_COORDINATE = (100, 710)
+RV_DATA_POINT = (100, 215)
 FOV_FOD = (701, 694)
 FOV_FOREIGN_CHECK_COORDINATE = (723, 717)
 FOV_INSIDE_CHECK_COORDINATE = (723, 738)
@@ -385,7 +430,7 @@ SELECT_PN_EXPORT_LIB_POINTS_DATES = [
     {"date": (1000, 405), "checkbox": ((1112, 398), (1124, 410))},
     {"date": (1000, 430), "checkbox": ((1112, 421), (1124, 433))},    
 ]
-LIGHT_VIEWS = [(550, 315), (685, 315), (820, 315),
+LIGHT_VIEWS_POINTS = [(550, 315), (685, 315), (820, 315),
                (550, 455), (685, 455), (820, 455),
                (550, 580), (685, 580), (820, 580),
                (550, 710), (685, 710)]
@@ -403,6 +448,8 @@ CW_SQUARE_POSITIONING_POINTS = [(1720, 398), (1720, 418), (1720, 440), (1720, 46
                     (1720, 650),
                     (1720, 690), (1720, 715), (1720, 735), (1720, 775), (1720, 840), (1720, 860)]
 CW_PIN_SIMILARITY_MATCHING_POINTS = [(1720, 440), (1720, 460), (1720, 500)]
+PCB_COMPONENT_LIST_POINTS = [(1545, 375), (1545, 400), (1545, 420), (1545, 440), (1545, 460), (1545, 480), 
+                             (1545, 500), (1545, 525), (1545, 545), (1545, 565), (1545, 585)]
 # ======================================区域========================================
 # 使用pyautogui时，将坐标（左上角AX,左上角AY,右下角BX,右下角BY）转为pyautogui的region的格式 用到pyautogui的才用该函数
 def convert_region(region):
@@ -410,6 +457,12 @@ def convert_region(region):
     width = right_bottom_x - left
     height = right_bottom_y - top
     return (left, top, width, height)
+# PCB列表区域
+PCB_LIST_REGION = convert_region((0, 80, 235, 1010))
+# PCB上边区域(首页的上部分)
+PCB_UP_REGION = convert_region((240, 80, 1500, 545))
+# PCB元件列表区域
+PCB_COMPONENT_LIST_REGION = convert_region((1509, 318, 1525, 605))
 # 屏幕坐标附近区域
 CENTRE_REGION = convert_region((888, 400, 1020, 510))
 # 检测结果区域
@@ -449,6 +502,8 @@ COMPONENT_WINDOW_REGION = convert_region((45, 640, 350, 850))
 COMPONENT_NUM_REGION = convert_region((82, 253, 232, 271))
 # 元件操作区域（屏幕中央区域）
 COMPONENT_OPERATION_REGION = convert_region((555, 190, 1300, 710))
+# ocv编辑 识别文字区域
+OCR_RESULT_REGION = convert_region((695, 365, 1100, 770))
 # 程式信息区域
 PROGRAM_INFORMATION_REGION = convert_region((994, 586, 1381, 828))
 # 元件库视图搜索下拉框
@@ -462,6 +517,13 @@ ELEMENTS_VIEW_IMAGE_REGION = convert_region((569, 243, 748, 417))
 # 元件库视图的元件编辑界面
 ELEMENTS_VIEW_COMPONENT_REGION = convert_region((560, 150, 1450, 738))
 
+# rv的pcb列表区域
+RV_PCB_LIST_REGION = convert_region((5, 140, 211, 985))
+# rv的元件列表区域
+RV_COMPONENT_LIST_REGION = convert_region((1510, 320, 1825, 605))
+# rv的元件标准图区域
+RV_STANDARD_IMAGE_REGION = convert_region((240, 80, 655, 540))
+
 # ======================================绝对路径========================================
 # 参数配置-数据导出配置-共享元件库路径
 SHARE_LIB_PATH = r'D:\EYAOI\PublicCompLibrary'
@@ -469,24 +531,35 @@ SHARE_LIB_PATH = r'D:\EYAOI\PublicCompLibrary'
 ELEMENTS_LIB_PATH = r'D:\EYAOI\CompLibrary'
 
 # ===================================RV-AI复判========================================
-RV_TOPIC = resource_path('images/rv_ai_test/topic.png')
-RV_TOPIC_DARK = resource_path('images/rv_ai_test/dark_topic.png')
-RV_SIMULATE_TO_TRAIN = resource_path('images/rv_ai_test/simulate_to_train.png')
-RV_SIMULATE_TO_EVAL = resource_path('images/rv_ai_test/simulate_to_eval.png')
-RV_TRAIN_SUCCESS = resource_path('images/rv_ai_test/train_success.png')
-RV_EVAL_SUCCESS = resource_path('images/rv_ai_test/eval_success.png')
-RV_TRAIN_EVAL_YES = resource_path('images/rv_ai_test/train_eval_yes.png')
-RV_MISSION_MANAGE = resource_path('images/rv_ai_test/mission_manage.png')
-RV_CLOSE_MISSION_MANAGE = resource_path('images/rv_ai_test/close_mission_manage.png')
-RV_JOB_NAME = resource_path('images/rv_ai_test/job_name.png')
-RV_TRAIN_STATUS = resource_path('images/rv_ai_test/train_status.png')
-RV_REFRESH_JOB = resource_path('images/rv_ai_test/refresh_job.png')
-RV_DELETE_JOB = resource_path('images/rv_ai_test/delete_job.png')
-RV_CLICK_RESTART_EVAL = resource_path('images/rv_ai_test/click_restart_eval.png')
-RV_MANUAL_FILTER = resource_path('images/rv_ai_test/manual_filter.png')
-RV_FILTER_TOPIC = resource_path('images/rv_ai_test/filter_topic.png')
-RV_IMAGE_ZERO = resource_path('images/rv_ai_test/image_zero.png')
-RV_PASS = resource_path('images/rv_ai_test/pass.png')
-RV_NG = resource_path('images/rv_ai_test/ng.png')
-RV_CURRENT_CLOSE = resource_path('images/rv_ai_test/current_close.png')
+RV_AI_TOPIC = resource_path('images/rv_ai_test/topic.png')
+RV_AI_TOPIC_DARK = resource_path('images/rv_ai_test/dark_topic.png')
+RV_AI_SIMULATE_TO_TRAIN = resource_path('images/rv_ai_test/simulate_to_train.png')
+RV_AI_SIMULATE_TO_EVAL = resource_path('images/rv_ai_test/simulate_to_eval.png')
+RV_AI_TRAIN_SUCCESS = resource_path('images/rv_ai_test/train_success.png')
+RV_AI_EVAL_SUCCESS = resource_path('images/rv_ai_test/eval_success.png')
+RV_AI_TRAIN_EVAL_YES = resource_path('images/rv_ai_test/train_eval_yes.png')
+RV_AI_MISSION_MANAGE = resource_path('images/rv_ai_test/mission_manage.png')
+RV_AI_CLOSE_MISSION_MANAGE = resource_path('images/rv_ai_test/close_mission_manage.png')
+RV_AI_JOB_NAME = resource_path('images/rv_ai_test/job_name.png')
+RV_AI_TRAIN_STATUS = resource_path('images/rv_ai_test/train_status.png')
+RV_AI_REFRESH_JOB = resource_path('images/rv_ai_test/refresh_job.png')
+RV_AI_DELETE_JOB = resource_path('images/rv_ai_test/delete_job.png')
+RV_AI_CLICK_RESTART_EVAL = resource_path('images/rv_ai_test/click_restart_eval.png')
+RV_AI_MANUAL_FILTER = resource_path('images/rv_ai_test/manual_filter.png')
+RV_AI_FILTER_TOPIC = resource_path('images/rv_ai_test/filter_topic.png')
+RV_AI_IMAGE_ZERO = resource_path('images/rv_ai_test/image_zero.png')
+RV_AI_PASS = resource_path('images/rv_ai_test/pass.png')
+RV_AI_NG = resource_path('images/rv_ai_test/ng.png')
+RV_AI_CURRENT_CLOSE = resource_path('images/rv_ai_test/current_close.png')
+
+# RV
+RV_PASSWORD = resource_path('images/rv/password.png')
+RV_ICON = resource_path('images/rv/icon.png')
+RV_ALL_PASS = resource_path('images/rv/all_pass.png')
+RV_PASS = resource_path('images/rv/pass.png')
+RV_NG = resource_path('images/rv/ng.png')
+RV_ALL_NG = resource_path('images/rv/all_ng.png')
+RV_CONFIRM = resource_path('images/rv/confirm.png')
+RV_PCB_LIST_EMPTY = resource_path('images/rv/pcb_list_empty.png')
+RV_TASKBAR = resource_path('images/rv/taskbar.png')
 
