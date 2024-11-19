@@ -7,32 +7,9 @@ import win32gui
 import win32con
 import re
 
-class WindowMgr:
-    """Encapsulates some calls to the winapi for window management"""
-    def __init__(self):
-        """Constructor"""
-        self._handle = None
-
-    def find_window_wildcard(self, wildcard):
-        self._handle = None
-        win32gui.EnumWindows(self._window_enum_callback, wildcard)
-
-    def _window_enum_callback(self, hwnd, wildcard):
-        '''Pass to win32gui.EnumWindows() to check all the opened windows'''
-        if re.match(wildcard, str(win32gui.GetWindowText(hwnd))) is not None:
-            self._handle = hwnd
-
-    def set_foreground(self):
-        """put the window in the foreground"""
-        if self._handle > 0:
-            win32gui.SendMessage(self._handle, win32con.WM_SYSCOMMAND, win32con.SC_RESTORE, 0)
-            win32gui.SetForegroundWindow(self._handle)
-            return True
-        return False
-
 if __name__ == "__main__":
     setup_logger()
-    utils.check_checkbox_status_before_text("打开左右循环")
+    utils.check_checkbox_status_before_text("打开左右循环", if_check=False)
     # # 检测D:\\work\\aoi_output目录是否存在并清空其内部所有文件
     # output_dir = "D:\\work\\aoi_output"
     # if os.path.exists(output_dir):

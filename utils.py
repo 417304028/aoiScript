@@ -326,8 +326,10 @@ def check_and_launch_spc():
                 logger.info(f"文件夹已存在: {plugins_dir}")
             ctypes.windll.shell32.ShellExecuteW(None, "open", config.SPC_EXE_PATH, None, None, 1)
             logger.info("等待SPC程序启动...")
+            time.sleep(5)
+
             # 中文界面
-            if search_symbol(config.SPC_LOGIN_USERNAME_CHINESE, 2):
+            if search_symbol(config.SPC_LOGIN_USERNAME_CHINESE, 5):
                 logger.info("检测到SPC中文登录界面")
                 write_text_textbox(config.SPC_LOGIN_USERNAME_CHINESE)
                 click_by_png(config.SPC_USER_ADMIN)
@@ -340,7 +342,7 @@ def check_and_launch_spc():
 
             # 英文界面
             elif search_symbol(config.SPC_LOGIN_USERNAME_ENGLISH, 2):
-                logger.info("检测到SPC英文登录界面")
+                raise Exception("检测到SPC英文登录界面")
                 write_text_textbox(config.SPC_LOGIN_USERNAME_ENGLISH)
                 click_by_png(config.SPC_USER_ADMIN)
                 write_text_textbox(config.SPC_LOGIN_USERNAME_ENGLISH, config.SPC_USER_NAME)
@@ -349,6 +351,11 @@ def check_and_launch_spc():
                 logger.info(f"输入密码: {config.SPC_PASSWORD}")
                 click_by_png(config.SPC_LOGIN_ENGLISH)
                 logger.info("点击登录按钮")
+            
+            else:
+                error_message = "疑似登录失败,未检测到SPC登录界面"
+                logger.error(error_message)
+                raise Exception(error_message)
             time.sleep(3)
             if not search_symbol(config.SPC_SYSTEM_SETTING):
                 error_message = "疑似登录失败,未检测到SPC界面"
@@ -2851,8 +2858,11 @@ def detect_text(target_text):
     logger.info(f"未识别到与{target_text}相似的文字")
     return None
 
-# 检查文字前面的勾选框状态 TODO
-def check_checkbox_status_before_text(target_text, direction="left", range=10, rgb=(255, 255, 255), frame_rgb=(0, 255, 0)):
+# 检查文字前面的勾选框状态
+def check_checkbox_status_before_text(target_text, if_check=True, direction="left", range=10, mark_rgb=(255, 255, 255), frame_rgb=(0, 255, 0)):
+    logger.info("开始检查文字前的勾选框状态")
+    logger.info(f"目标文字: {target_text}, 方向: {direction}, 范围: {range}, 目标颜色: {mark_rgb}, 框架颜色: {frame_rgb}")
+
     # 截取屏幕
     screenshot = pyautogui.screenshot()
 
@@ -2862,15 +2872,18 @@ def check_checkbox_status_before_text(target_text, direction="left", range=10, r
     # 使用EasyOCR识别文字
     reader = easyocr.Reader(['ch_sim'])
     result = reader.readtext(screenshot_cv, detail=1)  # 获取详细信息以获取位置
+    # logger.info(f"识别结果: {result}")
 
     # 检查是否包含目标文字
     for (bbox, text, _) in result:
         similarity = SequenceMatcher(None, target_text, text).ratio()
+        # logger.info(f"检测到文字: {text}, 相似度: {similarity}")
         if similarity >= 0.66:
-            logger.info(f"识别到与{target_text}相似的文字：{text}")
+            logger.info(f"识别到与{target_text}相似的文字：{text}，相似度: {similarity}")
 
             # 获取文字位置
             (top_left, top_right, bottom_right, bottom_left) = bbox
+            logger.info(f"文字位置: {bbox}")
             if direction == "left":
                 x_start, x_end = top_left[0] - range, top_left[0]
                 y_start, y_end = top_left[1], bottom_left[1]
@@ -2884,15 +2897,26 @@ def check_checkbox_status_before_text(target_text, direction="left", range=10, r
                 x_start, x_end = bottom_left[0], bottom_right[0]
                 y_start, y_end = bottom_left[1], bottom_left[1] + range
 
-            # 检查指定区域内是否存在目标颜色
-            region = screenshot_cv[y_start:y_end, x_start:x_end]
-            if not np.any(np.all(region == rgb, axis=-1)):
-                logger.info(f"未找到目标颜色{rgb}，将在指定区域点击")
-                # 点击操作
-                pyautogui.click(x=(x_start + x_end) // 2, y=(y_start + y_end) // 2)
-                return True
+            # 检查frame_rgb方框内是否存在目标颜色
+            frame_region = screenshot_cv[y_start:y_end, x_start:x_end]
+            mask = cv2.inRange(frame_region, np.array(mark_rgb) - 10, np.array(mark_rgb) + 10)
+            rgb_present = np.any(mask)
 
-    logger.info(f"未识别到与{target_text}相似的文字")
+            if rgb_present:
+                if (if_check and rgb_present) or (not if_check and not rgb_present):
+                    logger.info(f"识别到与{target_text}相似的文字且确认勾选框状态与预期一致，不进行点击操作")
+                else:
+                    logger.info(f"识别到与{target_text}相似的文字且确认勾选框状态与预期不一致，将在指定区域点击")
+                    # 点击操作
+                    click_x = (x_start + x_end) // 2
+                    click_y = (y_start + y_end) // 2
+                    logger.info(f"点击位置: ({click_x}, {click_y})")
+                    pyautogui.click(x=click_x, y=click_y)
+                return True
+            else:
+                logger.error(f"在方向{direction}未找到目标颜色的方框")
+
+    logger.info(f"未识别到与{target_text}相似的文字，可能是因为未识别到文字或识别到的文字相似度不足")
     return False
 
 # 调整将CAD框随机变大，再变小
