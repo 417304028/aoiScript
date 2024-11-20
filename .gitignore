@@ -3,3 +3,5 @@
 /DongleConfig.ini
 /align.log/
 *.spec
+/.idea/
+/.idea/workspace.xml
