@@ -1,0 +1,168 @@
+import utils
+import time
+import pyautogui
+import config
+
+@utils.screenshot_error_to_excel()
+def kjj_001_01():
+    # 1.【打开】任一job
+    # 2.【设置】--【硬件设置】--【快捷键设置】，查看元件编辑界面的快捷键
+    # 3.进入元件编辑界面，使用快捷键
+    utils.check_and_launch_aoi()
+    utils.ensure_in_edit_mode()
+
+
+    # 切换本体(引脚)/窗口
+    pyautogui.hotkey("ctrl", "b")
+    # 全选
+    pyautogui.hotkey("ctrl", "a")
+    # 取消选择
+    pyautogui.press("escape")
+    # 选择下一个窗口
+    pyautogui.press("back")
+    # 复制
+    pyautogui.hotkey("ctrl", "c")
+    # 黏贴
+    pyautogui.hotkey("ctrl", "v")
+    # 撤销
+    pyautogui.hotkey("ctrl", "z")
+    # 恢复
+    pyautogui.hotkey("ctrl", "y")
+    # 向左移动
+    pyautogui.press("left")
+    # 向右移动
+    pyautogui.press("right")
+    # 向上移动
+    pyautogui.press("up")
+    # 向下移动
+    pyautogui.press("down")
+    # 放大
+    pyautogui.hotkey("ctrl", "shift", "up")
+    # 缩小
+    pyautogui.hotkey("ctrl", "shift", "down")
+
+    # 增加引脚
+    pyautogui.press("q")
+    # 增加窗口
+    pyautogui.press("w")
+
+    # 测试窗口
+    pyautogui.press("space")
+    # 测试元件
+    pyautogui.press("d")
+    # 测试料号
+    pyautogui.press("f")
+    # 测试整板
+    pyautogui.press("b")
+    # 导入此元件库
+    pyautogui.press("f1")
+    # 导入所有元件库
+    pyautogui.press("f3")
+    # 导出此料号到元件库
+    pyautogui.press("f2")
+    # 导出所有料号到元件库
+    pyautogui.press("f4")
+    # 旋转元件
+    pyautogui.press("r")
+    # 选择元件CAD框
+    pyautogui.press("c")
+    # 链接所有元件检测框
+    pyautogui.press("f5")
+    # 获取颜色
+    pyautogui.press("s")
+    # 移动到下一个元件
+    try:
+        test_y_before = pyautogui.locateOnScreen(config.TEST, region=config.BOARD_COMPONENTS_REGION).top + pyautogui.locateOnScreen(config.TEST, region=config.BOARD_COMPONENTS_REGION).height // 2
+        pyautogui.press("x")
+        time.sleep(1)  # 停留一秒
+        test_y_after = pyautogui.locateOnScreen(config.TEST, region=config.BOARD_COMPONENTS_REGION).top + pyautogui.locateOnScreen(config.TEST, region=config.BOARD_COMPONENTS_REGION).height // 2
+    except pyautogui.ImageNotFoundException:
+        raise Exception("移动到下一个元件时，未能识别到被选中的元件")
+    # 查看y坐标有没有大于7的变动
+    if abs(test_y_before - test_y_after) <= 7:
+        raise Exception("疑似未能切换到下一个元件")
+    # 显示首件图
+
+    # 显示元件3D图
+
+    # 增加焊盘标志
+
+    # 在线调参显示同步封装
+
+    
+def kjj_001_02():
+    # 1.【打开】任一job
+    utils.check_and_launch_aoi()
+    utils.open_program()
+    # 2.【设置】--【硬件设置】--【快捷键设置】，查看主程序界面的快捷键
+    # 3.进入主程序界面，使用快捷键
+    # 打开程式
+    pyautogui.press("o")
+    # 保存Debug程式
+    pyautogui.hotkey("ctrl", "shift", "f12")
+    # 打开Debug程式
+    pyautogui.hotkey("ctrl", "shift", "f2")
+    # 打开元件库
+    pyautogui.press("f5")
+    # 删除所有记录文件
+    pyautogui.hotkey("ctrl", "shift", "l")
+    # 进板
+    pyautogui.press("insert")
+    # 归零
+    pyautogui.press("home")
+    # 开始测试
+    pyautogui.press("r")
+    # 停止测试
+    pyautogui.press("e")
+    # 保存程式
+    pyautogui.press("s")
+
+    utils.close_aoi()
+
+
+def kjj_001_03():
+    # 1.【打开】任一job
+    utils.check_and_launch_aoi()
+    utils.open_program()
+    # 2.【设置】--【硬件设置】--【快捷键设置】，查看整板编辑面的快捷键
+    # 3.进入整板编辑界面，使用快捷键
+    # 复制元件()
+    utils.click_color(1, config.COMPONENT_REGION, (0,255,0))
+
+    pyautogui.hotkey("ctrl", "c")
+    # 粘贴元件
+    pyautogui.hotkey("ctrl", "v")
+
+    # 手动编辑拼版编号
+    utils.click_by_png(config.BOARD_SPLICING_OPERATION)
+    utils.click_color(1, config.COMPONENT_REGION, (220, 20, 60))
+    pyautogui.press("F1")
+    utils.search_symbol_erroring(config.OK_COLLECTION)
+    utils.close_aoi()
+def kjj_001_04():
+    # 1.【打开】任一job
+    utils.check_and_launch_aoi()
+    utils.open_program()
+    # 2.【设置】--【硬件设置】--【快捷键设置】，查看缺陷视图界面的快捷键
+    # 3.【运行】该程式
+
+    # 4.弹出dv复判界面，在dv复判界面，使用快捷键
+    # 上一个元件
+    pyautogui.press("up")
+    # 下一个元件
+
+    # 上一个窗口
+    pyautogui.press("left")
+    # 下一个窗口
+    pyautogui.press("right")
+    # 元件通过
+    pyautogui.press("down")
+    # 元件不良
+    pyautogui.press("numpad0")
+    # 全部通过
+    pyautogui.press("f11")
+    # 全部不良
+    pyautogui.press("f12")
+    # 确认提交
+    pyautogui.press("return")
+    utils.close_aoi()
