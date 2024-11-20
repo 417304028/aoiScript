@@ -54,7 +54,7 @@ def front_rv_window():
 
 def sync_csv_to_xlsx(csv_path, xlsx_path):
     try:
-        logger.info("将csv更新的数据同步至xlsx...")
+        logger.info("将csv更新的数据剪切至xlsx...")
 
         # 读取CSV和XLSX文件
         df_csv = pd.read_csv(csv_path)
@@ -64,7 +64,7 @@ def sync_csv_to_xlsx(csv_path, xlsx_path):
         df_csv['id'] = df_csv['id'].astype(str).str.strip()
         df_xlsx['id'] = df_xlsx['id'].astype(str).str.strip()
 
-        # 遍历CSV中的每一行，将数据同步到XLSX
+        # 遍历CSV中的每一行，将数据剪切到XLSX
         for index, row in df_csv.iterrows():
             csv_id = row['id']
             # 查找XLSX中对应的行
@@ -78,16 +78,23 @@ def sync_csv_to_xlsx(csv_path, xlsx_path):
                 for col_index, col_name in enumerate(df_csv.columns):
                     # 在XLSX中对应的列索引为6 + col_index
                     df_xlsx.loc[xlsx_row.index, df_xlsx.columns[col_index + 6]] = row[col_name]
+                # 从CSV中删除已剪切的行
+                df_csv.drop(index, inplace=True)
             else:
                 # 如果XLSX中没有对应的行，则添加新行
                 new_row = pd.Series([None] * 6 + list(row), index=df_xlsx.columns)
                 df_xlsx = pd.concat([df_xlsx, new_row.to_frame().T], ignore_index=True)
+                # 从CSV中删除已剪切的行
+                df_csv.drop(index, inplace=True)
 
         # 保存更新后的XLSX文件
         with pd.ExcelWriter(xlsx_path, engine='openpyxl') as writer:
             df_xlsx.to_excel(writer, index=False)
 
-        logger.info("csv更新的数据同步至xlsx同步完成")
+        # 保存更新后的CSV文件
+        df_csv.to_csv(csv_path, index=False)
+
+        logger.info("csv更新的数据剪切至xlsx同步完成")
     except Exception as e:
         logger.error(f"处理Excel文件时发生错误: {e}")
         raise Exception(f"处理Excel文件时发生错误: {e}")
@@ -258,13 +265,12 @@ def rv_ai_test(train_eval_paths, result_path, mode):
         dir_suffix = os.path.basename(os.path.normpath(train_eval_path))
         train_logs_dir = os.path.join(pyd_path, 'train_logs')
         os.makedirs(train_logs_dir, exist_ok=True)
-        today_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        train_logs_path = os.path.join(train_logs_dir, f"{today_date}_{dir_suffix}.csv")
+        train_control_csv = os.path.join(train_logs_dir, f"train_control_{dir_suffix}.csv")
         trained_success_list = []
 
         # 读取里边为训练完成的训练路径装入trained_success_list。
-        if os.path.exists(train_logs_path):
-            with open(train_logs_path, 'r', encoding='utf-8') as file:
+        if os.path.exists(train_control_csv):
+            with open(train_control_csv, 'r', encoding='utf-8') as file:
                 reader = csv.reader(file)
                 next(reader)  # 跳过表头
                 for row in reader:
@@ -272,7 +278,7 @@ def rv_ai_test(train_eval_paths, result_path, mode):
                         trained_success_list.append(row[0])
         else:
             # 文件不存在的话把检索到的train_paths装入csv
-            with open(train_logs_path, 'w', newline='', encoding='utf-8') as file:
+            with open(train_control_csv, 'w', newline='', encoding='utf-8') as file:
                 writer = csv.writer(file)
                 writer.writerow(['train路径', 'train状态'])
                 for train_path in train_paths:
@@ -468,7 +474,8 @@ def rv_ai_test(train_eval_paths, result_path, mode):
                             utils.click_by_png(config.RV_AI_CLOSE_MISSION_MANAGE, timeout=5)
                             time.sleep(10)  # 等待10秒后再次尝试
                             retry_count += 1
-                    today_date = datetime.datetime.now().strftime("%Y-%m-%d")
+                    first_completed_date = datetime.datetime.now().strftime("%Y-%m-%d")
+                    another_date = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
                     time.sleep(1)
                     eval_results.clear()
                     eval_results.append((eval_path, eval_result, good_ng))
@@ -743,10 +750,10 @@ def rv_ai_test(train_eval_paths, result_path, mode):
             pyautogui.press('enter')
 
             have_trained_before = False
-            # 训练-推理结束，转csv为xlsx，并同步数据至xlsx 
+            # tep下小路径训练-推理结束，获得了eval_results。将训练推理生成的csv转为xlsx，并将eval_results装至xlsx。 TODO 如果命名为日期的话 隔天跑的时候会出问题
             try:
-                eval_result_csv = os.path.join(pyd_path, "logs", "res_static", f"{today_date}.csv")
-                logger.info(f"log_path: {eval_result_csv}")
+                eval_result_csv = os.path.join(pyd_path, "logs", "res_static", "control_and_show_train.csv")
+                logger.info(f"推理后生成的csv位置: {eval_result_csv}")
                 if not os.path.exists(eval_result_csv):
                     logger.error("未找到推理后生成的csv文件")
                     raise Exception("未找到推理后生成的csv文件")
@@ -754,8 +761,8 @@ def rv_ai_test(train_eval_paths, result_path, mode):
                 # 新增日志文件
                 result_xlsx_dir = os.path.join(pyd_path, "eval_logs")
                 os.makedirs(result_xlsx_dir, exist_ok=True)
-                # 结果xlsx文档
-                eval_result_xlsx = os.path.join(result_xlsx_dir, f"{today_date}_{os.path.basename(train_eval_path)}.xlsx")
+                # 结果xlsx文档，无论有没有过夜，生成的结果都在该文档 每次跑完个train路径就存一次 
+                eval_result_xlsx = os.path.join(result_xlsx_dir, f"{first_completed_date}_{os.path.basename(train_eval_path)}.xlsx")
                 if len(train_eval_paths) == 1 or train_eval_path == train_eval_paths[-1]:
                     completed_txt_path = os.path.join(pyd_path, "脚本已运行完成.txt")
                 else:
@@ -818,113 +825,120 @@ def rv_ai_test(train_eval_paths, result_path, mode):
                 return str(id_str).strip().replace('\n', '').replace('\r', '').replace('\t', '')
 
             logger.info("开始将推理结果同步至xlsx")
-            wb = openpyxl.load_workbook(eval_result_xlsx)
-            ws = wb.active
-            logger.info("工作簿和工作表已初始化")
+            for date in [first_completed_date, another_date]:
+                eval_result_xlsx = os.path.join(result_xlsx_dir, f"{date}_{os.path.basename(train_eval_path)}.xlsx")
+                if not os.path.exists(eval_result_xlsx):
+                    logger.warning(f"文件 {eval_result_xlsx} 不存在，跳过")
+                    continue
 
-            # 更新df_xlsx
-            xlsx = pd.read_excel(eval_result_xlsx, engine='openpyxl')
-            xlsx.columns = [col.strip() for col in xlsx.columns]
-            xlsx.columns = [re.sub(r'\s+', '', col) for col in xlsx.columns]
-
-            logger.info("开始更新eval_results至eval_xlsx...")
-            logger.warning(f"eval_results: {eval_results}")
-            for eval_path, eval_result, good_ng in eval_results:
-                eval_image_paths = []
-                eval_image_paths.extend(glob.glob(os.path.join(eval_path, '**/*.bmp'), recursive=True))
-                eval_image_paths.extend(glob.glob(os.path.join(eval_path, '**/*.jpg'), recursive=True))
-                eval_image_paths.extend(glob.glob(os.path.join(eval_path, '**/*.png'), recursive=True))
-                logger.info(f"推理路径下找到的图片路径为: {eval_image_paths}")
-                # 图片名称即id。通过id查找匹配的行 给其赋值
-                for eval_image_path in eval_image_paths:
-                    eval_image_name = clean_id(os.path.splitext(os.path.basename(eval_image_path))[0])
-                    logger.info(f"处理的图片id为: {eval_image_name}")
-
-                    try:
-                        # 打印调试信息
-                        logger.warning(f"待匹配的eval_image_name: '{eval_image_name}'")
-                        logger.warning(f"所有行中的id值: {xlsx['id'].tolist()}")
-                        logger.info("除标题行外所有行内容如下：")
-                        for row in ws.iter_rows(min_row=2, values_only=True):  # 从第二行开始打印
-                            logger.info(row)
-                        # 除了标题行外 每一个id值不为空的行都要log
-                        for index, row in xlsx.iterrows():
-                            if pd.notna(row['id']):
-                                logger.info(f"行 {index + 2} 的id值: {row['id']}")
-                        logger.warning(f"所有行中的id值: {xlsx['id'].tolist()}")
-
-                        # 确保id列为字符串类型并去除空格、换行符、回车符和制表符
-                        xlsx['id'] = xlsx['id'].apply(clean_id).astype(str)
-                        
-                        # 搜索所有id列有值的行（除了标题行外）
-                        for index, row in xlsx.iterrows():
-                            if pd.notna(row['id']):
-                                logger.info(f"行 {index + 2} 的id列数据类型: {type(row['id'])}")
-
-                        # 使用字符串包含关系进行匹配
-                        matching_rows = xlsx[xlsx['id'].astype(str).str.contains(eval_image_name, na=False)]
-                        if not matching_rows.empty:
-                            for index in matching_rows.index:
-                                excel_row = index + 2
-                                logger.info(f"匹配到的行号：{index + 1}")
-                                logger.info(f"更新eval_results至xslx内查找到的对应行：eval_path: {eval_path}, eval_image_path: {eval_image_path}, eval_image_name: {eval_image_name}, eval_result: {eval_result}")
-                                ws.cell(row=excel_row, column=1, value=eval_result)
-                                ws.cell(row=excel_row, column=2, value=good_ng)
-                                ws.cell(row=excel_row, column=3, value=eval_image_path)
-                                ws.cell(row=excel_row, column=6, value=eval_image_path)
-                                logger.info(f"已匹配到第 {index + 1} 行")
-                            wb.save(eval_result_xlsx)
-                        else:
-                            logger.warning(f"未找到匹配的行，id为: {eval_image_name}")
-                    except Exception as e:
-                        logger.error(f"更新eval_results至xslx时发生错误: {e}")
-
-                logger.info("推理结束，开始记录训练结果（该路径已 训练-推理 完成）")
-                try:
-                    # 处理train.csv，填入train路径及train状态
-                    logger.info(f"读取训练日志文件: {train_logs_path}")
-                    df_train_logs = pd.read_csv(train_logs_path, encoding='utf-8')
-                    logger.info(f"训练日志文件内容: {df_train_logs}")
-                    
-                    if train_path in df_train_logs['train路径'].values:
-                        logger.info(f"更新训练路径 {train_path} 的训练状态为 {train_result}")
-                        df_train_logs.loc[df_train_logs['train路径'] == train_path, 'train状态'] = train_result
-                        # 将train状态的单元格标注为黄色
-                        for index, row in df_train_logs.iterrows():
-                            if row['train路径'] == train_path:
-                                df_train_logs.at[index, 'train状态'] = train_result
-                        df_train_logs.to_csv(train_logs_path, index=False, encoding='utf-8')
-                        logger.info(f"训练路径 {train_path} 的训练状态已更新并保存")
-                    else:
-                        logger.info(f"训练路径 {train_path} 不存在于训练日志中，添加新记录")
-                        new_row = pd.DataFrame([[train_path, train_result]], columns=['train路径', 'train状态'])
-                        df_train_logs = pd.concat([df_train_logs, new_row], ignore_index=True)
-                        df_train_logs.to_csv(train_logs_path, index=False, encoding='utf-8')
-                        logger.info(f"新记录已添加并保存到训练日志文件")
-                    
-                    logger.info("训练日志文件已关闭")
-                except Exception as e:
-                    logger.error(f"记录训练结果时发生错误: {e}")
-                    raise Exception(f"记录训练结果时发生错误: {e}")
-                finally:
-                    logger.info("记录训练结果操作完成")
-
-        # 所有训练-推理完毕后 将所有操作过的文档排序 排序完之后插入图片
-
-        # 遍历可能存在的xlsx文件
-        possible_dates = [today_date, (datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%Y-%m-%d")]
-        for date in possible_dates:
-            eval_result_xlsx = os.path.join(result_xlsx_dir, f"{date}_{os.path.basename(train_eval_path)}.xlsx")
-            if os.path.exists(eval_result_xlsx):
-                logger.info(f"处理文件: {eval_result_xlsx}")
                 wb = openpyxl.load_workbook(eval_result_xlsx)
                 ws = wb.active
+                logger.info(f"工作簿和工作表已初始化: {eval_result_xlsx}")
 
+                # 更新推理结果至eval_xlsx
+                xlsx = pd.read_excel(eval_result_xlsx, engine='openpyxl')
+                xlsx.columns = [col.strip() for col in xlsx.columns]
+                xlsx.columns = [re.sub(r'\s+', '', col) for col in xlsx.columns]
+
+                logger.info(f"开始将单条tep推理结果同步至eval_xlsx: {eval_result_xlsx}")
+                logger.warning(f"eval_results: {eval_results}")
+                # 将eval_results内的数据同步至eval_xlsx 因为是根据id对应，且考虑到隔夜，对开始时间以及开始时间的后一天对应的文件都去匹配
+                for eval_path, eval_result, good_ng in eval_results:
+                    eval_image_paths = []
+                    eval_image_paths.extend(glob.glob(os.path.join(eval_path, '**/*.bmp'), recursive=True))
+                    eval_image_paths.extend(glob.glob(os.path.join(eval_path, '**/*.jpg'), recursive=True))
+                    eval_image_paths.extend(glob.glob(os.path.join(eval_path, '**/*.png'), recursive=True))
+                    logger.info(f"推理路径下找到的图片路径为: {eval_image_paths}")
+                    # 图片名称即id。通过id查找匹配的行 给对应行赋值
+                    for eval_image_path in eval_image_paths:
+                        eval_image_name = clean_id(os.path.splitext(os.path.basename(eval_image_path))[0])
+                        logger.info(f"处理的图片id为: {eval_image_name}")
+
+                        try:
+                            # 打印调试信息
+                            logger.warning(f"待匹配的eval_image_name: '{eval_image_name}'")
+                            logger.warning(f"所有行中的id值: {xlsx['id'].tolist()}")
+                            logger.info("除标题行外所有行内容如下：")
+                            for row in ws.iter_rows(min_row=2, values_only=True):  # 从第二行开始打印
+                                logger.info(row)
+                            # 除了标题行外 每一个id值不为空的行都要log
+                            for index, row in xlsx.iterrows():
+                                if pd.notna(row['id']):
+                                    logger.info(f"行 {index + 2} 的id值: {row['id']}")
+                            logger.warning(f"所有行中的id值: {xlsx['id'].tolist()}")
+
+                            # 确保id列为字符串类型并去除空格、换行符、回车符和制表符
+                            xlsx['id'] = xlsx['id'].apply(clean_id).astype(str)
+                            
+                            # 搜索所有id列有值的行（除了标题行外）
+                            for index, row in xlsx.iterrows():
+                                if pd.notna(row['id']):
+                                    logger.info(f"行 {index + 2} 的id列数据类型: {type(row['id'])}")
+
+                            # 使用字符串包含关系进行匹配
+                            matching_rows = xlsx[xlsx['id'].astype(str).str.contains(eval_image_name, na=False)]
+                            if not matching_rows.empty:
+                                for index in matching_rows.index:
+                                    excel_row = index + 2
+                                    logger.info(f"匹配到的行号：{index + 1}")
+                                    logger.info(f"更新eval_results至xslx内查找到的对应行：eval_path: {eval_path}, eval_image_path: {eval_image_path}, eval_image_name: {eval_image_name}, eval_result: {eval_result}")
+                                    ws.cell(row=excel_row, column=1, value=eval_result)
+                                    ws.cell(row=excel_row, column=2, value=good_ng)
+                                    ws.cell(row=excel_row, column=3, value=eval_image_path)
+                                    ws.cell(row=excel_row, column=6, value=eval_image_path)
+                                    logger.info(f"已匹配到第 {index + 1} 行")
+                                wb.save(eval_result_xlsx)
+                            else:
+                                logger.warning(f"未找到匹配的行，id为: {eval_image_name}")
+                        except Exception as e:
+                            logger.error(f"更新eval_results至xslx时发生错误: {e}")
+
+                    logger.info("推理结束，开始记录训练结果（该路径已 训练-推理 完成）")
+                    try:
+                        # 训练-推理完后处理train.csv，填入train路径及train状态，以达到控制指定路径训练
+                        logger.info(f"读取训练日志文件: {train_control_csv}")
+                        df_train_logs = pd.read_csv(train_control_csv, encoding='utf-8')
+                        logger.info(f"训练日志文件内容: {df_train_logs}")
+                        
+                        if train_path in df_train_logs['train路径'].values:
+                            logger.info(f"更新训练路径 {train_path} 的训练状态为 {train_result}")
+                            df_train_logs.loc[df_train_logs['train路径'] == train_path, 'train状态'] = train_result
+                            # 将train状态的单元格标注为黄色
+                            for index, row in df_train_logs.iterrows():
+                                if row['train路径'] == train_path:
+                                    df_train_logs.at[index, 'train状态'] = train_result
+                            df_train_logs.to_csv(train_control_csv, index=False, encoding='utf-8')
+                            logger.info(f"训练路径 {train_path} 的训练状态已更新并保存")
+                        else:
+                            logger.info(f"训练路径 {train_path} 不存在于训练日志中，添加新记录")
+                            new_row = pd.DataFrame([[train_path, train_result]], columns=['train路径', 'train状态'])
+                            df_train_logs = pd.concat([df_train_logs, new_row], ignore_index=True)
+                            df_train_logs.to_csv(train_control_csv, index=False, encoding='utf-8')
+                            logger.info(f"新记录已添加并保存到训练日志文件")
+                        
+                        logger.info("训练日志文件已关闭")
+                    except Exception as e:
+                        logger.error(f"记录训练结果时发生错误: {e}")
+                        raise Exception(f"记录训练结果时发生错误: {e}")
+                    finally:
+                        logger.info("记录训练结果操作完成")
+        # 如果有多条train_eval_path（tep）的话 每条tep每次把底下te小路径训练推理完后装入xlsx内。每个tep将有1/2个xlsx。
+        # 单条tep装入完后再排序和插入图 
+        possible_dates = [(datetime.datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d"), datetime.datetime.now().strftime("%Y-%m-%d")]
+        for date in possible_dates:
+            # 结果xlsx
+            eval_result_xlsx = os.path.join(result_xlsx_dir, f"{date}_{os.path.basename(train_eval_path)}.xlsx")
+            if os.path.exists(eval_result_xlsx):
+                logger.info(f"开始给结果文档排序和插入图片: {eval_result_xlsx}")
+                wb = openpyxl.load_workbook(eval_result_xlsx)
+                ws = wb.active
+                
                 if have_trained_before:
-                    logger.info(f"检测到之前已训练，开始删除xlsx内所有图片...删除前图片数量：{len(ws._images)}")
+                    # logger.info(f"检测到之前已训练，开始删除xlsx内所有图片...删除前图片数量：{len(ws._images)}")
                     ws._images = [image for image in ws._images if image.anchor._from.col in [2, 3, 4]]
-                    logger.info("已删除所有在C, D, E列的图片")
-                    logger.info(f"删除后图片数量: {len(ws._images)}")
+                    logger.critical(f"图片数量: {len(ws._images)}")
+                    # logger.info("已删除所有在C, D, E列的图片")
+                    # logger.info(f"删除后图片数量: {len(ws._images)}")
 
                 data = list(ws.values)
                 header = data[0]  # 保存标题行
@@ -947,7 +961,7 @@ def rv_ai_test(train_eval_paths, result_path, mode):
                 wb.save(eval_result_xlsx)
 
                 # 重新加载工作簿以验证数据
-                logger.info("开始处理图片")
+                logger.info("排序完毕，开始处理图片")
                 # 单独处理图片
                 for index, row in pd.DataFrame(ws.values).iterrows():
                     excel_row = index + 2

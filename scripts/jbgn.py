@@ -82,12 +82,12 @@ def jbgn_001_04():
 
         if program_count == 0:
             raise Exception("未发现任何程式")
-        # 计算D:\EYAOI\JOB内，往下一级的第一级路径含有.tjb文件的文件夹个数
-        folder_count = len([name for name in os.listdir(directory) if os.path.isdir(os.path.join(directory, name)) and any(f.endswith('.tjb') for f in os.listdir(os.path.join(directory, name)))])
+        # 计算D:\EYAOI\JOB内，往下一级的第一级路径含有名称内含.fov的文件夹，且该文件夹下包含.txt文件和.bmp文件的文件夹个数
+        folder_count = len([name for name in os.listdir(directory) if os.path.isdir(os.path.join(directory, name)) and '.fov' in name and any(f.endswith('.txt') for f in os.listdir(os.path.join(directory, name))) and any(f.endswith('.bmp') for f in os.listdir(os.path.join(directory, name)))])
         # 比较数量是否相同
         if program_count != folder_count:
             logger.warning(f"未能显示目录下所有程式，实际程式数量: {program_count}，期望程式数量: {folder_count}")
-            raise Exception("未能显示目录下所有程式，实际程式数量: {program_count}，期望程式数量: {folder_count}")
+            raise Exception(f"未能显示目录下所有程式，实际程式数量: {program_count}，期望程式数量: {folder_count}")
         # 3、在【程式列表】--【主目录程式】，双击任一准备测试的程式
         for symbol in symbols:
             if utils.search_symbol(symbol, 3,region=config.PROGRAM_LIST_REGION):
@@ -1224,8 +1224,8 @@ def jbgn_001_53():
                 os.remove(file_path)
                 logger.info(f"已删除文件: {file_path}")
     utils.click_by_png(config.COMPONENT_3D_IMAGE)
-    if not utils.search_symbol(config.TESTING_INTERFACE_INFORMATION,tolerance=0.8):
-        raise Exception("疑似为进入3D图界面")
+    if not utils.search_symbol(config.ICON_3D,tolerance=0.8):
+        raise Exception("疑似未进入3D图界面")
     time.sleep(5)
     # 检测debug_dir下是否有新的.dat文件生成
     new_dat_files = [file for file in os.listdir(debug_dir) if file.endswith(".dat")]

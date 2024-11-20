@@ -324,7 +324,14 @@ def check_and_launch_spc():
                 logger.info(f"创建文件夹: {plugins_dir}")
             else:
                 logger.info(f"文件夹已存在: {plugins_dir}")
-            ctypes.windll.shell32.ShellExecuteW(None, "open", config.SPC_EXE_PATH, None, None, 1)
+            
+            # 使用subprocess启动程序
+            try:
+                subprocess.run([config.SPC_EXE_PATH], check=True)
+                logger.info("SPC程序已启动")
+            except subprocess.CalledProcessError as e:
+                logger.error(f"启动SPC程序时发生错误: {e}")
+            
             logger.info("等待SPC程序启动...")
             time.sleep(5)
 
@@ -406,6 +413,7 @@ def check_and_launch_aoi():
             while search_symbol(config.LOGINING, 2, tolerance=0.8):
                 logger.info("等待登录进程完成...")
                 time.sleep(3)
+            aoi_mgr.find_window_wildcard(".*AOI.*")
             search_symbol_erroring(config.AOI_TOPIC, 60, tolerance=0.75)
         else:
             for proc in psutil.process_iter():
@@ -2176,7 +2184,9 @@ def check_auto_choose_window(if_auto_choose):
         time.sleep(1.5)
 
 
-def check_export_ok(if_export_ok, if_export_all_ok):
+def check_export_ok(if_export_ok=None, if_export_all_ok=None):
+    if if_export_ok is None and if_export_all_ok is None:
+        raise ValueError("check_export_ok参数不能都为空")
     # 参数配置--UI配置--程序设置
     if search_symbol(config.SETTING_DARK, 1):
         click_by_png(config.SETTING_DARK)

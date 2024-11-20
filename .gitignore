@@ -2,3 +2,4 @@
 /log/
 /DongleConfig.ini
 /align.log/
+*.spec

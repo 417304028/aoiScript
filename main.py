@@ -1,4 +1,5 @@
 import ctypes
+import subprocess
 import config, time
 import utils
 from utils import logger, setup_logger, check_and_launch_rv
@@ -9,7 +10,12 @@ import re
 
 if __name__ == "__main__":
     setup_logger()
-    utils.check_checkbox_status_before_text("打开左右循环", if_check=False)
+    # 使用subprocess启动程序
+    try:
+        subprocess.run([config.SPC_EXE_PATH], check=True)
+        logger.info("SPC程序已启动")
+    except subprocess.CalledProcessError as e:
+        logger.error(f"启动SPC程序时发生错误: {e}")
     # # 检测D:\\work\\aoi_output目录是否存在并清空其内部所有文件
     # output_dir = "D:\\work\\aoi_output"
     # if os.path.exists(output_dir):
