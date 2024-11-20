@@ -1334,6 +1334,9 @@ def jbgn_001_57():
     time.sleep(3)
     utils.write_text((825,950),"0")
     utils.write_text((825,975),"0")
+    utils.is_checked((640,949),(652,961),True)
+    pyautogui.press("enter")
+    time.sleep(1)
     pyautogui.press("enter")
     time.sleep(5)
     if not utils.check_color_in_region((255,0,0),region=config.CHECK_RESULT_REGION):
