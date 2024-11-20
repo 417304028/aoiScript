@@ -5,7 +5,7 @@ from scripts.rv import rv_ai_test
 from utils import setup_logger
 
 def submit():
-    train_eval_path = entry_train_eval_path.get()
+    train_eval_paths = [path.strip() for path in entry_train_eval_path.get().split(';')]  # 支持多个由;分隔开的路径，并去除每个路径前后的空白符
     result_path = entry_result_path.get().strip()  # 去除路径前后的空白符
     mode = mode_var.get()
     if not os.path.exists(result_path):
@@ -14,9 +14,9 @@ def submit():
         root.attributes('-topmost', False)
         return
     if mode == "正常":
-        status, train_statuses = rv_ai_test(train_eval_path, result_path, "normal")
+        status, train_statuses = rv_ai_test(train_eval_paths, result_path, "normal")
     elif mode == "存在good/ng":
-        status, train_statuses = rv_ai_test(train_eval_path, result_path, "good_ng")
+        status, train_statuses = rv_ai_test(train_eval_paths, result_path, "good_ng")
     
     if not train_statuses:
         root.attributes('-topmost', True)
@@ -57,6 +57,16 @@ def show_copied_message():
     copied_label.place(relx=0.5, rely=0.5, anchor='center')
     root.after(3000, copied_label.destroy)
 
+def on_entry_click(event, entry, default_text):
+    if entry.get() == default_text:
+        entry.delete(0, "end")  # 删除所有文本
+        entry.config(fg='black')
+
+def on_focusout(event, entry, default_text):
+    if entry.get() == '':
+        entry.insert(0, default_text)
+        entry.config(fg='grey')
+
 if __name__ == '__main__':
     setup_logger()
     
@@ -78,7 +88,11 @@ if __name__ == '__main__':
     right_frame.pack(side='right', fill='both', expand=True)
 
     tk.Label(left_frame, text="输入总路径(包含train,test文件夹)").pack(anchor='w', pady=(0, 5))
-    entry_train_eval_path = tk.Entry(left_frame)
+    entry_train_eval_path = tk.Entry(left_frame, fg='grey')
+    default_text = "可以输入多个路径，以;分隔开"
+    entry_train_eval_path.insert(0, default_text)
+    entry_train_eval_path.bind('<FocusIn>', lambda event: on_entry_click(event, entry_train_eval_path, default_text))
+    entry_train_eval_path.bind('<FocusOut>', lambda event: on_focusout(event, entry_train_eval_path, default_text))
     entry_train_eval_path.pack(fill='x', pady=(0, 10))
 
     tk.Label(left_frame, text="输入结果路径（含定位图片及输出数据文档）").pack(anchor='w', pady=(0, 5))

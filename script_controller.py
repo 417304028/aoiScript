@@ -3,11 +3,21 @@ from tkinter import ttk
 from threading import Thread, current_thread
 from loguru import logger
 import importlib
-from scripts import yjk, lxbj, jbgn, kjj, spc
+from scripts import yjk, lxbj, jbgn, kjj, spc, tccs
 from utils import running_event, test_case_status
 import ctypes
 import inspect
 from utils import setup_logger
+import sys
+import win32event
+import win32api
+import winerror
+
+# 创建一个全局的命名互斥体，确保同一时间只能有一个脚本控制器窗口打开
+mutex = win32event.CreateMutex(None, False, "Global\\ScriptControllerMutex")
+if win32api.GetLastError() == winerror.ERROR_ALREADY_EXISTS:
+    logger.error("脚本控制器窗口已经在运行，不能同时打开多个实例。")
+    sys.exit(0)
 
 class HomeScreen(tk.Frame):
     def __init__(self, master=None):

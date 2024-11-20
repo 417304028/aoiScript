@@ -1,6 +1,8 @@
 import ctypes
 import random
+import re
 import shutil
+import subprocess
 import easyocr
 import sys
 import time
@@ -8,12 +10,14 @@ import psutil
 import pyperclip
 import cv2
 import numpy as np
+import win32com
 import win32gui
 import pyautogui
 import config
 import functools
 import datetime
 import threading
+import win32con
 import os
 from difflib import SequenceMatcher
 import tkinter as tk
@@ -29,6 +33,8 @@ from difflib import SequenceMatcher
 from openpyxl import Workbook, load_workbook
 from openpyxl.drawing.image import Image as ExcelImage
 from sklearn.cluster import KMeans
+import win32api
+import win32process
 
 ctypes.windll.shcore.SetProcessDpiAwareness(0)  # 解决使用pyautowin时缩放问题
 running_event = Event()
@@ -229,8 +235,8 @@ def login_process():
     if search_symbol(config.RUN_DARK, 1.5):
         click_by_png(config.RUN_DARK, timeout=1.5)
         time.sleep(1)
-    if search_symbol(config.CHANGE_PARAM_ONLINE, 1.5):
-        click_by_png(config.CHANGE_PARAM_ONLINE, timeout=1.5)
+    if search_symbol(config.CHANGE_PARAM_ONLINE_OPENED, 1.5):
+        click_by_png(config.CHANGE_PARAM_ONLINE_OPENED, timeout=1.5)
         time.sleep(0.5)
     if search_symbol(config.QUESTION_MARK, 5, tolerance=0.75):
         if search_symbol(config.NO,2):
@@ -239,100 +245,197 @@ def login_process():
             pyautogui.press("enter")
     logger.warning("登录预处理完成")
 
+class WindowMgr:
+    def __init__(self):
+        self._handle = None
+
+    def find_window(self, class_name, window_name=None):
+        self._handle = win32gui.FindWindow(class_name, window_name)
+
+    def _window_enum_callback(self, hwnd, wildcard):
+        if re.match(wildcard, str(win32gui.GetWindowText(hwnd))) is not None:
+            self._handle = hwnd
+
+    def find_window_wildcard(self, wildcard):
+        self._handle = None
+        win32gui.EnumWindows(self._window_enum_callback, wildcard)
+
+    def set_foreground(self):
+        done = False
+        if self._handle is not None and self._handle > 0:
+            try:
+                logger.info("尝试附加输入线程")
+                win32gui.AttachThreadInput(win32api.GetCurrentThreadId(), win32process.GetWindowThreadProcessId(self._handle)[1], True)
+                logger.info("发送恢复窗口消息")
+                win32gui.SendMessage(self._handle, win32con.WM_SYSCOMMAND, win32con.SC_RESTORE, 0)
+                logger.info("设置窗口为前台窗口")
+                win32gui.SetForegroundWindow(self._handle)
+                logger.info("解除输入线程附加")
+                win32gui.AttachThreadInput(win32api.GetCurrentThreadId(), win32process.GetWindowThreadProcessId(self._handle)[1], False)
+                done = True
+                logger.info("窗口前置成功")
+            except Exception as e:
+                logger.error(f"窗口前置失败: {e}")
+        return done
+
+# 确保rv打开并前置
+def check_and_launch_rv():
+    rv_mgr = WindowMgr()
+    rv_mgr.find_window_wildcard(".*DVPro.*")
+    if not rv_mgr.set_foreground():
+        rv_running = None
+        for p in psutil.process_iter(['pid', 'name']):
+            if "DVPro.UI" in p.info['name']:
+                rv_running = p
+                break
+
+        if rv_running:
+            if search_symbol(config.RV_TASKBAR):
+                click_by_png(config.RV_TASKBAR, tolerance=0.8)
+            else:
+                logger.info("检测到DVPro.UI进程，正在将其前置...")
+                if not rv_mgr.set_foreground():
+                    logger.error("未找到匹配的窗口")
+        else:
+            logger.info(f"未检测到DVPro.UI进程，正在启动RV,路径: {config.RV_EXE_PATH}")
+            ctypes.windll.shell32.ShellExecuteW(None, "open", config.RV_EXE_PATH, None, None, 1)
+            logger.info("等待DVPro.UI程序启动...")
+            time.sleep(5)
+    # 登录
+    if search_symbol(config.RV_PASSWORD, 5, tolerance=0.75):
+        write_text_textbox(config.RV_PASSWORD, config.RV_PASSWORD_TEXT)
+        pyautogui.press("enter")
+        time.sleep(3)
+    search_symbol_erroring(config.RV_ICON,15,tolerance=0.75)
+    time.sleep(4)
+
 # 确保spc打开并前置
 def check_and_launch_spc():
-    spc_running = any("SPC.exe" == p.name() for p in psutil.process_iter())
-    if not spc_running:
-        logger.info("SPC程序未运行,正在启动...")
-        app = Application().start(config.SPC_EXE_PATH)
-        logger.info("等待SPC程序启动...")
-        app.window(title_re=".*SPC.*").wait('ready', timeout=60)
-        if search_symbol(config.SPC_LOGIN_USERNAME):
-            pyautogui.click(1141, 448)
-            click_by_png(config.SPC_USER_ADMIN)
-            write_text((845,495),config.SPC_PASSWORD)
-            click_by_png(config.SPC_LOGIN)
+    spc_mgr = WindowMgr()
+    spc_mgr.find_window_wildcard(".*SPC.*")
+    if not spc_mgr.set_foreground():
+        spc_running = any("SPC.exe" == p.name() for p in psutil.process_iter())
+        logger.info(f"SPC程序运行状态: {'运行中' if spc_running else '未运行'}")
+        if not spc_running:
+            logger.info(f"SPC程序未运行,路径: {config.SPC_EXE_PATH}，正在启动...")
+            plugins_dir = os.path.join(os.getcwd(), "PlugIns")
+            if not os.path.exists(plugins_dir):
+                os.makedirs(plugins_dir)
+                logger.info(f"创建文件夹: {plugins_dir}")
+            else:
+                logger.info(f"文件夹已存在: {plugins_dir}")
+            
+            # 使用subprocess启动程序
+            try:
+                subprocess.run([config.SPC_EXE_PATH], check=True)
+                logger.info("SPC程序已启动")
+            except subprocess.CalledProcessError as e:
+                logger.error(f"启动SPC程序时发生错误: {e}")
+            
+            logger.info("等待SPC程序启动...")
+            time.sleep(5)
+
+            # 中文界面
+            if search_symbol(config.SPC_LOGIN_USERNAME_CHINESE, 5):
+                logger.info("检测到SPC中文登录界面")
+                write_text_textbox(config.SPC_LOGIN_USERNAME_CHINESE)
+                click_by_png(config.SPC_USER_ADMIN)
+                write_text_textbox(config.SPC_LOGIN_USERNAME_CHINESE, config.SPC_USER_NAME)
+                logger.info(f"输入用户名: {config.SPC_USER_NAME}")
+                write_text_textbox(config.SPC_PASSWORD_CHINESE, config.SPC_PASSWORD)
+                logger.info(f"输入密码: {config.SPC_PASSWORD}")
+                click_by_png(config.SPC_LOGIN_CHINESE)
+                logger.info("点击登录按钮")
+
+            # 英文界面
+            elif search_symbol(config.SPC_LOGIN_USERNAME_ENGLISH, 2):
+                raise Exception("检测到SPC英文登录界面")
+                write_text_textbox(config.SPC_LOGIN_USERNAME_ENGLISH)
+                click_by_png(config.SPC_USER_ADMIN)
+                write_text_textbox(config.SPC_LOGIN_USERNAME_ENGLISH, config.SPC_USER_NAME)
+                logger.info(f"输入用户名: {config.SPC_USER_NAME}")
+                write_text_textbox(config.SPC_PASSWORD_ENGLISH, config.SPC_PASSWORD)
+                logger.info(f"输入密码: {config.SPC_PASSWORD}")
+                click_by_png(config.SPC_LOGIN_ENGLISH)
+                logger.info("点击登录按钮")
+            
+            else:
+                error_message = "疑似登录失败,未检测到SPC登录界面"
+                logger.error(error_message)
+                raise Exception(error_message)
             time.sleep(3)
             if not search_symbol(config.SPC_SYSTEM_SETTING):
-                raise Exception("SPC疑似登录失败,未检测到SPC界面")
-        
-    else:
-        if search_symbol(config.SPC_TOPIC):
-            click_by_png(config.SPC_TOPIC, type="right")
-            
-
+                error_message = "疑似登录失败,未检测到SPC界面"
+                logger.error(error_message)
+                raise Exception(error_message)
+            logger.info("SPC登录成功")
 
 # 确保aoi打开并前置
 def check_and_launch_aoi():
-    # 先检测并杀掉有关的进程
-    for proc in psutil.process_iter(['pid', 'name']):
-        if any(name in proc.info['name'] for name in ["AOI", "SPCView"]):
-            try:
-                parent_proc = psutil.Process(proc.info['pid'])
-                children = parent_proc.children(recursive=True)
-                for child in children:
-                    child.kill()
-                parent_proc.kill()
-                parent_proc.wait()
-                logger.info(f"进程 {proc.info['name']} (PID: {proc.info['pid']}) 已被杀死")
-            except Exception as kill_error:
-                logger.error(f"无法杀掉进程 {proc.info['name']} (PID: {proc.info['pid']}): {kill_error}")
+    logger.info("开始检查并启动AOI程序...")
+    aoi_mgr = WindowMgr()
+    aoi_mgr.find_window_wildcard(".*AOI.*")
+    if not aoi_mgr.set_foreground():
+        for proc in psutil.process_iter(['pid', 'name']):
+            if any(name in proc.info['name'] for name in ["AOI", "SPCView"]):
+                try:
+                    logger.info(f"检测到相关进程: {proc.info['name']} (PID: {proc.info['pid']})，准备杀掉...")
+                    parent_proc = psutil.Process(proc.info['pid'])
+                    children = parent_proc.children(recursive=True)
+                    for child in children:
+                        logger.info(f"杀掉子进程: {child.name()} (PID: {child.pid})")
+                        child.kill()
+                    parent_proc.kill()
+                    parent_proc.wait()
+                    logger.info(f"成功杀掉进程: {proc.info['name']} (PID: {proc.info['pid']})")
+                except Exception as kill_error:
+                    logger.error(f"无法杀掉进程 {proc.info['name']} (PID: {proc.info['pid']}): {kill_error}")
 
-    
-    aoi_running = any("AOI.exe" == p.name() for p in psutil.process_iter())
-    if not aoi_running:
-        logger.info("AOI程序未运行,正在启动...")
-        app = Application().start(config.AOI_EXE_PATH)
-        logger.info("等待AOI程序启动...")
-        # app.window(title_re=".*AOI.*").wait('ready', timeout=60)
-        # 发现程序在加载的话等30秒
-        timeout = time.time() + 60
-        while time.time() < timeout:
-            if search_symbol(config.WARNING, 5,tolerance=0.75):
+        aoi_running = any("AOI.exe" == p.name() for p in psutil.process_iter())
+        if not aoi_running:
+            logger.info("AOI程序未运行，正在启动...")
+            app = Application().start(config.AOI_EXE_PATH)
+            logger.info("等待AOI程序启动...")
+            if search_symbol(config.WARNING, 5, tolerance=0.75):
                 pyautogui.press("enter")
-            if search_symbol(config.LOGINING, tolerance=0.8):
-                for proc in psutil.process_iter():
-                    if "aoi_memory" in proc.name():
-                        logger.info(f"正在杀死进程 {proc.name()}...")
-                        proc.kill()
-                        proc.wait()
-                        logger.info(f"进程 {proc.name()} 已被杀死")
-                break
-            time.sleep(5)
-        while search_symbol(config.LOGINING, 2,tolerance=0.8):
-            time.sleep(3)
-        search_symbol_erroring(config.AOI_TOPIC, 60,tolerance=0.75)
-    else:
-        for proc in psutil.process_iter():
-            if "aoi_memory" in proc.name():
-                logger.info(f"正在杀死进程 {proc.name()}...")
-                proc.kill()
-                proc.wait()
-                logger.info(f"进程 {proc.name()} 已被杀死")
-        # 优先点击标题置顶，用窗口置顶容易出问题
-        while search_symbol(config.LOGINING, 2):
-            time.sleep(3)
-        if search_symbol(config.AOI_TOPIC, 2, tolerance=0.75):
-            click_by_png(config.AOI_TOPIC, tolerance=0.8, type="bottom")
+            timeout = time.time() + 60
+            while time.time() < timeout:
+                if search_symbol(config.LOGINING, tolerance=0.8):
+                    logger.info("检测到登录进程，检查并杀掉'aoi_memory'进程...")
+                    for proc in psutil.process_iter():
+                        if "aoi_memory" in proc.name():
+                            logger.info(f"正在杀死进程 {proc.name()}...")
+                            proc.kill()
+                            proc.wait()
+                            logger.info(f"进程 {proc.name()} 已被杀死")
+                    break
+                time.sleep(5)
+            while search_symbol(config.LOGINING, 2, tolerance=0.8):
+                logger.info("等待登录进程完成...")
+                time.sleep(3)
+            aoi_mgr.find_window_wildcard(".*AOI.*")
+            search_symbol_erroring(config.AOI_TOPIC, 60, tolerance=0.75)
         else:
-            logger.warning("AOI窗口标题未找到，尝试通过窗口句柄前置")
-            main_window = connect_aoi_window()
-            main_window.wait('ready', timeout=10)
-            main_window.set_focus()
-            main_window.wait('ready', timeout=10)
-            # 确保窗口未最小化并且前置
-            if main_window.is_minimized():
-                main_window.restore()
-            main_window.set_focus()  # 再次确保窗口前置
-            # 获取窗口句柄
-            hwnd = main_window.handle
-            rect = win32gui.GetWindowRect(hwnd)
-            # win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)  # 恢复窗口
-            win32gui.SetForegroundWindow(hwnd)  # 前置窗口
-            win32gui.BringWindowToTop(hwnd)  # 确保窗口在最前
-            win32gui.MoveWindow(hwnd, rect[0], rect[1], rect[2] - rect[0], rect[3] - rect[1], True)
-            logger.info("AOI窗口已前置并保持原大小。")
-    login_process()
+            for proc in psutil.process_iter():
+                if "aoi_memory" in proc.name():
+                    logger.info(f"正在杀死进程 {proc.name()}...")
+                    proc.kill()
+                    proc.wait()
+                    logger.info(f"进程 {proc.name()} 已被杀死")
+            while search_symbol(config.LOGINING, 2):
+                time.sleep(3)
+            if search_symbol(config.AOI_TOPIC, 2, tolerance=0.75):
+                logger.info("检测到AOI主题，尝试点击以置顶...")
+                click_by_png(config.AOI_TOPIC, tolerance=0.8, type="bottom")
+            else:
+                logger.warning("AOI窗口标题未找到，尝试通过WindowMgr前置...")
+                aoi_mgr.find_window_wildcard(".*AOI.*")
+                if not aoi_mgr.set_foreground():
+                    logger.error("无法前置AOI窗口。")
+                else:
+                    logger.info("AOI窗口已成功前置。")
+        login_process()
+        logger.info("AOI程序检查和启动完成。")
 def close_aoi():
     for proc in psutil.process_iter():
         if "AOI.exe" == proc.name():
@@ -402,17 +505,21 @@ def caton_or_flashback():
     try:
         # 检测主程序窗口是否还存在
         main_window = connect_aoi_window()
-        # if not main_window.is_visible():
-        #     raise Exception("AOI程序窗口不可见，可能已经崩溃")
+        if not main_window.exists(timeout=5):
+            raise Exception("AOI程序窗口不存在，可能已经崩溃")
 
         # 检测程序是否响应
         if not main_window.is_enabled():
             raise Exception("AOI程序无响应，可能已经卡顿")
 
+        # 检测程序是否在前台
+        if not main_window.is_active():
+            raise Exception("AOI程序未在前台，可能已经闪退")
+
         logger.info("AOI程序运行正常，无卡顿或闪退")
     except Exception as e:
         logger.error(f"检测到程序异常: {e}")
-        raise Exception(f"AOI程序异常: {e}")
+        raise Exception(f"AOI程序卡顿/闪退: {e}")
 
 
 
@@ -562,7 +669,7 @@ def filter_color(image, target_color):
     return PILImage.fromarray(filtered_image)
 
 # 识别图片并点击
-def click_by_png(image_path, times=1, timeout=20, if_click_right=0, tolerance=0.8, region=None, instance=1, use_random=0, type="default", click_index=None, preference=None):
+def click_by_png(image_path, times=1, timeout=20, if_click_right=0, tolerance=0.8, region=None, instance=1, use_random=0, type="default", click_index=None, preference=None, if_filter_color=False):
     start_time = time.time()
     clicked = False  # 添加一个标志来检测是否成功点击
     image_path = image_fit_screen(image_path)
@@ -578,8 +685,11 @@ def click_by_png(image_path, times=1, timeout=20, if_click_right=0, tolerance=0.
             screenshot_np = np.array(screenshot)
             
             # 过滤颜色
-            filtered_screenshot = filter_color(screenshot, target_avg_color)
-            filtered_screenshot_np = np.array(filtered_screenshot)
+            if if_filter_color:
+                filtered_screenshot = filter_color(screenshot, target_avg_color)
+                filtered_screenshot_np = np.array(filtered_screenshot)
+            else:
+                filtered_screenshot_np = screenshot_np
             
             locations = list(pyautogui.locateAllOnScreen(image_path, confidence=tolerance, region=region))
             if locations and len(locations) >= instance:
@@ -632,7 +742,38 @@ def click_by_png(image_path, times=1, timeout=20, if_click_right=0, tolerance=0.
         logger.error(f"超时: 在{timeout}秒内未能点击图片，图片路径为{image_path}")
         raise Exception(f"超时: 在{timeout}秒内未能点击图片，图片路径为{image_path}")
 
-def search_symbol(symbol, timeout=10, region=None, tolerance=0.9):
+# 在屏幕中获取text的中心坐标并点击
+def click_by_ocr(text, times=1, timeout=10, tolerance=0.75):
+    start_time = time.time()
+    logger.info(f"在{timeout}秒内识别屏幕中对应词，要求相似度系数为{tolerance}，目标文字为{text}")
+    
+    reader = easyocr.Reader(['ch_sim'])
+    
+    while time.time() - start_time < timeout:
+        try:
+            screenshot = pyautogui.screenshot()
+            screenshot_cv = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
+            result = reader.readtext(screenshot_cv, detail=1)
+            
+            for (bbox, detected_text, prob) in result:
+                similarity = SequenceMatcher(None, text, detected_text).ratio()
+                if similarity >= tolerance:
+                    center_x = (bbox[0][0] + bbox[2][0]) // 2
+                    center_y = (bbox[0][1] + bbox[2][1]) // 2
+                    pyautogui.click(center_x, center_y, clicks=times)
+                    logger.info(f"点击文本成功，目标文本为{text}，坐标为({center_x}, {center_y})")
+                    return center_x, center_y
+        except Exception as e:
+            logger.error(f"在尝试点击过程中发生异常: {e}")
+            pass
+        time.sleep(1)
+    
+    logger.error(f"超时: 在{timeout}秒内未能点击文本，目标文本为{text}")
+    raise Exception(f"超时: 在{timeout}秒内未能点击文本，目标文本为{text}")
+
+
+
+def search_symbol(symbol, timeout=10, region=None, tolerance=0.9, if_filter_color=False):
     start_time = time.time()
     symbol = image_fit_screen(symbol)
     logger.info(f"在{timeout}秒内识别图片，要求准确度系数为{tolerance}，图片路径为{symbol}")
@@ -649,8 +790,11 @@ def search_symbol(symbol, timeout=10, region=None, tolerance=0.9):
                 screenshot_avg_color = cv2.mean(screenshot_np)[:3]
                 
                 # 过滤颜色
-                filtered_screenshot = filter_color(screenshot, target_avg_color)
-                filtered_screenshot_np = np.array(filtered_screenshot)
+                if if_filter_color:
+                    filtered_screenshot = filter_color(screenshot, target_avg_color)
+                    filtered_screenshot_np = np.array(filtered_screenshot)
+                else:
+                    filtered_screenshot_np = screenshot_np
                 
                 location = pyautogui.locateOnScreen(symbol, region=region, confidence=tolerance)
                 if location is not None:
@@ -673,8 +817,11 @@ def search_symbol(symbol, timeout=10, region=None, tolerance=0.9):
                 screenshot_avg_color = cv2.mean(screenshot_np)[:3]
                 
                 # 过滤颜色
-                filtered_screenshot = filter_color(screenshot, target_avg_color)
-                filtered_screenshot_np = np.array(filtered_screenshot)
+                if if_filter_color:
+                    filtered_screenshot = filter_color(screenshot, target_avg_color)
+                    filtered_screenshot_np = np.array(filtered_screenshot)
+                else:
+                    filtered_screenshot_np = screenshot_np
                 
                 location = pyautogui.locateOnScreen(symbol, region=region, confidence=tolerance)
                 if location is not None:
@@ -689,7 +836,7 @@ def search_symbol(symbol, timeout=10, region=None, tolerance=0.9):
             logger.error(f"发生异常: {e}")
             raise Exception(f"发生异常: {e}")
 
-def search_symbol_erroring(symbol, timeout=10, region=None, tolerance=0.9):
+def search_symbol_erroring(symbol, timeout=10, region=None, tolerance=0.9, if_filter_color=False):
     start_time = time.time()
     symbol = image_fit_screen(symbol)
     logger.info(f"在{timeout}秒内识别图片，要求准确度系数为{tolerance}，图片路径为{symbol}，识别不到自动报错")
@@ -706,14 +853,17 @@ def search_symbol_erroring(symbol, timeout=10, region=None, tolerance=0.9):
                 screenshot_avg_color = cv2.mean(screenshot_np)[:3]
                 
                 # 过滤颜色
-                filtered_screenshot = filter_color(screenshot, target_avg_color)
-                filtered_screenshot_np = np.array(filtered_screenshot)
+                if if_filter_color:
+                    filtered_screenshot = filter_color(screenshot, target_avg_color)
+                    filtered_screenshot_np = np.array(filtered_screenshot)
+                else:
+                    filtered_screenshot_np = screenshot_np
                 
                 location = pyautogui.locateOnScreen(symbol, region=region, confidence=tolerance)
                 if location is not None:
                     center_x = location.left + location.width // 2
                     center_y = location.top + location.height // 2
-                    logger.info(f"已确认{symbol}存在，坐标为({center_x}, {center_y})")
+                    logger.info(f"已确认图片存在，坐标为({center_x}, {center_y})")
                     time.sleep(0.5)
                     return True
             except pyautogui.ImageNotFoundException:
@@ -722,8 +872,8 @@ def search_symbol_erroring(symbol, timeout=10, region=None, tolerance=0.9):
                 logger.error(f"发生异常: {e}")
                 raise Exception(f"发生异常: {e}")
         # 如果超时后还没有找到符号，抛出超时异常
-        logger.error(f"超时: 没找到{symbol}")
-        raise Exception(f"超时: 没找到{symbol}")
+        logger.error(f"超时: 没找到图片,图片路径为{symbol}")
+        raise Exception(f"超时: 没找到图片,图片路径为{symbol}")
     else:
         try:
             while True:
@@ -732,8 +882,11 @@ def search_symbol_erroring(symbol, timeout=10, region=None, tolerance=0.9):
                 screenshot_avg_color = cv2.mean(screenshot_np)[:3]
                 
                 # 过滤颜色
-                filtered_screenshot = filter_color(screenshot, target_avg_color)
-                filtered_screenshot_np = np.array(filtered_screenshot)
+                if if_filter_color:
+                    filtered_screenshot = filter_color(screenshot, target_avg_color)
+                    filtered_screenshot_np = np.array(filtered_screenshot)
+                else:
+                    filtered_screenshot_np = screenshot_np
                 
                 location = pyautogui.locateOnScreen(symbol, region=region, confidence=tolerance)
                 if location is not None:
@@ -770,20 +923,7 @@ def count_symbol_on_screen(symbol, region=None, confidence=0.9):
         raise Exception(f"发生异常: {e}")
 
 
-# =========================UI=========================
-def auto_close_msgbox(message, title, timeout=10000):
-    def show_message():
-        root = tk.Tk()
-        root.withdraw()
-        top = tk.Toplevel(root)
-        top.title(title)
-        label = tk.Label(top, text=message)
-        label.pack(padx=20, pady=20)
-        top.after(timeout, top.destroy)
-        root.after(timeout + 100, root.destroy)  # 确保在弹框销毁后销毁root
-        root.mainloop()
 
-    threading.Thread(target=show_message).start()
 
 # =========================装饰器=========================
 # 用于记录每个用例函数的最终状态
@@ -919,6 +1059,37 @@ def screenshot_to_excel(test_case_name, path, exception):
 
 # ====================业务处理========================
 
+# 找有对应窗口的元件
+def find_component_window(window_names, limit_time=300, image=None):
+    start_time = time.time()
+    # 边在左侧点击元件，边往下找
+    while True:
+        before_screenshot = pyautogui.screenshot(region=config.BOARD_COMPONENTS_REGION)
+        pyautogui.press("x")
+        time.sleep(3)
+        after_screenshot = pyautogui.screenshot(region=config.BOARD_COMPONENTS_REGION)
+        if before_screenshot == after_screenshot:
+            logger.error("程序列表到底了都没找到对应元件")
+            raise Exception("程序列表到底了都没找到对应元件")
+        
+        # 判断window_names是一个还是多个
+        if isinstance(window_names, str):
+            window_names = [window_names]
+        
+        # 判断是否存在对应窗口
+        for window_name in window_names:
+            if search_symbol(window_name, timeout=2, if_filter_color=True):
+                click_by_png(window_name, if_filter_color=True)
+                time.sleep(3)
+                if image:
+                    if search_symbol(image, timeout=2, if_filter_color=True):
+                        return
+                else:
+                    return
+        
+        # 超过指定时间没找到的话 raise
+        if time.time() - start_time > limit_time:
+            raise Exception(f"超过{limit_time}秒未找到窗口: 图片路径为{window_names}")
 def make_package():
     logger.info("开始制造封装")
     if search_symbol(config.TOOL_DARK, timeout=2):
@@ -1740,6 +1911,41 @@ def check_not_sync_same_package(if_not_sync_same_package):
     while search_symbol(config.PARAM_SETTING_TOPIC):
         time.sleep(1.5)
 
+# 参数配置--流程配置--缺陷视图：【打开DV复判模式】、【DV自动确认】按钮
+def check_dv(if_open_dv_mode, if_auto_check_dv):
+    if search_symbol(config.SETTING_DARK, 1):
+        click_by_png(config.SETTING_DARK)
+    else:
+        search_symbol_erroring(config.SETTING_LIGHT, 1)
+    click_by_png(config.PARAM_HARDWARE_SETTING)
+    time.sleep(2)
+    click_by_png(config.PARAM_PROCESS_SETTING)
+    time.sleep(2)
+    if if_open_dv_mode is not None:
+        if if_open_dv_mode:
+            if search_symbol(config.PARAM_DV_MODE_NO, 2):
+                click_by_png(config.PARAM_DV_MODE_NO)
+        else:
+            if search_symbol(config.PARAM_DV_MODE_YES, 2):
+                click_by_png(config.PARAM_DV_MODE_YES)
+    if if_auto_check_dv is not None:
+        if if_auto_check_dv:
+            if search_symbol(config.PARAM_DV_AUTO_CHECK_NO, 2):
+                click_by_png(config.PARAM_DV_AUTO_CHECK_NO)
+        else:
+            if search_symbol(config.PARAM_DV_AUTO_CHECK_YES, 2):
+                click_by_png(config.PARAM_DV_AUTO_CHECK_YES)        
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
+    if search_symbol(config.NO, 1.5, tolerance=0.95):
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
+    else:
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
+    time.sleep(0.5)
+    pyautogui.press('enter')
+    while search_symbol(config.PARAM_SETTING_TOPIC):
+        time.sleep(1.5)
+
+
 
 # 参数配置--硬件设置--数据导出配置--元件库--导入筛选限制
 def check_import_filtering_restriction(percent):
@@ -1752,6 +1958,38 @@ def check_import_filtering_restriction(percent):
     click_by_png(config.PARAM_DATA_EXPORT_SETTING)
     time.sleep(2)
     write_text((1340,225), percent)
+    time.sleep(1.5)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
+    if search_symbol(config.NO, 1.5, tolerance=0.95):
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
+    else:
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
+    time.sleep(0.5)
+    pyautogui.press('enter')
+    while search_symbol(config.PARAM_SETTING_TOPIC):
+        time.sleep(1.5)
+
+# # 数据导出配置--数据导出配置--输出数据延时--下拉框选择倒计时的时间【0】麻烦死了 不想写
+# def check_output_data_delay(delay_time = 0):
+#     if search_symbol(config.SETTING_DARK, 3):
+#         click_by_png(config.SETTING_DARK)
+#     else:
+#         search_symbol_erroring(config.SETTING_LIGHT, 1)
+#     click_by_png(config.PARAM_HARDWARE_SETTING)
+#     time.sleep(2)
+#     click_by_png(config.PARAM_DATA_EXPORT_SETTING)
+#     time.sleep(2)
+#     if delay_time == 0:
+#         click_by_png(config.OUTPUT_DELAY_TIME, type="left")
+
+
+
+
+
+
+
+
+
     time.sleep(1.5)
     click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
@@ -1814,7 +2052,10 @@ def check_open_developer_options(type=None):
         if search_symbol(config.DEVELOPER_OPTIONS_SAVE_CHECK_DATA_YES, 3):
             click_by_png(config.DEVELOPER_OPTIONS_SAVE_CHECK_DATA_YES)
 
-    click_by_png(config.DEVELOPER_OPTIONS_YES)
+    if not search_symbol(config.DEVELOPER_OPTIONS_YES, 2, tolerance=0.7):
+        click_by_png(config.DEVELOPER_OPTIONS_YES, tolerance=0.6)
+    else:
+        click_by_png(config.DEVELOPER_OPTIONS_YES, tolerance=0.7)
     time.sleep(1)
     click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
@@ -1825,7 +2066,6 @@ def check_open_developer_options(type=None):
     pyautogui.press('enter')
     while search_symbol(config.PARAM_SETTING_TOPIC):
         time.sleep(1.5)
-
 
 # 参数配置--演算法配置--关联子框检测模式
 def check_patent_not_NG(type):
@@ -1908,9 +2148,9 @@ def check_all_algs():
             click_by_png(config.SETTING_ALGORITHM_MARK_MATCHING_YES)
         if search_symbol(config.SETTING_ALGORITHM_BARCODE_DETECTION_YES, 3):
             click_by_png(config.SETTING_ALGORITHM_BARCODE_DETECTION_YES)
-    # 为了方便 勾选一下颜色分析
-    if search_symbol(config.SETTING_ALGORITHM_COLOR_ANALYSE_NO, 3):
-        click_by_png(config.SETTING_ALGORITHM_COLOR_ANALYSE_NO)
+    # 勾选的话 good的可以正常显示
+    if search_symbol(config.SETTING_ALGORITHM_COLOR_ANALYSE_NO, 3, tolerance=0.95):
+        click_by_png(config.SETTING_ALGORITHM_COLOR_ANALYSE_NO, tolerance=0.95)
 
     click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
@@ -1944,7 +2184,9 @@ def check_auto_choose_window(if_auto_choose):
         time.sleep(1.5)
 
 
-def check_export_ok(if_export_ok, if_export_all_ok):
+def check_export_ok(if_export_ok=None, if_export_all_ok=None):
+    if if_export_ok is None and if_export_all_ok is None:
+        raise ValueError("check_export_ok参数不能都为空")
     # 参数配置--UI配置--程序设置
     if search_symbol(config.SETTING_DARK, 1):
         click_by_png(config.SETTING_DARK)
@@ -1954,8 +2196,20 @@ def check_export_ok(if_export_ok, if_export_all_ok):
     time.sleep(2)
     click_by_png(config.PARAM_UI_SETTING)
     time.sleep(2)
-    is_checked((659, 726), (671, 738), if_export_ok)
-    is_checked((659, 751), (671, 763), if_export_all_ok)
+    if if_export_ok is not None:
+        if if_export_ok:
+            if search_symbol(config.SETTING_UI_EXPORT_OK_NO, 2):
+                click_by_png(config.SETTING_UI_EXPORT_OK_NO)
+        else:
+            if search_symbol(config.SETTING_UI_EXPORT_OK_YES, 2):
+                click_by_png(config.SETTING_UI_EXPORT_OK_YES)
+    if if_export_all_ok is not None:
+        if if_export_all_ok:
+            if search_symbol(config.SETTING_UI_EXPORT_ALL_OK_NO, 2):
+                click_by_png(config.SETTING_UI_EXPORT_ALL_OK_NO)
+        else:
+            if search_symbol(config.SETTING_UI_EXPORT_ALL_OK_YES, 2):
+                click_by_png(config.SETTING_UI_EXPORT_ALL_OK_YES)   
     click_by_png(config.APPLY,timeout=1.5, tolerance=0.95)
     if search_symbol(config.NO, 1.5, tolerance=0.95):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.95)
@@ -2462,6 +2716,39 @@ def get_choose_box():
     else:
         return False, None
 
+# 获取算法框中心点
+def get_frame_center(color):
+    # 截取整个屏幕
+    screenshot = pyautogui.screenshot()
+    screenshot = np.array(screenshot)
+    
+    # 精确颜色匹配（可以增加一点点容差进行调试）
+    tolerance = 5
+    lower_color = np.array([max(0, color[0] - tolerance), max(0, color[1] - tolerance), max(0, color[2] - tolerance)])
+    upper_color = np.array([min(255, color[0] + tolerance), min(255, color[1] + tolerance), min(255, color[2] + tolerance)])
+    
+    # 根据阈值构建掩模
+    mask = cv2.inRange(screenshot, lower_color, upper_color)
+    
+    # 寻找轮廓
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
+    # 过滤小轮廓
+    blocks = [cv2.boundingRect(cnt) for cnt in contours if cv2.contourArea(cnt) > 6]
+    
+    if blocks:
+        # 选择第一个找到的方块
+        target_block = blocks[0]
+        target_x = target_block[0] + target_block[2] // 2
+        target_y = target_block[1] + target_block[3] // 2
+        center_point = (target_x, target_y)
+        logger.info(f"中心点坐标: {center_point}")
+        return center_point
+    else:
+        logger.info("未找到匹配的算法框中点")
+        return None
+
+
 # 扩大算法框
 def expand_choose_box(point=config.CENTRE):
     # 获取选择框
@@ -2575,14 +2862,17 @@ def detect_text(target_text):
     for text in result:
         similarity = SequenceMatcher(None, target_text, text).ratio()
         if similarity >= 0.66:
-            logger.info(f"识别到与“{target_text}”相似的文字：{text}")
+            logger.info(f"识别到与{target_text}相似的文字：{text}")
             return text  # 返回识别到的文字
 
-    logger.info(f"未识别到与“{target_text}”相似的文字")
+    logger.info(f"未识别到与{target_text}相似的文字")
     return None
 
-# 检查文字前面的勾选框状态 TODO
-def check_checkbox_status_before_text(target_text):
+# 检查文字前面的勾选框状态
+def check_checkbox_status_before_text(target_text, if_check=True, direction="left", range=10, mark_rgb=(255, 255, 255), frame_rgb=(0, 255, 0)):
+    logger.info("开始检查文字前的勾选框状态")
+    logger.info(f"目标文字: {target_text}, 方向: {direction}, 范围: {range}, 目标颜色: {mark_rgb}, 框架颜色: {frame_rgb}")
+
     # 截取屏幕
     screenshot = pyautogui.screenshot()
 
@@ -2591,16 +2881,52 @@ def check_checkbox_status_before_text(target_text):
 
     # 使用EasyOCR识别文字
     reader = easyocr.Reader(['ch_sim'])
-    result = reader.readtext(screenshot_cv, detail=0)
+    result = reader.readtext(screenshot_cv, detail=1)  # 获取详细信息以获取位置
+    # logger.info(f"识别结果: {result}")
 
     # 检查是否包含目标文字
-    for text in result:
+    for (bbox, text, _) in result:
         similarity = SequenceMatcher(None, target_text, text).ratio()
+        # logger.info(f"检测到文字: {text}, 相似度: {similarity}")
         if similarity >= 0.66:
-            logger.info(f"识别到与“{target_text}”相似的文字：{text}")
-            return True
+            logger.info(f"识别到与{target_text}相似的文字：{text}，相似度: {similarity}")
 
-    logger.info(f"未识别到与“{target_text}”相似的文字")
+            # 获取文字位置
+            (top_left, top_right, bottom_right, bottom_left) = bbox
+            logger.info(f"文字位置: {bbox}")
+            if direction == "left":
+                x_start, x_end = top_left[0] - range, top_left[0]
+                y_start, y_end = top_left[1], bottom_left[1]
+            elif direction == "right":
+                x_start, x_end = top_right[0], top_right[0] + range
+                y_start, y_end = top_right[1], bottom_right[1]
+            elif direction == "up":
+                x_start, x_end = top_left[0], top_right[0]
+                y_start, y_end = top_left[1] - range, top_left[1]
+            elif direction == "down":
+                x_start, x_end = bottom_left[0], bottom_right[0]
+                y_start, y_end = bottom_left[1], bottom_left[1] + range
+
+            # 检查frame_rgb方框内是否存在目标颜色
+            frame_region = screenshot_cv[y_start:y_end, x_start:x_end]
+            mask = cv2.inRange(frame_region, np.array(mark_rgb) - 10, np.array(mark_rgb) + 10)
+            rgb_present = np.any(mask)
+
+            if rgb_present:
+                if (if_check and rgb_present) or (not if_check and not rgb_present):
+                    logger.info(f"识别到与{target_text}相似的文字且确认勾选框状态与预期一致，不进行点击操作")
+                else:
+                    logger.info(f"识别到与{target_text}相似的文字且确认勾选框状态与预期不一致，将在指定区域点击")
+                    # 点击操作
+                    click_x = (x_start + x_end) // 2
+                    click_y = (y_start + y_end) // 2
+                    logger.info(f"点击位置: ({click_x}, {click_y})")
+                    pyautogui.click(x=click_x, y=click_y)
+                return True
+            else:
+                logger.error(f"在方向{direction}未找到目标颜色的方框")
+
+    logger.info(f"未识别到与{target_text}相似的文字，可能是因为未识别到文字或识别到的文字相似度不足")
     return False
 
 # 调整将CAD框随机变大，再变小
@@ -3061,7 +3387,7 @@ def write_text_textbox(image_path, text, color=(255, 255, 255), direction="right
         logger.info(f"开始寻找 {symbol}")
         
         try:
-            locations = list(pyautogui.locateAllOnScreen(symbol, confidence=0.95))
+            locations = list(pyautogui.locateAllOnScreen(symbol, confidence=0.75))
             if locations:
                 if locate_direction == "left":
                     location = min(locations, key=lambda loc: loc.left)
@@ -3176,11 +3502,11 @@ def write_text_textbox(image_path, text, color=(255, 255, 255), direction="right
             full_screen_center_y = y + contour_center_y
             logger.info(f"识别到的轮廓中心点的全屏坐标: ({full_screen_center_x}, {full_screen_center_y})")
 
-            # 可视化调试：在屏幕上显示选择的轮廓
-            debug_image_selected = screenshot_np.copy()
-            cv2.drawContours(debug_image_selected, [closest_contour], -1, (255, 0, 0), 2)
-            cv2.imshow("Selected Contour", debug_image_selected)
-            cv2.waitKey(0)
+            # # 可视化调试：在屏幕上显示选择的轮廓
+            # debug_image_selected = screenshot_np.copy()
+            # cv2.drawContours(debug_image_selected, [closest_contour], -1, (255, 0, 0), 2)
+            # cv2.imshow("Selected Contour", debug_image_selected)
+            # cv2.waitKey(0)
 
             # 检查距离是否超过200
             if distance > 200:
@@ -3188,9 +3514,14 @@ def write_text_textbox(image_path, text, color=(255, 255, 255), direction="right
                 logger.error(f"找到的区域与标识距离超过200, 坐标: ({full_screen_center_x}, {full_screen_center_y}), 颜色: {detected_color}")
                 raise Exception("找到的区域与标识距离超过200")
 
-            # 将文本写入该区域B的中心点
-            write_text((full_screen_center_x, full_screen_center_y), text, if_select_all)
-            logger.info(f"写入完毕，内容为：{text}")
+            if text:
+                # 将文本写入该区域B的中心点
+                write_text((full_screen_center_x, full_screen_center_y), text, if_select_all)
+                logger.info(f"写入完毕，内容为：{text}")
+            else:
+                # 如果没有text的话 就单击该坐标
+                pyautogui.click(full_screen_center_x, full_screen_center_y)
+                logger.info(f"没有提供文本，单击坐标: ({full_screen_center_x}, {full_screen_center_y})")
         else:
             raise Exception("未找到合适的颜色区域")
     except Exception as e:
@@ -3239,16 +3570,28 @@ def read_text_choosed(x, y):
 
 
 # 点击选中颜色
-def click_color(times, region, target_color_rgb=(239, 240, 242), right_click=0):
+def click_color(times, region, target_color_rgb=(239, 240, 242), right_click=0, direction=None):
     # 截取区域内的屏幕图像
     screenshot = pyautogui.screenshot(region=region)
     screenshot_np = np.array(screenshot)
     # 寻找颜色匹配的像素点
     matches = np.where(np.all(screenshot_np == target_color_rgb, axis=-1))
     if matches[0].size > 0:
-        # 随机获取一个匹配的点的坐标
-        random_index = random.randint(0, len(matches[0]) - 1)
-        x, y = matches[1][random_index], matches[0][random_index]
+        if direction:
+            if direction == 'up':
+                index = np.argmin(matches[0])
+            elif direction == 'down':
+                index = np.argmax(matches[0])
+            elif direction == 'left':
+                index = np.argmin(matches[1])
+            elif direction == 'right':
+                index = np.argmax(matches[1])
+            x, y = matches[1][index], matches[0][index]
+        else:
+            # 随机获取一个匹配的点的坐标
+            random_index = random.randint(0, len(matches[0]) - 1)
+            x, y = matches[1][random_index], matches[0][random_index]
+        
         # 转换为区域内的相对坐标
         x += region[0]
         y += region[1]
@@ -3280,6 +3623,18 @@ def count_color_in_range(coordinate, range, color):
     matches = np.where(np.all(screenshot_np[start_y:end_y, start_x:end_x] == color, axis=-1))
     logger.info(f"找到的像素点数量: {len(matches[0])}")
     return len(matches[0])
+# 获取区域内颜色占比
+def get_color_ratio_in_region(region, target_color_rgb):
+    screenshot = pyautogui.screenshot(region=region)
+    screenshot_np = np.array(screenshot)
+    total_pixels = screenshot_np.shape[0] * screenshot_np.shape[1]
+    matches = np.where(np.all(screenshot_np == target_color_rgb, axis=-1))
+    color_pixels = len(matches[0])
+    color_ratio = color_pixels / total_pixels
+    logger.info(f"区域内颜色占比: {color_ratio:.2%}")
+    return color_ratio
+
+
 # 获取鼠标指针处的颜色
 def get_mouse_color(mouse_coordinate):
     screenshot = pyautogui.screenshot()
