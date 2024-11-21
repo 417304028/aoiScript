@@ -2,3 +2,6 @@
 /log/
 /DongleConfig.ini
 /align.log/
+.idea/
+/*.spec
+/*.csv
