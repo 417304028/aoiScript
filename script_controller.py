@@ -12,12 +12,63 @@ import sys
 import win32event
 import win32api
 import winerror
+import csv
+import os
+from datetime import datetime
 
 # 创建一个全局的命名互斥体，确保同一时间只能有一个脚本控制器窗口打开
 mutex = win32event.CreateMutex(None, False, "Global\\ScriptControllerMutex")
 if win32api.GetLastError() == winerror.ERROR_ALREADY_EXISTS:
     logger.error("脚本控制器窗口已经在运行，不能同时打开多个实例。")
     sys.exit(0)
+
+# 定义 CSV 文件路径
+CSV_FILE_PATH = "test_results.csv"
+
+# 定义列名
+CSV_COLUMNS = [
+    "设备类型", "执行系统", "用例模块", "用例编号", "执行操作",
+    "执行结果", "预期结果", "执行时间", "备注"
+]
+
+def create_or_read_csv():
+    # 如果 CSV 文件不存在，则创建一个新的文件
+    if not os.path.exists(CSV_FILE_PATH):
+        with open(CSV_FILE_PATH, mode='w', newline='', encoding='utf-8') as file:
+            writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS)
+            writer.writeheader()
+
+def update_csv(module_name, method_name, operation, result, error_step, execution_time, remarks):
+    # 读取现有的 CSV 文件
+    with open(CSV_FILE_PATH, mode='a', newline='', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS)
+        writer.writerow({
+            "设备类型": "AOI",
+            "执行系统": "",  # 先不管
+            "用例模块": module_name,
+            "用例编号": method_name,
+            "执行操作": operation,
+            "执行结果": result,
+            "预期结果": "",  # 先不管
+            "执行时间": execution_time,
+            "备注": remarks
+        })
+
+def screenshot_error_to_excel(method_name, error_content, test_case_status):
+    # 捕捉错误并更新 CSV
+    execution_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    update_csv(
+        module_name=self.case_combobox.get(),
+        method_name=method_name,
+        operation=error_content,
+        result=test_case_status,
+        error_step="",  # 根据需要填写
+        execution_time=execution_time,
+        remarks=""
+    )
+
+# 在程序启动时调用
+create_or_read_csv()
 
 class HomeScreen(tk.Frame):
     def __init__(self, master=None):
@@ -70,8 +121,26 @@ class AOIDetailScreen(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
+        self.csv_path = "test_results.csv"
+        self.results = self.load_csv()
         self.pack()
         self.create_widgets()
+
+    def load_csv(self):
+        if not os.path.exists(self.csv_path):
+            with open(self.csv_path, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(["设备类型", "执行系统", "用例模块", "用例编号", "执行操作", "执行结果", "预期结果", "执行时间", "备注"])
+            return []
+        
+        with open(self.csv_path, mode='r') as file:
+            reader = csv.DictReader(file)
+            return list(reader)
+
+    def save_to_csv(self, data):
+        with open(self.csv_path, mode='a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(data)
 
     def create_widgets(self):
         style = ttk.Style()
@@ -135,13 +204,11 @@ class AOIDetailScreen(tk.Frame):
         self.more_label.bind("<Button-1>", self.more_info)
 
     def update_table(self, event=None):
-        module_name = self.case_combobox.get()
-        module = self.modules.get(module_name)
-        if module:
-            methods = inspect.getmembers(module, inspect.isfunction)
-            self.table.delete(*self.table.get_children())
-            for method_name, _ in methods:
-                self.add_table_row(method_name)
+        # 更新表格时读取 CSV
+        self.results = self.load_csv()
+        self.table.delete(*self.table.get_children())
+        for result in self.results:
+            self.table.insert("", "end", values=(result["用例编号"], result["执行结果"], "操作"))
 
     def add_table_row(self, method_name):
         item = self.table.insert("", "end", values=(method_name, "未执行"))
@@ -157,15 +224,35 @@ class AOIDetailScreen(tk.Frame):
         canvas = tk.Canvas(self.table, width=bbox[2], height=bbox[3])
         canvas.place(x=bbox[0], y=bbox[1])
 
-        # 创建按钮
-        execute_button = tk.Button(canvas, text="执行这条", command=lambda: self.execute_method(method_name))
-        execute_down_button = tk.Button(canvas, text="这条往下", command=lambda: self.execute_down(method_name))
+        # 创建按钮，设置样式和大小
+        execute_button = tk.Button(
+            canvas, text="执行这条", command=lambda: self.execute_method(method_name),
+            height=1, width=8, font=("Segoe UI", 9)
+        )
+        execute_down_button = tk.Button(
+            canvas, text="这条往下", command=lambda: self.execute_down(method_name),
+            height=1, width=8, font=("Segoe UI", 9)
+        )
 
         # 布局按钮
         execute_button.pack(side="left", padx=5)
         execute_down_button.pack(side="left", padx=5)
 
     def execute_method(self, method_name):
+        # 执行用例逻辑
+        result = "成功"  # 假设执行成功
+        error_step = ""  # 假设没有错误步骤
+        # 如果有错误，捕获并记录
+        try:
+            # 执行用例
+            pass
+        except Exception as e:
+            result = "失败"
+            error_step = str(e)
+
+        # 保存结果到 CSV
+        data = ["AOI", "", "", method_name, error_step, result, "", "", ""]
+        self.save_to_csv(data)
         print(f"执行方法: {method_name}")
 
     def execute_down(self, method_name):
