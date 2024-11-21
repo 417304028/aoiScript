@@ -258,6 +258,7 @@ def rv_ai_test(train_eval_paths, result_path, mode):
     
     # 搜索train_eval_path下层及更下层文件夹中同时拥有名字内含train的文件夹和含test文件夹的文件夹
     for train_eval_path in train_eval_paths:
+        first_completed_date = datetime.datetime.now().strftime("%Y-%m-%d")
         # 清空列表以避免数据污染
         train_paths.clear()
         eval_results.clear()
@@ -762,7 +763,6 @@ def rv_ai_test(train_eval_paths, result_path, mode):
             utils.click_by_png(config.RV_AI_JOB_NAME, if_click_right=1)
             pyautogui.press('down')
             pyautogui.press('enter')
-            first_completed_date = datetime.datetime.now().strftime("%Y-%m-%d")
             another_date = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
             result_xlsx_dir = os.path.join(pyd_path, "eval_logs")
             # 结果xlsx文档，无论有没有过夜，生成的结果都在该文档 每次跑完个train路径就存一次 
