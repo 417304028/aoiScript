@@ -73,27 +73,30 @@ def sync_csv_to_xlsx(csv_path, xlsx_path):
         # 遍历CSV中的每一行，将数据剪切到XLSX
         rows_to_remove = []
         for index, row in df_csv.iterrows():
-            csv_id = row['id']
-            # 查找XLSX中对应的行
-            xlsx_row = df_xlsx[df_xlsx['id'] == csv_id]
-            if not xlsx_row.empty:
-                # 检查CSV行是否已存在于XLSX中
-                if (xlsx_row.iloc[0, 6:] == row).all():
-                    logger.info(f"CSV中的行已存在于XLSX中，跳过同步: {row.to_dict()}")
-                    continue
-                # 更新XLSX中对应的列，假设df_csv的列数为N
-                for col_index, col_name in enumerate(df_csv.columns):
-                    # 在XLSX中对应的列索引为6 + col_index
-                    df_xlsx.loc[xlsx_row.index, df_xlsx.columns[col_index + 6]] = row[col_name]
-                logger.info(f"已将CSV中的行剪切到XLSX: {row.to_dict()}")
-            else:
-                # 如果XLSX中没有对应的行，则添加新行
-                new_row = pd.Series([None] * 6 + list(row), index=df_xlsx.columns)
-                df_xlsx = pd.concat([df_xlsx, new_row.to_frame().T], ignore_index=True)
-                logger.info(f"已将CSV中的新行添加到XLSX: {row.to_dict()}")
+            try:
+                csv_id = row['id']
+                # 查找XLSX中对应的行
+                xlsx_row = df_xlsx[df_xlsx['id'] == csv_id]
+                if not xlsx_row.empty:
+                    # 检查CSV行是否已存在于XLSX中
+                    if (xlsx_row.iloc[0, 6:] == row).all():
+                        logger.info(f"CSV中的行已存在于XLSX中，跳过同步: {row.to_dict()}")
+                        continue
+                    # 更新XLSX中对应的列，假设df_csv的列数为N
+                    for col_index, col_name in enumerate(df_csv.columns):
+                        # 在XLSX中对应的列索引为6 + col_index
+                        df_xlsx.loc[xlsx_row.index, df_xlsx.columns[col_index + 6]] = row[col_name]
+                    logger.info(f"已将CSV中的行剪切到XLSX: {row.to_dict()}")
+                else:
+                    # 如果XLSX中没有对应的行，则添加新行
+                    new_row = pd.Series([None] * 6 + list(row), index=df_xlsx.columns[:6 + len(row)])
+                    df_xlsx = pd.concat([df_xlsx, new_row.to_frame().T], ignore_index=True)
+                    logger.info(f"已将CSV中的新行添加到XLSX: {row.to_dict()}")
 
-            # 记录需要删除的CSV行索引
-            rows_to_remove.append(index)
+                # 记录需要删除的CSV行索引
+                rows_to_remove.append(index)
+            except Exception as row_error:
+                logger.error(f"处理CSV行时发生错误: {row_error}, 行内容: {row.to_dict()}")
 
         # 删除CSV中已处理的行，保留标题行
         if rows_to_remove:
@@ -259,6 +262,7 @@ def rv_ai_test(train_eval_paths, result_path, mode):
         train_paths.clear()
         eval_results.clear()
         train_statuses.clear()
+        dir_suffix = os.path.basename(os.path.normpath(train_eval_path))
         for root, dirs, files in os.walk(train_eval_path):
             if root != train_eval_path:  # 忽略train_eval_path该级文件夹
                 train_folder = None
@@ -274,7 +278,6 @@ def rv_ai_test(train_eval_paths, result_path, mode):
         logger.success(f"读取train_eval_path下所有的训练路径train_paths: {train_paths}")
 
         # 使用 检测pyd_path下是否有train_logs的文件夹,没有的话创建该文件夹,在文件夹内创建 年-月-日.csv(若不存在的话)
-        dir_suffix = os.path.basename(os.path.normpath(train_eval_path))
         train_logs_dir = os.path.join(pyd_path, 'train_logs')
         os.makedirs(train_logs_dir, exist_ok=True)
         train_control_csv = os.path.join(train_logs_dir, f"train_control_{dir_suffix}.csv")
@@ -466,7 +469,7 @@ def rv_ai_test(train_eval_paths, result_path, mode):
                         else:
                             logger.error("没有找到符合条件的记录")
                         # 取两分钟内的记录，如果在队列中的话，则记录其task_id，3分钟后如果还是显示队列中则
-                        if latest_record and '推理' in latest_record[0] and '���功' in latest_record[2]:
+                        if latest_record and '推理' in latest_record[0] and '成功' in latest_record[2]:
                             eval_result = '推理成功'
                             if train_result == '待训练':
                                 eval_result = f"{train_result}, {eval_result}"
@@ -791,63 +794,62 @@ def rv_ai_test(train_eval_paths, result_path, mode):
                 logger.info(f"推理结果生成路径: {eval_result_xlsx}")
                 # 如果xlsx不存在 则先新增xlsx
                 if not os.path.exists(eval_result_xlsx):
-                    if os.path.exists(eval_result_csv_first):
-                        with open(eval_result_csv_first, 'rb') as file:
-                            content = file.read()
-                            result = chardet.detect(content)
-                            encoding = result['encoding'] if result['encoding'] else 'utf-8'
-                            # 尝试使用探测到的编码打开文件，如果失败则使用GBK编码尝试
-                            try:
-                                content = content.decode(encoding)
-                            except UnicodeDecodeError as e:
-                                logger.error(f"编码解码错误: {e}")
-                                content = content.decode('gbk', errors='ignore')
-
-                        # 使用探测到的编码读取文件
+                    with open(eval_result_csv_first, 'rb') as file:
+                        content = file.read()
+                        result = chardet.detect(content)
+                        encoding = result['encoding'] if result['encoding'] else 'utf-8'
+                        # 尝试使用探测到的编码打开文件，如果失败则使用GBK编码尝试
                         try:
-                            df_csv = pd.read_csv(eval_result_csv_first, encoding=encoding)
-                        except UnicodeEncodeError as e:
-                            logger.error(f"读取CSV文件时发生编码错误: {e}")
-                            raise Exception(f"读取CSV文件时发生编码错误: {e}")
+                            content = content.decode(encoding)
+                        except UnicodeDecodeError as e:
+                            logger.error(f"编码解码错误: {e}")
+                            content = content.decode('gbk', errors='ignore')
 
-                        # 添加新列
-                        df_csv = df_csv.assign(eval结果=None, good_ng=None, eval图片=None, 定位图片=None, train图片=None, eval路径=None)
+                    # 使用探测到的编码读取文件
+                    try:
+                        df_csv = pd.read_csv(eval_result_csv_first, encoding=encoding)
+                    except UnicodeEncodeError as e:
+                        logger.error(f"读取CSV文件时发生编码错误: {e}")
+                        raise Exception(f"读取CSV文件时发生编码错误: {e}")
+
+                    # 直接保存为XLSX，不对CSV进行列调整
+                    try:
+                        # 在XLSX中添加新列
+                        df_xlsx = df_csv.assign(eval结果=None, good_ng=None, eval图片=None, 定位图片=None, train图片=None, eval路径=None)
                         # 重新排序列，将新列放在前面
-                        columns_order = ['eval结果', 'good_ng', 'eval图片', '定位图片', 'train图片', 'eval路径'] + [col for col in df_csv.columns if col not in ['eval结果', 'good_ng', 'eval图片', '定位图片', 'train图片', 'eval路径']]
-                        df_csv = df_csv[columns_order]
-                        # 保存为XLSX
-                        try:
-                            df_csv.to_excel(eval_result_xlsx, index=False, engine='openpyxl')
-                        except Exception as e:
-                            logger.error(f"保存为XLSX时发生错误: {e}")
-                            raise Exception(f"保存为XLSX时发生错误: {e}")
+                        columns_order = ['eval结果', 'good_ng', 'eval图片', '定位图片', 'train图片', 'eval路径'] + [col for col in df_xlsx.columns if col not in ['eval结果', 'good_ng', 'eval图片', '定位图片', 'train图片', 'eval路径']]
+                        df_xlsx = df_xlsx[columns_order]
+                        df_xlsx.to_excel(eval_result_xlsx, index=False, engine='openpyxl')
+                    except Exception as e:
+                        logger.error(f"保存为XLSX时发生错误: {e}")
+                        raise Exception(f"保存为XLSX时发生错误: {e}")
 
-                        logger.info("对xlsx作预处理")
-                        # 打开xlsx
-                        xlsx = pd.read_excel(eval_result_xlsx, engine='openpyxl')
-                        # 去除列名中的空白符
-                        xlsx.columns = [col.strip() for col in xlsx.columns]
-                        # 使用openpyxl直接加载工作簿以修改列名样式
-                        wb = openpyxl.load_workbook(eval_result_xlsx)
-                        ws = wb.active
-                        # 取消列名加粗
-                        for cell in ws[1]:  # 第一行是列名
-                            cell.font = Font(bold=False)
-                        # 设置B列和D列的列宽为18字符
-                        ws.column_dimensions['C'].width = 18
-                        ws.column_dimensions['D'].width = 18
-                        ws.column_dimensions['E'].width = 18
-                        # 保存修改后的工作簿
-                        wb.save(eval_result_xlsx)
-                        # 重新加载DataFrame以确保列名更改生效
-                        xlsx = pd.read_excel(eval_result_xlsx, engine='openpyxl')
-                        # 去除列名中的空白符和其他特殊字符
-                        xlsx.columns = [re.sub(r'\s+', '', col) for col in xlsx.columns]
-                        logger.info("推理结束后对xlsx作预处理完成，此后每条train路径完成后都会进行一次同步")
-                        
-                        # 新增完xlsx后删除csv的原有数据，保留标题行
-                        df_csv.iloc[0:0].to_csv(eval_result_csv_first, index=False, encoding='utf-8-sig')
-                        logger.info("已删除csv中的原有数据，仅保留标题行")
+                    logger.info("对xlsx作预处理")
+                    # 打开xlsx
+                    xlsx = pd.read_excel(eval_result_xlsx, engine='openpyxl')
+                    # 去除列名中的空白符
+                    xlsx.columns = [col.strip() for col in xlsx.columns]
+                    # 使用openpyxl直接加载工作簿以修改列名样式
+                    wb = openpyxl.load_workbook(eval_result_xlsx)
+                    ws = wb.active
+                    # 取消列名加粗
+                    for cell in ws[1]:  # 第一行是列名
+                        cell.font = Font(bold=False)
+                    # 设置B列和D列的列宽为18字符
+                    ws.column_dimensions['C'].width = 18
+                    ws.column_dimensions['D'].width = 18
+                    ws.column_dimensions['E'].width = 18
+                    # 保存修改后的工作簿
+                    wb.save(eval_result_xlsx)
+                    # 重新加载DataFrame以确保列名更改生效
+                    xlsx = pd.read_excel(eval_result_xlsx, engine='openpyxl')
+                    # 去除列名中的空白符和其他特殊字符
+                    xlsx.columns = [re.sub(r'\s+', '', col) for col in xlsx.columns]
+                    logger.info("推理结束后对xlsx作预处理完成，此后每条train路径完成后都会进行一次同步")
+                    
+                    # 新增完xlsx后删除csv的原有数据，保留标题行
+                    df_csv.iloc[0:0].to_csv(eval_result_csv_first, index=False, encoding='utf-8-sig')
+                    logger.info("已删除csv中的原有数据，仅保留标题行")
                 else:
                     have_trained_before = True
                     for eval_result_csv in [eval_result_csv_first, eval_result_csv_another]:
