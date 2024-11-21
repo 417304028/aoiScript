@@ -65,6 +65,7 @@ def sync_csv_to_xlsx(csv_path, xlsx_path):
         df_xlsx['id'] = df_xlsx['id'].astype(str).str.strip()
 
         # 遍历CSV中的每一行，将数据剪切到XLSX
+        rows_to_remove = []
         for index, row in df_csv.iterrows():
             csv_id = row['id']
             # 查找XLSX中对应的行
@@ -78,16 +79,20 @@ def sync_csv_to_xlsx(csv_path, xlsx_path):
                 for col_index, col_name in enumerate(df_csv.columns):
                     # 在XLSX中对应的列索引为6 + col_index
                     df_xlsx.loc[xlsx_row.index, df_xlsx.columns[col_index + 6]] = row[col_name]
-                # 从CSV中删除已剪切的行
-                df_csv.drop(index, inplace=True)
                 logger.info(f"已将CSV中的行剪切到XLSX: {row.to_dict()}")
             else:
                 # 如果XLSX中没有对应的行，则添加新行
                 new_row = pd.Series([None] * 6 + list(row), index=df_xlsx.columns)
                 df_xlsx = pd.concat([df_xlsx, new_row.to_frame().T], ignore_index=True)
-                # 从CSV中删除已剪切的行
-                df_csv.drop(index, inplace=True)
                 logger.info(f"已将CSV中的新行添加到XLSX: {row.to_dict()}")
+
+            # 记录需要删除的CSV行索引
+            rows_to_remove.append(index)
+
+        # 删除CSV中已处理的行
+        if rows_to_remove:
+            logger.info(f"将从CSV中删除以下行索引: {rows_to_remove}")
+        df_csv.drop(rows_to_remove, inplace=True)
 
         # 保存更新后的XLSX文件
         with pd.ExcelWriter(xlsx_path, engine='openpyxl') as writer:
@@ -100,6 +105,7 @@ def sync_csv_to_xlsx(csv_path, xlsx_path):
     except Exception as e:
         logger.error(f"处理Excel文件时发生错误: {e}")
         raise Exception(f"处理Excel文件时发生错误: {e}")
+
 
 
 
