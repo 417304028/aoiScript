@@ -23,7 +23,7 @@ if win32api.GetLastError() == winerror.ERROR_ALREADY_EXISTS:
     sys.exit(0)
 
 # 定义 CSV 文件路径
-CSV_FILE_PATH = "test_results.csv"
+CSV_FILE_PATH = "storage.csv"
 
 # 定义列名
 CSV_COLUMNS = [
@@ -169,6 +169,7 @@ class AOIDetailScreen(tk.Frame):
 
         self.case_combobox = ttk.Combobox(self, values=list(self.modules.keys()), width=10)
         self.case_combobox.bind("<<ComboboxSelected>>", self.update_table)
+        self.case_combobox.bind("<<ComboboxSelected>>", self.insert_methods_to_csv)
         self.case_combobox.grid(row=0, column=3, padx=5, pady=5)
 
         self.search_frame = tk.Frame(self)
@@ -209,6 +210,14 @@ class AOIDetailScreen(tk.Frame):
         self.table.delete(*self.table.get_children())
         for result in self.results:
             self.table.insert("", "end", values=(result["用例编号"], result["执行结果"], "操作"))
+
+    def insert_methods_to_csv(self, event=None):
+        module_name = self.case_combobox.get()
+        module = self.modules.get(module_name)
+        if module:
+            methods = [func for func in dir(module) if callable(getattr(module, func)) and not func.startswith("__")]
+            for method in methods:
+                update_csv(module_name, method, "", "未执行", "", "", "")
 
     def add_table_row(self, method_name):
         item = self.table.insert("", "end", values=(method_name, "未执行"))
