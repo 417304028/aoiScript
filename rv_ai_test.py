@@ -8,11 +8,15 @@ def submit():
     train_eval_paths = [path.strip() for path in entry_train_eval_path.get().split(';')]  # 支持多个由;分隔开的路径，并去除每个路径前后的空白符
     result_path = entry_result_path.get().strip()  # 去除路径前后的空白符
     mode = mode_var.get()
+    status = None  # 初始化status变量
+    train_statuses = None  # 初始化train_statuses变量
+
     if not os.path.exists(result_path):
         root.attributes('-topmost', True)
         messagebox.showerror("错误", "结果路径不存在，请重新输入！", parent=root)
         root.attributes('-topmost', False)
         return
+
     if mode == "正常":
         status, train_statuses = rv_ai_test(train_eval_paths, result_path, "normal")
     elif mode == "存在good/ng":

@@ -117,10 +117,6 @@ def sync_csv_to_xlsx(csv_path, xlsx_path):
         logger.error(f"处理Excel文件时发生错误: {e}")
         raise Exception(f"处理Excel文件时发生错误: {e}")
 
-
-
-
-
 # ai复判 总路径(包含train,test文件夹),结果路径（含定位图片及输出数据文档）
 def rv_ai_test(train_eval_paths, result_path, mode):
     # 从提供的路径向上遍历，直到找到包含pyd的目录,用pyd_path保存
@@ -140,8 +136,9 @@ def rv_ai_test(train_eval_paths, result_path, mode):
     if not found:
         logger.error(f"在路径 {result_path} 中未找到包含 '{substring}' 的目录")
         raise Exception(f"在路径 {result_path} 中未找到包含 '{substring}' 的目录")
-    
 
+    result_xlsx_dir = os.path.join(pyd_path, "eval_logs")
+    os.makedirs(result_xlsx_dir, exist_ok=True)
     # 仅仅将csv处理为xlsx
     if not train_eval_paths and result_path:
 
@@ -257,11 +254,12 @@ def rv_ai_test(train_eval_paths, result_path, mode):
     train_paths = [] # 用于存储train_path
     eval_results = [] # 用于存储各个eval_path及其结果
     train_statuses = [] # 用于存储各个train_path及其状态 用于后续显示
-    
     # 搜索train_eval_path下层及更下层文件夹中同时拥有名字内含train的文件夹和含test文件夹的文件夹
     for train_eval_path in train_eval_paths:
         first_completed_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        another_date = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        # 结果xlsx文档，无论有没有过夜，生成的结果都在该文档 每次跑完个train路径就存一次 
+        eval_result_xlsx = os.path.join(result_xlsx_dir, f"{first_completed_date}_{os.path.basename(train_eval_path)}.xlsx")
+
         # 清空列表以避免数据污染
         train_paths.clear()
         eval_results.clear()
@@ -767,41 +765,32 @@ def rv_ai_test(train_eval_paths, result_path, mode):
             pyautogui.press('down')
             pyautogui.press('enter')
 
-            result_xlsx_dir = os.path.join(pyd_path, "eval_logs")
-            # 结果xlsx文档，无论有没有过夜，生成的结果都在该文档 每次跑完个train路径就存一次 
-            eval_result_xlsx = os.path.join(result_xlsx_dir, f"{first_completed_date}_{os.path.basename(train_eval_path)}.xlsx")
-
             have_trained_before = False
             # tep下小路径训练-推理结束，获得了eval_results。将训练推理生成的csv转为xlsx，并将eval_results装至xlsx。
             try:
-                # 查找两种命名的csv文件
-                eval_result_csv_first = os.path.join(pyd_path, "logs", "res_static", f"{first_completed_date}.csv")
-                eval_result_csv_another = os.path.join(pyd_path, "logs", "res_static", f"{another_date}.csv")
-                if os.path.exists(eval_result_csv_first):
-                    logger.info(f"推理后生成的csv位置A: {eval_result_csv_first}")
-                if os.path.exists(eval_result_csv_another):
-                    logger.info(f"推理后生成的csv位置B: {eval_result_csv_another}")
-
-                # 检查至少存在一种csv文件
-                if not os.path.exists(eval_result_csv_first) and not os.path.exists(eval_result_csv_another):
+                res_static_dir = os.path.join(pyd_path, "logs", "res_static")
+                csv_files = glob.glob(os.path.join(res_static_dir, "*.csv"))
+                if not csv_files:
+                    logger.error("res_static目录中未找到任何csv文件")
+                    raise Exception("res_static目录中未找到任何csv文件")
+                eval_result_newest_csv = max(csv_files, key=os.path.getctime)
+                if not os.path.exists(eval_result_newest_csv):
                     logger.error("未找到推理后生成的csv文件")
                     raise Exception("未找到推理后生成的csv文件")
-                # 新增日志文件
-                os.makedirs(result_xlsx_dir, exist_ok=True)
                 if len(train_eval_paths) == 1 or train_eval_path == train_eval_paths[-1]:
-                    completed_txt_path = os.path.join(result_xlsx_dir, "脚本已运行完成.txt")
+                    completed_txt_path = os.path.join(result_xlsx_dir, f"{os.path.basename(train_eval_path)}_脚本已运行完成.txt")
+                    final_completed_txt_path = os.path.join(result_xlsx_dir, "脚本已运行完成.txt")
                 else:
                     completed_txt_path = os.path.join(result_xlsx_dir, f"{os.path.basename(train_eval_path)}_脚本已运行完成.txt")
                 if os.path.exists(completed_txt_path):
                     os.remove(completed_txt_path)
+                if os.path.exists(final_completed_txt_path):
+                    os.remove(final_completed_txt_path)
                 logger.info(f"推理结果生成路径: {eval_result_xlsx}")
 
                 # 如果xlsx不存在 则先新增xlsx
                 if not os.path.exists(eval_result_xlsx):
-                    # 如果eval_result_csv_first不存在，尝试使用eval_result_csv_another
-                    eval_result_csv = eval_result_csv_first if os.path.exists(eval_result_csv_first) else eval_result_csv_another
-
-                    with open(eval_result_csv, 'rb') as file:
+                    with open(eval_result_newest_csv, 'rb') as file:
                         content = file.read()
                         result = chardet.detect(content)
                         encoding = result['encoding'] if result['encoding'] else 'utf-8'
@@ -814,7 +803,7 @@ def rv_ai_test(train_eval_paths, result_path, mode):
 
                     # 使用探测到的编码读取文件
                     try:
-                        df_csv = pd.read_csv(eval_result_csv, encoding=encoding)
+                        df_csv = pd.read_csv(eval_result_newest_csv, encoding=encoding)
                     except UnicodeEncodeError as e:
                         logger.error(f"读取CSV文件时发生编码错误: {e}")
                         raise Exception(f"读取CSV文件时发生编码错误: {e}")
@@ -859,13 +848,12 @@ def rv_ai_test(train_eval_paths, result_path, mode):
                     logger.info("已删除csv中的原有数据，仅保留标题行")
                 else:
                     have_trained_before = True
-                    for eval_result_csv in [eval_result_csv_first, eval_result_csv_another]:
-                        if os.path.exists(eval_result_csv):
-                            try:
-                                sync_csv_to_xlsx(eval_result_csv, eval_result_xlsx)
-                            except Exception as e:
-                                logger.error(f"同步CSV到XLSX时发生错误: {e}")
-                                raise
+                    if os.path.exists(eval_result_newest_csv):
+                        try:
+                            sync_csv_to_xlsx(eval_result_newest_csv, eval_result_xlsx)
+                        except Exception as e:
+                            logger.error(f"同步CSV到XLSX时发生错误: {e}")
+                            raise
 
             except Exception as e:
                 logger.error(f"转csv为xlsx并同步数据至xlsx时发生错误: {e}")
@@ -1071,6 +1059,9 @@ def rv_ai_test(train_eval_paths, result_path, mode):
 
         with open(completed_txt_path, "w") as f:
             pass
+        if len(train_eval_paths) == 1 or train_eval_path == train_eval_paths[-1]:
+            with open(final_completed_txt_path, "w") as f:
+                pass
 
     logger.info(f"ai复判完成")
     logger.info(f"train_statuses: {train_statuses}")
