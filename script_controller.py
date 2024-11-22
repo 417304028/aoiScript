@@ -12,7 +12,7 @@ import sys
 import win32event
 import win32api
 import winerror
-import csv
+import openpyxl
 import os
 from datetime import datetime
 
@@ -22,42 +22,48 @@ if win32api.GetLastError() == winerror.ERROR_ALREADY_EXISTS:
     logger.error("脚本控制器窗口已经在运行，不能同时打开多个实例。")
     sys.exit(0)
 
-# 定义 CSV 文件路径
-CSV_FILE_PATH = "storage.csv"
+# 定义 Excel 文件路径
+EXCEL_FILE_PATH = "test_results.xlsx"
 
 # 定义列名
-CSV_COLUMNS = [
+EXCEL_COLUMNS = [
     "设备类型", "执行系统", "用例模块", "用例编号", "执行操作",
     "执行结果", "预期结果", "执行时间", "备注"
 ]
 
-def create_or_read_csv():
-    # 如果 CSV 文件不存在，则创建一个新的文件
-    if not os.path.exists(CSV_FILE_PATH):
-        with open(CSV_FILE_PATH, mode='w', newline='', encoding='utf-8') as file:
-            writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS)
-            writer.writeheader()
+def create_or_read_excel():
+    # 如果 Excel 文件不存在，则创建一个新的文件
+    if not os.path.exists(EXCEL_FILE_PATH):
+        wb = openpyxl.Workbook()
+        wb.save(EXCEL_FILE_PATH)
 
-def update_csv(module_name, method_name, operation, result, error_step, execution_time, remarks):
-    # 读取现有的 CSV 文件
-    with open(CSV_FILE_PATH, mode='a', newline='', encoding='utf-8') as file:
-        writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS)
-        writer.writerow({
-            "设备类型": "AOI",
-            "执行系统": "",  # 先不管
-            "用例模块": module_name,
-            "用例编号": method_name,
-            "执行操作": operation,
-            "执行结果": result,
-            "预期结果": "",  # 先不管
-            "执行时间": execution_time,
-            "备注": remarks
-        })
+def update_excel(module_name, method_name, operation, result, error_step, execution_time, remarks):
+    # 读取现有的 Excel 文件
+    wb = openpyxl.load_workbook(EXCEL_FILE_PATH)
+    if module_name not in wb.sheetnames:
+        wb.create_sheet(module_name)
+        sheet = wb[module_name]
+        sheet.append(EXCEL_COLUMNS)
+    else:
+        sheet = wb[module_name]
+    
+    sheet.append([
+        "AOI",
+        "",  # 先不管
+        module_name,
+        method_name,
+        operation,
+        result,
+        "",  # 先不管
+        execution_time,
+        remarks
+    ])
+    wb.save(EXCEL_FILE_PATH)
 
 def screenshot_error_to_excel(method_name, error_content, test_case_status):
-    # 捕捉错误并更新 CSV
+    # 捕捉错误并更新 Excel
     execution_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    update_csv(
+    update_excel(
         module_name=self.case_combobox.get(),
         method_name=method_name,
         operation=error_content,
@@ -68,7 +74,7 @@ def screenshot_error_to_excel(method_name, error_content, test_case_status):
     )
 
 # 在程序启动时调用
-create_or_read_csv()
+create_or_read_excel()
 
 class HomeScreen(tk.Frame):
     def __init__(self, master=None):
@@ -121,26 +127,42 @@ class AOIDetailScreen(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
-        self.csv_path = "test_results.csv"
-        self.results = self.load_csv()
+        self.excel_path = EXCEL_FILE_PATH
+        self.results = self.load_excel()
         self.pack()
         self.create_widgets()
 
-    def load_csv(self):
-        if not os.path.exists(self.csv_path):
-            with open(self.csv_path, mode='w', newline='') as file:
-                writer = csv.writer(file)
-                writer.writerow(["设备类型", "执行系统", "用例模块", "用例编号", "执行操作", "执行结果", "预期结果", "执行时间", "备注"])
-            return []
+    def load_excel(self):
+        if not os.path.exists(self.excel_path):
+            wb = openpyxl.Workbook()
+            wb.save(self.excel_path)
+            return {}
         
-        with open(self.csv_path, mode='r') as file:
-            reader = csv.DictReader(file)
-            return list(reader)
+        wb = openpyxl.load_workbook(self.excel_path)
+        # 删除第一个空的工作表
+        if 'Sheet' in wb.sheetnames and not wb['Sheet'].max_row > 1:
+            wb.remove(wb['Sheet'])
+            wb.save(self.excel_path)
 
-    def save_to_csv(self, data):
-        with open(self.csv_path, mode='a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(data)
+        results = {}
+        for sheet_name in wb.sheetnames:
+            sheet = wb[sheet_name]
+            results[sheet_name] = []
+            for row in sheet.iter_rows(min_row=2, values_only=True):
+                results[sheet_name].append(row)
+        return results
+
+    def save_to_excel(self, data, module_name):
+        wb = openpyxl.load_workbook(self.excel_path)
+        if module_name not in wb.sheetnames:
+            wb.create_sheet(module_name)
+            sheet = wb[module_name]
+            sheet.append(EXCEL_COLUMNS)
+        else:
+            sheet = wb[module_name]
+        
+        sheet.append(data)
+        wb.save(self.excel_path)
 
     def create_widgets(self):
         style = ttk.Style()
@@ -169,7 +191,7 @@ class AOIDetailScreen(tk.Frame):
 
         self.case_combobox = ttk.Combobox(self, values=list(self.modules.keys()), width=10)
         self.case_combobox.bind("<<ComboboxSelected>>", self.update_table)
-        self.case_combobox.bind("<<ComboboxSelected>>", self.insert_methods_to_csv)
+        self.case_combobox.bind("<<ComboboxSelected>>", self.insert_methods_to_excel)
         self.case_combobox.grid(row=0, column=3, padx=5, pady=5)
 
         self.search_frame = tk.Frame(self)
@@ -204,20 +226,30 @@ class AOIDetailScreen(tk.Frame):
         self.more_label.grid(row=3, column=0, columnspan=6, pady=10)
         self.more_label.bind("<Button-1>", self.more_info)
 
-    def update_table(self, event=None):
-        # 更新表格时读取 CSV
-        self.results = self.load_csv()
-        self.table.delete(*self.table.get_children())
-        for result in self.results:
-            self.table.insert("", "end", values=(result["用例编号"], result["执行结果"], "操作"))
+        # 加载所有模块的方法到Excel
+        self.load_all_modules_to_excel()
 
-    def insert_methods_to_csv(self, event=None):
+    def load_all_modules_to_excel(self):
+        for module_name, module in self.modules.items():
+            methods = [func for func in dir(module) if callable(getattr(module, func)) and not func.startswith("__")]
+            for method in methods:
+                update_excel(module_name, method, "", "未执行", "", "", "")
+
+    def update_table(self, event=None):
+        # 更新表格时读取 Excel
+        module_name = self.case_combobox.get()
+        if module_name in self.results:
+            self.table.delete(*self.table.get_children())
+            for result in self.results[module_name]:
+                self.table.insert("", "end", values=(result[3], result[5], "操作"))
+
+    def insert_methods_to_excel(self, event=None):
         module_name = self.case_combobox.get()
         module = self.modules.get(module_name)
         if module:
             methods = [func for func in dir(module) if callable(getattr(module, func)) and not func.startswith("__")]
             for method in methods:
-                update_csv(module_name, method, "", "未执行", "", "", "")
+                update_excel(module_name, method, "", "未执行", "", "", "")
 
     def add_table_row(self, method_name):
         item = self.table.insert("", "end", values=(method_name, "未执行"))
@@ -259,9 +291,9 @@ class AOIDetailScreen(tk.Frame):
             result = "失败"
             error_step = str(e)
 
-        # 保存结果到 CSV
+        # 保存结果到 Excel
         data = ["AOI", "", "", method_name, error_step, result, "", "", ""]
-        self.save_to_csv(data)
+        self.save_to_excel(data, self.case_combobox.get())
         print(f"执行方法: {method_name}")
 
     def execute_down(self, method_name):
