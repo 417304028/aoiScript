@@ -1,20 +1,16 @@
 import tkinter as tk
 from tkinter import ttk
-from threading import Thread, current_thread
 from loguru import logger
-import importlib
 from scripts import yjk, lxbj, jbgn, kjj, spc, tccs
-from utils import running_event, test_case_status
-import ctypes
-import inspect
 from utils import setup_logger
 import sys
 import win32event
 import win32api
 import winerror
-import openpyxl
+import csv
 import os
 from datetime import datetime
+import threading
 
 # 创建一个全局的命名互斥体，确保同一时间只能有一个脚本控制器窗口打开
 mutex = win32event.CreateMutex(None, False, "Global\\ScriptControllerMutex")
@@ -22,59 +18,58 @@ if win32api.GetLastError() == winerror.ERROR_ALREADY_EXISTS:
     logger.error("脚本控制器窗口已经在运行，不能同时打开多个实例。")
     sys.exit(0)
 
-# 定义 Excel 文件路径
-EXCEL_FILE_PATH = "test_results.xlsx"
+# 定义 CSV 文件路径
+CSV_FILE_PATH = "test_results.csv"
 
 # 定义列名
-EXCEL_COLUMNS = [
+CSV_COLUMNS = [
     "设备类型", "执行系统", "用例模块", "用例编号", "执行操作",
     "执行结果", "预期结果", "执行时间", "备注"
 ]
 
-def create_or_read_excel():
-    # 如果 Excel 文件不存在，则创建一个新的文件
-    if not os.path.exists(EXCEL_FILE_PATH):
-        wb = openpyxl.Workbook()
-        wb.save(EXCEL_FILE_PATH)
+def create_or_read_csv():
+    # 如果 CSV 文件不存在，则创建一个新的文件
+    if not os.path.exists(CSV_FILE_PATH):
+        with open(CSV_FILE_PATH, mode='w', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow(CSV_COLUMNS)
+        logger.info("创建新的CSV文件")
 
-def update_excel(module_name, method_name, operation, result, error_step, execution_time, remarks):
-    # 读取现有的 Excel 文件
-    wb = openpyxl.load_workbook(EXCEL_FILE_PATH)
-    if module_name not in wb.sheetnames:
-        wb.create_sheet(module_name)
-        sheet = wb[module_name]
-        sheet.append(EXCEL_COLUMNS)
-    else:
-        sheet = wb[module_name]
-    
-    sheet.append([
-        "AOI",
-        "",  # 先不管
-        module_name,
-        method_name,
-        operation,
-        result,
-        "",  # 先不管
-        execution_time,
-        remarks
-    ])
-    wb.save(EXCEL_FILE_PATH)
+def update_csv(module_name, method_name, operation, result, error_step, execution_time, remarks, lock):
+    with lock:
+        # 读取现有的 CSV 文件
+        with open(CSV_FILE_PATH, mode='a', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow([
+                "AOI",
+                "",  # 先不管
+                module_name,
+                method_name,
+                operation,
+                result,
+                "",  # 先不管
+                execution_time,
+                remarks
+            ])
+        logger.info(f"更新CSV文件: {module_name} - {method_name}")
 
-def screenshot_error_to_excel(method_name, error_content, test_case_status):
-    # 捕捉错误并更新 Excel
+def process_error_update_csv(method_name, error_content, test_case_status, lock):
+    # 捕捉错误并更新 CSV
     execution_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    update_excel(
+    update_csv(
         module_name=self.case_combobox.get(),
         method_name=method_name,
         operation=error_content,
         result=test_case_status,
         error_step="",  # 根据需要填写
         execution_time=execution_time,
-        remarks=""
+        remarks="",
+        lock=lock
     )
+    logger.error(f"捕捉错误并更新CSV: {method_name} - {error_content}")
 
 # 在程序启动时调用
-create_or_read_excel()
+create_or_read_csv()
 
 class HomeScreen(tk.Frame):
     def __init__(self, master=None):
@@ -122,47 +117,64 @@ class HomeScreen(tk.Frame):
     def open_aoi_detail(self):
         if self.selected_icon.get() == "AOI":
             self.master.switch_frame(AOIDetailScreen)
+            # 启动加载模块的线程
+            threading.Thread(target=self.load_modules_in_background).start()
+
+    def load_modules_in_background(self):
+        try:
+            total_methods = sum([len([func for func in dir(module) if callable(getattr(module, func)) and not func.startswith("__")]) for module in self.master.current_frame.modules.values()])
+            loaded_methods = 0
+            
+            # 循环加载所有模块的方法
+            for module_name, module in self.master.current_frame.modules.items():
+                methods = [func for func in dir(module) if callable(getattr(module, func)) and not func.startswith("__")]
+                for method in methods:
+                    # 每加载一个方法
+                    loaded_methods += 1
+                    
+                    # 插入方法到CSV
+                    lock = threading.Lock()
+                    t = threading.Thread(target=update_csv, args=(module_name, method, "", "", "", "", "", lock))
+                    t.start()
+                    t.join()
+
+        except Exception as e:
+            logger.error(f"加载模块时出错: {e}")
 
 class AOIDetailScreen(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
-        self.excel_path = EXCEL_FILE_PATH
-        self.results = self.load_excel()
+        self.csv_path = CSV_FILE_PATH
+        self.results = self.load_csv()
+        self.displayed_rows = 50
         self.pack()
         self.create_widgets()
 
-    def load_excel(self):
-        if not os.path.exists(self.excel_path):
-            wb = openpyxl.Workbook()
-            wb.save(self.excel_path)
+    def load_csv(self):
+        if not os.path.exists(self.csv_path):
+            with open(self.csv_path, mode='w', newline='', encoding='utf-8') as file:
+                writer = csv.writer(file)
+                writer.writerow(CSV_COLUMNS)
+            logger.info("CSV文件不存在，创建新的CSV文件")
             return {}
         
-        wb = openpyxl.load_workbook(self.excel_path)
-        # 删除第一个空的工作表
-        if 'Sheet' in wb.sheetnames and not wb['Sheet'].max_row > 1:
-            wb.remove(wb['Sheet'])
-            wb.save(self.excel_path)
-
         results = {}
-        for sheet_name in wb.sheetnames:
-            sheet = wb[sheet_name]
-            results[sheet_name] = []
-            for row in sheet.iter_rows(min_row=2, values_only=True):
-                results[sheet_name].append(row)
+        with open(self.csv_path, mode='r', newline='', encoding='utf-8') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                module_name = row["用例模块"]
+                if module_name not in results:
+                    results[module_name] = []
+                results[module_name].append(row)
+        logger.info("加载CSV文件内容")
         return results
 
-    def save_to_excel(self, data, module_name):
-        wb = openpyxl.load_workbook(self.excel_path)
-        if module_name not in wb.sheetnames:
-            wb.create_sheet(module_name)
-            sheet = wb[module_name]
-            sheet.append(EXCEL_COLUMNS)
-        else:
-            sheet = wb[module_name]
-        
-        sheet.append(data)
-        wb.save(self.excel_path)
+    def save_to_csv(self, data, module_name):
+        lock = threading.Lock()
+        t = threading.Thread(target=update_csv, args=(module_name, data[3], data[4], data[5], data[4], data[7], data[8], lock))
+        t.start()
+        t.join()
 
     def create_widgets(self):
         style = ttk.Style()
@@ -186,12 +198,12 @@ class AOIDetailScreen(tk.Frame):
             "元件库": yjk,
             "基本功能": jbgn,
             "快捷键": kjj,
-            "SPC": spc
+            "SPC": spc,
+            "TCCS": tccs
         }
 
-        self.case_combobox = ttk.Combobox(self, values=list(self.modules.keys()), width=10)
-        self.case_combobox.bind("<<ComboboxSelected>>", self.update_table)
-        self.case_combobox.bind("<<ComboboxSelected>>", self.insert_methods_to_excel)
+        self.case_combobox = ttk.Combobox(self, values=list(self.results.keys()), width=10)
+        self.case_combobox.bind("<<ComboboxSelected>>", self.on_module_selected)
         self.case_combobox.grid(row=0, column=3, padx=5, pady=5)
 
         self.search_frame = tk.Frame(self)
@@ -209,7 +221,7 @@ class AOIDetailScreen(tk.Frame):
         self.start_button = ttk.Button(self.search_frame, text="开始执行", style="TButton", width=10)
         self.start_button.pack(side="left", padx=5)
 
-        self.stop_button = ttk.Button(self.search_frame, text="停止执行", style="TButton", width=10)
+        self.stop_button = ttk.Button(self.search_frame, text="停止执行", style="TButton", width=10, command=self.stop_execution)
         self.stop_button.pack(side="left", padx=5)
 
         self.table = ttk.Treeview(self, columns=("编码", "状态", "操作"), show="headings", height=10)
@@ -226,33 +238,52 @@ class AOIDetailScreen(tk.Frame):
         self.more_label.grid(row=3, column=0, columnspan=6, pady=10)
         self.more_label.bind("<Button-1>", self.more_info)
 
-        # 加载所有模块的方法到Excel
-        self.load_all_modules_to_excel()
+        # 加载所有模块的方法到CSV
+        self.load_all_modules_to_csv()
 
-    def load_all_modules_to_excel(self):
+    def load_all_modules_to_csv(self):
+        lock = threading.Lock()
+        total_methods = sum([len([func for func in dir(module) if callable(getattr(module, func)) and not func.startswith("__")]) for module in self.modules.values()])
+        loaded_methods = 0
+
         for module_name, module in self.modules.items():
             methods = [func for func in dir(module) if callable(getattr(module, func)) and not func.startswith("__")]
             for method in methods:
-                update_excel(module_name, method, "", "未执行", "", "", "")
+                t = threading.Thread(target=update_csv, args=(module_name, method, "", "", "", "", "", lock))
+                t.start()
+                t.join()
+                loaded_methods += 1
+
+        logger.info("加载所有模块的方法到CSV")
 
     def update_table(self, event=None):
-        # 更新表格时读取 Excel
+        # 更新表格时读取 CSV
         module_name = self.case_combobox.get()
-        if module_name in self.results:
+        if (module_name in self.results):
             self.table.delete(*self.table.get_children())
-            for result in self.results[module_name]:
-                self.table.insert("", "end", values=(result[3], result[5], "操作"))
+            try:
+                for result in self.results[module_name][:self.displayed_rows]:
+                    self.table.insert("", "end", values=(result["用例编号"], result["执行结果"], "操作"))
+                    logger.info(f"加载用例编号: {result['用例编号']}, 执行结果: {result['执行结果']}")
+                logger.info(f"更新表格: {module_name}")
+            except Exception as e:
+                logger.error(f"加载表格时出错: {e}")
 
-    def insert_methods_to_excel(self, event=None):
+    def insert_methods_to_csv(self, event=None):
         module_name = self.case_combobox.get()
         module = self.modules.get(module_name)
         if module:
+            lock = threading.Lock()
             methods = [func for func in dir(module) if callable(getattr(module, func)) and not func.startswith("__")]
             for method in methods:
-                update_excel(module_name, method, "", "未执行", "", "", "")
+                t = threading.Thread(target=update_csv, args=(module_name, method, "", "", "", "", "", lock))
+                t.start()
+                t.join()
+        self.update_table()  # 更换模块后从CSV读取对应的模块显示在列表内
+        logger.info(f"插入方法到CSV: {module_name}")
 
     def add_table_row(self, method_name):
-        item = self.table.insert("", "end", values=(method_name, "未执行"))
+        item = self.table.insert("", "end", values=(method_name, ""))
         self.add_buttons_to_row(item, method_name)
 
     def add_buttons_to_row(self, item, method_name):
@@ -280,21 +311,54 @@ class AOIDetailScreen(tk.Frame):
         execute_down_button.pack(side="left", padx=5)
 
     def execute_method(self, method_name):
-        # 执行用例逻辑
-        result = "成功"  # 假设执行成功
-        error_step = ""  # 假设没有错误步骤
-        # 如果有错误，捕获并记录
-        try:
-            # 执行用例
-            pass
-        except Exception as e:
-            result = "失败"
-            error_step = str(e)
+        # 启动一个新线程来执行用例逻辑
+        def run_test():
+            result = "进行中"
+            error_step = ""
+            self.update_status_in_csv_and_ui(method_name, result)
 
-        # 保存结果到 Excel
-        data = ["AOI", "", "", method_name, error_step, result, "", "", ""]
-        self.save_to_excel(data, self.case_combobox.get())
-        print(f"执行方法: {method_name}")
+            try:
+                # 执行用例
+                # 假设执行成功
+                result, last_exception = self.run_test_case(method_name)
+                if last_exception:
+                    result = "失败"
+                    error_step = str(last_exception)
+                else:
+                    result = "成功"
+            except Exception as e:
+                result = "失败"
+                error_step = str(e)
+
+            # 保存结果到 CSV
+            data = ["AOI", "", "", method_name, error_step, result, "", "", ""]
+            self.save_to_csv(data, self.case_combobox.get())
+            logger.info(f"执行方法: {method_name} - 结果: {result}")
+            print(f"执行方法: {method_name}")
+
+        threading.Thread(target=run_test).start()
+
+    def run_test_case(self, method_name):
+        # 这里调用实际的测试方法
+        # 假设返回值为 (result, last_exception)
+        # 需要根据实际情况实现
+        return "成功", None
+
+    def update_status_in_csv_and_ui(self, method_name, status):
+        lock = threading.Lock()
+        t = threading.Thread(target=update_csv, args=(self.case_combobox.get(), method_name, "", status, "", "", "", lock))
+        t.start()
+        t.join()
+
+        for item in self.table.get_children():
+            if self.table.item(item, "values")[0] == method_name:
+                self.table.set(item, column="状态", value=status)
+
+    def stop_execution(self):
+        # 停止所有线程
+        # 这里需要实现线程的管理和停止逻辑
+        logger.info("停止所有线程")
+        # 可能需要使用线程池或其他方式来管理线程
 
     def execute_down(self, method_name):
         print(f"执行从方法: {method_name} 开始的所有方法")
@@ -319,8 +383,37 @@ class AOIDetailScreen(tk.Frame):
             self.search_entry.configure(foreground="gray")
 
     def more_info(self, event):
-        # TODO: Add functionality for more info
-        pass
+        self.displayed_rows += 50
+        self.update_table()
+
+    def load_test_cases(self, module_name):
+        if module_name in self.results:
+            test_cases = []
+            results_list = []
+            
+            for row in self.results[module_name]:
+                test_case_id = row["用例编号"]
+                result = row["执行结果"]
+                test_cases.append(test_case_id)
+                results_list.append(result)
+            
+            self.update_test_case_list(test_cases)
+            self.update_status_list(results_list)
+        else:
+            logger.warning(f"模块 {module_name} 不存在于CSV文件中。")
+
+    def update_test_case_list(self, test_cases):
+        self.table.delete(*self.table.get_children())
+        for test_case in test_cases:
+            self.table.insert("", "end", values=(test_case, "未执行", "操作"))
+
+    def update_status_list(self, results):
+        for i, result in enumerate(results):
+            self.table.set(self.table.get_children()[i], column="状态", value=result)
+
+    def on_module_selected(self, event):
+        selected_module = self.case_combobox.get()
+        self.load_test_cases(selected_module)
 
 class Application(tk.Tk):
     def __init__(self):
