@@ -5,7 +5,8 @@ from scripts.rv import rv_ai_test
 from utils import setup_logger
 
 def submit():
-    train_eval_paths = [path.strip() for path in entry_train_eval_path.get().split(';')]  # 支持多个由;分隔开的路径，并去除每个路径前后的空白符
+    train_eval_paths = [path.strip().replace('；', ';') for path in entry_train_eval_path.get().split(';') if path.strip() and path.strip() != default_text]  # 支持多个由;分隔开的路径，并去除每个路径前后的空白符
+
     result_path = entry_result_path.get().strip()  # 去除路径前后的空白符
     mode = mode_var.get()
     status = None  # 初始化status变量
@@ -21,12 +22,14 @@ def submit():
         status, train_statuses = rv_ai_test(train_eval_paths, result_path, "normal")
     elif mode == "存在good/ng":
         status, train_statuses = rv_ai_test(train_eval_paths, result_path, "good_ng")
+    elif mode == "处理文档":
+        status, _ = rv_ai_test(train_eval_paths, result_path, "file")
     
-    if not train_statuses:
-        root.attributes('-topmost', True)
-        messagebox.showerror("错误", "train_statuses 为空，请检查脚本运行情况", parent=root)
-        root.attributes('-topmost', False)
-        return
+    # if not train_statuses:
+    #     root.attributes('-topmost', True)
+    #     messagebox.showerror("错误", "train_statuses 为空，请检查脚本运行情况", parent=root)
+    #     root.attributes('-topmost', False)
+    #     return
     
     update_train_paths_status(train_statuses)
     
@@ -93,7 +96,7 @@ if __name__ == '__main__':
 
     tk.Label(left_frame, text="输入总路径(包含train,test文件夹)").pack(anchor='w', pady=(0, 5))
     entry_train_eval_path = tk.Entry(left_frame, fg='grey')
-    default_text = "可以输入多个路径，以;分隔开"
+    default_text = "可以输入多个路径，以分号分隔开"
     entry_train_eval_path.insert(0, default_text)
     entry_train_eval_path.bind('<FocusIn>', lambda event: on_entry_click(event, entry_train_eval_path, default_text))
     entry_train_eval_path.bind('<FocusOut>', lambda event: on_focusout(event, entry_train_eval_path, default_text))
@@ -106,7 +109,7 @@ if __name__ == '__main__':
     tk.Label(left_frame, text="选择模式：").pack(anchor='w', pady=(0, 5))
     mode_var = tk.StringVar(left_frame)
     mode_var.set("正常")
-    mode_options = ["正常", "存在good/ng"]
+    mode_options = ["正常", "存在good/ng", "处理文档"]
     mode_combobox = ttk.Combobox(left_frame, textvariable=mode_var, values=mode_options, state="readonly")
     mode_combobox.pack(fill='x', pady=(0, 10))
 

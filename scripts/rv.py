@@ -120,8 +120,12 @@ def sync_csv_to_xlsx(csv_path, xlsx_path):
 # ai复判 总路径(包含train,test文件夹),结果路径（含定位图片及输出数据文档）
 def rv_ai_test(train_eval_paths, result_path, mode):
     # 从提供的路径向上遍历，直到找到包含pyd的目录,用pyd_path保存
+    logger.info(f"传入的train_eval_paths: {train_eval_paths}")
+    logger.info(f"传入的result_path: {result_path}")
+    logger.info(f"传入的mode: {mode}")
     logger.info(f"查询pyd路径")
     pyd_path = result_path
+    trained_success_list = []
     substring = 'py'
     root_path = os.path.abspath(os.sep)
     found = False  # 用于标记是否找到包含子字符串的目录
@@ -140,7 +144,7 @@ def rv_ai_test(train_eval_paths, result_path, mode):
     result_xlsx_dir = os.path.join(pyd_path, "eval_logs")
     os.makedirs(result_xlsx_dir, exist_ok=True)
     # 仅仅将csv处理为xlsx
-    if not train_eval_paths and result_path:
+    if not train_eval_paths and result_path or mode == "file":
 
         logger.info("训练推理为空，结果路径非空，开始处理结果路径下的.csv文件")
         csv_files = glob.glob(os.path.join(result_path, '*.csv'))
@@ -194,6 +198,32 @@ def rv_ai_test(train_eval_paths, result_path, mode):
                     if excel_row > 1:
                         ws.row_dimensions[excel_row].height = 75
                     id = ws.cell(row=excel_row, column=8).value
+
+                    # 检测train_eval_paths下（包括根目录）文件名为id的（不包括后缀） 后缀为jpg或者bmp的路径
+                    eval_path = None
+                    id_without_ext = os.path.splitext(id)[0]
+                    if isinstance(train_eval_paths, list):
+                        logger.info("train_eval_paths是一个列表")
+                        for path in train_eval_paths:
+                            for root, dirs, files in os.walk(path):
+                                for file in files:
+                                    if os.path.splitext(file)[0] == id_without_ext and file.lower().endswith(('.jpg', '.bmp')):
+                                        eval_path = os.path.join(root, file)
+                                        break
+                                if eval_path:
+                                    break
+                            if eval_path:
+                                break
+                    else:
+                        logger.info("train_eval_paths不是一个列表，假定其为单个路径")
+                        for root, dirs, files in os.walk(train_eval_paths):
+                            for file in files:
+                                if os.path.splitext(file)[0] == id_without_ext and file.lower().endswith(('.jpg', '.bmp')):
+                                    eval_path = os.path.join(root, file)
+                                    break
+                            if eval_path:
+                                break
+                    ws.cell(row=excel_row, column=6).value = eval_path if eval_path else "未找到路径"
 
                     eval_image_cell = ws.cell(row=excel_row, column=3)
                     eval_image_path = ws.cell(row=excel_row, column=9).value        
@@ -265,11 +295,16 @@ def rv_ai_test(train_eval_paths, result_path, mode):
         eval_results.clear()
         train_statuses.clear()
         dir_suffix = os.path.basename(os.path.normpath(train_eval_path))
+        
+        # 确保路径是 Unicode 格式
+        train_eval_path = os.path.abspath(train_eval_path)
+        
         for root, dirs, files in os.walk(train_eval_path):
             if root != train_eval_path:  # 忽略train_eval_path该级文件夹
                 train_folder = None
                 test_folder = None
                 for d in dirs:
+                    # 使用 Unicode 字符串处理
                     if 'train' in d:
                         train_folder = os.path.join(root, d)
                     if 'test' in d:
@@ -277,13 +312,16 @@ def rv_ai_test(train_eval_paths, result_path, mode):
                 if train_folder and test_folder:
                     if os.path.isdir(train_folder) and os.path.isdir(test_folder):
                         train_paths.append(train_folder)
+        if not train_paths:
+            raise Exception(f"{train_eval_path}下未读取到训练路径")
         logger.success(f"读取train_eval_path下所有的训练路径train_paths: {train_paths}")
+
 
         # 使用 检测pyd_path下是否有train_logs的文件夹,没有的话创建该文件夹,在文件夹内创建 年-月-日.csv(若不存在的话)
         train_logs_dir = os.path.join(pyd_path, 'train_logs')
         os.makedirs(train_logs_dir, exist_ok=True)
         train_control_csv = os.path.join(train_logs_dir, f"train_control_{dir_suffix}.csv")
-        trained_success_list = []
+        trained_success_list.clear()
 
         # 读取里边为训练完成的训练路径装入trained_success_list。
         if os.path.exists(train_control_csv):
@@ -300,18 +338,19 @@ def rv_ai_test(train_eval_paths, result_path, mode):
                 writer.writerow(['train路径', 'train状态'])
                 for train_path in train_paths:
                     writer.writerow([train_path, '待训练'])
-
+        # 是否跳过大循环
+        should_continue_outer = True
         for train_path in train_paths:
             try:
                 # 如果有训练完成的，则跳过
                 if train_path in trained_success_list:
                     logger.info(f"训练路径{train_path}训练状态为完成，跳过")
                     continue
-
+                should_continue_outer = False
                 pyperclip.copy(train_path)
                 logger.info(f"开始训练{train_path}")
                 utils.click_by_png(config.RV_AI_SIMULATE_TO_TRAIN)
-                if utils.search_symbol_erroring(config.RV_AI_TRAIN_SUCCESS, 90):
+                if utils.search_symbol_erroring(config.RV_AI_TRAIN_SUCCESS, 180):
                     time.sleep(0.5)
                     pyautogui.press('enter')
                 time.sleep(0.5)
@@ -446,6 +485,13 @@ def rv_ai_test(train_eval_paths, result_path, mode):
                         pyautogui.hotkey('ctrl', 'c')
                         logger.info("开始解析推理状态")
                         clipboard_content = pyperclip.paste()
+                        if clipboard_content is None:
+                            logger.error("复制到的推理状态为空")
+                            time.sleep(10)
+                            pyautogui.hotkey('ctrl', 'a')
+                            time.sleep(1.5)
+                            pyautogui.hotkey('ctrl', 'c')
+                            clipboard_content = pyperclip.paste()
                         task_lines = clipboard_content.split('\n')
                         latest_time = None
                         latest_record = None
@@ -518,14 +564,14 @@ def rv_ai_test(train_eval_paths, result_path, mode):
                         # 确保剪切板内容正确
                         clipboard_content = pyperclip.paste()
                         for i in range(5):
-                            pyperclip.copy(eval_path_from_txt)
+                            pyperclip.copy(good_path_from_txt)
                             time.sleep(2)
                             clipboard_content = pyperclip.paste()
-                            logger.info(f"第{i+1}次复制检测，剪切板内容: {clipboard_content}，期望内容: {eval_path_from_txt}")
-                            if clipboard_content == eval_path_from_txt:
+                            logger.info(f"第{i+1}次复制检测，剪切板内容: {clipboard_content}，期望内容: {good_path_from_txt}")
+                            if clipboard_content == good_path_from_txt:
                                 break
                         
-                        if clipboard_content != eval_path_from_txt:
+                        if clipboard_content != good_path_from_txt:
                             logger.error("无法确保剪切板内容正确，操作中止")
                             raise Exception("剪切板内容不匹配")
                         
@@ -610,23 +656,20 @@ def rv_ai_test(train_eval_paths, result_path, mode):
                                 utils.click_by_png(config.RV_AI_CLOSE_MISSION_MANAGE, timeout=5)
                                 time.sleep(10)  # 等待10秒后再次尝试
                                 retry_count += 1
+                        
+                        time.sleep(1)
                         eval_results.clear()
                         eval_results.append((good_path, eval_result, good_ng))
-                        time.sleep(3)
-                        # 手动筛选，本页pass
-                        utils.click_by_png(config.RV_AI_JOB_NAME, if_click_right=1)
+                        # 推理完成后，待确认列表，选中图片，同板批量删除
+                        if utils.search_symbol(config.RV_AI_CONFIRM_NO):
+                            utils.click_by_png(config.RV_AI_CONFIRM_NO)
+                        utils.click_by_png(config.RV_AI_NO_CONFIRMED)
+                        pyautogui.rightClick()
+                        pyautogui.press('up', presses=3)
+                        pyautogui.press('enter')
                         time.sleep(1)
-                        utils.click_by_png(config.RV_AI_MANUAL_FILTER)
-                        time.sleep(1)
-                        # 不断pass 直到没图片
-                        while True:
-                            if utils.search_symbol(config.RV_AI_IMAGE_ZERO, 5, tolerance=0.95):
-                                utils.click_by_png(config.RV_AI_CURRENT_CLOSE, tolerance=0.99)
-                                break
-                            utils.click_by_png(config.RV_AI_PASS, tolerance=0.9)
-                            time.sleep(1)
-                            pyautogui.press('enter')
-                            time.sleep(3)
+
+
                     if os.path.exists(ng_path):
                         logger.info(f"ng存在: {ng_path}")
                         good_ng = "ng"
@@ -645,14 +688,14 @@ def rv_ai_test(train_eval_paths, result_path, mode):
                         # 确保剪切板内容正确
                         clipboard_content = pyperclip.paste()
                         for i in range(5):
-                            pyperclip.copy(eval_path_from_txt)
+                            pyperclip.copy(ng_path_from_txt)
                             time.sleep(2)
                             clipboard_content = pyperclip.paste()
-                            logger.info(f"第{i+1}次复制检测，剪切板内容: {clipboard_content}，期望内容: {eval_path_from_txt}")
-                            if clipboard_content == eval_path_from_txt:
+                            logger.info(f"第{i+1}次复制检测，剪切板内容: {clipboard_content}，期望内容: {ng_path_from_txt}")
+                            if clipboard_content == ng_path_from_txt:
                                 break
                         
-                        if clipboard_content != eval_path_from_txt:
+                        if clipboard_content != ng_path_from_txt:
                             logger.error("无法确保剪切板内容正确，操作中止")
                             raise Exception("剪切板内容不匹配")
                         
@@ -738,23 +781,11 @@ def rv_ai_test(train_eval_paths, result_path, mode):
                                 time.sleep(10)  # 等待10秒后再次尝试
                                 retry_count += 1
 
+                        time.sleep(1)
                         eval_results.clear()
                         eval_results.append((ng_path, eval_result, good_ng))
-                        time.sleep(3)
-                        # 手动筛选，本页ng
-                        utils.click_by_png(config.RV_AI_JOB_NAME, if_click_right=1)
-                        time.sleep(1)
-                        utils.click_by_png(config.RV_AI_MANUAL_FILTER)
-                        time.sleep(1)
-                        # 搜是否图片为0 没搜到的话不断ng 直到没图片
-                        while True:
-                            if utils.search_symbol(config.RV_AI_IMAGE_ZERO, 5, tolerance=0.95):
-                                utils.click_by_png(config.RV_AI_CURRENT_CLOSE, tolerance=0.99)
-                                break
-                            utils.click_by_png(config.RV_AI_NG, tolerance=0.9)
-                            time.sleep(1)
-                            pyautogui.press('enter')
-                            time.sleep(3)
+
+
 
             except Exception as e:
                 logger.error(f"在处理{train_path}时发生错误: {e}")
@@ -765,7 +796,9 @@ def rv_ai_test(train_eval_paths, result_path, mode):
             pyautogui.press('down')
             pyautogui.press('enter')
 
+
             have_trained_before = False
+            final_completed_txt_path = None
             # tep下小路径训练-推理结束，获得了eval_results。将训练推理生成的csv转为xlsx，并将eval_results装至xlsx。
             try:
                 res_static_dir = os.path.join(pyd_path, "logs", "res_static")
@@ -773,6 +806,7 @@ def rv_ai_test(train_eval_paths, result_path, mode):
                 if not csv_files:
                     logger.error("res_static目录中未找到任何csv文件")
                     raise Exception("res_static目录中未找到任何csv文件")
+                # 找到最新的csv
                 eval_result_newest_csv = max(csv_files, key=os.path.getctime)
                 if not os.path.exists(eval_result_newest_csv):
                     logger.error("未找到推理后生成的csv文件")
@@ -782,13 +816,14 @@ def rv_ai_test(train_eval_paths, result_path, mode):
                     final_completed_txt_path = os.path.join(result_xlsx_dir, "脚本已运行完成.txt")
                 else:
                     completed_txt_path = os.path.join(result_xlsx_dir, f"{os.path.basename(train_eval_path)}_脚本已运行完成.txt")
+                    final_completed_txt_path = os.path.join(result_xlsx_dir, "脚本已运行完成.txt")
                 if os.path.exists(completed_txt_path):
                     os.remove(completed_txt_path)
-                if os.path.exists(final_completed_txt_path):
+                if final_completed_txt_path and os.path.exists(final_completed_txt_path):
                     os.remove(final_completed_txt_path)
                 logger.info(f"推理结果生成路径: {eval_result_xlsx}")
 
-                # 如果xlsx不存在 则先新增xlsx
+                # 如果xlsx不存在 则复制csv为xlsx 
                 if not os.path.exists(eval_result_xlsx):
                     with open(eval_result_newest_csv, 'rb') as file:
                         content = file.read()
@@ -844,7 +879,7 @@ def rv_ai_test(train_eval_paths, result_path, mode):
                     logger.info("推理结束后对xlsx作预处理完成，此后每条train路径完成后都会进行一次同步")
                     
                     # 新增完xlsx后删除csv的原有数据，保留标题行
-                    df_csv.iloc[0:0].to_csv(eval_result_csv, index=False, encoding='utf-8-sig')
+                    df_csv.iloc[0:0].to_csv(eval_result_newest_csv, index=False, encoding='utf-8-sig')
                     logger.info("已删除csv中的原有数据，仅保留标题行")
                 else:
                     have_trained_before = True
@@ -957,6 +992,10 @@ def rv_ai_test(train_eval_paths, result_path, mode):
                     raise Exception(f"记录训练结果时发生错误: {e}")
                 finally:
                     logger.info("记录训练结果操作完成")
+        # 所有路径都被跳过，则进入下一个tep
+        if should_continue_outer:
+            logger.warning("所有路径都被跳过，进入下一个tep")
+            continue
         # 如果有多条train_eval_path（tep）的话 每条tep每次把底下te小路径训练推理完后装入xlsx内。每个tep只有1个xlsx。
         # 单条tep装入完后再排序和插入图 
         if os.path.exists(eval_result_xlsx):

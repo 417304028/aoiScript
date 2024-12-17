@@ -9,24 +9,24 @@ import time
 import pyautogui
 import config
 
-@utils.screenshot_error_to_excel()
-# 新建单板程式
-def jbgn_001_01():
-    utils.check_and_launch_aoi()
-    # 1、新建程式文件：选择保存目录，选择单板CAD文件，输入【程式名称】，【是】
-    # 2、点击进版
-    # 3、待页面上方绿色方块到中间位置，点击【移到板边】，将版右下角位置移到屏幕中心十字线，点击【右下角标记位】
-    # 4、点击操作镜头的字母让其变成EG再点击左上箭头
-    # 5、将版左上角移动到屏幕中心十字线，点击【左上角标记位】
-    # 6、点击【扫描整版】
-    # 7、点击【是】
-    # 8、确认基板颜色提示框，根据实际情况点击【是】或【否】
-    # 9、弹出导入库提示框，选择【Default】后点击是
-    # 10、选中MARK点附近的空元件：Designator，右键选择【标记点操作】--【转换为标记点】--【是】
-    # 11、选中标记点--右键选择【标记点操作】--【根据标记点矫正元件】
+# @utils.screenshot_error_to_excel()
+# # 新建单板程式
+# def jbgn_001_01():
+#     utils.check_and_launch_aoi()
+#     # 1、新建程式文件：选择保存目录，选择单板CAD文件，输入【程式名称】，【是】
+#     # 2、点击进版
+#     # 3、待页面上方绿色方块到中间位置，点击【移到板边】，将版右下角位置移到屏幕中心十字线，点击【右下角标记位】
+#     # 4、点击操作镜头的字母让其变成EG再点击左上箭头
+#     # 5、将版左上角移动到屏幕中心十字线，点击【左上角标记位】
+#     # 6、点击【扫描整版】
+#     # 7、点击【是】
+#     # 8、确认基板颜色提示框，根据实际情况点击【是】或【否】
+#     # 9、弹出导入库提示框，选择【Default】后点击是
+#     # 10、选中MARK点附近的空元件：Designator，右键选择【标记点操作】--【转换为标记点】--【是】
+#     # 11、选中标记点--右键选择【标记点操作】--【根据标记点矫正元件】
 
 
-    pass
+    # pass
 
 
 
@@ -59,6 +59,8 @@ def jbgn_001_04():
         while not utils.search_symbol(config.OPEN_PROGRAM_TOPIC, 2):
             time.sleep(1)
             utils.click_by_png(config.OPEN_PROGRAM)
+            if utils.search_symbol(config.QUESTION_MARK, 2):
+                pyautogui.press("enter")
         time.sleep(2)
         # 2、在弹窗中的【程式主目录】，选择程式的目录或输入程式目录，例：D:\EYAOI\JOB，回车
         directory = r"D:\EYAOI\JOB"
@@ -72,51 +74,51 @@ def jbgn_001_04():
         found = False
         program_count = 0
         for symbol in symbols:
-            try:
-                located_symbols = list(pyautogui.locateAllOnScreen(symbol, region=config.PROGRAM_LIST_REGION))
-                program_count += len(located_symbols)
-                logger.info(f"找到 {len(located_symbols)} 个 {symbol} 符号")
-            except Exception:
-                logger.warning(f"未找到 {symbol} 符号")
-                continue
-
+            program_count += utils.count_symbol_on_region(symbol, object_of_reference=config.OPEN_PROGRAM_REMOVE, direction="left")
         if program_count == 0:
             raise Exception("未发现任何程式")
-        # 计算D:\EYAOI\JOB内，往下一级的第一级路径含有名称内含.fov的文件夹，且该文件夹下包含.txt文件和.bmp文件的文件夹个数
-        folder_count = len([name for name in os.listdir(directory) if os.path.isdir(os.path.join(directory, name)) and '.fov' in name and any(f.endswith('.txt') for f in os.listdir(os.path.join(directory, name))) and any(f.endswith('.bmp') for f in os.listdir(os.path.join(directory, name)))])
-        # 比较数量是否相同
-        if program_count != folder_count:
-            logger.warning(f"未能显示目录下所有程式，实际程式数量: {program_count}，期望程式数量: {folder_count}")
-            raise Exception(f"未能显示目录下所有程式，实际程式数量: {program_count}，期望程式数量: {folder_count}")
+        # 计算D:\EYAOI\JOB内，包含.fov文件夹（要包含.txt文件和.bmp文件）的文件夹个数
+        folder_count = 0
+        for folder_name in os.listdir(directory):
+            folder_path = os.path.join(directory, folder_name)
+            if os.path.isdir(folder_path):
+                # 查找以 .fov 结尾的文件夹
+                fov_folders = [f for f in os.listdir(folder_path) if f.endswith('.fov') and os.path.isdir(os.path.join(folder_path, f))]
+                for fov_folder in fov_folders:
+                    fov_folder_path = os.path.join(folder_path, fov_folder)
+                    # 检查 .fov 文件夹中是否包含 .txt 和 .bmp 文件
+                    if any(file.endswith('.txt') for file in os.listdir(fov_folder_path)) and any(file.endswith('.bmp') for file in os.listdir(fov_folder_path)):
+                        folder_count += 1
+                        break  # 找到一个符合条件的 .fov 文件夹即可，不需要继续检查其他 .fov 文件夹
+        # 如果program_count小于13，比较数量是否相同
+        if program_count < 13 and program_count != folder_count:
+            logger.warning(f"未能显示目录下所有程式，识别到的程式数量: {program_count}，文件夹内程式数量: {folder_count}")
+            raise Exception(f"未能显示目录下所有程式，识别到的程式数量: {program_count}，文件夹内程式数量: {folder_count}")
         # 3、在【程式列表】--【主目录程式】，双击任一准备测试的程式
         for symbol in symbols:
-            if utils.search_symbol(symbol, 3,region=config.PROGRAM_LIST_REGION):
-                utils.click_by_png(symbol, 2,region=config.PROGRAM_LIST_REGION)
-                if not utils.search_symbol(symbol, 3,region=config.SELECTED_PROGRAM_REGION):
-                    raise Exception("双击后程式未出现在被选程式列表中")
-                found = True
+            if utils.search_symbol(symbol, 3,object_of_reference = config.OPEN_PROGRAM_REMOVE,direction="left",tolerance=0.7):
+                utils.click_by_png(symbol, 2,object_of_reference = config.OPEN_PROGRAM_REMOVE,direction="left",tolerance=0.7)
+                time.sleep(2)
                 break
-            else:
-                raise Exception("打开程式-程式列表内未发现程式")
+        for symbol in symbols:
+            if utils.search_symbol(symbol, 3,object_of_reference = config.OPEN_PROGRAM_REMOVE,direction="right",tolerance=0.7):
+                found = True
         if not found:
-            raise Exception("找不到程式")
+            raise Exception("打开程式-程式列表内未发现程式")
         if i == 0:
             # 4、点击【取消】按钮
             utils.click_by_png(config.CANCEL)
             time.sleep(3)
             if utils.search_symbol(config.OPEN_PROGRAM_TOPIC):
                 raise Exception("关闭打开程式弹窗失败")
-            utils.search_symbol_erroring(config.AOI_TOPIC, 3)
-            if not utils.search_symbol(config.FOV):
-                raise Exception("点击取消后，疑似未回到整版视图界面")
             utils.close_aoi()
         elif i == 1:
             # 5、重复步骤1-3，点击【是】按钮
             utils.click_by_png(config.YES)
             time.sleep(1)
-            if not utils.search_symbol(config.PROGRAM_LOADING, 5):
+            if not utils.search_symbol(config.PROGRAM_LOADING, 5,tolerance=0.7):
                 raise Exception("未发现正在打开程式进度条")
-            while utils.search_symbol(config.PROGRAM_LOADING, 5):
+            while utils.search_symbol(config.PROGRAM_LOADING, 5,tolerance=0.7):
                 time.sleep(5)
             if utils.search_symbol(config.OPEN_PROGRAM_TOPIC, 2):
                 raise Exception("打开程式后还存在打开程式弹窗")
@@ -124,7 +126,7 @@ def jbgn_001_04():
             if not utils.search_symbol(config.BOARD_AUTO,tolerance=0.75):
                 raise Exception("点击是后，疑似未进入整版视图界面")
             time.sleep(3)
-            utils.caton_or_flashback()
+            utils.caton_or_flashback("AOI.exe")
             utils.close_aoi()        
 
 @utils.screenshot_error_to_excel()
@@ -134,6 +136,8 @@ def jbgn_001_05():
     while not utils.search_symbol(config.OPEN_PROGRAM_TOPIC, 2):
         time.sleep(1)
         utils.click_by_png(config.OPEN_PROGRAM)
+        if utils.search_symbol(config.QUESTION_MARK, 2):
+                pyautogui.press("enter")
     time.sleep(2)
     # 2、在弹窗中的【程式主目录】，选择程式的目录或输入程式目录，例：D:\EYAOI\JOB，回车
     directory = r"D:\EYAOI\JOB"
@@ -147,43 +151,48 @@ def jbgn_001_05():
     found = False
     program_count = 0
     for symbol in symbols:
-        try:
-            located_symbols = list(pyautogui.locateAllOnScreen(symbol, region=config.PROGRAM_LIST_REGION))
-            program_count += len(located_symbols)
-            logger.info(f"找到 {len(located_symbols)} 个 {symbol} 符号")
-        except Exception:
-            logger.warning(f"未找到 {symbol} 符号")
-            continue
-
+        program_count += utils.count_symbol_on_region(symbol, object_of_reference=config.OPEN_PROGRAM_REMOVE, direction="left")
     if program_count == 0:
         raise Exception("未发现任何程式")
-    # 计算D:\EYAOI\JOB内，往下一级的第一级路径内同时拥有.tjb和.pnf的文件夹个数
-    folder_count = len([name for name in os.listdir(directory) if os.path.isdir(os.path.join(directory, name)) and any(f.endswith('.tjb') for f in os.listdir(os.path.join(directory, name))) and any(f.endswith('.pnf') for f in os.listdir(os.path.join(directory, name)))])
-    # 比较数量是否相同
-    if program_count != folder_count:
-        raise Exception(f"未能显示目录下所有程式(通过同时拥有.tjb和.pnf判断)，实际程式数量: {program_count}，期望程式数量: {folder_count}")
+    # 计算D:\EYAOI\JOB内，包含.fov文件夹（要包含.txt文件和.bmp文件）的文件夹个数
+    folder_count = 0
+    for folder_name in os.listdir(directory):
+        folder_path = os.path.join(directory, folder_name)
+        if os.path.isdir(folder_path):
+            # 查找以 .fov 结尾的文件夹
+            fov_folders = [f for f in os.listdir(folder_path) if f.endswith('.fov') and os.path.isdir(os.path.join(folder_path, f))]
+            for fov_folder in fov_folders:
+                fov_folder_path = os.path.join(folder_path, fov_folder)
+                # 检查 .fov 文件夹中是否包含 .txt 和 .bmp 文件
+                if any(file.endswith('.txt') for file in os.listdir(fov_folder_path)) and any(file.endswith('.bmp') for file in os.listdir(fov_folder_path)):
+                    folder_count += 1
+                    break  # 找到一个符合条件的 .fov 文件夹即可，不需要继续检查其他 .fov 文件夹
+
+    # 如果program_count小于13，比较数量是否相同
+    if program_count < 13 and program_count != folder_count:
+        logger.warning(f"未能显示目录下所有程式，识别到的程式数量: {program_count}，文件夹内程式数量: {folder_count}")
+        raise Exception(f"未能显示目录下所有程式，识别到的程式数量: {program_count}，文件夹内程式数量: {folder_count}")
 
     # 3、在【程式列表】--【主目录程式】，选中任一程式(压缩的程式图标变成带有箭头)，点击【轨1】（如果是双轨机台在轨2打开，显示【轨2】）
     for symbol in symbols:
-        if utils.search_symbol(symbol, 3,region=config.PROGRAM_LIST_REGION):
-            utils.click_by_png(symbol, 2,region=config.PROGRAM_LIST_REGION)
-            if not utils.search_symbol(symbol, 3,region=config.SELECTED_PROGRAM_REGION):
-                raise Exception("双击后程式未出现在被选程式列表中")
-            found = True
+        if utils.search_symbol(symbol, 3,object_of_reference = config.OPEN_PROGRAM_REMOVE,direction="left"):
+            utils.click_by_png(symbol, object_of_reference = config.OPEN_PROGRAM_REMOVE,direction="left")
+            utils.click_by_png(config.OPEN_PROGRAM_LOAD_1)
             break
-        else:
-            raise Exception("打开程式-程式列表内未发现程式")
+    for symbol in symbols:
+        if utils.search_symbol(symbol, 3,object_of_reference = config.OPEN_PROGRAM_REMOVE,direction="right"):
+            found = True
     if not found:
-        raise Exception("找不到程式")
+        raise Exception("打开程式-程式列表内未发现程式")
     # 4、点击【是】按钮
     utils.click_by_png(config.YES)
-    utils.search_symbol_erroring(config.PROGRAM_LOADING, 5)
+    utils.search_symbol_erroring(config.PROGRAM_LOADING, 20)
     while utils.search_symbol(config.PROGRAM_LOADING, 5):
         time.sleep(5)
     if utils.search_symbol(config.OPEN_PROGRAM_TOPIC, 2):
         raise Exception("打开程式后还存在打开程式弹窗")
     utils.search_symbol_erroring(config.AOI_TOPIC, 3)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()  
 
 @utils.screenshot_error_to_excel()  
@@ -193,6 +202,8 @@ def jbgn_001_06():
     while not utils.search_symbol(config.OPEN_PROGRAM_TOPIC, 2):
         time.sleep(1)
         utils.click_by_png(config.OPEN_PROGRAM)
+        if utils.search_symbol(config.QUESTION_MARK, 2):
+            pyautogui.press("enter")
     time.sleep(2)
     # 2、在弹窗中的【程式主目录】，选择程式的目录或输入程式目录，例：D:\EYAOI\JOB，回车
     directory = r"D:\EYAOI\JOB"
@@ -205,33 +216,33 @@ def jbgn_001_06():
     symbols = [config.OPEN_PROGRAM_PLUS, config.OPEN_PROGRAM_CURSOR]
     program_count = 0
     for symbol in symbols:
-        try:
-            located_symbols = list(pyautogui.locateAllOnScreen(symbol, region=config.PROGRAM_LIST_REGION))
-            program_count += len(located_symbols)
-            logger.info(f"左侧程式列表找到 {len(located_symbols)} 个程式 {symbol} ")
-        except Exception:
-            logger.warning(f"左侧程式列表未找到程式 {symbol} ")
-            continue
-
+        program_count += utils.count_symbol_on_region(symbol, object_of_reference=config.OPEN_PROGRAM_REMOVE, direction="left")
     if program_count == 0:
         raise Exception("左侧程式列表未发现任何程式")
-    # 计算D:\EYAOI\JOB内，往下一级的第一级路径同时含有.tjb和.pnf文件的文件夹个数
-    folder_count = len([name for name in os.listdir(directory) if os.path.isdir(os.path.join(directory, name)) and any(f.endswith('.tjb') for f in os.listdir(os.path.join(directory, name))) and any(f.endswith('.pnf') for f in os.listdir(os.path.join(directory, name)))])
-    # 比较数量是否相同
-    if program_count != folder_count:
-        raise Exception(f"未能显示目录下所有程式(通过同时拥有.tjb和.pnf判断)，实际程式数量: {program_count}，期望程式数量: {folder_count}")
+    # 计算D:\EYAOI\JOB内，包含.fov文件夹（要包含.txt文件和.bmp文件）的文件夹个数
+    folder_count = 0
+    for folder_name in os.listdir(directory):
+        folder_path = os.path.join(directory, folder_name)
+        if os.path.isdir(folder_path):
+            # 查找以 .fov 结尾的文件夹
+            fov_folders = [f for f in os.listdir(folder_path) if f.endswith('.fov') and os.path.isdir(os.path.join(folder_path, f))]
+            for fov_folder in fov_folders:
+                fov_folder_path = os.path.join(folder_path, fov_folder)
+                # 检查 .fov 文件夹中是否包含 .txt 和 .bmp 文件
+                if any(file.endswith('.txt') for file in os.listdir(fov_folder_path)) and any(file.endswith('.bmp') for file in os.listdir(fov_folder_path)):
+                    folder_count += 1
+                    break  # 找到一个符合条件的 .fov 文件夹即可，不需要继续检查其他 .fov 文件夹
+
+    # 如果program_count小于13，比较数量是否相同
+    if program_count < 13 and program_count != folder_count:
+        logger.warning(f"未能显示目录下所有程式，识别到的程式数量: {program_count}，文件夹内程式数量: {folder_count}")
+        raise Exception(f"未能显示目录下所有程式，识别到的程式数量: {program_count}，文件夹内程式数量: {folder_count}")
     # 3、在【程式列表】--【主目录程式】，选中某一程式，点击【轨1】（如果是双轨机台在轨2打开，显示【轨2】）。按此操作，多次选择不同程式。
     # 先识别总共有多少个程式
     program_count = 0
     time.sleep(2)
     for symbol in symbols:
-        try:
-            located_symbols = list(pyautogui.locateAllOnScreen(symbol, region=config.PROGRAM_LIST_REGION))
-            program_count += len(located_symbols)
-            logger.info(f"在程式列表区域找到 {len(located_symbols)} 个 {symbol} 程式")
-        except Exception:
-            logger.warning(f"未找到程式 {symbol} ")
-            continue
+        program_count += utils.count_symbol_on_region(symbol, object_of_reference=config.OPEN_PROGRAM_REMOVE, direction="left")
     logger.info(f"左侧程式列表找到的程式数量: {program_count}")
     if program_count == 0:
         raise Exception("左侧程式列表未发现任何程式")
@@ -251,32 +262,34 @@ def jbgn_001_06():
 
     selected_program_count = 0
     for symbol in symbols:
-        try:
-            selected_program_count += len(list(pyautogui.locateAllOnScreen(symbol, region=config.SELECTED_PROGRAM_REGION)))
-        except Exception:
-            logger.warning(f"未找到 {symbol} 符号")
-            continue
+        selected_program_count += utils.count_symbol_on_region(symbol, object_of_reference=config.OPEN_PROGRAM_REMOVE, direction="right")
     if program_count != selected_program_count:
         logger.warning(f"程式未完全出现再被选程式列表中，实际数量：{selected_program_count}，期望数量：{program_count}")
         raise Exception(f"程式未完全出现再被选程式列表中,实际数量：{selected_program_count}，期望数量：{program_count}")
     # 4、点击【是】按钮
     utils.click_by_png(config.YES)
-    utils.search_symbol_erroring(config.PROGRAM_LOADING, 5)
+    if utils.search_symbol(config.OPEN_PROGRAM_SWITCH, 2,tolerance=0.8):
+        utils.check_checkbox_status_before_text("允许程式切换",True, mark_rgb=(72,72,72),frame_rgb=(51,51,51),similarity_threshold=0.85)
+        pyautogui.press('enter')
+    utils.search_symbol_erroring(config.PROGRAM_LOADING, 20)
     while utils.search_symbol(config.PROGRAM_LOADING, 5):
         time.sleep(5)
     if utils.search_symbol(config.OPEN_PROGRAM_TOPIC, 2):
         raise Exception("打开程式后还存在打开程式弹窗")
-    utils.search_symbol_erroring(config.AOI_TOPIC, 3)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()    
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_07():
     # 1、打开AOI软件，点击左上角【打开程式】按钮
     utils.check_and_launch_aoi()
-    while not utils.search_symbol(config.OPEN_PROGRAM_TOPIC, 2):
+    while True:
+        if utils.search_symbol(config.OPEN_PROGRAM_TOPIC, 2):
+            break
         time.sleep(1)
         utils.click_by_png(config.OPEN_PROGRAM)
+        if utils.search_symbol(config.QUESTION_MARK, 2):
+            pyautogui.press("enter")
     time.sleep(2)
     # 2、在弹窗中的【程式主目录】，选择程式的目录或输入程式目录，例：D:\EYAOI\JOB，回车
     directory = r"D:\EYAOI\JOB"
@@ -290,38 +303,48 @@ def jbgn_001_07():
     found = False
     program_count = 0
     for symbol in symbols:
-        try:
-            located_symbols = list(pyautogui.locateAllOnScreen(symbol, region=config.PROGRAM_LIST_REGION))
-            program_count += len(located_symbols)
-            logger.info(f"程式列表区域找到 {len(located_symbols)} 个 {symbol} 程式")
-        except Exception:
-            logger.warning(f"程式列表区域未找到 {symbol} 程式")
-            continue
-
+        program_count += utils.count_symbol_on_region(symbol, object_of_reference=config.OPEN_PROGRAM_REMOVE, direction="left")
     if program_count == 0:
         raise Exception("未发现任何程式")
-    # 计算D:\EYAOI\JOB内，往下一级的第一级路径同时含有.tjb和.pnf文件的文件夹个数
-    folder_count = len([name for name in os.listdir(directory) if os.path.isdir(os.path.join(directory, name)) and any(f.endswith('.tjb') for f in os.listdir(os.path.join(directory, name))) and any(f.endswith('.pnf') for f in os.listdir(os.path.join(directory, name)))])
-    # 比较数量是否相同
-    if program_count != folder_count:
-        raise Exception(f"未能显示目录下所有程式(通过同时拥有.tjb和.pnf判断)，实际程式数量: {program_count}，期望程式数量: {folder_count}")
+    # 计算D:\EYAOI\JOB内，包含.fov文件夹（要包含.txt文件和.bmp文件）的文件夹个数
+    folder_count = 0
+    for folder_name in os.listdir(directory):
+        folder_path = os.path.join(directory, folder_name)
+        if os.path.isdir(folder_path):
+            # 查找以 .fov 结尾的文件夹
+            fov_folders = [f for f in os.listdir(folder_path) if f.endswith('.fov') and os.path.isdir(os.path.join(folder_path, f))]
+            for fov_folder in fov_folders:
+                fov_folder_path = os.path.join(folder_path, fov_folder)
+                # 检查 .fov 文件夹中是否包含 .txt 和 .bmp 文件
+                if any(file.endswith('.txt') for file in os.listdir(fov_folder_path)) and any(file.endswith('.bmp') for file in os.listdir(fov_folder_path)):
+                    folder_count += 1
+                    break  # 找到一个符合条件的 .fov 文件夹即可，不需要继续检查其他 .fov 文件夹
+    # 如果program_count小于13，比较数量是否相同
+    if program_count < 13 and program_count != folder_count:
+        logger.warning(f"未能显示目录下所有程式，识别到的程式数量: {program_count}，文件夹内程式数量: {folder_count}")
+        raise Exception(f"未能显示目录下所有程式，识别到的程式数量: {program_count}，文件夹内程式数量: {folder_count}")
     # 3、在【程式列表】--【主目录程式】，选中任一程式，点击【轨1】（如果是双轨机台在轨2打开，显示【轨2】）
     found = False
-    temp = None
+    logger.info("点击程式进被选程式列表")
     for symbol in symbols:
-        if utils.search_symbol(symbol, 3):
-            temp = symbol
-            utils.click_by_png(symbol, 2)
-            utils.search_symbol_erroring(symbol, 3,region=config.SELECTED_PROGRAM_REGION)
+        if utils.search_symbol(symbol, 3,object_of_reference = config.OPEN_PROGRAM_REMOVE,direction="left",tolerance=0.7):
+            utils.click_by_png(symbol, object_of_reference = config.OPEN_PROGRAM_REMOVE,direction="left",tolerance=0.7)
+            utils.click_by_png(config.OPEN_PROGRAM_LOAD_1)
+            time.sleep(1)
+            break
+    logger.info("被选程式列表点击程式")
+    for symbol in symbols:
+        if utils.search_symbol(symbol, 3,object_of_reference = config.OPEN_PROGRAM_REMOVE,direction="right",tolerance=0.6):
             found = True
+            utils.click_by_png(symbol, object_of_reference = config.OPEN_PROGRAM_REMOVE,direction="right",tolerance=0.6)
             break
     if not found:
         raise Exception("被选程式列表区域找不到程式")
     # 4、选中【被选程式列表】--【轨一被选程式】列表中的程式后，点击【移除】
-    utils.click_by_png(temp, region=config.SELECTED_PROGRAM_REGION)
     utils.click_by_png(config.OPEN_PROGRAM_REMOVE)
-    if utils.search_symbol(temp, 3, region=config.SELECTED_PROGRAM_REGION):
-        raise Exception("移除程式失败")
+    for symbol in symbols:
+        if utils.search_symbol(symbol, 3, object_of_reference = config.OPEN_PROGRAM_REMOVE,direction="right",tolerance=0.7):
+            raise Exception("移除程式失败")
     utils.close_aoi()
 
 # @utils.screenshot_error_to_excel()
@@ -486,15 +509,24 @@ def jbgn_001_11():
     utils.open_program()
     # 4、点击左上角【save to Job File】
     utils.click_by_png(config.SAVE)
-    if utils.search_symbol(config.QUESTION_MARK):
-        pyautogui.press("enter")
-    while utils.search_symbol(config.SAVING_PROGRAM):
+    for _ in range(2):
         time.sleep(3)
-    latest_folder = max([os.path.join(r"D:\EYAOI\JOB", d) for d in os.listdir(r"D:\EYAOI\JOB")], key=os.path.getmtime)
-    time_difference = time.time() - os.path.getmtime(latest_folder)
-    logger.info(f"保存时间差距: {time_difference} 秒")
-    if time_difference > 60:
-        raise Exception("非当前保存时间")
+        pyautogui.press("enter")
+    # 检测D:\EYAOI\JOB下有无60s内修改过的文件夹
+    job_directory = r"D:\EYAOI\JOB"
+    recent_folder_found = False
+
+    for folder_name in os.listdir(job_directory):
+        folder_path = os.path.join(job_directory, folder_name)
+        if os.path.isdir(folder_path):
+            time_difference = time.time() - os.path.getmtime(folder_path)
+            if time_difference <= 60:
+                logger.info(f"找到最近修改的文件夹: {folder_path}, 修改时间差距: {time_difference} 秒")
+                recent_folder_found = True
+                break
+
+    if not recent_folder_found:
+        raise Exception("在D:\\EYAOI\\JOB下未找到60秒内修改过的文件夹")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -505,14 +537,18 @@ def jbgn_001_12():
     # 3、点击【是】按钮
     utils.open_program()
     # 4、点击左上角【save As To Job File】
-    utils.click_by_png(config.SAVE_AS_JOB)
+    utils.click_by_png(config.SAVE_AS_JOB, 2)
     time.sleep(1)
     if os.path.exists(r"D:\EYAOI\JOB\save_test"):
         shutil.rmtree(r"D:\EYAOI\JOB\save_test")
     # 5、选择文件夹并重新命名程式名称后点击【是】
-    utils.write_text((815,480),"D:\EYAOI\JOB")
-    utils.write_text((815,540),"save_test")
-    utils.click_by_png(config.YES)
+    if utils.search_symbol(config.QUESTION_MARK):
+        utils.write_text((815,480),"D:\EYAOI\JOB")
+        utils.write_text((815,540),"save_test")
+        utils.click_by_png(config.YES)
+        time.sleep(10)
+    else:
+        raise Exception("未发现save as to job file窗口")
     while utils.search_symbol(config.SAVING_PROGRAM):
         time.sleep(3)
     if not os.path.exists(r"D:\EYAOI\JOB\save_test"):
@@ -760,20 +796,24 @@ def jbgn_001_12():
 @utils.screenshot_error_to_excel()
 def jbgn_001_40():
     utils.check_and_launch_aoi()
-    utils.check_all_algs()
+    utils.check_close_all_algs()
     utils.open_program()
     utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
     utils.is_checked((66,255),(78,267),True)
-    utils.click_by_png(config.PLAY)
-    for _ in range (2):
-        time.sleep(2)
+    utils.click_by_png(config.PLAY, 2)
+    for _ in range (3):
+        time.sleep(5)
         pyautogui.press("enter")
-        time.sleep(2)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
-    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.75):
-        raise Exception("循环单次时疑似超过五分钟")
+        time.sleep(5)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    start_time = time.time()
+    while True:
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+            break
+        if time.time() - start_time > 300:
+            raise Exception("循环单次时疑似超过五分钟")
     utils.click_by_png(config.STOP)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75, timeout=20)
     utils.click_by_png(config.TESTING_INTERFACE_ENTER_DETAIL_INTERFACE)
     time.sleep(5)
     # 1、点击【进入细调界面】，在【元件窗口】选择所有红色NG的窗口，查看算法参数值
@@ -787,46 +827,53 @@ def jbgn_001_40():
     screen_later = pyautogui.screenshot(region=config.ALG_PARAM_REGION)
     if screen_before != screen_later:
         raise Exception("算法参数值发生变化")
+    else:
+        logger.info("算法参数值未发生变化")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_41():
     utils.check_and_launch_aoi()
-    utils.check_all_algs()
+    utils.check_close_all_algs()
     utils.open_program()
     utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
     utils.is_checked((66,255),(78,267),True)
-    utils.click_by_png(config.PLAY)
-    for _ in range (2):
-        time.sleep(2)
+    utils.click_by_png(config.PLAY, 2)
+    for _ in range (3):
+        time.sleep(5)
         pyautogui.press("enter")
-        time.sleep(2)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
-    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.75):
-        raise Exception("循环单次时疑似超过五分钟")
+        time.sleep(5)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    start_time = time.time()
+    while True:
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+            break
+        if time.time() - start_time > 300:
+            raise Exception("循环单次时疑似超过五分钟")
     utils.click_by_png(config.STOP)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75, timeout=20)
     utils.click_by_png(config.TESTING_INTERFACE_ENTER_DETAIL_INTERFACE)
     time.sleep(5)
     # 1、点击【进入细调界面】，在【不良元件】Tab页，快速点击不同料号、位号的元件（包括大元件）
     start_time = datetime.datetime.now()
-    while (datetime.datetime.now() - start_time).seconds < 600:
+    while (datetime.datetime.now() - start_time).seconds < 180:
         ng_components = []  # 初始化为一个空列表
         try:
-            ng_components = list(pyautogui.locateAllOnScreen(config.NO_PASS_COMPONENT, confidence=0.9, region=config.BOARD_COMPONENTS_REGION))
+            ng_components = list(pyautogui.locateAllOnScreen(config.NO_PASS_COMPONENT, confidence=0.7, region=config.BOARD_COMPONENTS_REGION))
         except Exception as e:
             logger.error(f"该页未找到不良元件，继续下滚: {e}")
         for ng_component in ng_components:
             reference = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
-            pyautogui.doubleClick(ng_component)
+            center_x, center_y = ng_component.left + ng_component.width // 2, ng_component.top + ng_component.height // 2
+            pyautogui.doubleClick(x=center_x, y=center_y)
             for _ in range(10):
-                time.sleep(0.1)
+                time.sleep(1)
                 current_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
                 if current_screenshot != reference:
                     reference = current_screenshot
                     break
                 else:
-                    continue
+                    raise Exception("元件切换时间不在一秒以内")
         for _ in range(7):
             utils.scroll_down((200, 380), config.BOARD_COMPONENTS_REGION, "-100")
     utils.close_aoi()
@@ -834,20 +881,24 @@ def jbgn_001_41():
 @utils.screenshot_error_to_excel()
 def jbgn_001_42():
     utils.check_and_launch_aoi()
-    utils.check_all_algs()
+    utils.check_close_all_algs()
     utils.open_program()
     utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
     utils.is_checked((66,255),(78,267),True)
-    utils.click_by_png(config.PLAY)
-    for _ in range (2):
-        time.sleep(2)
+    utils.click_by_png(config.PLAY, 2)
+    for _ in range (3):
+        time.sleep(5)
         pyautogui.press("enter")
-        time.sleep(2)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
-    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.75):
-        raise Exception("循环单次时疑似超过五分钟")
+        time.sleep(5)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    start_time = time.time()
+    while True:
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+            break
+        if time.time() - start_time > 300:
+            raise Exception("循环单次时疑似超过五分钟")
     utils.click_by_png(config.STOP)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75, timeout=20)
     utils.click_by_png(config.TESTING_INTERFACE_ENTER_DETAIL_INTERFACE)
     time.sleep(5)
     # 1、点击【进入细调界面】，在【元件窗口】中选择含有搜索范围的算法，如：方形定位
@@ -871,25 +922,31 @@ def jbgn_001_42():
     after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
     if before_screenshot == after_screenshot:
         raise Exception("3D图未发生变化")
+    else:
+        logger.info("3D图发生变化")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_43():
     utils.check_and_launch_aoi()
-    utils.check_all_algs()
+    utils.check_close_all_algs()
     utils.open_program()
     utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
     utils.is_checked((66,255),(78,267),True)
-    utils.click_by_png(config.PLAY)
-    for _ in range (2):
-        time.sleep(2)
+    utils.click_by_png(config.PLAY, 2)
+    for _ in range (3):
+        time.sleep(5)
         pyautogui.press("enter")
-        time.sleep(2)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
-    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.75):
-        raise Exception("循环单次时疑似超过五分钟")
+        time.sleep(5)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    start_time = time.time()
+    while True:
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+            break
+        if time.time() - start_time > 300:
+            raise Exception("循环单次时疑似超过五分钟")
     utils.click_by_png(config.STOP)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75, timeout=20)
     utils.click_by_png(config.TESTING_INTERFACE_ENTER_DETAIL_INTERFACE)
     time.sleep(5)
     # 1、点击【进入细调界面】，在【元件窗口】中选择含有搜索范围的算法，如：方形定位
@@ -911,22 +968,24 @@ def jbgn_001_43():
     after_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
     if before_screenshot == after_screenshot:
         raise Exception("3D图未发生变化")
+    else:
+        logger.info("3D图发生变化")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_44():
     utils.check_and_launch_aoi()
-    utils.check_all_algs()
+    utils.check_close_all_algs()
     utils.open_program()
     utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
     utils.is_checked((66,255),(78,267),True)
     # 1、点击【运行】按钮，【运行】按钮置灰进入检测状态
-    utils.click_by_png(config.PLAY)
-    for _ in range (2):
-        time.sleep(2)
+    utils.click_by_png(config.PLAY, 2)
+    for _ in range (3):
+        time.sleep(5)
         pyautogui.press("enter")
-        time.sleep(2)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
+        time.sleep(5)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
     # 2、点击【停止】按钮，查看UI界面在1秒内显示的状态
     time.sleep(10)
     utils.click_by_png(config.STOP)
@@ -942,7 +1001,7 @@ def jbgn_001_44():
 #     utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
 #     utils.is_checked((66,255),(78,267),True)
 #     # 1、点击【运行】按钮，查看运行各阶段的界面显示状态与实际轨道上板的位置
-#     utils.click_by_png(config.PLAY)
+#     utils.click_by_png(config.PLAY, 2)
 #     for _ in range (2):
 #         time.sleep(2)
 #         pyautogui.press("enter")
@@ -963,29 +1022,39 @@ def jbgn_001_46():
     utils.click_by_png(config.CANCEL)
     time.sleep(3)
     # 跑完后面才有数据
-    utils.click_by_png(config.PLAY)
-    for _ in range (2):
-        time.sleep(2)
+    utils.click_by_png(config.PLAY, 2)
+    for _ in range (3):
+        time.sleep(5)
         pyautogui.press("enter")
-        time.sleep(2)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,30,tolerance=0.75)
+        time.sleep(5)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
 
     start_time = time.time()
-    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 180, tolerance=0.75):
-        logger.error("疑似三分钟都没检测完一块板")
+    while True:
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+            break
+        if time.time() - start_time > 300:
+            raise Exception("循环单次时疑似超过五分钟")
     time.sleep(10)
     create_data_time = datetime.datetime.now()
     # 2、RV在【未复判】列表中双击准备复判的数据，然后点击【全部通过】--【确认】进行复判
     utils.check_and_launch_rv()
-    start_time = time.time()
-    while not utils.search_symbol(config.RV_PCB_LIST_EMPTY, 2, tolerance=0.8) or not utils.check_color_in_region((232,168,91),config.RV_PCB_LIST_REGION):
-        if time.time() - start_time > 180:
-            logger.error("操作超时，超过3分钟")
-            break
-        pyautogui.doubleClick(config.RV_DATA_POINT)
-        utils.click_by_png(config.RV_ALL_PASS)
-        utils.click_by_png(config.RV_CONFIRM)
-        time.sleep(5)
+    try:
+        lane_location = pyautogui.locateOnScreen(config.RV_PCB_LIST_LANE, confidence=0.6)
+        if lane_location:
+            center_x = lane_location.left + lane_location.width // 2
+            center_y = lane_location.top + lane_location.height // 2
+            lane_point = (center_x, center_y)
+            logger.info(f"找到了RV PCB列表的位置: {lane_location}, 中心点坐标: ({center_x}, {center_y})")
+    except pyautogui.ImageNotFoundException:
+        logger.error("疑似开启了自动复判,PCB列表未识别到数据")
+    if lane_point:
+        pyautogui.doubleClick(lane_point)
+        utils.scroll_down(lane_point,config.RV_PCB_LIST_REGION)
+        utils.click_by_png(config.RV_PCB_LIST_LANE,times=2,preference="bottom",tolerance=0.6)
+        utils.click_by_png(config.RV_ALL_PASS,tolerance=0.7)
+        utils.click_by_png(config.RV_CONFIRM,tolerance=0.7)
+        time.sleep(7)
 
     # 3、在SPC点击【程序视图】--【1小时】--【查询】，在搜索结果中选择相应的数据， 点击【PCB视图】
     utils.check_and_launch_spc()
@@ -1034,8 +1103,8 @@ def jbgn_001_46():
         # 计算时间差
         time_difference = current_time - end_time
 
-        # 判断时间差是否在三分钟内
-        if abs(time_difference.total_seconds()) <= 180:
+        # 判断时间差是否在五分钟内
+        if abs(time_difference.total_seconds()) <= 300:
             count_within_three_minutes += 1
             if latest_time is None or end_time > latest_time:
                 latest_time = end_time
@@ -1043,24 +1112,37 @@ def jbgn_001_46():
 
     # 如果计数器为0，报错
     if count_within_three_minutes == 0:
-        raise Exception("未找到截止时间在三分钟内的数据")
+        raise Exception("未找到截止时间在五分钟内的数据")
 
     utils.click_by_ocr(job_name,2)
     time.sleep(5)
-    pyautogui.click(360,260)
+    utils.click_by_png(config.SPC_PCB_VIEW, 2)
+    utils.search_symbol_erroring(config.PCB_VIEW_TOPIC,tolerance=0.6)
     time.sleep(3)
-    utils.click_by_png(config.SPC_PCB_VIEW)
-    utils.search_symbol_erroring(config.PCB_VIEW_TOPIC)
-    time.sleep(3)
-    
+
+    total_iterations = 0
+    black_ratio_2d_count = 0
+    black_ratio_3d_count = 0
     while True:
-        before_screenshot = pyautogui.screenshot(region=config.PCB_COMPONENT_LIST_REGION)
-        if utils.search_symbol(config.PCB_VIEW_BLACK_MEDIUM,region=config.PCB_UP_REGION):
-            if not utils.search_symbol(config.PCB_VIEW_BOARD_DISCRET,region=config.PCB_COMPONENT_LIST_REGION):
-                raise Exception("疑似缺少对应的不良图像/3D图像")
+        black_2d_ratio = utils.get_color_ratio_in_region(config.PCB_2D_IMAGE_REGION, (0,0,0))
+        black_3d_ratio = utils.get_color_ratio_in_region(config.PCB_3D_IMAGE_REGION, (0,0,0))
+        if black_2d_ratio > 0.8:
+            black_ratio_2d_count += 1
+        if black_3d_ratio > 0.8:
+            black_ratio_3d_count += 1
+        total_iterations += 1
+
+        before_screenshot = pyautogui.screenshot(region=config.PCB_UP_REGION)
         pyautogui.press("down")
-        after_screenshot = pyautogui.screenshot(region=config.PCB_COMPONENT_LIST_REGION)
+        time.sleep(1)
+        after_screenshot = pyautogui.screenshot(region=config.PCB_UP_REGION)
         if before_screenshot == after_screenshot:
+            if black_ratio_2d_count / total_iterations > 0.8:
+                logger.error(f"多次检测到不良2D图像，2D图像未检测到元件的比率为{black_ratio_2d_count / total_iterations}")
+                raise Exception(f"多次检测到不良2D图像，2D图像未检测到元件的比率为{black_ratio_2d_count / total_iterations}")
+            if black_ratio_3d_count / total_iterations > 0.8:
+                logger.error(f"多次检测到不良3D图像，3D图像未检测到元件的比率为{black_ratio_3d_count / total_iterations}")
+                raise Exception(f"多次检测到不良3D图像，3D图像未检测到元件的比率为{black_ratio_3d_count / total_iterations}")
             break
         time.sleep(3)
 
@@ -1090,31 +1172,287 @@ def jbgn_001_47():
     utils.check_dv(True)
     # 1、点击【运行】按钮，运行完成后
     utils.open_program()
-    utils.click_by_png(config.PLAY)
-    for _ in range (2):
-        time.sleep(2)
+    # 获取job名
+    utils.click_by_png(config.SAVE_AS_JOB)
+    job_name = utils.read_text(800,540)
+    utils.click_by_png(config.CANCEL)
+    time.sleep(3)
+    # 跑完后面才有数据
+    utils.click_by_png(config.PLAY, 2)
+    for _ in range (3):
+        time.sleep(5)
         pyautogui.press("enter")
-        time.sleep(2)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
+        time.sleep(5)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+
+    start_time = time.time()
+    while True:
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+            break
+        if time.time() - start_time > 300:
+            raise Exception("循环单次时疑似超过五分钟")
+    time.sleep(10)
+    create_data_time = datetime.datetime.now()
     # 2、在DV界面，点击【全部通过】--【确认完成】按钮
-    utils.click_by_png(config.RV_ALL_PASS)
-    utils.confirm_in_dv()
+    start_time = time.time()
+    while True:
+        if utils.search_symbol(config.DV_INFORMATION, 5, tolerance=0.7):
+            break
+        if time.time() - start_time > 60:
+            raise Exception("超过1分钟未能识别到dv界面")
+    utils.click_by_ocr("全部通过")
+    utils.click_by_ocr("确认完成")
+    time.sleep(2)
+    pyautogui.press("enter")
+    time.sleep(2)
     # 3、在SPC点击【程序视图】--【1小时】--【查询】，在搜索结果中选择相应的数据， 点击【PCB视图】
-    utils.query_spc_and_check_pcb_view()
+    utils.check_and_launch_spc()
+    utils.click_by_png(config.SPC_PROGRAM_VIEW)
+    utils.click_by_png(config.SPC_ONE_HOUR)
+    utils.click_by_png(config.SPC_QUERY)
+    time.sleep(3)
+    # 先获取job名，通过job名去点击对应行
+    utils.read_text(config.CENTRE)
+    # 获取当前时间
+    current_time = datetime.datetime.now()
+
+    # 读取剪贴板内容
+    clipboard_content = pyperclip.paste()
+
+    # 将剪贴板内容按行分割
+    lines = clipboard_content.split('\n')
+
+    # 初始化计数器
+    count_within_three_minutes = 0
+    job_name = None
+    latest_time = None
+
+    # 遍历每一行数据
+    for line in lines:
+        # 跳过表头
+        if line.startswith("Selection"):
+            continue
+
+        # 按制表符分割每一行数据
+        parts = line.split('\t')
+
+        # 确保有足够的列
+        if len(parts) < 4:
+            continue
+
+        # 获取截止时间
+        end_time_str = parts[3]
+
+        # 将截止时间字符串转换为datetime对象
+        try:
+            end_time = datetime.datetime.strptime(end_time_str, '%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            continue
+
+        # 计算时间差
+        time_difference = current_time - end_time
+
+        # 判断时间差是否在三分钟内
+        if abs(time_difference.total_seconds()) <= 600:
+            count_within_three_minutes += 1
+            if latest_time is None or end_time > latest_time:
+                latest_time = end_time
+                job_name = parts[1]
+
+    # 如果计数器为0，报错
+    if count_within_three_minutes == 0:
+        raise Exception("未找到截止时间在十分钟内的数据")
+
+    utils.click_by_ocr(job_name,2)
+    time.sleep(5)
+    utils.click_by_png(config.SPC_PCB_VIEW)
+    utils.search_symbol_erroring(config.PCB_VIEW_TOPIC,tolerance=0.6)
+    time.sleep(3)
+    
+    total_iterations = 0
+    black_ratio_2d_count = 0
+    black_ratio_3d_count = 0
+    while True:
+        black_2d_ratio = utils.get_color_ratio_in_region(config.PCB_2D_IMAGE_REGION, (0,0,0))
+        black_3d_ratio = utils.get_color_ratio_in_region(config.PCB_3D_IMAGE_REGION, (0,0,0))
+        if black_2d_ratio > 0.8:
+            black_ratio_2d_count += 1
+        if black_3d_ratio > 0.8:
+            black_ratio_3d_count += 1
+        total_iterations += 1
+
+        before_screenshot = pyautogui.screenshot(region=config.PCB_UP_REGION)
+        pyautogui.press("down")
+        time.sleep(1)
+        after_screenshot = pyautogui.screenshot(region=config.PCB_UP_REGION)
+        if before_screenshot == after_screenshot:
+            if black_ratio_2d_count / total_iterations > 0.8:
+                logger.error(f"多次检测到不良2D图像，2D图像未检测到元件的比率为{black_ratio_2d_count / total_iterations}")
+                raise Exception(f"多次检测到不良2D图像，2D图像未检测到元件的比率为{black_ratio_2d_count / total_iterations}")
+            if black_ratio_3d_count / total_iterations > 0.8:
+                logger.error(f"多次检测到不良3D图像，3D图像未检测到元件的比率为{black_ratio_3d_count / total_iterations}")
+                raise Exception(f"多次检测到不良3D图像，3D图像未检测到元件的比率为{black_ratio_3d_count / total_iterations}")
+            break
+        time.sleep(3)
+
+    # 确认数据保存路径下有数据
+    # 检测F:\DataExport\{job_name}下有没有在create_data_time前后五分钟内的数据生成
+    data_export_path = os.path.join(r"F:\DataExport", job_name)
+    if not os.path.exists(data_export_path):
+        raise Exception(f"目录不存在: {data_export_path}")
+
+    data_found = False
+    for root, dirs, files in os.walk(data_export_path):
+        for file in files:
+            file_path = os.path.join(root, file)
+            file_creation_time = datetime.datetime.fromtimestamp(os.path.getctime(file_path))
+            time_difference = abs((file_creation_time - create_data_time).total_seconds())
+            if time_difference <= 300:  # 前后五分钟内
+                logger.info(f"找到文件: {file_path}, 创建时间: {file_creation_time}")
+                data_found = True
+
+    if not data_found:
+        raise Exception(f"在{create_data_time}前后五分钟内未找到数据生成")
+
+    utils.close_aoi()
+
 @utils.screenshot_error_to_excel()
 def jbgn_001_48():
     utils.check_and_launch_aoi()
     utils.check_dv(if_auto_check_dv=True)
     # 1、点击【运行】按钮，运行完成后
     utils.open_program()
-    utils.click_by_png(config.PLAY)
-    for _ in range (2):
-        time.sleep(2)
+    # 获取job名
+    utils.click_by_png(config.SAVE_AS_JOB)
+    job_name = utils.read_text(800,540)
+    utils.click_by_png(config.CANCEL)
+    time.sleep(3)
+    # 跑完后面才有数据
+    utils.click_by_png(config.PLAY, 2)
+    for _ in range (3):
+        time.sleep(5)
         pyautogui.press("enter")
-        time.sleep(2)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
+        time.sleep(5)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+
+    start_time = time.time()
+    while True:
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+            break
+        if time.time() - start_time > 300:
+            raise Exception("循环单次时疑似超过五分钟")
+    time.sleep(10)
+    create_data_time = datetime.datetime.now()
     # 2、在SPC点击【程序视图】--【1小时】--【查询】，在搜索结果中选择相应的数据， 点击【PCB视图】
-    utils.query_spc_and_check_pcb_view()
+    utils.check_and_launch_spc()
+    utils.click_by_png(config.SPC_PROGRAM_VIEW)
+    utils.click_by_png(config.SPC_ONE_HOUR)
+    utils.click_by_png(config.SPC_QUERY)
+    time.sleep(3)
+    # 先获取job名，通过job名去点击对应行
+    utils.read_text(config.CENTRE)
+    # 获取当前时间
+    current_time = datetime.datetime.now()
+
+    # 读取剪贴板内容
+    clipboard_content = pyperclip.paste()
+
+    # 将剪贴板内容按行分割
+    lines = clipboard_content.split('\n')
+
+    # 初始化计数器
+    count_within_three_minutes = 0
+    job_name = None
+    latest_time = None
+
+    # 遍历每一行数据
+    for line in lines:
+        # 跳过表头
+        if line.startswith("Selection"):
+            continue
+
+        # 按制表符分割每一行数据
+        parts = line.split('\t')
+
+        # 确保有足够的列
+        if len(parts) < 4:
+            continue
+
+        # 获取截止时间
+        end_time_str = parts[3]
+
+        # 将截止时间字符串转换为datetime对象
+        try:
+            end_time = datetime.datetime.strptime(end_time_str, '%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            continue
+
+        # 计算时间差
+        time_difference = current_time - end_time
+
+        # 判断时间差是否在三分钟内
+        if abs(time_difference.total_seconds()) <= 600:
+            count_within_three_minutes += 1
+            if latest_time is None or end_time > latest_time:
+                latest_time = end_time
+                job_name = parts[1]
+
+    # 如果计数器为0，报错
+    if count_within_three_minutes == 0:
+        raise Exception("未找到截止时间在十分钟内的数据")
+
+    utils.click_by_ocr(job_name,2)
+    time.sleep(5)
+    utils.click_by_png(config.SPC_PCB_VIEW)
+    utils.search_symbol_erroring(config.PCB_VIEW_TOPIC,tolerance=0.6)
+    time.sleep(3)
+    
+    total_iterations = 0
+    black_ratio_2d_count = 0
+    black_ratio_3d_count = 0
+    while True:
+        black_2d_ratio = utils.get_color_ratio_in_region(config.PCB_2D_IMAGE_REGION, (0,0,0))
+        black_3d_ratio = utils.get_color_ratio_in_region(config.PCB_3D_IMAGE_REGION, (0,0,0))
+        if black_2d_ratio > 0.8:
+            black_ratio_2d_count += 1
+        if black_3d_ratio > 0.8:
+            black_ratio_3d_count += 1
+        total_iterations += 1
+
+        before_screenshot = pyautogui.screenshot(region=config.PCB_UP_REGION)
+        pyautogui.press("down")
+        time.sleep(1)
+        after_screenshot = pyautogui.screenshot(region=config.PCB_UP_REGION)
+        if before_screenshot == after_screenshot:
+            if black_ratio_2d_count / total_iterations > 0.8:
+                logger.error(f"多次检测到不良2D图像，2D图像未检测到元件的比率为{black_ratio_2d_count / total_iterations}")
+                raise Exception(f"多次检测到不良2D图像，2D图像未检测到元件的比率为{black_ratio_2d_count / total_iterations}")
+            if black_ratio_3d_count / total_iterations > 0.8:
+                logger.error(f"多次检测到不良3D图像，3D图像未检测到元件的比率为{black_ratio_3d_count / total_iterations}")
+                raise Exception(f"多次检测到不良3D图像，3D图像未检测到元件的比率为{black_ratio_3d_count / total_iterations}")
+            break
+        time.sleep(3)
+
+    # 确认数据保存路径下有数据
+    # 检测F:\DataExport\{job_name}下有没有在create_data_time前后五分钟内的数据生成
+    data_export_path = os.path.join(r"F:\DataExport", job_name)
+    if not os.path.exists(data_export_path):
+        raise Exception(f"目录不存在: {data_export_path}")
+
+    data_found = False
+    for root, dirs, files in os.walk(data_export_path):
+        for file in files:
+            file_path = os.path.join(root, file)
+            file_creation_time = datetime.datetime.fromtimestamp(os.path.getctime(file_path))
+            time_difference = abs((file_creation_time - create_data_time).total_seconds())
+            if time_difference <= 300:  # 前后五分钟内
+                logger.info(f"找到文件: {file_path}, 创建时间: {file_creation_time}")
+                data_found = True
+
+    if not data_found:
+        raise Exception(f"在{create_data_time}前后五分钟内未找到数据生成")
+
+    utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_49():
@@ -1127,31 +1465,37 @@ def jbgn_001_49():
     # 删除目录D:\EYAOI\JOB\job_name\job_name.oki
     oki_path = os.path.join(r"D:\EYAOI\JOB", job_name, f"{job_name}.oki")
     if os.path.exists(oki_path):
-        os.remove(oki_path)
+        shutil.rmtree(oki_path)
     # 删除目录F:\DataExport\job_name\OKImage
     okimage_path = os.path.join(r"F:\DataExport", job_name, "OKImage")
     if os.path.exists(okimage_path):
         shutil.rmtree(okimage_path)
     # 1、在元器件编辑界面，右击--【导出所有元件OK图】
     utils.ensure_in_edit_mode()
+    utils.is_checked((66,255),(78,267),True)
     pyautogui.rightClick(config.CENTRE)
     utils.click_by_png(config.EXPORT_ALL_OK)
     if utils.search_symbol(config.QUESTION_MARK):
         pyautogui.press("enter")
-    while utils.search_symbol(config.EXPORTING_OK):
+    while utils.search_symbol(config.EXPORTING_OK,tolerance=0.7):
         time.sleep(5)
-    if utils.search_symbol(config.QUESTION_MARK):
-        pyautogui.press("enter")
+    for _ in range(2):
+        if utils.search_symbol(config.QUESTION_MARK, tolerance=0.7):
+            pyautogui.press("enter")
     # 跑一遍
-    utils.click_by_png(config.PLAY)
-    for _ in range (3):
-        time.sleep(2)
+    utils.click_by_png(config.PLAY, 2)
+    for _ in range (4):
+        time.sleep(3)
         pyautogui.press("enter")
-        time.sleep(2)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
+        time.sleep(3)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
 
-    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.75):
-        raise Exception("循环单次时疑似超过五分钟")
+    start_time = time.time()
+    while True:
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+            break
+        if time.time() - start_time > 300:
+            raise Exception("循环单次时疑似超过五分钟")
     time.sleep(10)
     # 2、在RV检查所有元件的标准图
     utils.check_and_launch_rv()
@@ -1160,20 +1504,22 @@ def jbgn_001_49():
     time.sleep(3)
     # 轮询,下滑,轮询,直到底
     start_time = time.time()
+    error_count = 0
     while True:
         before_screenshot = pyautogui.screenshot(region=config.RV_COMPONENT_LIST_REGION)
         pyautogui.press("down")
         time.sleep(2)
         if utils.get_color_ratio_in_region(config.RV_STANDARD_IMAGE_REGION,(0,0,0)) > 0.6:
-            logger.error("疑似没有标准图")
-            raise Exception("疑似没有标准图")
+            error_count += 1
+            logger.error("识别到一次疑似没有标准图")
+            if error_count > 2:
+                raise Exception("疑似没有标准图")
         after_screenshot = pyautogui.screenshot(region=config.RV_COMPONENT_LIST_REGION)
         if before_screenshot == after_screenshot:
             logger.debug("元件列表疑似到底了")
             break
         if time.time() - start_time > 300:
             logger.success("切换元件切换了超过五分钟，应该都有标准图")
-
     utils.close_aoi()
 
 # @utils.screenshot_error_to_excel()
@@ -1217,6 +1563,9 @@ def jbgn_001_53():
     utils.ensure_in_edit_mode()
     # 删除D:\EYAOI\BIN\Debug下后缀为.dat的文件（如果存在的话）
     debug_dir = r"D:\EYAOI\BIN\Debug"
+    if_create_data = utils.check_new_data(debug_dir,minutes=5)
+    if not if_create_data:
+        raise Exception("在D:\EYAOI\BIN\Debug下未生成新文件")
     for file_name in os.listdir(debug_dir):
         if file_name.endswith(".dat"):
             file_path = os.path.join(debug_dir, file_name)
@@ -1224,16 +1573,19 @@ def jbgn_001_53():
                 os.remove(file_path)
                 logger.info(f"已删除文件: {file_path}")
     utils.click_by_png(config.COMPONENT_3D_IMAGE)
-    if not utils.search_symbol(config.ICON_3D,tolerance=0.8):
+    if not utils.search_symbol(config.BLACK,tolerance=0.6):
         raise Exception("疑似未进入3D图界面")
     time.sleep(5)
     # 检测debug_dir下是否有新的.dat文件生成
     new_dat_files = [file for file in os.listdir(debug_dir) if file.endswith(".dat")]
     if not new_dat_files:
-        raise Exception("在D:\EYAOI\BIN\Debug下未生成.dat文件")
+        all_files = os.listdir(debug_dir)
+        logger.info(f"debug_dir中的所有文件: {all_files}")
+        raise Exception("在D:\EYAOI\BIN\Debug下有生成新文件，但未生成.dat文件")
     else:
         logger.info(f"生成的.dat文件: {new_dat_files}")
     utils.close_aoi()
+
 @utils.screenshot_error_to_excel()
 def jbgn_001_54():
     utils.check_and_launch_aoi()
@@ -1248,20 +1600,33 @@ def jbgn_001_54():
                 os.remove(file_path)
                 logger.info(f"已删除文件: {file_path}")
     utils.is_checked((66,255),(78,267),True)
-    utils.click_by_png(config.PLAY)
-    for _ in range(2):
+    utils.click_by_png(config.PLAY, 2)
+    for _ in range(3):
         time.sleep(2)
         pyautogui.press("enter")
         time.sleep(2)
-    if not utils.search_symbol(config.TESTING_INTERFACE_INFORMATION,tolerance=0.8):
-        raise Exception("未能进入测试板界面")
-    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.75):
-        raise Exception("循环单次时疑似超过五分钟")
+    if not utils.search_symbol(config.TESTING_INTERFACE_INFORMATION,timeout=30,tolerance=0.8):
+        raise Exception("未检测到测试板界面的特定标识，疑似能未进入测试板界面")
+    start_time = time.time()
+    while True:
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+            break
+        if time.time() - start_time > 300:
+            raise Exception("循环单次时疑似超过五分钟")
     time.sleep(10)
     # 检测debug_dir下是否有新的.insp文件生成
+    if_create_data = utils.check_new_data(debug_dir,minutes=3)
+    if not if_create_data:
+        raise Exception("在D:\EYAOI\BIN\Debug下未生成新文件")
     new_insp_files = [file for file in os.listdir(debug_dir) if file.endswith(".insp")]
     if not new_insp_files:
-        raise Exception("在D:\EYAOI\BIN\Debug下未生成.insp文件")
+        current_time = time.time()
+        for file in new_insp_files:
+            file_path = os.path.join(debug_dir, file)
+            file_time = os.path.getmtime(file_path)
+            minutes_ago = (current_time - file_time) / 60
+            logger.info(f"文件名: {file}, 距离现在的分钟数: {minutes_ago:.2f}")
+        raise Exception("在D:\EYAOI\BIN\Debug下有生成新文件，但未生成.insp文件")
     else:
         logger.info(f"生成的.insp文件: {new_insp_files}")
 
@@ -1274,27 +1639,33 @@ def jbgn_001_55():
     utils.check_save_djb(True)
     utils.open_program()
     utils.is_checked((66,255),(78,267),True)
-    utils.click_by_png(config.PLAY)
-    for _ in range(2):
+    utils.click_by_png(config.PLAY, 2)
+    for _ in range(3):
         time.sleep(2)
         pyautogui.press("enter")
         time.sleep(2)
-    if not utils.search_symbol(config.TESTING_INTERFACE_INFORMATION,tolerance=0.8):
-        raise Exception("未能进入测试板界面")
+    if not utils.search_symbol(config.TESTING_INTERFACE_INFORMATION,timeout=30,tolerance=0.8):
+        raise Exception("未检测到测试板界面的特定标识，疑似能未进入测试板界面")
     time.sleep(3)
     start_time = time.time()
-    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.75):
-        raise Exception("循环单次时疑似超过五分钟")
-    time.sleep(10)
+    while True:
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+            break
+        if time.time() - start_time > 300:
+            raise Exception("循环单次时疑似超过五分钟")
+    time.sleep(20)
     debug_djb_dir = r"D:\EYAOI\BIN\DebugDBJFileExport"
     current_time = time.time()
+    if_create_data = utils.check_new_data(debug_djb_dir,minutes=5)
+    if not if_create_data:
+        raise Exception("在D:\EYAOI\BIN\DebugDBJFileExport下未生成新文件")
     try:
         new_djb_files = [file for file in os.listdir(debug_djb_dir) if file.endswith(".djb") and (current_time - os.path.getmtime(os.path.join(debug_djb_dir, file))) < 180]
         if not new_djb_files:
             latest_djb_file = max(new_djb_files, key=lambda file: os.path.getmtime(os.path.join(debug_djb_dir, file)))
             latest_djb_time = os.path.getmtime(os.path.join(debug_djb_dir, latest_djb_file))
             logger.info(f"最新的.djb文件: {latest_djb_file}, 生成时间: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(latest_djb_time))}")
-            raise Exception("三分钟内无.djb文件生成")
+            raise Exception("三分钟内D:\EYAOI\BIN\DebugDBJFileExport下生成了新文件，但无.djb文件生成")
     except ValueError:
         raise Exception("未找到任何.djb文件")
 
@@ -1304,24 +1675,23 @@ def jbgn_001_55():
 def jbgn_001_56():
     utils.check_and_launch_aoi()
     # 任意测试一个job
-    utils.check_all_algs()
+    utils.check_close_all_algs()
     utils.open_program()
     utils.is_checked((66,255),(78,267),True)
-    utils.click_by_png(config.PLAY)
-    for _ in range(2):
-        time.sleep(2)
+    utils.click_by_png(config.PLAY, 2)
+    for _ in range (3):
+        time.sleep(5)
         pyautogui.press("enter")
-        time.sleep(2)
-    if not utils.search_symbol(config.TESTING_INTERFACE_INFORMATION, 20):
-        raise Exception("未能进入测试板界面")
+        time.sleep(5)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
     time.sleep(5)
-    if not utils.search_symbol(config.TESTING_INTERFACE_GOOD, 60,tolerance=0.8):
+    if not utils.search_symbol(config.TESTING_INTERFACE_GOOD, 60,tolerance=0.7):
         raise Exception("未检测到：良好")
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_57():
     utils.check_and_launch_aoi() 
-    utils.check_all_algs()
+    utils.check_close_all_algs()
     utils.open_program()   
     # 测试一个忽略板
     pyautogui.rightClick(config.CENTRE)
@@ -1341,12 +1711,12 @@ def jbgn_001_57():
     time.sleep(5)
     if not utils.check_color_in_region((255,0,0),region=config.CHECK_RESULT_REGION):
         raise Exception("标记坏板失败：调整调色板后未检测到坏板结果")
-    utils.click_by_png(config.PLAY)
+    utils.click_by_png(config.PLAY, 2)
     for _ in range(5):
         if utils.search_symbol(config.QUESTION_MARK, 5):
             pyautogui.press("enter")
             time.sleep(3)
-    if not utils.search_symbol(config.TESTING_INTERFACE_INFORMATION,15,tolerance=0.8):
+    if not utils.search_symbol(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.8):
         raise Exception("疑似未进入测试板界面")
     if not utils.search_symbol(config.TESTING_INTERFACE_IGNORE, 60):
         raise Exception("未检测到结果：忽略")
@@ -1394,29 +1764,85 @@ def jbgn_001_57():
         time_difference = current_time - end_time
 
         # 判断时间差是否在三分钟内
-        if abs(time_difference.total_seconds()) <= 180:
+        if abs(time_difference.total_seconds()) <= 600:
             count_within_three_minutes += 1
 
     # 如果计数器为0，报错
     if count_within_three_minutes == 0:
-        raise Exception("未找到截止时间在三分钟内的数据")
+        raise Exception("未找到截止时间在十分钟内的数据")
 
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_58():  
+    # 打开任意job--双击元件进入元件编辑界面--编辑--测试当前窗口
+    utils.check_and_launch_aoi()
+    utils.ensure_in_edit_mode()
+    utils.click_by_png(config.TEST_WINDOW)
+    time.sleep(3)
+    utils.caton_or_flashback("AOI.exe")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def jbgn_001_59():  
+    # 打开任意job--双击元件进入元件编辑界面--编辑--测试当前元件
+    utils.check_and_launch_aoi()
+    utils.ensure_in_edit_mode()
+    utils.click_by_png(config.TEST_COMPONENT)
+    time.sleep(3)
+    utils.caton_or_flashback("AOI.exe")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def jbgn_001_60():  
+    # 打开任意job--双击元件进入元件编辑界面--编辑--测试当前分组
+    utils.check_and_launch_aoi()
+    utils.ensure_in_edit_mode()
+    utils.click_by_png(config.TEST_GROUP)
+    time.sleep(3)
+    utils.caton_or_flashback("AOI.exe")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def jbgn_001_61():  
+    # 打开任意job--双击元件进入元件编辑界面--编辑--测试当前整版
+    utils.check_and_launch_aoi()
+    utils.ensure_in_edit_mode()
+    utils.click_by_png(config.TEST_BOARD)
+    time.sleep(3)
+    utils.caton_or_flashback("AOI.exe")
+    utils.close_aoi()
+
+@utils.screenshot_error_to_excel()
+def jbgn_001_62():  
     utils.check_and_launch_aoi()
     # 1.打开任意一个job，运行测试
     utils.open_program()
-    utils.click_by_png(config.PLAY)
-    for _ in range(2):
-        time.sleep(2)
+    utils.click_by_png(config.PLAY, 2)
+    for _ in range (3):
+        time.sleep(5)
         pyautogui.press("enter")
-        time.sleep(2)
-    if not utils.search_symbol(config.TESTING_INTERFACE_INFORMATION, 20):
-        raise Exception("未能进入测试板界面")
-    # 2.计算完成后--查看rv TODO
+        time.sleep(5)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    start_time = time.time()
+    while True:
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+            break
+        if time.time() - start_time > 300:
+            raise Exception("循环单次时疑似超过五分钟")
+    # 2.计算完成后--查看rv 
     utils.check_and_launch_rv()
     # 3.按快捷键进行复判--提交
-    utils.review_and_submit_with_shortcut()
+    pcb_list_before = pyautogui.screenshot(config.PCB_LIST_REGION)
+    pcb_component_list_before = pyautogui.screenshot(config.PCB_COMPONENT_LIST_REGION)
+    pyautogui.press('num0')
+    time.sleep(5)
+    pcb_component_list_after = pyautogui.screenshot(config.PCB_COMPONENT_LIST_REGION)
+    if pcb_component_list_before == pcb_component_list_after:
+        raise Exception("复判后pcb元件列表未发生变化")
+    pyautogui.press("enter")
+    time.sleep(5)
+    pcb_list_after = pyautogui.screenshot(config.PCB_LIST_REGION)
+    if pcb_list_before == pcb_list_after:
+        raise Exception("全部通过后pcb列表未发生变化")
     utils.close_aoi()

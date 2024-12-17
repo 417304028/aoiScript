@@ -322,7 +322,7 @@ def tccs_007_01():
     utils.open_program()
     utils.click_by_png(config.PLAY)
     time.sleep(5)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -343,12 +343,13 @@ def tccs_007_02():
         pyautogui.press("enter")
         time.sleep(2)
     time.sleep(5)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
 def tccs_007_03():
     utils.check_and_launch_aoi()
+    utils.check_close_all_algs(False)
     # 1.打开任一job
     utils.ensure_in_edit_mode()
     # 2.检测一个有字符检测的元件，且字符检测只有一个待料
@@ -367,13 +368,14 @@ def tccs_007_03():
         raise Exception("ocv未识别到字符")
     utils.click_by_png(config.APPLY)
     time.sleep(3)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
     
 
 @utils.screenshot_error_to_excel()
 def tccs_008_01():
     utils.check_and_launch_aoi()
+    utils.check_close_all_algs(False)
     # 1.打开任一job
     utils.open_program()
     # 2.选择已有的可添加代料的算法，点击【+】--选择光源--【确定】添加代料
@@ -400,13 +402,14 @@ def tccs_008_01():
         raise Exception("ocv未识别到字符")
     utils.click_by_png(config.APPLY)
     time.sleep(5)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 
 @utils.screenshot_error_to_excel()
 def tccs_008_02():
     utils.check_and_launch_aoi()
+    utils.check_close_all_algs(False)
     # 1.打开任一job
     utils.ensure_in_edit_mode()
     # 2.选择字符检测，点击【+】--选择光源--【确定】添加代料
@@ -433,12 +436,13 @@ def tccs_008_02():
         raise Exception("ocv未识别到字符")
     utils.click_by_png(config.APPLY)
     time.sleep(5)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
 def tccs_008_03():
     utils.check_and_launch_aoi()
+    utils.check_close_all_algs(False)
     # 1.打开任一job
     utils.ensure_in_edit_mode()
     # 2.检测一个有字符检测的元件，且字符检测只有一个待料
@@ -468,26 +472,33 @@ def tccs_008_03():
         pyautogui.press("enter")
         time.sleep(2)
     time.sleep(5)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 
 @utils.screenshot_error_to_excel()
 def tccs_008_04():
     utils.check_and_launch_aoi()
-    # utils.check_output_data_delay_0()
+    utils.check_close_all_algs(False)
+    utils.check_output_data_delay(0)
     # 1.打开任一job，【运行】程式
     utils.open_program()
     utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
     utils.is_checked((66,255),(78,267),True)
-    utils.click_by_png(config.PLAY)
-    for _ in range (2):
-        time.sleep(2)
+    utils.click_by_png(config.PLAY, 2)
+    for _ in range (3):
+        time.sleep(5)
         pyautogui.press("enter")
-        time.sleep(2)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
+        time.sleep(5)
     # 2.在页面计算进度条达到100%后，点击【停止】--【进入细调界面】
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_PERCENT_100,60)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    start_time = time.time()
+    while True:
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+            break
+        if time.time() - start_time > 300:
+            raise Exception("循环单次时疑似超过五分钟")
+        
     utils.click_by_png(config.STOP)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75)
     utils.click_by_png(config.TESTING_INTERFACE_ENTER_DETAIL_INTERFACE)
@@ -516,24 +527,32 @@ def tccs_008_04():
         raise Exception("ocv未识别到字符")
     utils.click_by_png(config.APPLY)
     time.sleep(5)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
 def tccs_008_05():
     utils.check_and_launch_aoi()
+    utils.check_close_all_algs(False)
+    utils.check_output_data_delay(0)
     # 1.打开任一job，【运行】程式
     utils.open_program()
     utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
     utils.is_checked((66,255),(78,267),True)
-    utils.click_by_png(config.PLAY)
-    for _ in range (2):
-        time.sleep(2)
+    utils.click_by_png(config.PLAY, 2)
+    for _ in range (3):
+        time.sleep(5)
         pyautogui.press("enter")
-        time.sleep(2)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
+        time.sleep(5)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
     # 2.在页面计算进度条达到100%后，点击【停止】--【进入细调界面】
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_PERCENT_100,60)
+    start_time = time.time()
+    while True:
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+            break
+        if time.time() - start_time > 300:
+            raise Exception("循环单次时疑似超过五分钟")
+
     utils.click_by_png(config.STOP)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75)
     utils.click_by_png(config.TESTING_INTERFACE_ENTER_DETAIL_INTERFACE)
@@ -562,24 +581,31 @@ def tccs_008_05():
         raise Exception("ocv未识别到字符")
     utils.click_by_png(config.APPLY)
     time.sleep(5)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
 def tccs_008_06():
     utils.check_and_launch_aoi()
+    utils.check_close_all_algs(False)
+    utils.check_output_data_delay(0)
     # 1.打开任一job，【运行】程式
     utils.open_program()
     utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
     utils.is_checked((66,255),(78,267),True)
-    utils.click_by_png(config.PLAY)
-    for _ in range (2):
-        time.sleep(2)
+    utils.click_by_png(config.PLAY, 2)
+    for _ in range (3):
+        time.sleep(5)
         pyautogui.press("enter")
-        time.sleep(2)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
+        time.sleep(5)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
     # 2.在页面计算进度条达到100%后，点击【停止】--【进入细调界面】
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_PERCENT_100,60)
+    start_time = time.time()
+    while True:
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+            break
+        if time.time() - start_time > 300:
+            raise Exception("循环单次时疑似超过五分钟")
     utils.click_by_png(config.STOP)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75)
     utils.click_by_png(config.TESTING_INTERFACE_ENTER_DETAIL_INTERFACE)
@@ -612,73 +638,89 @@ def tccs_008_06():
         raise Exception("ocv未识别到字符")
     utils.click_by_png(config.APPLY)
     time.sleep(5)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
-@utils.screenshot_error_to_excel()
-def tccs_009_01():
-    utils.check_and_launch_aoi()
-    utils.check_patent_not_NG(3)
-    # 1.打开任一job
-    utils.ensure_in_edit_mode()
-    # 2.选中已关联父框，全选后移偏
-    pyautogui.hotkey("ctrl","a")
-    pyautogui.press("delete")
-    if utils.search_symbol(config.QUESTION_MARK):
-        pyautogui.press("enter")
+# TODO 难度太大
+# @utils.screenshot_error_to_excel()
+# def tccs_009_01():
+#     utils.check_and_launch_aoi()
+#     utils.check_patent_not_NG(3)
+#     # 1.打开任一job
+#     utils.ensure_in_edit_mode()
+#     # 2.选中已关联父框，全选后移偏
+#     pyautogui.hotkey("ctrl","a")
+#     pyautogui.press("delete")
+#     if utils.search_symbol(config.QUESTION_MARK):
+#         pyautogui.press("enter")
 
-    for action in [config.SQUARE_POSITIONING, config.COLOR_AREA]:
-        utils.add_window()
-        utils.click_by_png(action)
-        utils.click_by_png(config.YES)
-        time.sleep(7)
-    pyautogui.hotkey("ctrl","a")
-    utils.click_by_png(config.RELATE_WINDOW)
-    pyautogui.hotkey("ctrl","tab")
-    time.sleep(3)
-    frame_center = utils.get_frame_center((0,0,255))
-    # 按住frame_center 往任意方向拖动50-100距离
-    pyautogui.mouseDown(frame_center)
-    time.sleep(0.5)
-    move_x = random.randint(50, 100) * random.choice([-1, 1])
-    move_y = random.randint(50, 100) * random.choice([-1, 1])
-    pyautogui.moveRel(move_x, move_y, duration=1)
-    time.sleep(0.5)
-    pyautogui.mouseUp()
+#     for action in [config.SQUARE_POSITIONING, config.COLOR_AREA]:
+#         utils.add_window()
+#         utils.click_by_png(action)
+#         utils.click_by_png(config.YES)
+#         time.sleep(7)
+#     pyautogui.hotkey("ctrl","a")
+#     utils.click_by_png(config.RELATE_WINDOW)
+#     pyautogui.hotkey("ctrl","tab")
+#     time.sleep(3)
+#     frame_center = utils.get_frame_center((0,0,255))
+#     # 按住frame_center 往任意方向拖动50-100距离
+#     pyautogui.mouseDown(frame_center)
+#     time.sleep(0.5)
+#     move_x = random.randint(50, 100) * random.choice([-1, 1])
+#     move_y = random.randint(50, 100) * random.choice([-1, 1])
+#     pyautogui.moveRel(move_x, move_y, duration=1)
+#     time.sleep(0.5)
+#     pyautogui.mouseUp()
 
-    # 3.点击【测试当前元件】
-    utils.click_by_png(config.TEST_COMPONENT)
-    if utils.search_symbol(config.QUESTION_MARK):
-        pyautogui.press("enter")
-    if utils.search_symbol(config.TESTING_COMPONENT):
-        time.sleep(1)
-    utils.close_aoi()
+#     # 3.点击【测试当前元件】
+#     utils.click_by_png(config.TEST_COMPONENT)
+#     if utils.search_symbol(config.QUESTION_MARK):
+#         pyautogui.press("enter")
+#     while utils.search_symbol(config.TESTING_COMPONENT):
+#         time.sleep(1)
 
-@utils.screenshot_error_to_excel()
-def tccs_009_02():
-    utils.check_and_launch_aoi()
-    utils.check_patent_not_NG(3)
-    # 1.打开任一job，【运行】程式
-    utils.open_program()
-    utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
-    utils.is_checked((66,255),(78,267),True)
-    utils.click_by_png(config.PLAY)
-    for _ in range (2):
-        time.sleep(2)
-        pyautogui.press("enter")
-        time.sleep(2)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
-    # 2.选中已关联父框，全选后移偏
-    pyautogui.hot
+#     # 子框随父框移动,切在移动后的位置进行计算
+#     utils.get_color_in_region
 
-    # 方形定位和颜色面积
-    # 3.在页面计算进度条达到100%后，点击【停止】--【进入细调界面】
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_PERCENT_100,60)
-    utils.click_by_png(config.STOP)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75)
-    utils.click_by_png(config.TESTING_INTERFACE_ENTER_DETAIL_INTERFACE)
-    time.sleep(5)
-    # 4.查看移偏元件
+
+
+
+    # utils.close_aoi()
+
+# # TODO
+# @utils.screenshot_error_to_excel()
+# def tccs_009_02():
+#     utils.check_and_launch_aoi()
+#     utils.check_patent_not_NG(3)
+#     # 1.打开任一job，【运行】程式
+#     utils.open_program()
+#     utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
+#     utils.is_checked((66,255),(78,267),True)
+#     utils.click_by_png(config.PLAY, 2)
+#     for _ in range (3):
+#         time.sleep(5)
+#         pyautogui.press("enter")
+#         time.sleep(5)
+#     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+#     # 2.选中已关联父框，全选后移偏
+#     pyautogui.hotkey("ctrl","a")
+
+
+
+
+
+
+
+#     # 方形定位和颜色面积
+#     # 3.在页面计算进度条达到100%后，点击【停止】--【进入细调界面】
+#     if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.75):
+#         raise Exception("循环单次时疑似超过五分钟")
+#     utils.click_by_png(config.STOP)
+#     utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75)
+#     utils.click_by_png(config.TESTING_INTERFACE_ENTER_DETAIL_INTERFACE)
+#     time.sleep(5)
+#     # 4.查看移偏元件
 
 # @utils.screenshot_error_to_excel()
 # def tccs_0010_01():
@@ -726,35 +768,89 @@ def tccs_009_02():
 #     # 6.RV复判后，看继电器亮灯
 
 @utils.screenshot_error_to_excel()
-def tccs_0012_01():
+def tccs_012_01():
     utils.check_and_launch_aoi()
     # 1.打开任一job，【运行】程式
     utils.open_program()
     utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
     utils.is_checked((66,255),(78,267),True)
-    utils.click_by_png(config.PLAY)
-    for _ in range (2):
-        time.sleep(2)
+    utils.click_by_png(config.PLAY, 2)
+    for _ in range (3):
+        time.sleep(5)
         pyautogui.press("enter")
-        time.sleep(2)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
+        time.sleep(5)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
     # 2.在页面计算进度条达到100%后，点击【停止】--【进入细调界面】
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_PERCENT_100,60)
+    start_time = time.time()
+    while True:
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+            break
+        if time.time() - start_time > 300:
+            raise Exception("循环单次时疑似超过五分钟")
     utils.click_by_png(config.STOP)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75)
     utils.click_by_png(config.TESTING_INTERFACE_ENTER_DETAIL_INTERFACE)
     time.sleep(5)
     # 3.任意选择一个有算法的元件移动算法框
+    utils.find_component_window(1)
+    before_left_point = utils.get_color_direction_coordinate((255,255,255),config.COMPONENT_OPERATION_REGION,"left")
+    before_up_point = utils.get_color_direction_coordinate((255,255,255),config.COMPONENT_OPERATION_REGION,"up")
+    pyautogui.click(config.CENTRE)
+    time.sleep(3)
+    pyautogui.drag(-50, -50, duration=1)
+    after_left_point = utils.get_color_direction_coordinate((255,255,255),config.COMPONENT_OPERATION_REGION,"left")
+    after_up_point = utils.get_color_direction_coordinate((255,255,255),config.COMPONENT_OPERATION_REGION,"up")
+    if after_left_point >= before_left_point and after_up_point >= before_up_point:
+        raise Exception("算法框未成功左移或上移")
+    utils.close_aoi()
+
+    
 
 @utils.screenshot_error_to_excel()
-def tccs_0012_02():
+def tccs_012_02():
     utils.check_and_launch_aoi()
     # 1.打开任意job,运行程式
     utils.open_program()
     # 2.计算完成后，停止进入细调，在超出此元件roi的范围外添加一个检测框 TODO
+    utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
+    utils.is_checked((66,255),(78,267),True)
+    utils.click_by_png(config.PLAY, 2)
+    for _ in range (3):
+        time.sleep(5)
+        pyautogui.press("enter")
+        time.sleep(5)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+
+    start_time = time.time()
+    while True:
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+            break
+        if time.time() - start_time > 300:
+            raise Exception("循环单次时疑似超过五分钟")
+    utils.click_by_png(config.STOP)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75)
+    utils.click_by_png(config.TESTING_INTERFACE_ENTER_DETAIL_INTERFACE)
+    time.sleep(5)
+
+    before_left_point = utils.get_color_direction_coordinate((255,255,255),config.COMPONENT_OPERATION_REGION,"left")
+    before_up_point = utils.get_color_direction_coordinate((255,255,255),config.COMPONENT_OPERATION_REGION,"up")
+
+    pyautogui.press("w")
+    time.sleep(3)
+    pyautogui.moveTo(730, 420)
+    pyautogui.mouseDown()
+    pyautogui.moveTo(1100, 480, duration=1)
+    pyautogui.mouseUp()
+    time.sleep(3)
+
+    after_left_point = utils.get_color_direction_coordinate((255,255,255),config.COMPONENT_OPERATION_REGION,"left")
+    after_up_point = utils.get_color_direction_coordinate((255,255,255),config.COMPONENT_OPERATION_REGION,"up")
+    if after_left_point >= before_left_point and after_up_point >= before_up_point:
+        raise Exception("算法框未成功左移或上移")
+    utils.close_aoi()
 
 # @utils.screenshot_error_to_excel()
-# def tccs_0012_03():
+# def tccs_012_03():
 #     # 测试表格中的用例【金山文档 | WPS云文档】 细条测试 TODO
 #     # https://kdocs.cn/l/cvw8JGzbm95v
     

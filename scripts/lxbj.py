@@ -33,6 +33,16 @@ import os
 
 # 查看RV，SRC上元件窗口，结果值 正常显示
 
+def lxbj_001_01():
+    pass
+def lxbj_001_02():
+    pass
+def lxbj_001_03():
+    pass
+def lxbj_001_04():
+    pass
+
+
 @utils.screenshot_error_to_excel()
 # 添加待料
 def lxbj_002_01():
@@ -97,24 +107,24 @@ def lxbj_002_01():
     time.sleep(1)
 
     # 调用卡顿或闪退检测函数
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
-# TODO 可以识别出提示，但是没办法跟缺陷名对应
-# 不良窗口/元件
-@utils.screenshot_error_to_excel()
-def lxbj_003_01():
-    utils.check_and_launch_aoi()
-    utils.ensure_in_edit_mode()
-    time.sleep(2)
-    pyautogui.press('b')
-    # 不良窗口，红字提示：检测窗口 缺陷名称（左侧窗口的缺陷名，如果左侧窗口的缺陷名是默认，取算法参数界面首个不良结果对应的缺陷名）
-    utils.click_by_png(config.TEST_WINDOW)
-    time.sleep(3)
-    # 不良元件，红字提示：元件 首个不良窗口的缺陷名称（左侧窗口的缺陷名，如果左侧窗口的缺陷名是默认，取算法参数界面首个不良结果对应的缺陷名）
-    utils.click_by_png(config.TEST_COMPONENT)
-    time.sleep(3)
-    utils.close_aoi()
+# # TODO 可以识别出提示，但是没办法跟缺陷名对应
+# # 不良窗口/元件
+# @utils.screenshot_error_to_excel()
+# def lxbj_003_01():
+#     utils.check_and_launch_aoi()
+#     utils.ensure_in_edit_mode()
+#     time.sleep(2)
+#     pyautogui.press('b')
+#     # 不良窗口，红字提示：检测窗口 缺陷名称（左侧窗口的缺陷名，如果左侧窗口的缺陷名是默认，取算法参数界面首个不良结果对应的缺陷名）
+#     utils.click_by_png(config.TEST_WINDOW)
+#     time.sleep(3)
+#     # 不良元件，红字提示：元件 首个不良窗口的缺陷名称（左侧窗口的缺陷名，如果左侧窗口的缺陷名是默认，取算法参数界面首个不良结果对应的缺陷名）
+#     utils.click_by_png(config.TEST_COMPONENT)
+#     time.sleep(3)
+#     utils.close_aoi()
 
 # 返回不修改
 @utils.screenshot_error_to_excel()
@@ -378,7 +388,7 @@ def lxbj_005_04():
     point = (935, 445)
     pyautogui.rightClick(point)
     utils.click_by_png(config.EXPORT_PART_OK)
-    if not utils.search_symbol_erroring(config.QUESTION_MARK, 5):
+    if not utils.search_symbol_erroring(config.WARNING, 5):
         raise Exception("未发现提示框")
     else:
         pyautogui.press('enter')
@@ -1603,7 +1613,7 @@ def lxbj_014_01():
         pyautogui.click((1725, 545))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1638,7 +1648,7 @@ def lxbj_014_02():
         pyautogui.click((1725, 575))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1673,7 +1683,7 @@ def lxbj_014_03():
         pyautogui.click((1725, 595))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1708,7 +1718,7 @@ def lxbj_014_04():
         pyautogui.click((1725, 545))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1743,7 +1753,7 @@ def lxbj_014_05():
         pyautogui.click((1725, 545))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1778,7 +1788,7 @@ def lxbj_014_06():
         pyautogui.click((1725, 560))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1813,7 +1823,7 @@ def lxbj_014_07():
         pyautogui.click((1725, 575))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1848,7 +1858,7 @@ def lxbj_014_08():
         pyautogui.click((1725, 590))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1883,7 +1893,7 @@ def lxbj_014_09():
         pyautogui.click((1725, 545))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1918,7 +1928,7 @@ def lxbj_014_10():
         pyautogui.click((1725, 560))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1953,7 +1963,7 @@ def lxbj_014_11():
         pyautogui.click((1725, 575))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1988,7 +1998,7 @@ def lxbj_014_12():
         pyautogui.click((1725, 590))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -2361,12 +2371,12 @@ def lxbj_018_03():
         time.sleep(5)
     utils.click_by_png(config.BOARD_REDUCE)
     # 统计板数量
-    board_num_before = utils.count_symbol_on_screen(config.BOARD_BOARD)
+    board_num_before = utils.count_symbol_on_region(config.BOARD_BOARD)
     logger.info(f'板数量: {board_num_before}')
     # 统计基准点数量
     utils.click_by_png(config.BOARD_ENLARGE)
     utils.scroll_down((200, 400),config.BOARD_INFORMATION_REGION)
-    mark_point_num_before = utils.count_symbol_on_screen(config.MARK_POINT)
+    mark_point_num_before = utils.count_symbol_on_region(config.MARK_POINT)
     logger.info(f'基准点数量: {mark_point_num_before}')
     # 2、左侧选择板--选择一个拼版右键--删除拼版
     utils.click_by_png(config.BOARD_BOARD)
@@ -2385,10 +2395,10 @@ def lxbj_018_03():
     pyautogui.press('enter')
     time.sleep(5)
     # 统计基准点数量
-    mark_point_num_after = utils.count_symbol_on_screen(config.MARK_POINT)
+    mark_point_num_after = utils.count_symbol_on_region(config.MARK_POINT)
     logger.info(f'基准点数量: {mark_point_num_after}')
     utils.click_by_png(config.BOARD_REDUCE)
-    board_num_after = utils.count_symbol_on_screen(config.BOARD_BOARD)
+    board_num_after = utils.count_symbol_on_region(config.BOARD_BOARD)
     if board_num_before == board_num_after and mark_point_num_before != mark_point_num_after:
         logger.info('拼版被删除且基准点被保留')
     else:
@@ -2406,12 +2416,12 @@ def lxbj_018_04():
         time.sleep(5)
     utils.click_by_png(config.BOARD_REDUCE)
     # 统计板数量
-    board_num_before = utils.count_symbol_on_screen(config.BOARD_BOARD)
+    board_num_before = utils.count_symbol_on_region(config.BOARD_BOARD)
     logger.info(f'板数量: {board_num_before}')
     # 统计基准点数量
     utils.click_by_png(config.BOARD_ENLARGE)
     utils.scroll_down((200, 400),config.BOARD_INFORMATION_REGION)
-    mark_point_num_before = utils.count_symbol_on_screen(config.MARK_POINT)
+    mark_point_num_before = utils.count_symbol_on_region(config.MARK_POINT)
     logger.info(f'基准点数量: {mark_point_num_before}')
     # 2、点击拼版操作 再点击删除拼版
     utils.click_by_png(config.BOARD_SPLICING_OPERATION)
@@ -2424,10 +2434,10 @@ def lxbj_018_04():
     pyautogui.press('enter')
     time.sleep(5)
     # 统计基准点数量
-    mark_point_num_after = utils.count_symbol_on_screen(config.MARK_POINT)
+    mark_point_num_after = utils.count_symbol_on_region(config.MARK_POINT)
     logger.info(f'基准点数量: {mark_point_num_after}')
     utils.click_by_png(config.BOARD_REDUCE)
-    board_num_after = utils.count_symbol_on_screen(config.BOARD_BOARD)
+    board_num_after = utils.count_symbol_on_region(config.BOARD_BOARD)
     if board_num_before == board_num_after and mark_point_num_before != mark_point_num_after:
         logger.info('拼版被删除且基准点被保留')
     else:

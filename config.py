@@ -27,15 +27,18 @@ def resource_path(relative_path):
 # AOI路径
 AOI_EXE_PATH = r'D:\EYAOI\Bin\AOI.exe'
 # SPC路径
-SPC_EXE_PATH = r'D:\EYAOI\AOI_SPC\SPCViewMain.exe'
+SPC_EXE_PATH = 'D:/EYAOI/AOI_SPC/SPCViewMain.exe'
 # RV路径
-RV_EXE_PATH = r'D:\EYAOI\AOI_RV\DVPro.UI.exe'
+RV_EXE_PATH = 'D:/EYAOI/AOI_RV/DVPro.UI.exe'
 # job路径
 JOB_PATH = r'D:\EYAOI\JOB\djb'
 # SPC用户名
 SPC_USER_NAME = "sinictek"
 # SPC密码
 SPC_PASSWORD, RV_PASSWORD_TEXT = "000", "000"
+
+
+DV_INFORMATION = resource_path('images/dv/information.png')
 
 SPC_TOPIC = resource_path('images/spc/topic.png')
 SPC_TASKBAR = resource_path('images/spc/taskbar.png')
@@ -102,6 +105,7 @@ OPEN_PROGRAM_CURSOR = resource_path('images/open_program/cursor.png')
 OPEN_PROGRAM_REMOVE = resource_path('images/open_program/remove.png')
 OPEN_PROGRAM_LOAD_1 = resource_path('images/open_program/load_1.png')
 OPEN_PROGRAM_RECENT = resource_path('images/open_program/recent.png')
+OPEN_PROGRAM_SWITCH = resource_path('images/open_program/switch.png')
 REMOVE_PROGRAM = resource_path('images/open_program/remove.png')
 OPEN_PROGRAM_ALL_ALGS = resource_path('images/open_program/all_algs.png')
 OPEN_PROGRAM_TOPIC = resource_path('images/open_program/topic.png')
@@ -303,7 +307,7 @@ HARDWARE_SETTING = resource_path('images/gui/setting/hardware/hardware_setting.p
 PYQT_ICON = resource_path('gui/resources/sinic_tek.jpg')
 CHANGE_PARAM_ONLINE_TASKBAR = resource_path('images/gui/run/change_param_online_taskbar.png')
 EDIT_PACKAGE_TYPE = resource_path('images/hodgepodge/edit_package_type.png')
-ICON_3D = resource_path('images/hodgepodge/icon_3d.png')
+BLACK = resource_path('images/hodgepodge/black.png')
 CLEAR_PACKAGE_TYPE = resource_path('images/hodgepodge/clear_package_type.png')
 COPY_PACKAGE_TYPE_NAME = resource_path('images/hodgepodge/copy_package_type_name.png')
 COPY_PART_NO_NAME = resource_path('images/hodgepodge/copy_part_no_name.png')
@@ -320,6 +324,7 @@ PALETTE_EMPTY = resource_path('images/hodgepodge/palette_empty.png')
 ELEMENTS_VIEW_PN_EMPTY = resource_path('images/hodgepodge/elements_view_pn_empty.png')
 ELEMENTS_VIEW_PT_EMPTY = resource_path('images/hodgepodge/elements_view_pt_empty.png')
 ALG_PARAM_EMPTY = resource_path('images/hodgepodge/alg_param_empty.png')
+COMPONENT_WINDOW_EMPTY = resource_path('images/hodgepodge/component_window_empty.png')
 SAVE_AS_TOPIC = resource_path('images/hodgepodge/save_as_topic.png')
 OPEN_DJB_TOPIC = resource_path('images/hodgepodge/open_djb_topic.png')
 LOG_SAVE_SUCCESS = resource_path('images/hodgepodge/log_save_success.png')
@@ -358,7 +363,10 @@ SETTING_ALGORITHM_ALL_ALGS_NO = resource_path('images/setting/algorithm/all_algs
 
 # 文件夹-左
 OFFSET_LEFT_1 = resource_path('images/offset/left_1.png')
+OFFSET_USE_DATE_FOLDER = resource_path('images/offset/use_date_folder.png')
 OUTPUT_DELAY_TIME = resource_path('images/offset/output_delay_time.png')
+DATE_FOLDER_LIST = resource_path('images/offset/date_folder_list.png')
+DELAY_TIME_LIST = resource_path('images/offset/delay_time_list.png')
 
 # 元件库视图-上图为空
 ELEMENTS_VIEW_PICTURE_EMPTY_UP = resource_path('images/hodgepodge/elements_view_picture_empty_up.png')
@@ -461,6 +469,10 @@ def convert_region(region):
 PCB_LIST_REGION = convert_region((0, 80, 235, 1010))
 # PCB上边区域(首页的上部分)
 PCB_UP_REGION = convert_region((240, 80, 1500, 545))
+# PCB-2d图像区域
+PCB_2D_IMAGE_REGION = convert_region((713, 437, 1286, 686))
+# PCB-3d图像区域
+PCB_3D_IMAGE_REGION = convert_region((1301, 433, 1905, 686))
 # PCB元件列表区域
 PCB_COMPONENT_LIST_REGION = convert_region((1509, 318, 1525, 605))
 # 屏幕坐标附近区域
@@ -532,6 +544,9 @@ ELEMENTS_LIB_PATH = r'D:\EYAOI\CompLibrary'
 
 # ===================================RV-AI复判========================================
 RV_AI_TOPIC = resource_path('images/rv_ai_test/topic.png')
+RV_AI_CONFIRM_YES = resource_path('images/rv_ai_test/confirm_yes.png')
+RV_AI_CONFIRM_NO = resource_path('images/rv_ai_test/confirm_no.png')
+RV_AI_NO_CONFIRMED = resource_path('images/rv_ai_test/no_confirmed.png')
 RV_AI_TOPIC_DARK = resource_path('images/rv_ai_test/dark_topic.png')
 RV_AI_SIMULATE_TO_TRAIN = resource_path('images/rv_ai_test/simulate_to_train.png')
 RV_AI_SIMULATE_TO_EVAL = resource_path('images/rv_ai_test/simulate_to_eval.png')
@@ -561,5 +576,10 @@ RV_NG = resource_path('images/rv/ng.png')
 RV_ALL_NG = resource_path('images/rv/all_ng.png')
 RV_CONFIRM = resource_path('images/rv/confirm.png')
 RV_PCB_LIST_EMPTY = resource_path('images/rv/pcb_list_empty.png')
+RV_CHECKED_NO_CHOSED = resource_path('images/rv/checked_no_chosed.png')
+RV_CHECKED_CHOSED = resource_path('images/rv/checked_chosed.png')
+RV_NO_CHECKED_NO_CHOSED = resource_path('images/rv/no_checked_no_chosed.png')
+RV_NO_CHECKED_CHOSED = resource_path('images/rv/no_checked_chosed.png')
 RV_TASKBAR = resource_path('images/rv/taskbar.png')
+RV_PCB_LIST_LANE = resource_path('images/rv/pcb_list_lane.png')
 
