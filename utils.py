@@ -5,6 +5,7 @@ import shutil
 import subprocess
 import easyocr
 import sys
+sys.coinit_flags = 2
 import time
 import psutil
 from PIL import Image
@@ -36,6 +37,7 @@ from openpyxl.drawing.image import Image as ExcelImage
 from sklearn.cluster import KMeans
 import win32api
 import win32process
+
 
 ctypes.windll.shcore.SetProcessDpiAwareness(0)  # 解决使用pyautowin时缩放问题
 running_event = Event()
@@ -162,17 +164,25 @@ def window_interactive(title_re=None, auto_id=None, class_name=None, control_typ
 # 处理登录时的一系列预处理（有可能为打开程式的界面）
 def login_process():
     logger.warning("开始登录预处理")
-    for proc in psutil.process_iter():
-        if "ServiceProcessManager" in proc.name():
-            logger.info(f"正在杀死进程 {proc.name()}...")
-            proc.kill()
-            proc.wait()
+    try:    
+        for proc in psutil.process_iter():
+            if "ServiceProcessManager" in proc.name():
+                logger.info(f"正在杀死进程 {proc.name()}...")
+                proc.kill()
+                proc.wait()
             logger.info(f"进程 {proc.name()} 已被杀死")
             break
-    if search_symbol(config.LOGINING, 2):
+    except Exception as e:
+        logger.critical(f"无法杀死进程 {proc.name()}，错误: {e}")
+    while search_symbol(config.LOGINING, 2):
         time.sleep(3)
     delete_documents(config.SHARE_LIB_PATH)
     delete_documents(config.ELEMENTS_LIB_PATH)
+    if search_symbol(config.LOGIN_ENGLISH,2):
+        logger.info("检测到aoi英文登录界面")
+        pyautogui.write("sinictek")
+        pyautogui.press("enter")
+        time.sleep(1)
     if search_symbol(config.RV_PASSWORD,2,tolerance=0.7):
         time.sleep(1)
         logger.info("输入密码")
@@ -185,6 +195,8 @@ def login_process():
         click_by_png(config.CANCEL)
     if search_symbol(config.NO,2):
         click_by_png(config.NO)
+    while search_symbol(config.PROGRAM_LOADING,3):
+        time.sleep(3)
     try:
         # 获取屏幕分辨率
         user32 = ctypes.windll.user32
@@ -574,7 +586,11 @@ def check_and_launch_aoi():
     # aoi不存在的话，启动aoi
     if not aoi_running:
         logger.info("AOI程序未运行，正在启动...")
-        app = Application().start(config.AOI_EXE_PATH)
+        # app = Application().start(config.AOI_EXE_PATH)
+        # 使用命令行启动AOI程序
+        os.chdir(os.path.dirname(config.AOI_EXE_PATH))
+        subprocess.Popen(f'cmd /c "{os.path.basename(config.AOI_EXE_PATH)}"', shell=True)
+
         logger.info("等待AOI程序启动...")
         if search_symbol(config.WARNING, 10, tolerance=0.75):
             pyautogui.press("enter")
@@ -599,15 +615,27 @@ def check_and_launch_aoi():
                     time.sleep(2)  # 等待2秒后重试
                 else:
                     break
-        if not search_symbol(config.LOGINING, 5, tolerance=0.65):
+        if not search_symbol(config.LOGINING, 10, tolerance=0.65):
             bring_window_to_foreground("AOI.exe")
         else:
-            raise Exception("识别又又又出问题了 aoi没正常启动")
+            if search_symbol(config.WARNING, 2, tolerance=0.7):
+                pyautogui.press("enter")
+            else:
+                raise Exception("aoi疑似没正常启动")
         #     if not search_symbol(config.AOI_TOPIC, 10, tolerance=0.75):
         #         raise Exception("登录后未进入AOI主界面")
     # aoi存在的话 关闭再重启aoi
     else:
-        raise Exception("杀死aoi进程后AOI程序仍在运行")
+        logger.info("再次检测AOI.exe是否存在...")
+        for proc in psutil.process_iter():
+            if "AOI.exe" == proc.name():
+                logger.info(f"检测到进程 {proc.name()} (PID: {proc.pid})，正在杀死...")
+                proc.kill()
+                proc.wait()
+                logger.info(f"进程 {proc.name()} (PID: {proc.pid}) 已被杀死")
+                break
+        else:
+            logger.info("未检测到AOI.exe进程")
         # for proc in psutil.process_iter():
         #     if "aoi_memory" in proc.name():
         #         logger.info(f"正在杀死进程 {proc.name()}...")
@@ -846,7 +874,7 @@ def if_checked(top_left, bottom_right):
 
     # 定义目标颜色和容差
     target_colors = [(70, 70, 88), (32, 32, 54), (107, 107, 107)]
-    tolerance = 10  # 容差值
+    tolerance = 15  # 容差值
 
     # 检查每个目标颜色
     for color in target_colors:
@@ -1427,7 +1455,7 @@ def screenshot_to_excel(test_case_name, path, exception):
         ws.add_image(img)
         logger.info("数据处理完毕，开始保存excel")
         wb.save(excel_path)
-        logger.info("Excel文件保存在:", excel_path)
+        logger.info(f"Excel文件保存在: {excel_path}")
         logger.info("保存完毕")
     except Exception as e:
         logger.error(f"在保存截图和数据到Excel时发生错误: {e}")
@@ -1437,7 +1465,16 @@ def screenshot_to_excel(test_case_name, path, exception):
 
 
 # ====================业务处理========================
-
+# 执行方法结束后打开循环运行
+def loop(job_path,job_name):
+    check_and_launch_aoi()
+    check_loop()
+    open_program(if_specific=True, job_path=job_path, job_name=job_name)
+    click_by_png(config.PLAY, 2)
+    for _ in range (3):
+        time.sleep(5)
+        pyautogui.press("enter")
+        time.sleep(5)
 
 def check_test_time():
     right_side_text = get_text_by_text("测试时", "right")
@@ -1489,7 +1526,7 @@ def check_new_data_in_rv(if_new_data = None):
         raise Exception("rv未出现五分钟内的新数据")
 
 
-# 找有对应窗口的元件
+# 找有对应窗口的元件 并确认含待料的情况
 def find_component_window(window_names, limit_time=300, image=None):
     start_time = time.time()
     # 边在左侧点击元件，边往下找
@@ -1517,9 +1554,9 @@ def find_component_window(window_names, limit_time=300, image=None):
             for window_name in window_names:
                 if search_symbol(window_name, timeout=2,  region=config.COMPONENT_WINDOW_REGION, if_filter_color=True):
                     click_by_png(window_name, if_filter_color=True, region=config.COMPONENT_WINDOW_REGION)
-                    time.sleep(3)
+                    time.sleep(7)
                     if image:
-                        if search_symbol(image, timeout=2, if_filter_color=True, region=config.COMPONENT_WINDOW_REGION):
+                        if search_symbol(image, timeout=2, if_filter_color=True, region=config.PALETTE_REGION):
                             return
                     else:
                         return
@@ -1770,7 +1807,7 @@ def add_window(button="w"):
         pyautogui.mouseUp()
         logger.info("瞎画完成")
 # 打开程式(随机) 
-def open_program(program_type=0, if_recent=True):
+def open_program(program_type=0, if_recent=True, if_specific=False, job_path=None, job_name=None):
     """
     打开程式
     :param program_type: 0 - 默认, 1 - non-compressed, 2 - compressed
@@ -1814,13 +1851,23 @@ def open_program(program_type=0, if_recent=True):
     directory = r"D:\EYAOI\JOB"
     time.sleep(3)
     pyautogui.press("enter")
-    pyautogui.write(directory)
+    if if_specific and job_path is None and job_name is None:
+        write_text((715,655),"全算法")
+    elif if_specific and job_path is not None and job_name is not None:
+        parent_directory = os.path.dirname(job_path)
+        logger.info(f"打开程式窗口选择文件夹窗口写入job_path的上一级目录: {parent_directory}, 写入job_name: {job_name}")
+        write_text((715,655),parent_directory)
+    else:
+        logger.info(f"打开程式窗口选择文件夹窗口写入job_path: {directory}")
+        write_text((715,655),directory)
     time.sleep(0.5)
     click_by_png(config.SELECT_FOLDER)
     if not if_recent:
         click_by_png(config.OFFSET_LEFT_1,tolerance=0.98, type="left")
-    time.sleep(2)
 
+    time.sleep(2)
+    if if_specific and job_path is not None and job_name is not None:
+        write_text((650,220),job_name)
     # 双击程式
     if program_type == 0:
         symbols = [config.OPEN_PROGRAM_PLUS, config.OPEN_PROGRAM_CURSOR]
@@ -1851,23 +1898,27 @@ def open_program(program_type=0, if_recent=True):
         click_by_png(config.OPEN_PROGRAM_CURSOR, 2)
         if search_symbol(config.OPEN_PROGRAM_EMPTY, 3):
             raise Exception("该程式无job")
-    click_by_png(config.YES)
+    if search_symbol(config.YES, 2):
+        click_by_png(config.YES)
     if search_symbol(config.OPEN_PROGRAM_SWITCH, 2):
         check_checkbox_status_before_text("允许程式切换",True)
         pyautogui.press('enter')
     while search_symbol(config.PROGRAM_LOADING, 5):
         time.sleep(5)
     # cnm的傻逼岗位 傻逼软件一堆窗口
-    for proc in psutil.process_iter():
-        if "ServiceProcessManager.exe" in proc.name():
-            logger.info(f"正在尝试杀死进程 {proc.name()}...")
-            try:
-                proc.kill()
-                proc.wait()
-                logger.info(f"进程 {proc.name()} 已被杀死")
-            except Exception as e:
-                logger.error(f"无法杀死进程 {proc.name()}，错误: {e}")
-            break
+    try:
+        for proc in psutil.process_iter():
+            if "ServiceProcessManager.exe" in proc.name():
+                logger.info(f"正在尝试杀死进程 {proc.name()}...")
+                try:
+                    proc.kill()
+                    proc.wait()
+                    logger.info(f"进程 {proc.name()} 已被杀死")
+                except Exception as e:
+                    logger.error(f"无法杀死进程 {proc.name()}，错误: {e}")
+                break
+    except Exception as e:
+        logger.error(f"无法杀死进程 {proc.name()}，错误: {e}")
 
 
 # 获取最近编辑的一个程式
@@ -2086,6 +2137,8 @@ def shortcut_key_online_parameter_display_sync_package():
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
         pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
         if time.time() - start_time > 30:
@@ -2117,6 +2170,8 @@ def param_keep_the_last_pcb_number():
     time.sleep(0.5)
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
+        pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
         pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
@@ -2174,11 +2229,42 @@ def param_good_and_ng_component_limits(good_limit, ng_limit):
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
         pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
         if time.time() - start_time > 30:
             raise Exception("超过半分钟了设置界面仍未关闭")
         time.sleep(1.5)
+
+def check_loop():
+    if search_symbol(config.SETTING_DARK, 1):
+        click_by_png(config.SETTING_DARK)
+    else:
+        search_symbol_erroring(config.SETTING_LIGHT, 1)
+    click_by_png(config.PARAM_HARDWARE_SETTING)
+    time.sleep(3)
+    check_checkbox_status_before_text("打开左右循环", True)
+    check_checkbox_status_before_text("重新载板", True)
+    check_checkbox_status_before_text("左进右出", False)
+    time.sleep(1)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.75)
+    if search_symbol(config.NO, 1.5, tolerance=0.75):
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.85)
+    else:
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.85)
+    time.sleep(0.5)
+    pyautogui.press('enter')
+    if search_symbol(config.QUESTION_MARK, 2):
+        pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
+    start_time = time.time()
+    while search_symbol(config.PARAM_SETTING_TOPIC, 2):
+        if time.time() - start_time > 30:
+            raise Exception("超过半分钟了设置界面仍未关闭")
+        time.sleep(1.5)
+
 # 【设置】--【硬件设置】--【数据导出配置】--【数据导出配置】--勾选【输出测试数据】
 def check_export_test_data(if_checked):
     if search_symbol(config.SETTING_DARK, 1):
@@ -2199,6 +2285,8 @@ def check_export_test_data(if_checked):
     time.sleep(0.5)
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
+        pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
         pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
@@ -2225,6 +2313,8 @@ def check_offline_send_data(if_checked):
     time.sleep(0.5)
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
+        pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
         pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
@@ -2256,6 +2346,8 @@ def check_share_lib_path(if_checked):
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
         pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
         if time.time() - start_time > 30:
@@ -2283,6 +2375,8 @@ def check_default_export_auto_save(if_default_export, if_auto_save):
     time.sleep(0.5)
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
+        pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
         pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
@@ -2314,6 +2408,8 @@ def check_auto_load_program(if_auto_load_program):
     time.sleep(0.5)
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
+        pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
         pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
@@ -2350,6 +2446,8 @@ def check_xy_max_extension():
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
         pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
         if time.time() - start_time > 30:
@@ -2373,6 +2471,8 @@ def check_not_allow_paste_component_to_component(if_not_allow):
     time.sleep(0.5)
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
+        pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
         pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
@@ -2398,6 +2498,8 @@ def check_not_allow_paste_component_to_blank(if_not_allow):
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
         pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
         if time.time() - start_time > 30:
@@ -2422,6 +2524,8 @@ def check_cross_component_copy():
     time.sleep(0.5)
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
+        pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
         pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
@@ -2452,6 +2556,8 @@ def check_not_sync_same_and_default_package(if_not_sync_same_package, if_default
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
         pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
         if time.time() - start_time > 30:
@@ -2477,6 +2583,8 @@ def check_not_sync_same_package(if_not_sync_same_package):
     time.sleep(0.5)
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
+        pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
         pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
@@ -2517,6 +2625,8 @@ def check_dv(if_open_dv_mode=None, if_auto_check_dv=None):
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
         pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
         if time.time() - start_time > 30:
@@ -2546,15 +2656,46 @@ def check_import_filtering_restriction(percent):
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
         pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
+    start_time = time.time()
+    while search_symbol(config.PARAM_SETTING_TOPIC, 2):
+        if time.time() - start_time > 30:
+            raise Exception("超过半分钟了设置界面仍未关闭")
+        time.sleep(1.5)
+# 【设置】--【硬件设置】--【数据导出配置】--【数据导出配置】--勾选【输出路径】--更改该路径
+def check_output_path(if_check,path):
+    if search_symbol(config.SETTING_DARK, 1):
+        click_by_png(config.SETTING_DARK)
+    else:
+        search_symbol_erroring(config.SETTING_LIGHT, 1)
+    click_by_png(config.PARAM_HARDWARE_SETTING)
+    time.sleep(2)
+    click_by_png(config.PARAM_DATA_EXPORT_SETTING)
+    time.sleep(2)
+    check_checkbox_status_before_text("输出路径",if_check,"right",200)
+    # 去你妈的 坐标就坐标吧 能实现就行
+    write_text((520,175), path)
+    time.sleep(1)
+    click_by_png(config.APPLY,timeout=1.5, tolerance=0.75)
+    if search_symbol(config.NO, 1.5, tolerance=0.75):
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.85)
+    else:
+        click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.85)
+    time.sleep(0.5)
+    pyautogui.press('enter')
+    if search_symbol(config.QUESTION_MARK, 2):
+        pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
         if time.time() - start_time > 30:
             raise Exception("超过半分钟了设置界面仍未关闭")
         time.sleep(1.5)
 
-
 # 【设置】--【硬件设置】--【数据导出配置】--【数据导出配置】--勾选【使用日期文件夹】
-def check_use_data_folder(if_use):
+def check_use_date_folder(if_use):
     """
     if_use为0 不勾选 1 选择YYYY  2 YYYY-MM 3 YYYY-MM-DD
     """
@@ -2646,6 +2787,8 @@ def check_output_data_delay(delay_time = 0):
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
         pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
         if time.time() - start_time > 30:
@@ -2673,6 +2816,8 @@ def check_refresh_tree(if_fresh):
     time.sleep(0.5)
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
+        pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
         pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
@@ -2722,6 +2867,8 @@ def check_open_developer_options(type=None):
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
         pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
         if time.time() - start_time > 30:
@@ -2762,6 +2909,8 @@ def check_patent_not_NG(type):
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
         pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
         if time.time() - start_time > 30:
@@ -2793,6 +2942,8 @@ def check_save_djb(if_save_djb):
     time.sleep(0.5)
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
+        pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
         pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
@@ -2836,6 +2987,8 @@ def check_close_all_algs(if_close_all_algs = True):
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
         pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
         if time.time() - start_time > 30:
@@ -2861,6 +3014,8 @@ def check_auto_choose_window(if_auto_choose):
     time.sleep(0.5)
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
+        pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
         pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
@@ -2904,6 +3059,8 @@ def check_export_ok(if_export_ok=None, if_export_all_ok=None):
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
         pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
         if time.time() - start_time > 30:
@@ -2931,6 +3088,8 @@ def check_export_pn_add_sn(if_export_pn_add_sn):
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
         pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
         if time.time() - start_time > 30:
@@ -2956,6 +3115,8 @@ def check_allow_preview(if_allow):
     time.sleep(0.5)
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
+        pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
         pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
@@ -2983,6 +3144,8 @@ def check_allow_fallback(if_allow):
     time.sleep(0.5)
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
+        pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
         pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
@@ -3013,6 +3176,8 @@ def check_allow_copy_cross_component(if_allow):
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
         pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
         if time.time() - start_time > 30:
@@ -3038,6 +3203,8 @@ def check_export_wm_img_1():
     time.sleep(0.5)
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
+        pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
         pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
@@ -3068,6 +3235,8 @@ def check_export_wm_img_1_all(if_export_wm_img_1_all):
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
         pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
         if time.time() - start_time > 30:
@@ -3095,6 +3264,8 @@ def check_import_sync_package(if_import_sync_package):
     time.sleep(0.5)
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
+        pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
         pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
@@ -3125,6 +3296,8 @@ def check_pn_1_day():
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
         pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
         if time.time() - start_time > 30:
@@ -3151,6 +3324,8 @@ def check_import_delete_ocv_wm(if_delete):
     time.sleep(0.5)
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
+        pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
         pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
@@ -3179,6 +3354,8 @@ def check_allow_cad_teach(if_allow):
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
         pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
         if time.time() - start_time > 30:
@@ -3204,6 +3381,8 @@ def check_import_update_height(if_update):
     time.sleep(0.5)
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
+        pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
         pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
@@ -3231,6 +3410,8 @@ def check_import_component_xy(if_update):
     time.sleep(0.5)
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
+        pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
         pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
@@ -3270,6 +3451,8 @@ def check_export_image_libs(if_export):
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
         pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
         if time.time() - start_time > 30:
@@ -3297,6 +3480,8 @@ def filter_auxiliary_window(if_filter):
     pyautogui.press('enter')
     if search_symbol(config.QUESTION_MARK, 2):
         pyautogui.press('enter')
+    if search_symbol(config.WARNING, 2):
+        pyautogui.press('enter')
     start_time = time.time()
     while search_symbol(config.PARAM_SETTING_TOPIC, 2):
         if time.time() - start_time > 30:
@@ -3312,7 +3497,7 @@ def modify_component():
     pyautogui.keyUp('left')
 
 # ================================================文件处理=====================================
-# 确认是否文件夹下生成了新数据
+# 检查文件夹及其子文件夹中是否有文件在时间限制内创建或修改过
 def check_new_data(path, name=None, minutes=5):
     recent_creations = []
     all_files_and_dirs = []
@@ -3322,27 +3507,29 @@ def check_new_data(path, name=None, minutes=5):
         target_path = os.path.join(path, name)
         if os.path.exists(target_path):
             ctime = os.path.getctime(target_path)
-            logger.debug(f"检测到文件或文件夹：{target_path}，创建时间：{ctime}")
+            mtime = os.path.getmtime(target_path)
+            logger.debug(f"检测到文件或文件夹：{target_path}，创建时间：{ctime}，修改时间：{mtime}")
             all_files_and_dirs.append(target_path)
-            if time.time() - ctime < minutes * 60:
+            if time.time() - ctime < minutes * 60 or time.time() - mtime < minutes * 60:
                 recent_creations.append(target_path)
     else:
         # 如果name为空，检查所有文件和子文件夹
         for root, dirs, files in os.walk(path):
-            for item in files + dirs:
+            for item in files:
                 full_path = os.path.join(root, item)
                 ctime = os.path.getctime(full_path)
-                logger.debug(f"检测到文件或文件夹：{full_path}，创建时间：{ctime}")
+                mtime = os.path.getmtime(full_path)
+                logger.debug(f"检测到文件：{full_path}，创建时间：{ctime}，修改时间：{mtime}")
                 all_files_and_dirs.append(full_path)
-                if time.time() - ctime < minutes * 60:
+                if time.time() - ctime < minutes * 60 or time.time() - mtime < minutes * 60:
                     recent_creations.append(full_path)
 
-    logger.info(f"路径 {path} 下的所有文件和文件夹: {all_files_and_dirs}")
+    logger.info(f"路径 {path} 下的所有文件: {all_files_and_dirs}")
     if recent_creations:
-        logger.info(f"最近创建的文件或文件夹: {recent_creations}")
+        logger.info(f"最近创建或修改的文件: {recent_creations}")
         return True
     else:
-        logger.info("没有最近创建的文件或文件夹")
+        logger.info("没有最近创建或修改的文件")
         return False
 def check_data_amount(path):
     a = 0
@@ -3641,40 +3828,77 @@ def detect_text(target_text):
     return None
 
 # 获得文字右侧的文字
-def get_text_by_text(text, direction="right"):
-    test_time = pyautogui.screenshot()
+def get_text_by_text(text, direction="right", region=None):
+    # 如果指定了区域，则截取该区域的屏幕，否则截取全屏
+    if region:
+        test_time = pyautogui.screenshot(region=region)
+    else:
+        test_time = pyautogui.screenshot()
+    
     test_time_cv = cv2.cvtColor(np.array(test_time), cv2.COLOR_RGB2BGR)
+    
     if os.path.exists(os.path.join(os.path.dirname(sys.executable), '_internal', 'model')):
         reader = easyocr.Reader(lang_list=['ch_sim'], gpu=False, model_storage_directory=os.path.join(os.path.dirname(sys.executable), '_internal', 'model'), download_enabled=False)
     else:
         reader = easyocr.Reader(lang_list=['ch_sim'], gpu=False, download_enabled=True)
+    
     result = reader.readtext(test_time_cv, detail=1)
     
     for (bbox, detected_text, prob) in result:
         if text in detected_text:
+            # 在图像上绘制识别到的文字区域
+            cv2.rectangle(test_time_cv, bbox[0], bbox[2], (0, 255, 0), 2)
+            cv2.putText(test_time_cv, detected_text, (bbox[0][0], bbox[0][1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+
             if direction == "right":
                 target_x = bbox[1][0]  # 获取目标文字右侧的x坐标
                 for (other_bbox, other_text, other_prob) in result:
                     if other_bbox[0][0] > target_x and abs(other_bbox[0][1] - bbox[0][1]) < 10:
+                        # 在图像上绘制相邻文字区域
+                        cv2.rectangle(test_time_cv, other_bbox[0], other_bbox[2], (255, 0, 0), 2)
+                        cv2.putText(test_time_cv, other_text, (other_bbox[0][0], other_bbox[0][1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
+                        # 显示图像
+                        cv2.imshow("Detected Text", test_time_cv)
+                        cv2.waitKey(0)
+                        cv2.destroyAllWindows()
                         return other_text.strip()
             elif direction == "left":
                 target_x = bbox[0][0]  # 获取目标文字左侧的x坐标
                 for (other_bbox, other_text, other_prob) in result:
                     if other_bbox[1][0] < target_x and abs(other_bbox[0][1] - bbox[0][1]) < 10:
+                        # 在图像上绘制相邻文字区域
+                        cv2.rectangle(test_time_cv, other_bbox[0], other_bbox[2], (255, 0, 0), 2)
+                        cv2.putText(test_time_cv, other_text, (other_bbox[0][0], other_bbox[0][1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
+                        # 显示图像
+                        cv2.imshow("Detected Text", test_time_cv)
+                        cv2.waitKey(0)
+                        cv2.destroyAllWindows()
                         return other_text.strip()
             elif direction == "up":
                 target_y = bbox[0][1]  # 获取目标文字上方的y坐标
                 for (other_bbox, other_text, other_prob) in result:
                     if other_bbox[2][1] < target_y and abs(other_bbox[0][0] - bbox[0][0]) < 10:
+                        # 在图像上绘制相邻文字区域
+                        cv2.rectangle(test_time_cv, other_bbox[0], other_bbox[2], (255, 0, 0), 2)
+                        cv2.putText(test_time_cv, other_text, (other_bbox[0][0], other_bbox[0][1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
+                        # 显示图像
+                        cv2.imshow("Detected Text", test_time_cv)
+                        cv2.waitKey(0)
+                        cv2.destroyAllWindows()
                         return other_text.strip()
             elif direction == "down":
                 target_y = bbox[2][1]  # 获取目标文字下方的y坐标
                 for (other_bbox, other_text, other_prob) in result:
                     if other_bbox[0][1] > target_y and abs(other_bbox[0][0] - bbox[0][0]) < 10:
+                        # 在图像上绘制相邻文字区域
+                        cv2.rectangle(test_time_cv, other_bbox[0], other_bbox[2], (255, 0, 0), 2)
+                        cv2.putText(test_time_cv, other_text, (other_bbox[0][0], other_bbox[0][1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
+                        # 显示图像
+                        cv2.imshow("Detected Text", test_time_cv)
+                        cv2.waitKey(0)
+                        cv2.destroyAllWindows()
                         return other_text.strip()
     raise Exception(f"未能识别到{direction}方向的文字")
-
-
 
 # 检查文字前面的勾选框状态
 def check_checkbox_status_before_text(target_text, if_check=True, direction="left", range=10, mark_rgb=(107, 107, 107), frame_rgb=(51, 51, 51), similarity_threshold=0.66):
@@ -4171,7 +4395,7 @@ def get_frame_points(region, color):
         logger.error(f"获取框的坐标时发生错误: {e}")
         raise
 
-def write_text(coordinate, text, if_select_all=True):
+def write_text(coordinate, text, if_select_all=True, if_press_enter=False):
     pyautogui.click(coordinate)
     time.sleep(0.5)
     if if_select_all:   
@@ -4189,10 +4413,15 @@ def write_text(coordinate, text, if_select_all=True):
         text_to_type = text  # 保持原样
 
     # 输入文本
-    pyautogui.typewrite(text_to_type)
-    pyautogui.press('enter')
+    logger.info(f"开始输入文本: {text_to_type}")
+    # pyautogui.typewrite(text_to_type)  #输入中文会有问题
+    pyperclip.copy(text_to_type)
+    pyautogui.hotkey('ctrl', 'v')
+    
+    if if_press_enter:
+        pyautogui.press('enter')
 
-def write_text_textbox(image_path, text, color=(255, 255, 255), direction="right", locate_direction="left", if_select_all=True):
+def write_text_textbox(image_path, text, color=(255, 255, 255), direction="right", locate_direction="left", if_select_all=True, if_press_enter=False):
     try:
         logger.debug(f"开始处理图片: {image_path}, 方向: {direction}, 颜色: {color}, 识别方向: {locate_direction}")
         time.sleep(2)
@@ -4336,7 +4565,7 @@ def write_text_textbox(image_path, text, color=(255, 255, 255), direction="right
 
             if text:
                 # 将文本写入该区域B的中心点
-                write_text((full_screen_center_x, full_screen_center_y), text, if_select_all)
+                write_text((full_screen_center_x, full_screen_center_y), text, if_select_all, if_press_enter)
                 logger.info(f"写入完毕，内容为：{text}")
             else:
                 # 如果没有text的话 就单击该坐标

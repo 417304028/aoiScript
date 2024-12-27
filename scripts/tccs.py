@@ -491,7 +491,7 @@ def tccs_008_04():
         pyautogui.press("enter")
         time.sleep(5)
     # 2.在页面计算进度条达到100%后，点击【停止】--【进入细调界面】
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
     start_time = time.time()
     while True:
         if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
@@ -544,7 +544,7 @@ def tccs_008_05():
         time.sleep(5)
         pyautogui.press("enter")
         time.sleep(5)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
     # 2.在页面计算进度条达到100%后，点击【停止】--【进入细调界面】
     start_time = time.time()
     while True:
@@ -598,7 +598,7 @@ def tccs_008_06():
         time.sleep(5)
         pyautogui.press("enter")
         time.sleep(5)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
     # 2.在页面计算进度条达到100%后，点击【停止】--【进入细调界面】
     start_time = time.time()
     while True:
@@ -702,7 +702,7 @@ def tccs_008_06():
 #         time.sleep(5)
 #         pyautogui.press("enter")
 #         time.sleep(5)
-#     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+#     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 #     # 2.选中已关联父框，全选后移偏
 #     pyautogui.hotkey("ctrl","a")
 
@@ -779,7 +779,7 @@ def tccs_012_01():
         time.sleep(5)
         pyautogui.press("enter")
         time.sleep(5)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
     # 2.在页面计算进度条达到100%后，点击【停止】--【进入细调界面】
     start_time = time.time()
     while True:
@@ -819,7 +819,7 @@ def tccs_012_02():
         time.sleep(5)
         pyautogui.press("enter")
         time.sleep(5)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:

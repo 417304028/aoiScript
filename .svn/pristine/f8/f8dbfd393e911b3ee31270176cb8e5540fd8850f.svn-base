@@ -96,7 +96,7 @@ def jbgn_001_04():
     if utils.search_symbol(config.OPEN_PROGRAM_TOPIC, 2):
         raise Exception("打开程式后还存在打开程式弹窗")
     utils.search_symbol_erroring(config.AOI_TOPIC, 3)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()        
 @utils.screenshot_error_to_excel()
 def jbgn_001_05():
@@ -144,7 +144,7 @@ def jbgn_001_05():
     if utils.search_symbol(config.OPEN_PROGRAM_TOPIC, 2):
         raise Exception("打开程式后还存在打开程式弹窗")
     utils.search_symbol_erroring(config.AOI_TOPIC, 3)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()  
 @utils.screenshot_error_to_excel()  
 def jbgn_001_06():
@@ -190,7 +190,7 @@ def jbgn_001_06():
     if utils.search_symbol(config.OPEN_PROGRAM_TOPIC, 2):
         raise Exception("打开程式后还存在打开程式弹窗")
     utils.search_symbol_erroring(config.AOI_TOPIC, 3)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()    
 @utils.screenshot_error_to_excel()
 def jbgn_001_07():

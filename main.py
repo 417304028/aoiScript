@@ -1,5 +1,8 @@
 import datetime
 import difflib
+import sys
+from tkinter import filedialog
+sys.coinit_flags = 2
 import shutil
 import subprocess
 import zipfile
@@ -14,6 +17,7 @@ import pyautogui
 import os,time
 from PIL import Image as PILImage
 import win32gui, win32con
+import threading
 
 def build_script_controller():
     utils.setup_logger()
@@ -131,4 +135,5 @@ def build_script_controller():
 if __name__ == "__main__":
     utils.setup_logger()
     build_script_controller()
-    # utils.check_checkbox_status_before_text("输出路径",False,"right",200)
+
+

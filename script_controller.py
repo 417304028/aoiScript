@@ -2,9 +2,10 @@ import shutil
 import tkinter as tk
 from tkinter import ttk
 from loguru import logger
-from scripts import yjk, lxbj, jbgn, kjj, spc, tccs, sjdc
-from utils import setup_logger
 import sys
+sys.coinit_flags = 2
+from scripts import yjk, lxbj, jbgn, kjj, spc, tccs, sjdc, kfzy
+from utils import setup_logger,loop
 import win32event
 import win32api
 import winerror
@@ -15,19 +16,27 @@ import ctypes
 import time
 import inspect
 from threading import Thread
-import pyautogui
+from tkinter import messagebox
+from tkinter import filedialog
+import json
+import concurrent.futures
+
 
 # 在文件的开头定义全局变量
-global thread, csv_created, execution_lock, current_thread, is_running, CSV_FILE_PATH
+global thread, csv_created, current_thread, is_running, CSV_FILE_PATH, config_window_instance, active_path, active_job_name
 thread = None
 current_thread = None
 is_running = False  # 初始化is_running变量
 test_case_status = {}
 # 定义一个全局变量来标记CSV文件是否新创建
 csv_created = False 
-
+active_loop = False
 # 定义一个全局锁，确保同一时间只能执行一个方法
 execution_lock = threading.Lock()
+# 定义一个全局变量来标记配置窗口实例
+config_window_instance = None
+active_path = None
+active_job_name = None
 
 # 创建一个全局的命名互斥体，确保同一时间只能有一个脚本控制器窗口打开
 mutex = win32event.CreateMutex(None, False, "Global\\ScriptControllerMutex")
@@ -40,56 +49,73 @@ CSV_COLUMNS = [
     "设备类型", "执行系统", "用例模块", "用例编号", "执行操作",
     "执行结果", "预期结果", "执行时间", "备注"
 ]
-
+def thread_it(func, *args):
+    t = threading.Thread(target=func, args=args)
+    t.setDaemon(True)
+    t.start()
+    
 def initialize_csv_file_path():
     global CSV_FILE_PATH
-    CSV_FILE_PATH = f"operation_results_{time.strftime('%Y-%m-%d-%H-%M')}.csv"
+    # 确保路径包含有效的目录
+    directory = os.path.join(os.getcwd(), "csv_files")
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    CSV_FILE_PATH = os.path.join(directory, f"operation_results_{time.strftime('%Y-%m-%d-%H-%M')}.csv")
+    logger.debug(f"初始化的 CSV_FILE_PATH: {CSV_FILE_PATH}")
 
 def create_or_read_csv():
     """
     创建或读取CSV文件。如果文件不存在，则创建一个新的文件并插入模块和方法名。
     """
-    global csv_created
+    global csv_created, CSV_FILE_PATH
     logger.debug(f"Checking if CSV file exists at: {CSV_FILE_PATH}")
-    if not os.path.exists(CSV_FILE_PATH):
-        logger.debug("CSV file does not exist, creating a new one.")
-        with open(CSV_FILE_PATH, mode='w', newline='', encoding='utf-8') as file:
-            writer = csv.writer(file)
-            writer.writerow(CSV_COLUMNS)
-            # 插入模块和方法名
-            modules = {
-                "离线编辑": lxbj,
-                "元件库": yjk,
-                "基本功能": jbgn,
-                "快捷键": kjj,
-                "数据导出": sjdc,
-                "SPC": spc,
-                "调参测试": tccs
-            }
-            for module_name, module in modules.items():
-                methods = [func for func in dir(module) if callable(getattr(module, func)) and not func.startswith("__")]
-                for method in methods:
-                    writer.writerow([
-                        "AOI",
-                        "",  # 先不管
-                        module_name,
-                        method,
-                        "",  # 先不管
-                        "",  # 先不管
-                        "",  # 先不管
-                        "",  # 先不管
-                        ""   # 先不管
-                    ])
-        logger.info("成功创建新的CSV文件，并添加模块及相应的方法名称。")
-        csv_created = True
-    else:
-        logger.info("CSV文件已存在，跳过创建和模块方法加载。")
-        csv_created = False
+
+    def create_csv():
+        if not os.path.exists(CSV_FILE_PATH):
+            logger.debug("CSV file does not exist, creating a new one.")
+            with open(CSV_FILE_PATH, mode='w', newline='', encoding='utf-8') as file:
+                writer = csv.writer(file)
+                writer.writerow(CSV_COLUMNS)
+                # 插入模块和方法名
+                modules = {
+                    "离线编辑": lxbj,
+                    "元件库": yjk,
+                    "基本功能": jbgn,
+                    "快捷键": kjj,
+                    "数据导出": sjdc,
+                    "SPC": spc,
+                    "调参测试": tccs,
+                    "开发专用": kfzy
+                }
+                for module_name, module in modules.items():
+                    methods = [func for func in dir(module) if callable(getattr(module, func)) and not func.startswith("__")]
+                    for method in methods:
+                        writer.writerow([
+                            "AOI",
+                            "",  # 先不管
+                            module_name,
+                            method,
+                            "",  # 先不管
+                            "",  # 先不管
+                            "",  # 先不管
+                            "",  # 先不管
+                            ""   # 先不管
+                        ])
+            logger.info("成功创建新的CSV文件，并添加模块及相应的方法名称。")
+            csv_created = True
+        else:
+            logger.info("CSV文件已存在，跳过创建和模块方法加载。")
+            csv_created = False
+
+    # 在后台线程中执行创建 CSV 的操作
+    threading.Thread(target=create_csv).start()
 
 def update_csv(module_name, method_name, operation="", result="", error_step="", execution_time="", remarks="", lock=None, device_type="", execution_system=""):
     """
     更新CSV文件，修改已有的测试结果记录。
     """
+    global CSV_FILE_PATH
+
     if not method_name:
         logger.error("方法名不能为空")
         return
@@ -99,6 +125,8 @@ def update_csv(module_name, method_name, operation="", result="", error_step="",
 
     try:
         rows = []
+        logger.debug(f"打开csv路径: {CSV_FILE_PATH}")
+        
         with open(CSV_FILE_PATH, mode='r', newline='', encoding='utf-8') as file:
             reader = csv.DictReader(file)
             found = False
@@ -123,25 +151,38 @@ def update_csv(module_name, method_name, operation="", result="", error_step="",
             if not found:
                 raise Exception("未找到对应用例")
 
+        logger.debug(f"准备写入CSV文件: {CSV_FILE_PATH}")
         with open(CSV_FILE_PATH, mode='w', newline='', encoding='utf-8') as file:
             writer = csv.DictWriter(file, fieldnames=CSV_COLUMNS)
             writer.writeheader()
             writer.writerows(rows)
         logger.info(f"已更新CSV文件：模块 '{module_name}' 的方法 '{method_name}'。")
+
     except FileNotFoundError:
         logger.error(f"CSV文件未找到：{CSV_FILE_PATH}")
-        # 记录CSV文件夹下所有文件的名称
-        csv_folder = os.path.dirname(CSV_FILE_PATH)
-        if os.path.exists(csv_folder):
-            files = os.listdir(csv_folder)
-            logger.info(f"CSV文件夹 '{csv_folder}' 下的文件：{files}")
-        else:
-            logger.error(f"CSV文件夹 '{csv_folder}' 不存在")
+        handle_csv_not_found()
     except Exception as e:
-        logger.error(f"更新CSV文件时发生错误：{e}")
+        logger.error(f"更新CSV文件时发生错误：{e}，时间：{time.strftime('%Y-%m-%d %H:%M:%S')}，CSV文件的绝对路径：{os.path.abspath(CSV_FILE_PATH)}")
+        handle_csv_not_found()
     finally:
         if lock:
             lock.release()
+
+def handle_csv_not_found():
+    global CSV_FILE_PATH
+    csv_folder = os.path.dirname(CSV_FILE_PATH)
+    logger.debug(f"CSV folder path: {csv_folder}")
+    if os.path.exists(csv_folder):
+        files = os.listdir(csv_folder)
+        logger.info(f"CSV文件夹 '{csv_folder}' 下的文件：{files}")
+        csv_files = [f for f in files if f.endswith('.csv')]
+        if csv_files:
+            latest_csv = max(csv_files, key=lambda f: os.path.getctime(os.path.join(csv_folder, f)))
+            CSV_FILE_PATH = os.path.join(csv_folder, latest_csv)
+            logger.info(f"更新CSV_FILE_PATH为最新的CSV文件：{latest_csv}")
+            logger.info(f"CSV文件的绝对路径：{os.path.abspath(CSV_FILE_PATH)}")
+    else:
+        logger.error(f"CSV文件夹 '{csv_folder}' 不存在")
 
 # 在程序启动时调用
 initialize_csv_file_path()
@@ -161,7 +202,6 @@ def _async_raise(tid, exctype):
 
 def stop_thread(thread):
     _async_raise(thread.ident, SystemExit)
-
 class HomeScreen(tk.Frame):
     def __init__(self, master=None):
         """
@@ -169,6 +209,10 @@ class HomeScreen(tk.Frame):
         """
         super().__init__(master)
         self.master = master
+
+        # 设置窗口的尺寸
+        self.master.geometry("420x410") 
+
         self.pack()
         self.create_widgets()
 
@@ -203,6 +247,10 @@ class HomeScreen(tk.Frame):
         self.exit_button = ttk.Button(self.button_frame, text="退出", command=self.master.quit)
         self.exit_button.pack(side="right", padx=10)
 
+        # 配置按钮
+        self.config_button = ttk.Button(self, text="配置", style="TButton", width=10, command=self.show_config_window)
+        self.config_button.pack(anchor="ne", padx=10, pady=10)  # 将按钮放置在右上角
+
     def toggle_aoi(self):
         """
         切换AOI按钮的选中状态。
@@ -219,11 +267,23 @@ class HomeScreen(tk.Frame):
         打开AOI详情界面，并在必要时启动加载模块的线程。
         """
         if self.selected_icon.get() == "AOI":
-            self.master.switch_frame(AOIDetailScreen)
+            # 销毁当前界面
+            for widget in self.master.winfo_children():
+                widget.destroy()
+
+
+            # 创建并显示AOIDetailScreen界面
+            aoi_detail_screen = AOIDetailScreen(master=self.master)
+            aoi_detail_screen.pack(fill=tk.BOTH, expand=True)
+
             logger.info("切换至AOI详情界面。")
+
             # 如果CSV文件是新创建的，则启动加载模块的线程
             if csv_created:
                 threading.Thread(target=self.load_modules_in_background).start()
+
+            # 使用全局变量获取路径信息
+            logger.info(f"使用全局变量获取路径信息: path={active_path}, job_name={active_job_name}")
 
     def load_modules_in_background(self):
         """
@@ -250,6 +310,108 @@ class HomeScreen(tk.Frame):
         except Exception as e:
             logger.error(f"在加载模块时发生异常：{e}")
 
+    # 点开配置后的窗口
+    def show_config_window(self):
+        """
+        显示配置窗口。
+        """
+        global config_window_instance
+        if config_window_instance is not None and config_window_instance.winfo_exists():
+            config_window_instance.lift()
+            return
+
+        config_window_instance = tk.Toplevel(self)
+        config_window_instance.title("配置选项")
+        config_window_instance.geometry("400x300")
+        config_window_instance.transient(self)
+        config_window_instance.grab_set()
+
+        # 创建标题
+        title_label = tk.Label(config_window_instance, text="执行软件", font=("Arial", 12, "bold"))
+        title_label.pack(anchor="nw", padx=10, pady=10)
+
+        # 创建按钮并绑定事件
+        button_frame = tk.Frame(config_window_instance)
+        button_frame.pack(anchor="nw", padx=10, pady=10)
+
+        button1 = ttk.Button(button_frame, text="登录密码", command=self.handle_login_password)
+        button1.pack(side=tk.LEFT, padx=5)
+
+        button2 = ttk.Button(button_frame, text="循环测试", command=self.handle_loop_test)
+        button2.pack(side=tk.LEFT, padx=5)
+
+        button3 = ttk.Button(button_frame, text="覆盖设置", command=self.handle_override_settings)
+        button3.pack(side=tk.LEFT, padx=5)
+
+    def handle_login_password(self):
+        """
+        处理登录密码按钮事件。
+        """
+        logger.info("登录密码按钮被点击")
+        self.master.switch_frame(LoginPasswordWindow)
+
+    def handle_loop_test(self):
+        """
+        处理循环测试按钮事件。
+        """
+        logger.info("循环测试配置按钮被点击")
+        try:
+            # 确保在点击循环测试按钮时，正确实例化并显示 LoopTestWindow
+            LoopTestWindow(self.master)
+        except Exception as e:
+            logger.error(f"在循环配置按钮事件中发生错误: {e}")
+
+    def handle_override_settings(self):
+        """
+        处理覆盖设置按钮事件，显示现有的配置选项。
+        """
+        global config_window_instance
+        if config_window_instance is not None and config_window_instance.winfo_exists():
+            config_window_instance.lift()
+            return
+
+        config_window_instance = tk.Toplevel(self)
+        config_window_instance.title("覆盖设置")
+        config_window_instance.geometry("300x200")
+        config_window_instance.transient(self)
+        config_window_instance.grab_set()
+
+        # 获取屏幕的宽度和高度
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+
+        # 计算新窗口的居中位置
+        window_width = 450
+        window_height = 200
+        position_right = (screen_width // 2) - (window_width // 2)
+        position_down = (screen_height // 2) - (window_height // 2)
+
+        # 设置新窗口的位置
+        config_window_instance.geometry(f"+{position_right}+{position_down}")
+
+        # 使用已保存的配置状态初始化勾选框
+        self.aoi_var = tk.BooleanVar(value=self.master.config_state.get("replace_aoi", True))
+        aoi_check = ttk.Checkbutton(config_window_instance, text="替换aoi流程配置及切换程式配置", variable=self.aoi_var)
+        aoi_check.pack(anchor="w", pady=10, padx=10)
+
+        self.rv_var = tk.BooleanVar(value=self.master.config_state.get("replace_rv", True))
+        rv_check = ttk.Checkbutton(config_window_instance, text="替换rv视图配置", variable=self.rv_var)
+        rv_check.pack(anchor="w", pady=10, padx=10)
+
+        # 确认按钮
+        confirm_button = ttk.Button(config_window_instance, text="确认", command=lambda: self.save_config(config_window_instance))
+        confirm_button.pack(anchor="w", pady=20, padx=10)
+
+    def save_config(self, config_window):
+        """
+        保存配置状态。
+        """
+        self.master.config_state = {
+            "replace_aoi": self.aoi_var.get(),
+            "replace_rv": self.rv_var.get()
+        }
+        config_window.destroy()
+        logger.info(f"配置已保存: {self.master.config_state}")
 class AOIDetailScreen(tk.Frame):
     def __init__(self, master=None):
         """
@@ -265,6 +427,8 @@ class AOIDetailScreen(tk.Frame):
         self.create_widgets()
         self.running_event = threading.Event()
         self.running_event.set()
+        self.active_path = None
+        self.active_job_name = None
 
         # 初始化配置状态
         self.config_state = {
@@ -275,9 +439,12 @@ class AOIDetailScreen(tk.Frame):
         # 默认加载"基本功能"模块的用例
         self.load_test_cases("基本功能")
 
+        # 设置窗口的尺寸
+        self.master.geometry("520x600")
+
     def load_csv(self):
         """
-        加载CSV文件内容，如果文件不存在则创建新的CSV文件。
+        加载CSV文件内容，如果文件不存在，则创建新的CSV文件。
         """
         if not os.path.exists(self.csv_path):
             with open(self.csv_path, mode='w', newline='', encoding='utf-8') as file:
@@ -338,7 +505,8 @@ class AOIDetailScreen(tk.Frame):
             "快捷键": kjj,
             "SPC": spc,
             "调参测试": tccs,
-            "数据导出": sjdc
+            "数据导出": sjdc,
+            "开发专用": kfzy
         }
         # 用例标签
         self.case_label = ttk.Label(self, text="用例:")
@@ -410,9 +578,9 @@ class AOIDetailScreen(tk.Frame):
         current_method_entry = ttk.Entry(self, textvariable=self.current_method_var, state='readonly')
         current_method_entry.grid(row=7, column=3, padx=10, pady=10, sticky="w")
 
-        # 配置按钮
-        self.config_button = ttk.Button(self, text="配置", style="TButton", width=10, command=lambda: self.show_config_window())
-        self.config_button.grid(row=7, column=0, padx=10, pady=10, sticky="w")
+        # 显示所有方法已执行完毕的标签
+        self.execution_complete_label = tk.Label(self, text="", fg="green", font=("Segoe UI", 12))
+        self.execution_complete_label.grid(row=8, column=0, columnspan=4, pady=10)
 
     def on_click(self, event):
         """
@@ -473,7 +641,7 @@ class AOIDetailScreen(tk.Frame):
             try:
                 if thread and thread.is_alive():
                     self.show_running_message()
-                    logger.warning("已有一个用例脚本在运行，请等待其结束后再启动新的用例脚本")
+                    logger.warning("已有一个用例脚本在运行，请等待其结束后再动新的用例脚本")
                     return
             except NameError:
                 thread = None
@@ -498,7 +666,10 @@ class AOIDetailScreen(tk.Frame):
                 selected_methods = [func for module in modules for func in dir(module) if callable(getattr(module, func)) and not func.startswith("__")]
                 logger.info(f"没有选择特定方法，准备执行模块 '{module_name}' 中的所有方法。")
             else:
-                logger.info(f"准备执行模块 '{module_name}' 中选中的方法：{selected_methods}。")
+                logger.info(f"准备执行模块 '{module_name}' 中的方法：{selected_methods}。")
+
+            # 清除底部的执行完毕文本
+            self.execution_complete_label.config(text="")
 
             thread = Thread(target=lambda: self.run_selected(selected_methods, modules))
             thread.start()
@@ -525,7 +696,19 @@ class AOIDetailScreen(tk.Frame):
                         self.master.after(3000, lambda: execute_method(method, index))
                         break
             else:
-                self.master.after(5000, self.create_prompt_box, "选中的方法执行完毕")
+                # 所有方法执行完毕后，如果循环生效，就调用 loop
+                self.master.after(0, self.create_prompt_box, "选中的方法执行完毕", active_loop)
+                if active_loop:
+                    global active_path, active_job_name
+                    if active_path and active_job_name:
+                        logger.info(f"调用 loop 函数，job_path: {active_path}, job_name: {active_job_name}")
+                        loop(job_path=active_path, job_name=active_job_name)
+                    else:
+                        logger.warning("未找到生效中的路径信息，无法调用 loop。")
+                else:
+                    logger.warning(
+                        f"未发现生效的循环job路径，无法调用 loop。active_loop:{active_loop}, active_path:{active_path}, active_job_name:{active_job_name}")
+                self.execution_complete_label.config(text="所有方法已执行完毕")
                 global is_running
                 is_running = False
                 # 更新所有方法的状态
@@ -534,6 +717,9 @@ class AOIDetailScreen(tk.Frame):
                 self.master.focus_force()
 
         def execute_method(method, index):
+            """
+            执行单个用例方法。
+            """
             def run_in_thread():
                 try:
                     # 记录当前的配置状态
@@ -587,15 +773,22 @@ class AOIDetailScreen(tk.Frame):
                         test_case_status[method.__name__] = "成功" if not error else "失败"
                         update_csv(module_name=self.case_combobox.get(), method_name=method.__name__, result=test_case_status[method.__name__], remarks=str(error) if error else "")
                         self.master.after(0, lambda: self.update_status_list([test_case_status.get(method_name, '未执行') for method_name in method_names]))
-                        self.master.after(5000, self.create_prompt_box, f"{method.__name__} 方法执行完毕")
+                        self.master.after(5000, self.create_prompt_box, f"{method.__name__} 方法执行完毕", True)
 
                         # 确保状态更新完成后再执行下一个方法
                         self.master.after(10000, lambda: run_method(index + 1))  # 增加时间以确保任务状态更新完毕
                 except SystemExit:
                     logger.info(f"{method.__name__} 方法被终止")
                 except Exception as e:
-                    logger.error(f"{method.__name__} 方法执行出错: {e}")
+                    logger.error(f"{method.__name__} 方法执行出错: {e}，CSV文件的绝对路径：{os.path.abspath(CSV_FILE_PATH)}")
                     test_case_status[method.__name__] = "失败"
+                    csv_folder = os.path.dirname(CSV_FILE_PATH)
+                    if os.path.exists(csv_folder):
+                        files = os.listdir(csv_folder)
+                        csv_files = [f for f in files if f.endswith('.csv')]
+                        logger.info(f"CSV文件夹 '{csv_folder}' 下的文件：{csv_files}")
+                    else:
+                        logger.error(f"CSV文件夹 '{csv_folder}' 不存在")
                     
                     # 调用 update_status_list 更新表格状态
                     self.master.after(0, lambda: self.update_status_list([test_case_status.get(method_name, '未执行') for method_name in method_names]))
@@ -612,7 +805,6 @@ class AOIDetailScreen(tk.Frame):
             current_thread.start()
 
         run_method(0)
-
     def show_running_message(self):
         """
         显示正在执行中的提示框，三秒后消失。
@@ -639,16 +831,21 @@ class AOIDetailScreen(tk.Frame):
         self.master.after(3000, running_message.destroy)
 
 
-    def create_prompt_box(self, status):
+    def create_prompt_box(self, status, auto_close):
         """
         更新界面状态信息。
         """
+        if active_loop and "选中的方法执行完毕" in status:
+            # 如果循环生效，自动关闭提示框
+            auto_close = True
+
         status_window = tk.Toplevel(self)
         status_window.title("状态")
         status_label = tk.Label(status_window, text=status, font=("Segoe UI", 12))
         status_label.pack(padx=20, pady=20)
         
-        self.master.after(5000, status_window.destroy)  # 显示五秒后关闭
+        if auto_close:
+            self.master.after(5000, status_window.destroy)  # 显示五秒后关闭
 
     def terminate_execution(self):
         """
@@ -664,7 +861,7 @@ class AOIDetailScreen(tk.Frame):
             if thread.is_alive():
                 logger.error("线程未能在预期时间内结束")
                 stop_thread(thread)  # 强制终止线程
-        self.create_prompt_box("脚本已终止")
+        self.create_prompt_box("脚本已终止", True)
         is_running = False
 
     def on_search(self, event):
@@ -800,27 +997,23 @@ class AOIDetailScreen(tk.Frame):
         except Exception as e:
             logger.error(f"更新用例列表时发生错误: {e}")
 
-
     def update_status_list(self, results):
         """
         更新表格中用例的执行状态，并确保表格完全更新完成。
         """
         try:
             children = self.table.get_children()
-            logger.debug(f"Children count: {len(children)}, Results count: {len(results)}")
-            logger.debug(f"Results keys: {list(results.keys())}")  # 列出结果中的键
-            for i, result in enumerate(results):
-                if i < len(children):  # 确保索引不超出范围
-                    self.table.set(children[i], column="状态", value=result)
-                else:
-                    logger.critical(f"索引 {i} 超出范围，跳过更新状态")
-                    continue  # 跳过不存在的索引
+            for child in children:
+                test_case_id = self.table.item(child, "values")[0]  # 获取用例编号
+                # 从 test_case_status 获取执行结果
+                result = test_case_status.get(test_case_id, '未执行')
+                self.table.set(child, column="状态", value=result)
+                logger.debug(f"更新用例编号 {test_case_id} 的状态为 {result}")
             self.update_idletasks()  # 确保每次更新后界面能即时反映出变化
-            logger.debug(f"已更新用例状态为 '{result}'。")
+            logger.debug("已更新用例状态。")
         except Exception as e:
             logger.error(f"更新用例状态时发生错误: {e}")
-            logger.error(f"Exception details: {e.__class__.__name__}, {e.args}")
-
+            logger.error(f"异常详情: {e.__class__.__name__}, {e.args}")
 
     def on_module_selected(self, event):
         """
@@ -842,50 +1035,521 @@ class AOIDetailScreen(tk.Frame):
         搜索框输入事件处理函数。
         """
         self.load_test_cases(self.case_combobox.get())
-
-    def show_config_window(self):
+    
+class LoopTestWindow(tk.Toplevel):
+    def __init__(self, master):
         """
-        显示配置窗口。
+        初始化循环测试窗口。
         """
-        config_window = tk.Toplevel(self)
-        config_window.title("配置选项")
-        config_window.geometry("300x200")
-        config_window.transient(self)
-        config_window.grab_set()
+        super().__init__(master)
+        self.master = master
+        self.title("循环测试配置")
+        self.geometry("800x600")
+        self.transient(master)
+        self.grab_set()
 
-        # 使用已保存的配置状态初始化勾选框
-        self.aoi_var = tk.BooleanVar(value=self.config_state.get("replace_aoi", True))
-        aoi_check = ttk.Checkbutton(config_window, text="替换aoi流程配置及切换程式配置", variable=self.aoi_var)
-        aoi_check.pack(pady=10)
+        # 加载路径数据
+        self.load_paths()
 
-        self.rv_var = tk.BooleanVar(value=self.config_state.get("replace_rv", True))
-        rv_check = ttk.Checkbutton(config_window, text="替换rv视图配置", variable=self.rv_var)
-        rv_check.pack(pady=10)
+        # 定义颜色常量
+        SELECTED_COLOR = "#169bd5"
+        DEFAULT_COLOR = "#f0f0f0"
+        ACTIVE_COLOR = "#d9001b"
 
-        # 确认按钮
-        confirm_button = ttk.Button(config_window, text="确认", command=lambda: self.save_config(config_window))
-        confirm_button.pack(pady=20)
+        # 左上角标题
+        header_label = tk.Label(self, text="路径", font=("SimHei", 16, "bold"), anchor="nw")
+        header_label.grid(row=0, column=0, columnspan=20, sticky="w", padx=10, pady=10)
 
-    def save_config(self, config_window):
+        # 左侧系统框
+        system_frame = tk.Frame(self, borderwidth=2, relief="groove", padx=10, pady=10)
+        system_frame.grid(row=1, column=0, rowspan=20, columnspan=5, sticky="nsew", padx=10, pady=10)
+
+        # 系统标题
+        system_label = tk.Label(system_frame, text="系统", font=("Arial", 12, "bold"))
+        system_label.pack(pady=5)
+
+        systems = ["AOI", "MES"]
+        for idx, system in enumerate(systems):
+            btn = tk.Button(system_frame, text=system, bg=DEFAULT_COLOR, command=lambda s=system: self.switch_system(s), width=15)
+            btn.pack(fill="x", pady=2)
+
+        # 新增系统按钮
+        add_system_button = tk.Button(system_frame, text="新增", command=lambda: print("新增系统"), bg=SELECTED_COLOR, fg="white")
+        add_system_button.pack(side="left", pady=5, padx=5, fill="x", expand=True)
+
+        # 删除系统按钮
+        delete_system_button = tk.Button(system_frame, text="删除", command=lambda: print("删除系统"))
+        delete_system_button.pack(side="right", pady=5, padx=5, fill="x", expand=True)
+
+        # 路径列表框架
+        self.path_frame = tk.Frame(self, borderwidth=2, relief="groove", padx=10, pady=10)
+        self.path_frame.grid(row=1, column=5, rowspan=20, columnspan=15, sticky="nsew", padx=10, pady=10)
+
+        # 路径列表标题
+        path_label = tk.Label(self.path_frame, text="路径", font=("Arial", 12, "bold"), anchor="nw")
+        path_label.grid(row=0, column=0, columnspan=4, pady=5, sticky="w")
+
+        # 表格列标题
+        columns = ["选择", "文件夹路径", "JOB名称", "状态"]
+        for col_idx, col_name in enumerate(columns):
+            tk.Label(self.path_frame, text=col_name, font=("Arial", 12, "bold")).grid(row=1, column=col_idx, padx=5, pady=5)
+
+        self.selected_path = 0  # 默认选中第一条路径
+        self.selected_path_var = tk.IntVar(value=self.selected_path)
+
+        # 按钮框架
+        button_frame = tk.Frame(self.path_frame)
+        button_frame.grid(row=0, column=1, columnspan=4, sticky="ew")
+
+        buttons = [
+            ("生效", self.take_loop_path_effect, ACTIVE_COLOR),
+            ("失效", self.make_loop_path_ineffective, None),
+            ("编辑", self.edit_path, None),
+            ("测试", lambda: None, None),
+            ("新增", self.add_path, SELECTED_COLOR),
+            ("删除", lambda: None, None),
+        ]
+
+        for idx, (text, command, color) in enumerate(buttons):
+            fg_color = "white" if color else "black"
+            tk.Button(button_frame, text=text, command=command, bg=color or DEFAULT_COLOR, fg=fg_color, width=8).grid(row=0, column=idx, padx=5)
+
+        # 初始加载路径数据
+        self.refresh_path_list()
+
+        # 确保初始状态下没有任何一个路径是生效的
+        for path in self.path_data:
+            path["状态"] = ""
+
+        # 调整窗口布局留白
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_columnconfigure(5, weight=1)
+
+    def switch_system(self, system):
         """
-        保存配置状态。
+        切换系统。
         """
-        self.config_state = {
-            "replace_aoi": self.aoi_var.get(),
-            "replace_rv": self.rv_var.get()
-        }
-        config_window.destroy()
-        logger.info(f"配置已保存: {self.config_state}")
+        self.current_system = system
+        print(f"当前系统切换到: {system}")
+
+    def select_path(self, idx):
+        """
+        选择路径。
+        """
+        self.selected_path = idx
+        print(f"选择了路径: {self.path_data[idx]['文件夹路径']}")
+
+    def take_loop_path_effect(self):
+        """
+        让路径生效。
+        """
+        global active_loop, active_path, active_job_name
+        if self.selected_path is not None:
+            for path in self.path_data:
+                path["状态"] = ""
+            self.path_data[self.selected_path]["状态"] = "生效中"
+            active_loop = True
+            self.refresh_path_list()
+            self.save_paths()
+
+            # 更新全局变量
+            selected_path = self.path_data[self.selected_path]
+            active_path = selected_path["文件夹路径"]
+            active_job_name = selected_path["JOB名称"]
+            logger.info(f"更新全局变量: active_path={active_path}, active_job_name={active_job_name}")
+
+    def make_loop_path_ineffective(self):
+        """
+        让路径失效。
+        """
+        global active_loop, active_path, active_job_name
+        if self.selected_path is not None:
+            if self.path_data[self.selected_path]["状态"] == "生效中":
+                self.path_data[self.selected_path]["状态"] = ""
+            active_loop = False
+            self.refresh_path_list()
+            self.save_paths()
+
+            # 更新全局变量
+            active_path = None
+            active_job_name = None
+            logger.info("路径已失效，清除全局变量: active_path 和 active_job_name")
+
+    def refresh_path_list(self):
+        """
+        刷新路径列表。
+        """
+        for widget in self.path_frame.winfo_children():
+            if widget.grid_info()["row"] > 1:  # 保留标题行
+                widget.destroy()
+
+        for row_idx, entry in enumerate(self.path_data, start=2):
+            rbutton = tk.Radiobutton(
+                self.path_frame,
+                variable=self.selected_path_var,
+                value=row_idx - 2,
+                command=lambda idx=row_idx - 2: self.select_path(idx),
+            )
+            rbutton.grid(row=row_idx, column=0, padx=5, pady=5)
+            tk.Label(self.path_frame, text=entry["文件夹路径"]).grid(row=row_idx, column=1, padx=5, pady=5)
+            tk.Label(self.path_frame, text=entry["JOB名称"]).grid(row=row_idx, column=2, padx=5, pady=5)
+            status_color = "green" if entry["状态"] == "生效中" else "black"
+            tk.Label(self.path_frame, text=entry["状态"], fg=status_color).grid(row=row_idx, column=3, padx=5, pady=5)
+
+    def load_paths(self):
+        """
+        从文件加载路径信息。
+        """
+        try:
+            with open("path_data.json", "r", encoding="utf-8") as f:
+                self.path_data = json.load(f)
+        except FileNotFoundError:
+            # 添加几条示例路径
+            self.path_data = [
+                {"文件夹路径": "D:\\EYAOI\\JOB\\全算法", "JOB名称": "全算法定位", "状态": ""},
+                {"文件夹路径": "D:\\EYAOI\\JOB\\测试1", "JOB名称": "测试1", "状态": "生效中"},
+                {"文件夹路径": "D:\\EYAOI\\JOB\\测试2", "JOB名称": "测试2", "状态": ""}
+            ]
+
+    def save_paths(self):
+        """
+        保存路径信息到文件。
+        """
+        with open("path_data.json", "w", encoding="utf-8") as f:
+            json.dump(self.path_data, f, ensure_ascii=False, indent=4)
+
+    def add_path(self):
+        """
+        弹出窗口以添加新路径。
+        """
+        def save_path():
+            folder_path = path_entry.get().strip()
+            job_name = job_entry.get().strip()
+
+            # 前置条件校验
+            if not folder_path:
+                messagebox.showwarning("警告", "请输入文件夹路径")
+                return
+            if not job_name:
+                messagebox.showwarning("警告", "请输入JOB名称")
+                return
+            if any(entry["JOB名称"] == job_name for entry in self.path_data):
+                messagebox.showwarning("警告", "当前JOB已存在不允许重复添加")
+                return
+
+            self.path_data.append({"文件夹路径": folder_path, "JOB名称": job_name, "状态": ""})
+            self.refresh_path_list()
+            self.save_paths()
+            add_window.destroy()
+
+        def select_folder():
+            folder_selected = filedialog.askdirectory(parent=add_window)
+            if folder_selected:
+                folder_selected = folder_selected.replace("/", "\\")
+                path_entry.delete(0, tk.END)
+                path_entry.insert(0, folder_selected)
+                job_entry.delete(0, tk.END)
+                job_entry.insert(0, os.path.basename(folder_selected))
+
+        add_window = tk.Toplevel(self)
+        add_window.title("新增路径")
+        add_window.geometry("450x200")
+        add_window.transient(self)
+        add_window.grab_set()
+
+        tk.Label(add_window, text="文件夹路径:").grid(row=0, column=0, padx=10, pady=10)
+        path_entry = tk.Entry(add_window, width=40)
+        path_entry.grid(row=0, column=1, padx=10, pady=10)
+        tk.Button(add_window, text="选择", command=select_folder).grid(row=0, column=2, padx=5)
+
+        tk.Label(add_window, text="JOB名称:").grid(row=1, column=0, padx=10, pady=10)
+        job_entry = tk.Entry(add_window, width=40)
+        job_entry.grid(row=1, column=1, padx=10, pady=10)
+
+        tk.Button(add_window, text="取消", command=add_window.destroy).grid(row=2, column=0, pady=10)
+        tk.Button(add_window, text="保存", command=save_path, bg="#169bd5", fg="white").grid(row=2, column=1, pady=10)
+
+    def edit_path(self):
+        """
+        编辑所选路径。
+        """
+        if self.selected_path is None:
+            messagebox.showwarning("警告", "请先选择一个路径！")
+            return
+
+        selected_entry = self.path_data[self.selected_path]
+
+        def save_edit_changes():
+            selected_entry["文件夹路径"] = path_entry.get()
+            selected_entry["JOB名称"] = job_entry.get()
+            self.refresh_path_list()
+            self.save_paths()
+            edit_window.destroy()
+
+        def select_folder():
+            folder_selected = filedialog.askdirectory(parent=edit_window)
+            if folder_selected:
+                folder_selected = folder_selected.replace("/", "\\")
+                path_entry.delete(0, tk.END)
+                path_entry.insert(0, folder_selected)
+                job_entry.delete(0, tk.END)
+                job_entry.insert(0, os.path.basename(folder_selected))
+
+        edit_window = tk.Toplevel(self)
+        edit_window.title("编辑路径")
+        edit_window.geometry("450x200")
+        edit_window.transient(self)
+        edit_window.grab_set()
+
+        tk.Label(edit_window, text="文件夹路径:").grid(row=0, column=0, padx=10, pady=10)
+        path_entry = tk.Entry(edit_window, width=40)
+        path_entry.grid(row=0, column=1, padx=10, pady=10)
+        path_entry.insert(0, selected_entry["文件夹路径"])
+        tk.Button(edit_window, text="选择", command=select_folder).grid(row=0, column=2, padx=5)
+
+        tk.Label(edit_window, text="JOB名称:").grid(row=1, column=0, padx=10, pady=10)
+        job_entry = tk.Entry(edit_window, width=40)
+        job_entry.grid(row=1, column=1, padx=10, pady=10)
+        job_entry.insert(0, selected_entry["JOB名称"])
+
+        tk.Button(edit_window, text="取消", command=edit_window.destroy).grid(row=2, column=0, pady=10)
+        tk.Button(edit_window, text="保存", command=save_edit_changes, bg="#169bd5", fg="white").grid(row=2, column=1, pady=10)
+
+
+class LoginPasswordWindow(tk.Toplevel):
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.title("登录密码")
+        self.geometry("800x600")
+        self.account_data = [
+            {"账号": "admin", "密码": "admin123", "状态": "生效中"},
+            {"账号": "op2", "密码": "op2pass", "状态": "失效"},
+        ]
+        self.current_system = "AOI"
+        self.selected_account = None
+        self.create_widgets()
+
+    def create_widgets(self):
+        # 定义颜色常量
+        SELECTED_COLOR = "#169bd5"
+        DEFAULT_COLOR = "#f0f0f0"
+        ACTIVE_COLOR = "#d9001b"
+        TEXT_ACTIVE_COLOR = "#9fce56"
+
+        # 左上角标题
+        header_label = tk.Label(self, text="登录密码", font=("Arial", 16, "bold"), anchor="w")
+        header_label.grid(row=0, column=0, columnspan=20, sticky="w", padx=10, pady=10)
+
+        # 刷新账号密码列表
+        def refresh_account_list():
+            for widget in account_frame.winfo_children():
+                if widget.grid_info()["row"] > 1:  # 保留标题行
+                    widget.destroy()
+
+            for row_idx, entry in enumerate(self.account_data, start=2):
+                rbutton = tk.Radiobutton(
+                    account_frame,
+                    variable=selected_account_var,
+                    value=row_idx - 2,
+                    command=lambda idx=row_idx - 2: select_account(idx),
+                )
+                rbutton.grid(row=row_idx, column=0, padx=5, pady=5)
+                tk.Label(account_frame, text=entry["账号"]).grid(row=row_idx, column=1, padx=5, pady=5)
+                tk.Label(account_frame, text="******").grid(row=row_idx, column=2, padx=5, pady=5)
+                status_color = TEXT_ACTIVE_COLOR if entry["状态"] == "生效中" else "black"
+                tk.Label(account_frame, text=entry["状态"], fg=status_color).grid(row=row_idx, column=3, padx=5, pady=5)
+
+        # 切换系统
+        def switch_system(system):
+            self.current_system = system
+            print(f"当前系统切换到: {system}")
+            refresh_account_list()
+
+        # 左侧系统框
+        system_frame = tk.Frame(self, borderwidth=2, relief="groove", padx=10, pady=10)
+        system_frame.grid(row=1, column=0, rowspan=20, columnspan=5, sticky="nsew", padx=10, pady=10)
+
+        # 系统标题
+        system_label = tk.Label(system_frame, text="系统", font=("Arial", 12, "bold"))
+        system_label.pack(pady=5)
+
+        systems = ["AOI", "MES"]
+        for idx, system in enumerate(systems):
+            btn = tk.Button(system_frame, text=system, bg=DEFAULT_COLOR, command=lambda s=system: switch_system(s), width=15)
+            btn.pack(fill="x", pady=2)
+
+        # 新增系统按钮
+        add_system_button = tk.Button(system_frame, text="新增", command=lambda: print("新增系统"), bg=SELECTED_COLOR, fg="white")
+        add_system_button.pack(side="left", pady=5, padx=5, fill="x", expand=True)
+
+        # 删除系统按钮
+        delete_system_button = tk.Button(system_frame, text="删除", command=lambda: print("删除系统"))
+        delete_system_button.pack(side="right", pady=5, padx=5, fill="x", expand=True)
+
+        # 账号密码框架
+        account_frame = tk.Frame(self, borderwidth=2, relief="groove", padx=10, pady=10)
+        account_frame.grid(row=1, column=5, rowspan=20, columnspan=15, sticky="nsew", padx=10, pady=10)
+
+        # 账号密码标题
+        account_label = tk.Label(account_frame, text="账号密码", font=("Arial", 12, "bold"))
+        account_label.grid(row=0, column=0, columnspan=4, pady=5)
+
+        # 表格列标题
+        columns = ["选择", "账号", "密码", "状态"]
+        for col_idx, col_name in enumerate(columns):
+            tk.Label(account_frame, text=col_name, font=("Arial", 12, "bold")).grid(row=1, column=col_idx, padx=5, pady=5)
+
+        selected_account_var = tk.IntVar(value=-1)
+
+        # 选择账号
+        def select_account(idx):
+            self.selected_account = idx
+            print(f"选择了账号: {self.account_data[idx]['账号']}")
+
+        # 编辑账号
+        def edit_account():
+            if self.selected_account is None:
+                messagebox.showwarning("警告", "请先选择一个账号！")
+                return
+
+            account = self.account_data[self.selected_account]
+
+            def save_changes():
+                account["账号"] = account_entry.get()
+                account["密码"] = password_entry.get() if password_entry.get() != "******" else account["密码"]
+                refresh_account_list()
+                edit_window.destroy()
+
+            edit_window = tk.Toplevel(self)
+            edit_window.title("编辑账号")
+            edit_window.geometry("300x200")
+
+            tk.Label(edit_window, text="账号:").grid(row=0, column=0, padx=10, pady=10)
+            account_entry = tk.Entry(edit_window)
+            account_entry.grid(row=0, column=1, padx=10, pady=10)
+            account_entry.insert(0, account["账号"])
+
+            tk.Label(edit_window, text="密码:").grid(row=1, column=0, padx=10, pady=10)
+            password_entry = tk.Entry(edit_window, show="*")
+            password_entry.grid(row=1, column=1, padx=10, pady=10)
+            password_entry.insert(0, "******")
+
+            tk.Button(edit_window, text="保存", command=save_changes).grid(row=2, column=0, columnspan=2, pady=10)
+
+        # 新增账号
+        def add_account():
+            def save_new_account():
+                self.account_data.append({"账号": account_entry.get(), "密码": password_entry.get(), "状态": "失效"})
+                refresh_account_list()
+                add_window.destroy()
+
+            add_window = tk.Toplevel(self)
+            add_window.title("新增账号")
+            add_window.geometry("300x200")
+
+            tk.Label(add_window, text="账号:").grid(row=0, column=0, padx=10, pady=10)
+            account_entry = tk.Entry(add_window)
+            account_entry.grid(row=0, column=1, padx=10, pady=10)
+
+            tk.Label(add_window, text="密码:").grid(row=1, column=0, padx=10, pady=10)
+            password_entry = tk.Entry(add_window, show="*")
+            password_entry.grid(row=1, column=1, padx=10, pady=10)
+
+            tk.Button(add_window, text="保存", command=save_new_account).grid(row=2, column=0, columnspan=2, pady=10)
+
+        # 删除账号
+        def delete_account():
+            if self.selected_account is None:
+                messagebox.showwarning("警告", "请先选择一个账号！")
+                return
+            if messagebox.askyesno("确认删除", f"确定要删除账号 {self.account_data[self.selected_account]['账号']} 吗？"):
+                self.account_data.pop(self.selected_account)
+                self.selected_account = None
+                refresh_account_list()
+
+        # 生效按钮
+        def activate_account():
+            if self.selected_account is None:
+                messagebox.showwarning("警告", "请先选择一个账号！")
+                return
+
+            for account in self.account_data:
+                account["状态"] = "失效"
+            self.account_data[self.selected_account]["状态"] = "生效中"
+            refresh_account_list()
+
+        # 失效按钮
+        def deactivate_account():
+            if self.selected_account is None:
+                messagebox.showwarning("警告", "请先选择一个账号！")
+                return
+
+            self.account_data[self.selected_account]["状态"] = "失效"
+            refresh_account_list()
+
+        # 测试按钮
+        def test_account():
+            if self.selected_account is None:
+                messagebox.showwarning("警告", "请先选择一个账号！")
+                return
+
+            messagebox.showinfo("测试", f"测试账号 {self.account_data[self.selected_account]['账号']}")
+
+        # 按钮框架
+        button_frame = tk.Frame(account_frame)
+        button_frame.grid(row=0, column=1, columnspan=4, sticky="ew")
+
+        buttons = [
+            ("生效", activate_account, ACTIVE_COLOR),
+            ("失效", deactivate_account, None),
+            ("编辑", edit_account, None),
+            ("测试", test_account, None),
+            ("新增", add_account, SELECTED_COLOR),
+            ("删除", delete_account, None),
+        ]
+
+        for idx, (text, command, color) in enumerate(buttons):
+            fg_color = "white" if color else "black"
+            tk.Button(button_frame, text=text, command=command, bg=color or DEFAULT_COLOR, fg=fg_color, width=8).grid(row=0, column=idx, padx=5)
+
+        # 初始加载账号数据
+        refresh_account_list()
+
+        # 调整窗口布局留白
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_columnconfigure(5, weight=1)
 
 class Application(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("自动化测试")
-        self.geometry("533x400")  # 调整窗口大小为原来的三分之二
+        self.geometry("533x400")
         self.center_window()
-        self.current_frame = None
-        self.switch_frame(HomeScreen)  # 先进入HomeScreen
-        self.protocol("WM_DELETE_WINDOW", self.on_closing)  # 绑定窗口关闭事件
+        self.current_frame = None  # 用于跟踪当前的框架
+        self.loop_test_window = None
+        self.config_state = {
+            "replace_aoi": True,
+            "replace_rv": True
+        }
+        self.switch_frame(HomeScreen)
+
+    def switch_frame(self, frame_class):
+        # 销毁当前的 frame
+        if self.current_frame is not None:
+            self.current_frame.destroy()
+
+        # 创建新的 frame
+        if issubclass(frame_class, tk.Toplevel):
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(frame_class, self)
+                new_frame = future.result()
+                new_frame.grab_set()
+                if isinstance(new_frame, LoopTestWindow):
+                    self.loop_test_window = new_frame
+        else:
+            new_frame = frame_class(self)
+            self.current_frame = new_frame  # 更新当前的框架
+            self.current_frame.pack(fill=tk.BOTH, expand=True)
 
     def center_window(self):
         """
@@ -897,20 +1561,6 @@ class Application(tk.Tk):
         x = (self.winfo_screenwidth() // 2) - (width // 2)
         y = (self.winfo_screenheight() // 2) - (height // 2)
         self.geometry(f"{width}x{height}+{x}+{y}")
-
-    def switch_frame(self, frame_class):
-        """
-        切换当前显示的帧。
-        """
-        new_frame = frame_class(self)
-        if self.current_frame is not None:
-            self.current_frame.destroy()
-        self.current_frame = new_frame
-        self.current_frame.pack(fill=tk.BOTH, expand=True)
-        if isinstance(new_frame, AOIDetailScreen):
-            self.geometry("550x600")  # Detail界面大小，增加下方留白
-        else:
-            self.geometry("400x400")  # Home界面大小，适当调整
 
     def on_closing(self):
         """
@@ -925,10 +1575,13 @@ class Application(tk.Tk):
             if thread.is_alive():
                 logger.error("线程未能在预期时间内结束")
                 stop_thread(thread)  # 强制终止线程
+        # 释放互斥体
+        if mutex:
+            win32api.CloseHandle(mutex)
         self.destroy()
+
 
 if __name__ == "__main__":
     setup_logger()
     app = Application()
     app.mainloop()
-

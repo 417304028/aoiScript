@@ -32,17 +32,6 @@ import os
 
 
 # 查看RV，SRC上元件窗口，结果值 正常显示
-
-def lxbj_001_01():
-    pass
-def lxbj_001_02():
-    pass
-def lxbj_001_03():
-    pass
-def lxbj_001_04():
-    pass
-
-
 @utils.screenshot_error_to_excel()
 # 添加待料
 def lxbj_002_01():
@@ -61,10 +50,13 @@ def lxbj_002_01():
     # 添加标准影像
     # 加五种随机不同光源的待料 需确认添加成功
     for _ in range(5):
-        utils.click_by_png(config.ADD_STANDARD_IMAGE)
+        if utils.search_symbol(config.ADD_STANDARD_IMAGE):
+            utils.click_by_png(config.ADD_STANDARD_IMAGE)
         utils.random_choose_light()
-        utils.click_by_png(config.YES)
-        utils.click_by_png(config.IMAGE_CLOSE)
+        if utils.search_symbol(config.YES):
+            utils.click_by_png(config.YES)
+        if utils.search_symbol(config.IMAGE_CLOSE):
+            utils.click_by_png(config.IMAGE_CLOSE)
     utils.random_change_image_param()
     if utils.search_symbol(config.PALETTE_EMPTY):
         raise Exception("添加标准影像失败")
@@ -488,58 +480,61 @@ def lxbj_007_01():
     components = [config.NO_CHECKED_COMPONENT, config.CHECKED_COMPONENT, config.PASS_COMPONENT, config.NO_PASS_COMPONENT]
     
     def find_frames():
-        for component in components:
-            logger.debug(f"查找元件类型: {component}")
-            logger.debug(f"区域: {config.BOARD_INFORMATION_REGION}")
-            try:
-                component_positions = list(pyautogui.locateAllOnScreen(component, region=config.BOARD_INFORMATION_REGION))
-            except Exception as e:
-                logger.warning(f"查找元件类型 {component} 时出错: {e}")
-                continue
-            if not component_positions:
-                continue
-            for pos in component_positions:
-                logger.debug(f"双击元件: {pos}")
-                pyautogui.doubleClick(pos)
-                time.sleep(20)  # 等待界面响应
-
-                # 获取父框，子框
+        timeout = 600  # 设置超时时间为6.0秒
+        start_time = time.time()
+        while time.time() - start_time < timeout:
+            for component in components:
+                logger.debug(f"查找元件类型: {component}")
+                logger.debug(f"区域: {config.BOARD_INFORMATION_REGION}")
                 try:
-                    w_positions = list(pyautogui.locateAllOnScreen(config.ALG_W_, region=config.COMPONENT_WINDOW_REGION))
-                    logger.info(f"算法框数量: {len(w_positions)}")
-                    if len(w_positions) < 2:
-                        logger.warning("算法框少于两个，跳到下一个元件")
-                        continue
-                    father_frame = None
-                    child_frame = None
-                    for w_pos in w_positions:
-                        x, y = pyautogui.center(w_pos)
-                        logger.debug(f"点击位置: ({x}, {y})")
-                        pyautogui.click(x, y)
-                        time.sleep(10)
-                        # 检测父框良好
-                        utils.click_by_png(config.TEST_WINDOW)
-                        time.sleep(10)
-                        try:
-                            good_frame = utils.check_color_in_region((0,128,0), (x, y))
-                        except Exception as e:
-                            logger.error(f"检测父框良好时出现错误: {e}")
+                    component_positions = list(pyautogui.locateAllOnScreen(component, region=config.BOARD_INFORMATION_REGION))
+                except Exception as e:
+                    logger.warning(f"查找元件类型 {component} 时出错: {e}")
+                    continue
+                if not component_positions:
+                    continue
+                for pos in component_positions:
+                    logger.debug(f"双击元件: {pos}")
+                    pyautogui.doubleClick(pos)
+                    time.sleep(20)  # 等待界面响应
+
+                    # 获取父框，子框
+                    try:
+                        w_positions = list(pyautogui.locateAllOnScreen(config.ALG_W_, region=config.COMPONENT_WINDOW_REGION))
+                        logger.info(f"算法框数量: {len(w_positions)}")
+                        if len(w_positions) < 2:
+                            logger.warning("算法框少于两个，跳到下一个元件")
                             continue
-                        if good_frame:
-                            father_frame = (x, y)
-                            break
-                    if father_frame:
+                        father_frame = None
+                        child_frame = None
                         for w_pos in w_positions:
                             x, y = pyautogui.center(w_pos)
-                            if (x, y) != father_frame:
-                                child_frame = (x, y)
+                            logger.debug(f"点击位置: ({x}, {y})")
+                            pyautogui.click(x, y)
+                            time.sleep(10)
+                            # 检测父框良好
+                            utils.click_by_png(config.TEST_WINDOW)
+                            time.sleep(10)
+                            try:
+                                good_frame = utils.check_color_in_region((0,128,0), (x, y))
+                            except Exception as e:
+                                logger.error(f"检测父框良好时出现错误: {e}")
+                                continue
+                            if good_frame:
+                                father_frame = (x, y)
                                 break
-                    if father_frame and child_frame:
-                        return father_frame, child_frame
-                except Exception as e:
-                    logger.warning(f"获取父框，子框时出现错误： {e}")
-                    continue
-        return None, None
+                        if father_frame:
+                            for w_pos in w_positions:
+                                x, y = pyautogui.center(w_pos)
+                                if (x, y) != father_frame:
+                                    child_frame = (x, y)
+                                    break
+                        if father_frame and child_frame:
+                            return father_frame, child_frame
+                    except Exception as e:
+                        logger.warning(f"获取父框，子框时出现错误： {e}")
+                        continue
+        raise Exception("超时：未能找到合适的父框和子框")
 
     father_frame, child_frame = find_frames()
     time.sleep(10)
@@ -576,7 +571,11 @@ def lxbj_007_01():
         raise Exception("疑似算法参数结果不为0")
     # 5、点击【测试当前元件】
     utils.click_by_png(config.TEST_COMPONENT)
+    timeout = 60  # 设置超时时间为60秒
+    start_time = time.time()
     while utils.search_symbol(config.TESTING_COMPONENT):
+        if time.time() - start_time > timeout:
+            raise Exception("测试元件等待超时")
         time.sleep(2)
     time.sleep(1)
     alg_result_positions = list(pyautogui.locateAllOnScreen(config.ALG_RESULT_0, region=config.ALG_PARAM_REGION))
@@ -584,7 +583,10 @@ def lxbj_007_01():
         raise Exception("疑似算法参数结果不为0")
     # 6、点击【测试当前分组】
     utils.click_by_png(config.TEST_GROUP)
+    start_time = time.time()
     while utils.search_symbol(config.TESTING_COMPONENT):
+        if time.time() - start_time > timeout:
+            raise Exception("测试元件等待超时")
         time.sleep(2)    
     time.sleep(1)
     alg_result_positions = list(pyautogui.locateAllOnScreen(config.ALG_RESULT_0, region=config.ALG_PARAM_REGION))

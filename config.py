@@ -145,6 +145,7 @@ DEVELOPER_OPTIONS_SAVE_CHECK_DATA_NO = resource_path('images/developer_options/s
 
 
 YES = resource_path('images/prompt_box/yes.png')
+LOGIN_ENGLISH = resource_path('images/prompt_box/login_english.png')
 SELECT_FOLDER = resource_path('images/prompt_box/select_folder.png')
 DEVELOPER_OPTIONS_YES = resource_path('images/prompt_box/developer_options_yes.png')
 YES_BLUE = resource_path('images/prompt_box/yes_blue.png')

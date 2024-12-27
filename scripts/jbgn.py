@@ -506,7 +506,7 @@ def jbgn_001_11():
     utils.check_and_launch_aoi()
     # 2、在弹窗中的【程式主目录】，选择程式的目录：任意选择一个JOB
     # 3、点击【是】按钮
-    utils.open_program()
+    utils.open_program(if_specific=True)
     # 4、点击左上角【save to Job File】
     utils.click_by_png(config.SAVE)
     for _ in range(2):
@@ -535,24 +535,26 @@ def jbgn_001_12():
     utils.check_and_launch_aoi()
     # 2、在弹窗中的【程式主目录】，选择程式的目录：任意选择一个JOB
     # 3、点击【是】按钮
-    utils.open_program()
+    utils.open_program(if_specific=True)
     # 4、点击左上角【save As To Job File】
     utils.click_by_png(config.SAVE_AS_JOB, 2)
     time.sleep(1)
     if os.path.exists(r"D:\EYAOI\JOB\save_test"):
         shutil.rmtree(r"D:\EYAOI\JOB\save_test")
     # 5、选择文件夹并重新命名程式名称后点击【是】
-    if utils.search_symbol(config.QUESTION_MARK):
-        utils.write_text((815,480),"D:\EYAOI\JOB")
-        utils.write_text((815,540),"save_test")
-        utils.click_by_png(config.YES)
-        time.sleep(10)
-    else:
-        raise Exception("未发现save as to job file窗口")
+    time.sleep(3)
+    utils.write_text((815,480),"D:\EYAOI\JOB")
+    time.sleep(3)
+    utils.write_text((815,540),"save_test")
+    utils.click_by_png(config.YES)
+    time.sleep(10)
     while utils.search_symbol(config.SAVING_PROGRAM):
         time.sleep(3)
     if not os.path.exists(r"D:\EYAOI\JOB\save_test"):
         raise Exception("未发现另存为的程式名")
+    else:
+        # 删除该job
+        shutil.rmtree(r"D:\EYAOI\JOB\save_test")
     utils.close_aoi()
 # @utils.screenshot_error_to_excel()
 # def jbgn_001_13():
@@ -797,15 +799,16 @@ def jbgn_001_12():
 def jbgn_001_40():
     utils.check_and_launch_aoi()
     utils.check_close_all_algs()
-    utils.open_program()
+    utils.open_program(if_specific=True)
     utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
     utils.is_checked((66,255),(78,267),True)
+    utils.is_checked((84,273),(96,285),True)
     utils.click_by_png(config.PLAY, 2)
     for _ in range (3):
         time.sleep(5)
         pyautogui.press("enter")
         time.sleep(5)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
     start_time = time.time()
     while True:
         if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
@@ -814,6 +817,7 @@ def jbgn_001_40():
             raise Exception("循环单次时疑似超过五分钟")
     utils.click_by_png(config.STOP)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75, timeout=20)
+    time.sleep(5)
     utils.click_by_png(config.TESTING_INTERFACE_ENTER_DETAIL_INTERFACE)
     time.sleep(5)
     # 1、点击【进入细调界面】，在【元件窗口】选择所有红色NG的窗口，查看算法参数值
@@ -835,15 +839,16 @@ def jbgn_001_40():
 def jbgn_001_41():
     utils.check_and_launch_aoi()
     utils.check_close_all_algs()
-    utils.open_program()
+    utils.open_program(if_specific=True)
     utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
     utils.is_checked((66,255),(78,267),True)
+    utils.is_checked((84,273),(96,285),True)
     utils.click_by_png(config.PLAY, 2)
     for _ in range (3):
         time.sleep(5)
         pyautogui.press("enter")
         time.sleep(5)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
     start_time = time.time()
     while True:
         if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
@@ -852,6 +857,7 @@ def jbgn_001_41():
             raise Exception("循环单次时疑似超过五分钟")
     utils.click_by_png(config.STOP)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75, timeout=20)
+    time.sleep(5)
     utils.click_by_png(config.TESTING_INTERFACE_ENTER_DETAIL_INTERFACE)
     time.sleep(5)
     # 1、点击【进入细调界面】，在【不良元件】Tab页，快速点击不同料号、位号的元件（包括大元件）
@@ -882,15 +888,16 @@ def jbgn_001_41():
 def jbgn_001_42():
     utils.check_and_launch_aoi()
     utils.check_close_all_algs()
-    utils.open_program()
+    utils.open_program(if_specific=True)
     utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
     utils.is_checked((66,255),(78,267),True)
+    utils.is_checked((84,273),(96,285),True)
     utils.click_by_png(config.PLAY, 2)
     for _ in range (3):
         time.sleep(5)
         pyautogui.press("enter")
         time.sleep(5)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
     start_time = time.time()
     while True:
         if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
@@ -899,6 +906,7 @@ def jbgn_001_42():
             raise Exception("循环单次时疑似超过五分钟")
     utils.click_by_png(config.STOP)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75, timeout=20)
+    time.sleep(5)
     utils.click_by_png(config.TESTING_INTERFACE_ENTER_DETAIL_INTERFACE)
     time.sleep(5)
     # 1、点击【进入细调界面】，在【元件窗口】中选择含有搜索范围的算法，如：方形定位
@@ -930,15 +938,16 @@ def jbgn_001_42():
 def jbgn_001_43():
     utils.check_and_launch_aoi()
     utils.check_close_all_algs()
-    utils.open_program()
+    utils.open_program(if_specific=True)
     utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
     utils.is_checked((66,255),(78,267),True)
+    utils.is_checked((84,273),(96,285),True)
     utils.click_by_png(config.PLAY, 2)
     for _ in range (3):
         time.sleep(5)
         pyautogui.press("enter")
         time.sleep(5)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
     start_time = time.time()
     while True:
         if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
@@ -947,6 +956,7 @@ def jbgn_001_43():
             raise Exception("循环单次时疑似超过五分钟")
     utils.click_by_png(config.STOP)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75, timeout=20)
+    time.sleep(5)
     utils.click_by_png(config.TESTING_INTERFACE_ENTER_DETAIL_INTERFACE)
     time.sleep(5)
     # 1、点击【进入细调界面】，在【元件窗口】中选择含有搜索范围的算法，如：方形定位
@@ -976,7 +986,7 @@ def jbgn_001_43():
 def jbgn_001_44():
     utils.check_and_launch_aoi()
     utils.check_close_all_algs()
-    utils.open_program()
+    utils.open_program(if_specific=True)
     utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
     utils.is_checked((66,255),(78,267),True)
     # 1、点击【运行】按钮，【运行】按钮置灰进入检测状态
@@ -985,7 +995,7 @@ def jbgn_001_44():
         time.sleep(5)
         pyautogui.press("enter")
         time.sleep(5)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
     # 2、点击【停止】按钮，查看UI界面在1秒内显示的状态
     time.sleep(10)
     utils.click_by_png(config.STOP)
@@ -997,7 +1007,7 @@ def jbgn_001_44():
 # def jbgn_001_45():
 #     utils.check_and_launch_aoi()
 #     utils.check_all_algs()
-#     utils.open_program()
+#     utils.open_program(if_specific=True)
 #     utils.click_by_png(config.PROGRAM_COMPONENT_DARK)
 #     utils.is_checked((66,255),(78,267),True)
 #     # 1、点击【运行】按钮，查看运行各阶段的界面显示状态与实际轨道上板的位置
@@ -1015,7 +1025,7 @@ def jbgn_001_46():
     utils.check_and_launch_aoi()
     utils.check_dv(False,False)
     # 1、点击【运行】按钮，运行完成后
-    utils.open_program()
+    utils.open_program(if_specific=True)
     # 获取job名
     utils.click_by_png(config.SAVE_AS_JOB)
     job_name = utils.read_text(800,540)
@@ -1027,7 +1037,7 @@ def jbgn_001_46():
         time.sleep(5)
         pyautogui.press("enter")
         time.sleep(5)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1055,7 +1065,8 @@ def jbgn_001_46():
         utils.click_by_png(config.RV_ALL_PASS,tolerance=0.7)
         utils.click_by_png(config.RV_CONFIRM,tolerance=0.7)
         time.sleep(7)
-
+    else:
+        logger.error("可能已经自动复判了 直接打开spc")
     # 3、在SPC点击【程序视图】--【1小时】--【查询】，在搜索结果中选择相应的数据， 点击【PCB视图】
     utils.check_and_launch_spc()
     utils.click_by_png(config.SPC_PROGRAM_VIEW)
@@ -1112,7 +1123,7 @@ def jbgn_001_46():
 
     # 如果计数器为0，报错
     if count_within_three_minutes == 0:
-        raise Exception("未找到截止时间在五分钟内的数据")
+        raise Exception("未找到截止时间在五分钟内的数据，疑似数据未到spc")
 
     utils.click_by_ocr(job_name,2)
     time.sleep(5)
@@ -1171,7 +1182,7 @@ def jbgn_001_47():
     utils.check_and_launch_aoi()
     utils.check_dv(True)
     # 1、点击【运行】按钮，运行完成后
-    utils.open_program()
+    utils.open_program(if_specific=True)
     # 获取job名
     utils.click_by_png(config.SAVE_AS_JOB)
     job_name = utils.read_text(800,540)
@@ -1183,7 +1194,7 @@ def jbgn_001_47():
         time.sleep(5)
         pyautogui.press("enter")
         time.sleep(5)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1321,7 +1332,7 @@ def jbgn_001_48():
     utils.check_and_launch_aoi()
     utils.check_dv(if_auto_check_dv=True)
     # 1、点击【运行】按钮，运行完成后
-    utils.open_program()
+    utils.open_program(if_specific=True)
     # 获取job名
     utils.click_by_png(config.SAVE_AS_JOB)
     job_name = utils.read_text(800,540)
@@ -1333,7 +1344,7 @@ def jbgn_001_48():
         time.sleep(5)
         pyautogui.press("enter")
         time.sleep(5)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1458,7 +1469,7 @@ def jbgn_001_48():
 def jbgn_001_49():
     utils.check_and_launch_aoi()
     utils.check_export_ok(if_export_all_ok=True)
-    utils.open_program()
+    utils.open_program(if_specific=True)
     utils.click_by_png(config.SAVE_AS_JOB)
     job_name = utils.read_text(800,540)
     utils.click_by_png(config.CANCEL)
@@ -1488,7 +1499,7 @@ def jbgn_001_49():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1590,7 +1601,7 @@ def jbgn_001_53():
 def jbgn_001_54():
     utils.check_and_launch_aoi()
     utils.check_open_developer_options(type="save_check_data_yes")
-    utils.open_program()
+    utils.open_program(if_specific=True)
     # 任意测试一个job
     debug_dir = r"D:\EYAOI\BIN\Debug"
     for file_name in os.listdir(debug_dir):
@@ -1600,6 +1611,7 @@ def jbgn_001_54():
                 os.remove(file_path)
                 logger.info(f"已删除文件: {file_path}")
     utils.is_checked((66,255),(78,267),True)
+    utils.is_checked((84,273),(96,285),True)
     utils.click_by_png(config.PLAY, 2)
     for _ in range(3):
         time.sleep(2)
@@ -1637,8 +1649,9 @@ def jbgn_001_55():
     utils.check_and_launch_aoi()
     # 任意在线测试一个JOB
     utils.check_save_djb(True)
-    utils.open_program()
+    utils.open_program(if_specific=True)
     utils.is_checked((66,255),(78,267),True)
+    utils.is_checked((84,273),(96,285),True)
     utils.click_by_png(config.PLAY, 2)
     for _ in range(3):
         time.sleep(2)
@@ -1676,14 +1689,15 @@ def jbgn_001_56():
     utils.check_and_launch_aoi()
     # 任意测试一个job
     utils.check_close_all_algs()
-    utils.open_program()
+    utils.open_program(if_specific=True)
     utils.is_checked((66,255),(78,267),True)
+    utils.is_checked((84,273),(96,285),True)
     utils.click_by_png(config.PLAY, 2)
     for _ in range (3):
         time.sleep(5)
         pyautogui.press("enter")
         time.sleep(5)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
     time.sleep(5)
     if not utils.search_symbol(config.TESTING_INTERFACE_GOOD, 60,tolerance=0.7):
         raise Exception("未检测到：良好")
@@ -1692,7 +1706,7 @@ def jbgn_001_56():
 def jbgn_001_57():
     utils.check_and_launch_aoi() 
     utils.check_close_all_algs()
-    utils.open_program()   
+    utils.open_program(if_specific=True)   
     # 测试一个忽略板
     pyautogui.rightClick(config.CENTRE)
     utils.click_by_png(config.ADD_OBJECT,tolerance=0.75)
@@ -1817,13 +1831,13 @@ def jbgn_001_61():
 def jbgn_001_62():  
     utils.check_and_launch_aoi()
     # 1.打开任意一个job，运行测试
-    utils.open_program()
+    utils.open_program(if_specific=True)
     utils.click_by_png(config.PLAY, 2)
     for _ in range (3):
         time.sleep(5)
         pyautogui.press("enter")
         time.sleep(5)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
     start_time = time.time()
     while True:
         if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):

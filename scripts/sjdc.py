@@ -1,6 +1,7 @@
 
 import datetime
 import os
+import shutil
 from loguru import logger
 import utils
 import config
@@ -54,18 +55,21 @@ def sjdc_001_02():
     if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.75):
         raise Exception("循环单次时疑似超过五分钟")
     # 检测F盘DataExport下有没有五分钟内生成的数据
-    data_export_path = "F:\\DataExport"
+    data_export_path = r"F:\DataExport"
     current_time = time.time()
     found_recent_file = False
 
-    for file in os.listdir(data_export_path):
-        file_path = os.path.join(data_export_path, file)
-        if os.path.isfile(file_path):
+    for root, dirs, files in os.walk(data_export_path):
+        for file in files:
+            file_path = os.path.join(root, file)
             file_creation_time = os.path.getctime(file_path)
-            # 如果文件是在五分钟内创建的
-            if current_time - file_creation_time <= 300:
+            file_modification_time = os.path.getmtime(file_path)
+            # 如果文件是在五分钟内创建或修改的
+            if current_time - file_creation_time <= 300 or current_time - file_modification_time <= 300:
                 found_recent_file = True
                 break
+        if found_recent_file:
+            break
 
     if not found_recent_file:
         raise Exception(f"{data_export_path}路径下无五分钟内生成的测试数据")
@@ -399,7 +403,9 @@ def sjdc_002_08():
 @utils.screenshot_error_to_excel()
 def sjdc_003_01():
     utils.check_and_launch_aoi()
-    utils.check_use_data_folder(0)
+    old_folder = "F:/DataExport"
+    utils.check_output_path(False, old_folder)
+    utils.check_use_date_folder(0)
     # 1.【打开】job
     utils.open_program()
     # 获取job名
@@ -413,7 +419,7 @@ def sjdc_003_01():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -432,7 +438,9 @@ def sjdc_003_01():
 @utils.screenshot_error_to_excel()
 def sjdc_003_02():
     utils.check_and_launch_aoi()
-    utils.check_use_data_folder(3)
+    old_folder = "F:/DataExport"
+    utils.check_output_path(False, old_folder)
+    utils.check_use_date_folder(3)
     # 1.【打开】job
     utils.open_program()
     # 获取job名
@@ -446,7 +454,7 @@ def sjdc_003_02():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -464,7 +472,9 @@ def sjdc_003_02():
 @utils.screenshot_error_to_excel()
 def sjdc_003_03():
     utils.check_and_launch_aoi()
-    utils.check_use_data_folder(2)
+    old_folder = "F:/DataExport"
+    utils.check_output_path(False, old_folder)
+    utils.check_use_date_folder(2)
     # 1.【打开】job
     utils.open_program()
     # 获取job名
@@ -478,7 +488,7 @@ def sjdc_003_03():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -496,7 +506,9 @@ def sjdc_003_03():
 @utils.screenshot_error_to_excel()
 def sjdc_003_04():
     utils.check_and_launch_aoi()
-    utils.check_use_data_folder(1)
+    old_folder = "F:/DataExport"
+    utils.check_output_path(False, old_folder)
+    utils.check_use_date_folder(1)
     # 1.【打开】job
     utils.open_program()
     # 获取job名
@@ -510,7 +522,7 @@ def sjdc_003_04():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -528,7 +540,9 @@ def sjdc_003_04():
 @utils.screenshot_error_to_excel()
 def sjdc_004_01():
     utils.check_and_launch_aoi()
-    utils.check_use_data_folder(0)
+    old_folder = "F:/DataExport"
+    utils.check_output_path(False, old_folder)
+    utils.check_use_date_folder(0)
     # 1.【打开】job
     utils.open_program()
     # 获取job名
@@ -552,7 +566,9 @@ def sjdc_004_01():
 @utils.screenshot_error_to_excel()
 def sjdc_004_02():
     utils.check_and_launch_aoi()
-    utils.check_use_data_folder(3)
+    old_folder = "F:/DataExport"
+    utils.check_output_path(False, old_folder)
+    utils.check_use_date_folder(3)
     # 1.【打开】job
     utils.open_program()
     # 获取job名
@@ -566,7 +582,7 @@ def sjdc_004_02():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -579,11 +595,12 @@ def sjdc_004_02():
 
 @utils.screenshot_error_to_excel()
 def sjdc_004_03():
-    #TODO
     utils.check_and_launch_aoi()
-    utils.check_use_data_folder(False)
+    utils.check_use_date_folder(False)
+    old_folder = "F:/DataExport"
+    new_folder = "F:/DataExport/test"
+    utils.check_output_path(True,new_folder)
 
-    utils.check_checkbox_status_before_text("输出路径",True,"right",200)
     # 1.【打开】job
     utils.open_program()
     # 获取job名
@@ -597,7 +614,7 @@ def sjdc_004_03():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -606,14 +623,31 @@ def sjdc_004_03():
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
     # 3.打开更改前的路径文件夹
-    utils.open_old_path_folder()
+    if utils.check_new_data(path=old_folder):
+        raise Exception(f"{old_folder}下生成了新数据")
     # 4.打开更改后的路径文件夹
-    utils.open_new_path_folder()
+    if not utils.check_new_data(path=new_folder):
+        raise Exception(f"{new_folder}下未生成新数据")
+    utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
 def sjdc_004_04():
     utils.check_and_launch_aoi()
-    utils.check_offline_send_data(True)
+    utils.check_use_date_folder(False)
+    old_folder = "F:/DataExport"
+    new_folder = "F:/DataExport/test"
+    utils.check_output_path(True, new_folder)
+    os.chmod(new_folder, 0o777)  # 将文件夹权限设置为对所有人可读写执行
+
+    today_date_folder = datetime.now().strftime("%Y-%m-%d")
+    for folder in [old_folder, new_folder]:
+        path_to_delete = os.path.join(folder, today_date_folder)
+        if os.path.exists(path_to_delete):
+            shutil.rmtree(path_to_delete)
+            logger.info(f"已删除文件夹: {path_to_delete}")
+        else:
+            logger.info(f"文件夹不存在，无需删除: {path_to_delete}")
+
     # 1.【打开】job
     utils.open_program()
     # 获取job名
@@ -627,7 +661,7 @@ def sjdc_004_04():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -636,9 +670,14 @@ def sjdc_004_04():
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
     # 3.打开更改前的路径文件夹
-    utils.open_old_path_folder()
+    if utils.check_new_data(path=old_folder, name=f"{datetime.datetime.now():%Y-%m-%d}"):
+        raise Exception(f"{old_folder}下生成了年-月-日格式的文件夹")
     # 4.打开更改后的路径文件夹
-    utils.open_new_path_folder()
+    if not utils.check_new_data(path=new_folder, name=f"{datetime.datetime.now():%Y-%m-%d}"):
+        raise Exception(f"{new_folder}下未生成年-月-日格式的文件夹")
+    
+    utils.close_aoi()
+    
 
 @utils.screenshot_error_to_excel()
 def sjdc_005_01():
@@ -657,7 +696,7 @@ def sjdc_005_01():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -688,7 +727,7 @@ def sjdc_005_02():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -719,7 +758,7 @@ def sjdc_006_01():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -747,7 +786,7 @@ def sjdc_006_02():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -775,7 +814,7 @@ def sjdc_006_03():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -803,7 +842,7 @@ def sjdc_007_01():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -835,7 +874,7 @@ def sjdc_007_02():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -867,7 +906,7 @@ def sjdc_007_03():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1025,7 +1064,7 @@ def sjdc_010_01():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1054,7 +1093,7 @@ def sjdc_010_02():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1083,7 +1122,7 @@ def sjdc_010_03():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1112,7 +1151,7 @@ def sjdc_010_04():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1141,7 +1180,7 @@ def sjdc_010_05():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1173,7 +1212,7 @@ def sjdc_010_06():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1200,7 +1239,7 @@ def sjdc_010_07():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1229,7 +1268,7 @@ def sjdc_010_08():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1261,7 +1300,7 @@ def sjdc_010_09():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1301,7 +1340,7 @@ def sjdc_012_01():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1329,7 +1368,7 @@ def sjdc_012_02():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1358,7 +1397,7 @@ def sjdc_012_03():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1387,7 +1426,7 @@ def sjdc_013_01():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1417,7 +1456,7 @@ def sjdc_013_02():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1447,7 +1486,7 @@ def sjdc_013_03():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1477,7 +1516,7 @@ def sjdc_013_04():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1507,7 +1546,7 @@ def sjdc_013_05():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1537,7 +1576,7 @@ def sjdc_013_06():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1567,7 +1606,7 @@ def sjdc_013_07():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1597,7 +1636,7 @@ def sjdc_013_08():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1627,7 +1666,7 @@ def sjdc_014_01():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1657,7 +1696,7 @@ def sjdc_014_02():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1687,7 +1726,7 @@ def sjdc_014_03():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1717,7 +1756,7 @@ def sjdc_014_04():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1747,7 +1786,7 @@ def sjdc_014_05():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1777,7 +1816,7 @@ def sjdc_014_06():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1807,7 +1846,7 @@ def sjdc_014_07():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -1837,7 +1876,7 @@ def sjdc_014_08():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2003,7 +2042,7 @@ def sjdc_016_01():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2031,7 +2070,7 @@ def sjdc_016_02():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2060,7 +2099,7 @@ def sjdc_017_01():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2089,7 +2128,7 @@ def sjdc_017_02():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2118,7 +2157,7 @@ def sjdc_018_01():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2148,7 +2187,7 @@ def sjdc_018_02():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2178,7 +2217,7 @@ def sjdc_018_03():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2208,7 +2247,7 @@ def sjdc_018_04():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2238,7 +2277,7 @@ def sjdc_018_05():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2268,7 +2307,7 @@ def sjdc_018_06():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2298,7 +2337,7 @@ def sjdc_018_07():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2328,7 +2367,7 @@ def sjdc_018_08():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2358,7 +2397,7 @@ def sjdc_018_09():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2388,7 +2427,7 @@ def sjdc_018_10():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2418,7 +2457,7 @@ def sjdc_018_11():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2448,7 +2487,7 @@ def sjdc_018_12():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2478,7 +2517,7 @@ def sjdc_018_13():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2508,7 +2547,7 @@ def sjdc_018_14():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2538,7 +2577,7 @@ def sjdc_018_15():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2568,7 +2607,7 @@ def sjdc_018_16():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2734,7 +2773,7 @@ def sjdc_019_01():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2762,7 +2801,7 @@ def sjdc_019_02():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2790,7 +2829,7 @@ def sjdc_019_03():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2818,7 +2857,7 @@ def sjdc_019_04():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2846,7 +2885,7 @@ def sjdc_019_05():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2874,7 +2913,7 @@ def sjdc_020_01():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2902,7 +2941,7 @@ def sjdc_020_02():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -2930,7 +2969,7 @@ def sjdc_020_03():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -3740,7 +3779,7 @@ def sjdc_026_01():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -3768,7 +3807,7 @@ def sjdc_026_02():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -3796,7 +3835,7 @@ def sjdc_026_03():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -3824,7 +3863,7 @@ def sjdc_026_04():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -3852,7 +3891,7 @@ def sjdc_026_05():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -3880,7 +3919,7 @@ def sjdc_026_06():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -3908,7 +3947,7 @@ def sjdc_027_01():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -3936,7 +3975,7 @@ def sjdc_027_02():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -3964,7 +4003,7 @@ def sjdc_028_01():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -3992,7 +4031,7 @@ def sjdc_028_02():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -4020,7 +4059,7 @@ def sjdc_028_03():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -4048,7 +4087,7 @@ def sjdc_028_04():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -4076,7 +4115,7 @@ def sjdc_028_05():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -4104,7 +4143,7 @@ def sjdc_028_06():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -4358,7 +4397,7 @@ def sjdc_032_01():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -4381,7 +4420,7 @@ def sjdc_032_02():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -4404,7 +4443,7 @@ def sjdc_032_03():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:
@@ -4427,7 +4466,7 @@ def sjdc_032_04():
         time.sleep(3)
         pyautogui.press("enter")
         time.sleep(3)
-    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.75)
+    utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
 
     start_time = time.time()
     while True:

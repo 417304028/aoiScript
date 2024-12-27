@@ -97,7 +97,7 @@ def lxbj_002_01():
     time.sleep(1)
 
     # 调用卡顿或闪退检测函数
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 # TODO 可以识别出提示，但是没办法跟缺陷名对应
@@ -1609,7 +1609,7 @@ def lxbj_014_01():
         pyautogui.click((1725, 545))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1644,7 +1644,7 @@ def lxbj_014_02():
         pyautogui.click((1725, 575))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1679,7 +1679,7 @@ def lxbj_014_03():
         pyautogui.click((1725, 595))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1714,7 +1714,7 @@ def lxbj_014_04():
         pyautogui.click((1725, 545))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1749,7 +1749,7 @@ def lxbj_014_05():
         pyautogui.click((1725, 545))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1784,7 +1784,7 @@ def lxbj_014_06():
         pyautogui.click((1725, 560))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1819,7 +1819,7 @@ def lxbj_014_07():
         pyautogui.click((1725, 575))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1854,7 +1854,7 @@ def lxbj_014_08():
         pyautogui.click((1725, 590))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1889,7 +1889,7 @@ def lxbj_014_09():
         pyautogui.click((1725, 545))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1924,7 +1924,7 @@ def lxbj_014_10():
         pyautogui.click((1725, 560))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1959,7 +1959,7 @@ def lxbj_014_11():
         pyautogui.click((1725, 575))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -1994,7 +1994,7 @@ def lxbj_014_12():
         pyautogui.click((1725, 590))
     # 4、点击上方【测试当前窗口】
     utils.click_by_png(config.TEST_WINDOW)
-    utils.caton_or_flashback()
+    utils.caton_or_flashback("AOI.exe")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
