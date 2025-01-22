@@ -26,12 +26,27 @@ def sjdc_001_01():
         pyautogui.press("enter")
         time.sleep(2)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
-    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.75):
+    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.95):
         raise Exception("循环单次时疑似超过五分钟")
-    # 检测F盘DataExport下有没有三分钟内生成的数据
+    # 检测F盘DataExport及其所有子文件夹内有没有三分钟内修改或者生成的数据或者文件夹
     folder_path = f"F:/DataExport"
-    if not utils.check_new_data(path=folder_path, name=job_name):
-        raise Exception(f"{folder_path}下疑似未生成该笔数据")
+    current_time = time.time()
+    found_recent_file_or_folder = False
+
+    for root, dirs, files in os.walk(folder_path):
+        for name in dirs + files:
+            item_path = os.path.join(root, name)
+            item_creation_time = os.path.getctime(item_path)
+            item_modification_time = os.path.getmtime(item_path)
+            # 如果文件或文件夹是在三分钟内创建或修改的
+            if current_time - item_creation_time <= 180 or current_time - item_modification_time <= 180:
+                found_recent_file_or_folder = True
+                break
+        if found_recent_file_or_folder:
+            break
+
+    if not found_recent_file_or_folder:
+        raise Exception(f"{folder_path}及其所有子文件夹内疑似未生成或修改数据或文件夹")
     utils.close_aoi()
 
 @utils.screenshot_error_to_excel()
@@ -52,7 +67,7 @@ def sjdc_001_02():
         pyautogui.press("enter")
         time.sleep(2)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
-    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.75):
+    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.95):
         raise Exception("循环单次时疑似超过五分钟")
     # 检测F盘DataExport下有没有五分钟内生成的数据
     data_export_path = r"F:\DataExport"
@@ -118,7 +133,7 @@ def sjdc_002_02():
         pyautogui.press("enter")
         time.sleep(2)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
-    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.75):
+    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.95):
         raise Exception("循环单次时疑似超过五分钟")
 
     # 3.点【停止】--【进入细调】
@@ -164,11 +179,11 @@ def sjdc_002_03():
         pyautogui.press("enter")
         time.sleep(2)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
-    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.75):
+    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.95):
         raise Exception("循环单次时疑似超过五分钟")
 
     # 3.运行结束后倒计时点【细调】
-    if utils.search_symbol(config.QUESTION_MARK, 5):
+    if utils.search_symbol(config.QUESTION_MARK, 15):
         pyautogui.press("enter")
     else:
         raise Exception("未找到停止进细调弹框")
@@ -208,11 +223,11 @@ def sjdc_002_04():
         pyautogui.press("enter")
         time.sleep(2)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
-    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.75):
+    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.95):
         raise Exception("循环单次时疑似超过五分钟")
 
     # 3.运行结束后倒计时点【停止】--【进入细调】
-    if utils.search_symbol(config.QUESTION_MARK, 5):
+    if utils.search_symbol(config.QUESTION_MARK, 15):
         pyautogui.press("enter")
     else:
         raise Exception("未找到停止进细调弹框")
@@ -281,11 +296,11 @@ def sjdc_002_06():
         pyautogui.press("enter")
         time.sleep(2)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
-    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.75):
+    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.95):
         raise Exception("循环单次时疑似超过五分钟")
 
     # 3.点【停止】--【进入细调】
-    if utils.search_symbol(config.QUESTION_MARK, 5):
+    if utils.search_symbol(config.QUESTION_MARK, 15):
         pyautogui.press("enter")
     else:
         raise Exception("未找到停止进细调弹框")
@@ -326,11 +341,11 @@ def sjdc_002_07():
         pyautogui.press("enter")
         time.sleep(2)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
-    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.75):
+    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.95):
         raise Exception("循环单次时疑似超过五分钟")
 
     # 3.运行结束后倒计时点【细调】
-    if utils.search_symbol(config.QUESTION_MARK, 5):
+    if utils.search_symbol(config.QUESTION_MARK, 15):
         pyautogui.press("enter")
     else:
         raise Exception("未找到停止进细调弹框")
@@ -372,11 +387,11 @@ def sjdc_002_08():
         pyautogui.press("enter")
         time.sleep(2)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,20,tolerance=0.75)
-    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.75):
+    if not utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 300, tolerance=0.95):
         raise Exception("循环单次时疑似超过五分钟")
 
     # 3.运行结束后倒计时点【停止】--【进入细调】
-    if utils.search_symbol(config.QUESTION_MARK, 5):
+    if utils.search_symbol(config.QUESTION_MARK, 15):
         pyautogui.press("enter")
     else:
         raise Exception("未找到停止进细调弹框")

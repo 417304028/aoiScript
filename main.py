@@ -1,5 +1,6 @@
 import datetime
 import difflib
+import random
 import sys
 from tkinter import filedialog
 sys.coinit_flags = 2
@@ -8,13 +9,13 @@ import subprocess
 import zipfile
 import tkinter as tk
 from tkinter import messagebox
-import cv2, easyocr
+import cv2
 import numpy as np
 import psutil
 import utils, config
 from loguru import logger
 import pyautogui
-import os,time
+import os, time
 from PIL import Image as PILImage
 import win32gui, win32con
 import threading
@@ -44,22 +45,57 @@ def build_script_controller():
             os.remove(zip_filename)
         except Exception as e:
             logger.error(f"无法删除zip文件 {zip_filename}: {e}")
+    
     aoi_script_dir = r"D:\work\aoiScript"
     if os.path.exists(aoi_script_dir):
         for file in os.listdir(aoi_script_dir):
-            if file.endswith(".csv") or file.endswith(".spec"):
+            if file.endswith(".spec"):
                 os.remove(os.path.join(aoi_script_dir, file))
-
+        
+        # 删除csv_files文件夹
+        csv_files_dir = os.path.join(aoi_script_dir, "csv_files")
+        if os.path.exists(csv_files_dir):
+            shutil.rmtree(csv_files_dir, ignore_errors=True)
+        
+        # 删除__pycache__文件夹
+        pycache_dir = os.path.join(aoi_script_dir, "__pycache__")
+        if os.path.exists(pycache_dir):
+            shutil.rmtree(pycache_dir, ignore_errors=True)
 
     # 执行pyinstaller命令
     command = [
         "pyinstaller", "--onedir", "--clean", "--noconsole",
-        "--add-data", "images;images", 
-        "--add-data", "C:\\Users\\Sinictek\\.EasyOCR\\model;model",
-        "--add-data", "aoi_config;aoi_config", 
+        # "pyinstaller", "--onedir", "--console",
+        "--add-data", "images;images",
+        "--add-data", "aoi_config;aoi_config",
         "--add-data", "rv_config;rv_config",
-        "--distpath", "D:\\work\\aoi_output", "--workpath", "D:\\work\\build", "script_controller.py", "--noconfirm"
+        "--add-data", "D:\\environment\\Miniconda3\\Lib\\site-packages\\paddleocr;./paddleocr",
+        "--add-data", "D:\\work\\models;./models",
+        "--add-binary", "D:\\environment\\Miniconda3\\Lib\\site-packages\\paddle\\libs\\*;paddle/libs",
+        "--hidden-import=paddle",
+        "--hidden-import=paddle.fluid.core",
+        "--hidden-import=paddleocr",
+        "--hidden-import=paddleocr.tools",
+        "--hidden-import=paddleocr.tools.infer",
+        "--hidden-import=shapely",
+        "--hidden-import=pyclipper",
+        "--hidden-import=numpy",
+        "--hidden-import=cv2",
+        "--hidden-import=scipy",
+        "--hidden-import=PIL",
+        "--hidden-import=skimage.morphology",
+        "--hidden-import=yaml",
+        "--hidden-import=skimage",
+        "--hidden-import=imgaug",
+        "--hidden-import=albumentations",
+        "--hidden-import=docx",
+        "--distpath", "D:\\work\\aoi_output",
+        "--workpath", "D:\\work\\build",
+        "script_controller.py",
+        "--noconfirm",
+        "--debug=all"
     ]
+
     subprocess.run(command, check=True)
 
     # 确保编译完成后再打包为zip文件
@@ -74,6 +110,7 @@ def build_script_controller():
                     arcname = os.path.relpath(file_path, output_dir)
                     zipf.write(file_path, arcname)
     root = tk.Tk()
+    root.withdraw()  # 隐藏主窗口
     root.attributes('-topmost', True)  # 置顶窗口
     messagebox.showinfo("通知", "zip文件已创建", master=root)
     root.after(5000, root.destroy)  # 5秒后自动关闭弹窗
@@ -94,7 +131,7 @@ def build_script_controller():
         logger.info("开始尝试传输文件至215")
         try:
             shutil.copy(zip_filename, target_zip_path)
-            logger.info("文件复制成功")
+            logger.info("文件传输成功")
             break
         except Exception as e:
             logger.error(f"无法复制zip文件到目标路径 {target_zip_path}: {e}")
@@ -102,38 +139,12 @@ def build_script_controller():
 
     if time.time() - start_time >= 300:
         logger.error("五分钟内未能成功发送文件")
-    logger.info("发送文件完成")
     root = tk.Tk()
+    # root.withdraw()  # 隐藏主窗口
     root.attributes('-topmost', True)  # 置顶窗口
     messagebox.showinfo("通知", "编译完成", master=root)
     root.after(5000, root.destroy)  # 5秒后自动关闭弹窗
 
-# import ctypes
-# def hide_taskbar():
-#     try:
-#         taskbar_hwnd = win32gui.FindWindow("Shell_TrayWnd", None)
-#         if taskbar_hwnd:
-#             win32gui.ShowWindow(taskbar_hwnd, win32con.SW_HIDE)
-#             logger.info("任务栏已隐藏")
-#         else:
-#             logger.error("未找到任务栏窗口")
-#     except Exception as e:
-#         logger.error(f"隐藏任务栏时发生错误: {e}")
-# def show_taskbar():
-#     try:
-#         taskbar_hwnd = win32gui.FindWindow("Shell_TrayWnd", None)
-#         if taskbar_hwnd:
-#             win32gui.ShowWindow(taskbar_hwnd, win32con.SW_SHOW)
-#             logger.info("任务栏已显示")
-#         else:
-#             logger.error("未找到任务栏窗口")
-#     except Exception as e:
-#         logger.error(f"显示任务栏时发生错误: {e}")
-
-
-
 if __name__ == "__main__":
     utils.setup_logger()
     build_script_controller()
-
-

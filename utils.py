@@ -3,7 +3,6 @@ import random
 import re
 import shutil
 import subprocess
-import easyocr
 import sys
 sys.coinit_flags = 2
 import time
@@ -37,10 +36,11 @@ from openpyxl.drawing.image import Image as ExcelImage
 from sklearn.cluster import KMeans
 import win32api
 import win32process
-
+pyautogui.FAILSAFE = False
 
 ctypes.windll.shcore.SetProcessDpiAwareness(0)  # 解决使用pyautowin时缩放问题
 running_event = Event()
+
 
 # ============================日志=======================
 # 设置日志记录器
@@ -53,45 +53,56 @@ def setup_logger():
                format="{time:YYYY-MM-DD HH:mm:ss.SSS} {level} {message}", level="INFO")
     logger.info("已开启日志记录")
 
+try:
+    from paddleocr import PaddleOCR
+    logger.info("paddleocr 和 PaddleOCR 已成功导入。")
+    
+    # 确定路径
+    dev_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'models')
+    if os.path.exists(dev_path):
+        # 开发环境
+        logger.info("使用开发环境")
+        internal_path = dev_path
+    elif getattr(sys, 'frozen', True):
+        # 打包后的环境
+        logger.info("使用打包后环境")
+        internal_path = os.path.join(os.path.abspath(os.path.dirname(sys.executable)), 'models')
+
+    # 检查路径中 '_internal' 的出现次数
+    internal_count = internal_path.count('_internal')
+    logger.debug(f"最终 internal_path: {internal_path}")
+
+    if os.path.exists(internal_path):
+        # 使用 _internal 目录下的模型
+        det_model_dir = os.path.join(internal_path, 'ch_PP-OCRv4_det_infer')
+        rec_model_dir = os.path.join(internal_path, 'ch_PP-OCRv4_rec_infer')
+        cls_model_dir = os.path.join(internal_path, 'ch_ppocr_mobile_v2.0_cls_infer')
+    else:
+        logger.error("模型目录不存在，使用绝对路径（仅用于开发环境）")
+        det_model_dir = 'D:\\work\\models\\ch_PP-OCRv4_det_infer'
+        rec_model_dir = 'D:\\work\\models\\ch_PP-OCRv4_rec_infer'
+        cls_model_dir = 'D:\\work\\models\\ch_ppocr_mobile_v2.0_cls_infer'
+
+    logger.debug(f"det_model_dir: {det_model_dir}")
+    logger.debug(f"rec_model_dir: {rec_model_dir}")
+    logger.debug(f"cls_model_dir: {cls_model_dir}")
+
+    # 初始化 PaddleOCR
+    ocr = PaddleOCR(
+        use_angle_cls=True,
+        lang='ch',
+        use_gpu=False,
+        show_log=True,
+        det_model_dir=det_model_dir,
+        rec_model_dir=rec_model_dir,
+        cls_model_dir=cls_model_dir
+    )
+except ImportError as e:
+    logger.error(f"导入错误: {e}")
 
 # ============================窗格处理===================
 # 连接窗口（好像只能用win32连接窗口,uia不行）
 def connect_aoi_window():
-    # try:
-    #     windows = Desktop(backend="win32").windows()
-    #     window_found = False
-    #     aoi_amount = 0
-    #     for w in windows:
-    #         try:
-    #             class_name = w.class_name()
-    #             automation_id = w.automation_id()
-    #             if class_name == "WindowsForms10.Window.8.app.0.ea7f4a_r8_ad1" and automation_id == "MainForm":
-    #                 window_properties = w.get_properties()
-    #                 logger.info(f"aoi窗口存在,详细信息：{window_properties}")
-    #                 window_found = True
-    #                 aoi_amount += 1
-    #                 # break
-    #         except Exception as e:
-    #             continue
-    #     logger.info(f"aoi窗口数量: {aoi_amount}")
-    #     if not window_found:
-    #         error_message = "未找到任何符合条件的aoi窗口。"
-    #         logger.error(error_message)
-    #         raise Exception(error_message)
-    #     else:
-    #         app = Application().connect(class_name="WindowsForms10.Window.8.app.0.ea7f4a_r8_ad1", auto_id="MainForm")
-    #         main_window = app.window(auto_id="MainForm")
-    #         if main_window.exists(timeout=10):
-    #             logger.info("成功连接到窗口")
-    #             return main_window
-    #         else:
-    #             error_message = "未找到窗口"
-    #             logger.error(error_message)
-    #             raise Exception(error_message)
-    # except Exception as e:
-    #     error_message = f"连接窗口时发生错误: {e}"
-    #     logger.error(error_message)
-        # raise Exception(error_message)
     try:
         # 使用 uia 后端进行连接
         app = Application(backend="uia").connect(title_re="Sinic-Tek 3D AOI", auto_id="MainForm")
@@ -286,7 +297,6 @@ def bring_window_to_foreground(process_name):
             self.name = name
 
         def setForegroundWindowByWin32GUI(self):
-            
             try:
                 # 获取窗口句柄
                 hwnds = self.get_obj_hwnd()
@@ -309,6 +319,12 @@ def bring_window_to_foreground(process_name):
                 return True
             else:
                 logger.error(f"无法前置窗口: {self.name}")
+                # 查找最相近的进程名
+                similar_processes = [proc.info['name'] for proc in psutil.process_iter(['name']) if process_name.lower() in proc.info['name'].lower()]
+                if similar_processes:
+                    logger.info(f"最相近的进程名: {', '.join(similar_processes)}")
+                else:
+                    logger.info("未找到相近的进程名")
                 return False
 
         def get_obj_hwnd(self):
@@ -353,13 +369,20 @@ def bring_window_to_foreground(process_name):
 
 # 确保rv打开并前置
 def check_and_launch_rv():
+    close_rv()
     logger.info("将所有窗口最小化")
     pyautogui.hotkey('win', 'd')
     time.sleep(1)
     logger.info("最小化完成...")
     if not bring_window_to_foreground('DVPro.UI.exe'):
+        # 保存当前工作目录
+        current_dir = os.getcwd()
+        # 切换到目标目录并运行程序
         os.chdir(os.path.dirname(config.RV_EXE_PATH))
         subprocess.Popen(f'cmd /c "{os.path.basename(config.RV_EXE_PATH)}"', shell=True)
+        # 切换回原来的工作目录
+        os.chdir(current_dir)
+
         process_found = False
         while not process_found:
             for proc in psutil.process_iter(['pid', 'name']):
@@ -375,86 +398,27 @@ def check_and_launch_rv():
         #     click_by_png(config.RV_TASKBAR, tolerance=0.8)
         # else:
         #     logger.info("检测到DVPro.UI进程，正在将其前置...")
-    pyautogui.press("enter")
+    else:
+        logger.info("置顶rv成功")
+    # pyautogui.press("enter")
     # 登录
     if search_symbol(config.RV_PASSWORD, 5, tolerance=0.7):
         logger.info("检测到登录界面")
-        time.sleep(3)
-        write_text_textbox(config.RV_PASSWORD, config.RV_PASSWORD_TEXT)
-        pyautogui.press("enter")
-        time.sleep(3)
     else:
         logger.info("未检测到登录界面，即将前置窗口")
         bring_window_to_foreground('DVPro.UI.exe')
-        start_time = time.time()
-        hwnd = None
-        while not hwnd and (time.time() - start_time) < 30:
-            try:
-                hwnd = win32gui.FindWindow(None, 'DVPro.UI.exe')
-                if hwnd:
-                    win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
-                    break
-                else:
-                    time.sleep(1)  # 短暂休眠后再次尝试
-            except Exception as e:
-                logger.error(f"查找DVPro.UI.exe窗口时发生错误: {e}")
-                time.sleep(1)  # 短暂休眠后再次尝试
-        if not hwnd:
-            logger.error("20秒内未能找到DVPro.UI.exe窗口")
-        pyautogui.write(config.RV_PASSWORD_TEXT)
+    write_text_textbox(config.RV_PASSWORD, write_content=config.RV_PASSWORD_TEXT)
+    pyautogui.press("enter")
+    if not search_symbol(config.RV_ICON,5):
         pyautogui.press("enter")
-        time.sleep(3)
-
-    import win32api
-    try:
-        hwnd = None
-        logger.info("开始枚举窗口以查找 'DVPro'")
-
-        def enum_windows_callback(hwnd_temp, _):
-            global hwnd  # 声明为全局变量
-            if "DVPro" in win32gui.GetWindowText(hwnd_temp) or "Version" in win32gui.GetWindowText(hwnd_temp):
-                logger.info(f"找到窗口: {hwnd_temp}")
-                hwnd = hwnd_temp
-                return False  # 停止枚举
-            return True
-
-        win32gui.EnumWindows(enum_windows_callback, None)
-
-        if hwnd:
-            logger.info(f"找到的窗口句柄: {hwnd}")
-            # 获取工作区尺寸
-            monitor_info = win32api.GetMonitorInfo(win32api.MonitorFromWindow(hwnd))
-            work_area = monitor_info['Work']
-            monitor_area = monitor_info['Monitor']
-            work_width = work_area[2] - work_area[0]
-            work_height = work_area[3] - work_area[1] - 40  # 减去任务栏高度40像素
-            logger.info(f"工作区尺寸: 宽度={work_width}, 高度={work_height}")
-
-            # 确保窗口处于正常状态
-            win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
-            logger.info("窗口已恢复到正常状态")
-
-            # 设置窗口大小和位置，避免被任务栏遮挡
-            win32gui.SetWindowPos(hwnd, win32con.HWND_TOP, work_area[0], work_area[1], work_width, work_height, win32con.SWP_NOZORDER)
-            logger.info("窗口已调整大小以避免任务栏遮挡")
-        else:
-            logger.error("未找到含有 'DVPro' 或 'Version' 的窗口")
-            all_window_titles = []
-            def enum_all_windows_callback(hwnd_temp, _):
-                title = win32gui.GetWindowText(hwnd_temp)
-                if title:  # 只添加有标题的窗口
-                    all_window_titles.append(title)
-                return True  # 继续枚举
-
-            win32gui.EnumWindows(enum_all_windows_callback, None)
-            logger.info(f"系统中所有窗口的标题: {all_window_titles}")
-
-    except Exception as e:
-        logger.error(f"最大化和居中窗口时发生错误: {e}")
-    search_symbol_erroring(config.RV_ICON,15,tolerance=0.75)
+        write_text_textbox(config.RV_PASSWORD, write_content="sinictek")
+        pyautogui.press("enter")
+    if not search_symbol(config.RV_ICON,25):
+        raise Exception("未发现rv界面")
 
 # 确保spc打开并前置
 def check_and_launch_spc():
+    close_spc()
     logger.info("将所有窗口最小化")
     pyautogui.hotkey('win', 'd')
     time.sleep(1)
@@ -511,45 +475,61 @@ def check_and_launch_spc():
             #     logger.error(f"启动SPC程序时发生错误（方式4）: {e}")
 
             # 方式5: 使用命令行运行SPCViewMain.exe
+            current_dir = os.getcwd()
             os.chdir(os.path.dirname(config.SPC_EXE_PATH))
             subprocess.Popen(f'cmd /c "{os.path.basename(config.SPC_EXE_PATH)}"', shell=True)
+            # 切换回原来的工作目录
+            os.chdir(current_dir)
             process_found = False
             while not process_found:
                 for proc in psutil.process_iter(['pid', 'name']):
                     if proc.info['name'] == os.path.basename(config.SPC_EXE_PATH):
                         logger.info(f"{os.path.basename(config.SPC_EXE_PATH)} 已启动")
                         process_found = True
+                        time.sleep(3)
                         break
                 if not process_found:
                     logger.info(f"等待 {os.path.basename(config.SPC_EXE_PATH)} 启动...")
-                    time.sleep(1)
-
+                    time.sleep(3)
             # 中文界面
-            if search_symbol(config.SPC_LOGIN_USERNAME_CHINESE, 5,tolerance=0.6):
+            def attempt_login():
                 logger.info("检测到SPC中文登录界面")
-                click_by_png(config.SPC_LOGIN_USERNAME_CHINESE,tolerance=0.7,type="right")
+                click_by_png(config.SPC_LOGIN_USERNAME_CHINESE, tolerance=0.7, type="right")
                 click_by_png(config.SPC_USER_ADMIN)
-                write_text_textbox(config.SPC_LOGIN_USERNAME_CHINESE, config.SPC_USER_NAME)
-                logger.info(f"输入用户名: {config.SPC_USER_NAME}")
-                write_text_textbox(config.SPC_LOGIN_PASSWORD_CHINESE, config.SPC_USER_NAME)
+                write_text_textbox(config.SPC_LOGIN_PASSWORD_CHINESE, write_content=config.SPC_USER_NAME)
                 logger.info(f"输入密码: {config.SPC_USER_NAME}")
-                if search_symbol(config.SPC_LOGIN_CHINESE, 5,tolerance=0.6):
-                    click_by_png(config.SPC_LOGIN_CHINESE,tolerance=0.6)
+                if search_symbol(config.SPC_LOGIN_CHINESE, 5, tolerance=0.6):
+                    click_by_png(config.SPC_LOGIN_CHINESE, tolerance=0.6)
                     logger.info("点击登录按钮")
                 else:
                     pyautogui.press("enter")
+                if not search_symbol(config.SPC_SYSTEM_SETTING, 2):
+                    logger.error("登录spc时密码错误 改用000")
+                    pyautogui.press("enter")
+                    write_text_textbox(config.SPC_LOGIN_PASSWORD_CHINESE, write_content="000")
+                    click_by_png(config.SPC_LOGIN_CHINESE, tolerance=0.6)
 
+            if search_symbol(config.SPC_LOGIN_CHINESE, 5, tolerance=0.6):
+                attempt_login()
             else:
-                error_message = "疑似登录失败,未检测到SPC登录界面"
-                logger.error(error_message)
-                raise Exception(error_message)
+                logger.info("未检测到SPC登录界面，尝试将窗口前置")
+                bring_window_to_foreground('SPCViewMain.exe')
+                # 这里是把登录界面置顶了 但是没执行登录
+                if search_symbol(config.SPC_LOGIN_CHINESE, 2, tolerance=0.6):
+                    logger.debug("前置后找到登录界面了 开始登录")
+                    attempt_login()
+                else:
+                    error_message = "疑似登录失败,未检测到spc登录界面后前置了但还未能检测到SPC登录界面"
+                    logger.error(error_message)
             time.sleep(3)
-            if not search_symbol(config.SPC_SYSTEM_SETTING):
-                error_message = "疑似登录失败,未检测到SPC界面"
-                logger.error(error_message)
-                raise Exception(error_message)
+            if not search_symbol(config.SPC_SYSTEM_SETTING, 2):
+                bring_window_to_foreground('SPCViewMain.exe')
+                if not search_symbol(config.SPC_SYSTEM_SETTING, 2):
+                    error_message = "疑似登录失败,未检测到SPC界面"
+                    logger.error(error_message)
+                    raise Exception(error_message)
             logger.info("SPC登录成功")
-        
+            bring_window_to_foreground('SPCViewMain.exe')
 # 确保aoi打开并前置
 def check_and_launch_aoi():
     logger.info("开始检查并启动AOI程序...")
@@ -588,9 +568,11 @@ def check_and_launch_aoi():
         logger.info("AOI程序未运行，正在启动...")
         # app = Application().start(config.AOI_EXE_PATH)
         # 使用命令行启动AOI程序
+        current_dir = os.getcwd()
         os.chdir(os.path.dirname(config.AOI_EXE_PATH))
         subprocess.Popen(f'cmd /c "{os.path.basename(config.AOI_EXE_PATH)}"', shell=True)
-
+        # 切换回原来的工作目录
+        os.chdir(current_dir)
         logger.info("等待AOI程序启动...")
         if search_symbol(config.WARNING, 10, tolerance=0.75):
             pyautogui.press("enter")
@@ -598,15 +580,18 @@ def check_and_launch_aoi():
         retry_count = 0
         max_retries = 2
         while time.time() < timeout:
-            if search_symbol(config.LOGINING, 5, tolerance=0.7):
+            if search_symbol(config.LOGINING, 5, tolerance=0.7) or any("AOI.exe" == p.name() for p in psutil.process_iter()):
                 logger.info("检测到登录进程，检查并杀掉'aoi_memory'进程...")
                 for proc in psutil.process_iter():
-                    if "aoi_memory" in proc.name():
-                        logger.info(f"正在杀死进程 {proc.name()}...")
-                        proc.kill()
-                        proc.wait()
-                        logger.info(f"进程 {proc.name()} 已被杀死")
-                        break
+                    try:
+                        if "aoi_memory" in proc.name():
+                            logger.info(f"正在杀死进程 {proc.name()}...")
+                            proc.kill()
+                            proc.wait()
+                            logger.info(f"进程 {proc.name()} 已被杀死")
+                            break
+                    except Exception as e:
+                        logger.error(f"无法杀死进程 {proc.name()}: {e}")
                 retry_count = 0  # 重置重试计数
             else:
                 if retry_count < max_retries:
@@ -627,12 +612,19 @@ def check_and_launch_aoi():
     # aoi存在的话 关闭再重启aoi
     else:
         logger.info("再次检测AOI.exe是否存在...")
+        time.sleep(3)
         for proc in psutil.process_iter():
             if "AOI.exe" == proc.name():
-                logger.info(f"检测到进程 {proc.name()} (PID: {proc.pid})，正在杀死...")
-                proc.kill()
-                proc.wait()
-                logger.info(f"进程 {proc.name()} (PID: {proc.pid}) 已被杀死")
+                try:
+                    logger.info(f"检测到进程 {proc.name()} (PID: {proc.pid})，正在杀死...")
+                    proc.kill()
+                    proc.wait(timeout=5)  # 增加超时时间
+                    if not proc.is_running():
+                        logger.info(f"进程 {proc.name()} (PID: {proc.pid}) 已被杀死")
+                    else:
+                        logger.error(f"进程 {proc.name()} (PID: {proc.pid}) 未能被杀死")
+                except Exception as e:
+                    logger.error(f"无法杀死进程 {proc.name()} (PID: {proc.pid}): {e}")
                 break
         else:
             logger.info("未检测到AOI.exe进程")
@@ -656,23 +648,39 @@ def check_and_launch_aoi():
     login_process()
     logger.info("AOI程序检查和启动完成。")
 def close_aoi():
-    for proc in psutil.process_iter():
-        if "AOI.exe" == proc.name():
-            logger.info("AOI程序正在运行,正在关闭...")
-            proc.kill()
-            proc.wait() 
-            logger.info("AOI程序已关闭")
-            break
+    try:
+        for proc in psutil.process_iter():
+            if "AOI.exe" == proc.name():
+                logger.info("AOI程序正在运行,正在关闭...")
+                proc.kill()
+                proc.wait() 
+                logger.info("AOI程序已关闭")
+                break
+    except Exception as e:
+        logger.info(f"关闭aoi时出现错误:{e}")
 
+def close_rv():
+    try:
+        for proc in psutil.process_iter():
+            if "DVPro.UI.exe" == proc.name():
+                logger.info("AOI程序正在运行,正在关闭...")
+                proc.kill()
+                proc.wait() 
+                logger.info("AOI程序已关闭")
+                break
+    except Exception as e:
+        logger.info(f"关闭rv时出现错误:{e}")
 def close_spc():
-    for proc in psutil.process_iter():
-        if "SPCViewMain.exe" == proc.name():
-            logger.info("SPC程序正在运行,正在关闭...")
-            proc.kill()
-            proc.wait() 
-            logger.info("SPC程序已关闭")
-            break
-
+    try:
+        for proc in psutil.process_iter():
+            if "SPCViewMain.exe" == proc.name():
+                logger.info("SPC程序正在运行,正在关闭...")
+                proc.kill()
+                proc.wait() 
+                logger.info("SPC程序已关闭")
+                break
+    except Exception as e:
+        logger.info(f"关闭spc时出现错误:{e}")
 # 确保在特定界面（通过特定标识物的存在）
 def ensure_in_specific_window(name=None, auto_id=None, control_type=None):
     try:
@@ -872,11 +880,18 @@ def if_checked(top_left, bottom_right):
     screenshot_np = np.array(screenshot)
     screenshot_np = cv2.cvtColor(screenshot_np, cv2.COLOR_RGB2BGR)
 
-    # 定义目标颜色和容差
+    # 先检测蓝色
+    lower_blue = np.array([100, 0, 0])
+    upper_blue = np.array([255, 100, 100])
+    blue_mask = cv2.inRange(screenshot_np, lower_blue, upper_blue)
+
+    if np.any(blue_mask):
+        return True
+
+    # 如果没有识别到蓝色，继续检测其他目标颜色
     target_colors = [(70, 70, 88), (32, 32, 54), (107, 107, 107)]
     tolerance = 15  # 容差值
 
-    # 检查每个目标颜色
     for color in target_colors:
         lower_bound = np.array(color) - tolerance
         upper_bound = np.array(color) + tolerance
@@ -925,36 +940,42 @@ def click_by_ocr(text, times=1, timeout=10, tolerance=0.6):
     # 判断输入的text是否为中文
     chinese_count = sum(1 for char in text if '\u4e00' <= char <= '\u9fff')
     if chinese_count / len(text) >= 0.6:
-        lang = 'ch_sim'
+        lang = 'ch'
     else:
         lang = 'en'
-    model_directory = os.path.join(os.path.dirname(sys.executable), '_internal', 'model')
-    if os.path.exists(model_directory):
-        logger.info(f"模型目录存在于: {model_directory}")
-        reader = easyocr.Reader(lang_list=[lang], gpu=False, model_storage_directory=model_directory, download_enabled=False)
-    else:
-        logger.info(f"未检测到模型目录{model_directory}，开始下载模型并开始ocr")
-        try:
-            reader = easyocr.Reader(lang_list=[lang], gpu=False, download_enabled=True)
-        except Exception as e:
-            logger.error(f"ocr模型联网下载失败: {e}")
-            raise Exception(f"ocr模型联网下载失败: {e}")
+    
     while time.time() - start_time < timeout:
         try:
             logger.debug("开始截取屏幕截图")
             screenshot = pyautogui.screenshot()
             screenshot_cv = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
             logger.debug("开始进行OCR文字识别")
-            result = reader.readtext(screenshot_cv, detail=1)
+            result = ocr.ocr(screenshot_cv, cls=True)
             
-            for (bbox, detected_text, prob) in result:
-                similarity = SequenceMatcher(None, text, detected_text).ratio()
-                if similarity >= tolerance:
-                    center_x = (bbox[0][0] + bbox[2][0]) // 2
-                    center_y = (bbox[0][1] + bbox[2][1]) // 2
-                    pyautogui.click(center_x, center_y, clicks=times)
-                    logger.info(f"点击文本成功，识别到的文本为{detected_text}，坐标为({center_x}, {center_y}),相似度为{similarity}")
-                    return True
+            best_match = None
+            highest_similarity = 0
+
+            # 忽略符号对相似度的影响
+            def normalize_text(input_text):
+                return re.sub(r'[^\w\s]', '', input_text)
+
+            normalized_target_text = normalize_text(text)
+
+            for line in result:
+                for (bbox, (detected_text, prob)) in line:
+                    normalized_detected_text = normalize_text(detected_text)
+                    similarity = SequenceMatcher(None, normalized_target_text, normalized_detected_text).ratio()
+                    if similarity > highest_similarity:
+                        highest_similarity = similarity
+                        best_match = (bbox, detected_text, similarity)
+
+            if best_match and highest_similarity >= tolerance:
+                bbox, detected_text, similarity = best_match
+                center_x = (bbox[0][0] + bbox[2][0]) // 2
+                center_y = (bbox[0][1] + bbox[2][1]) // 2
+                pyautogui.click(center_x, center_y, clicks=times)
+                logger.info(f"点击文本成功，识别到的文本为{detected_text}，坐标为({center_x}, {center_y}),相似度为{similarity}")
+                return True
         except Exception as e:
             logger.error(f"在尝试点击过程中发生异常: {e}")
             pass
@@ -1346,8 +1367,8 @@ def screenshot_error_to_excel(max_attempts=2, running_event=None):
                     if running_event and not running_event.is_set():
                         raise Exception("Execution stopped by user")
                     
-                    logger.info(f"{func.__name__} 执行完毕，无报错")
-                    auto_close_msgbox(f"{func.__name__} 执行完毕，无报错", "信息", 5000, topmost=True)
+                    logger.info(f"{func.__name__} 执行完毕")
+                    auto_close_msgbox(f"{func.__name__} 执行完毕", "信息", 5000, topmost=True)
                     
                     test_case_status[func.__name__] = "success"  # 标记为成功
                     return result, None
@@ -1355,8 +1376,9 @@ def screenshot_error_to_excel(max_attempts=2, running_event=None):
                     last_exception = e
                     logger.error(f"{func.__name__} 执行出错 (尝试 {attempt + 1}/{max_attempts}): {e}")
                     current_function_name = func.__name__
-                    path = sys.executable
-                    screenshot_to_excel(current_function_name, path, e)
+                    path = os.getcwd()
+                    logger.debug(f"excel保存路径: {path}")
+                    screenshot_to_excel(current_function_name, e)
                     
                     if attempt < max_attempts - 1:
                         logger.warning(f"准备重试 {func.__name__}")
@@ -1406,7 +1428,7 @@ def auto_close_msgbox(message, title, timeout=10000, topmost=False):
 
     threading.Thread(target=show_message).start()
 # 报错时截图存至excel，后关闭aoi
-def screenshot_to_excel(test_case_name, path, exception):
+def screenshot_to_excel(test_case_name, exception):
     logger.info("开始截图异常情况")
     # 获取当前工作目录
     current_dir = os.getcwd()
@@ -1445,13 +1467,12 @@ def screenshot_to_excel(test_case_name, path, exception):
         # 写入数据
         ws[f"A{row}"] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         ws[f"B{row}"] = test_case_name
-        ws[f"C{row}"] = path
-        ws[f"D{row}"] = str(exception)
+        ws[f"C{row}"] = str(exception)
         logger.info("插入图片")
 
         # 将截图插入到Excel
         img = ExcelImage(screenshot_file)
-        img.anchor = f"E{row}"  # 设置图片的锚点
+        img.anchor = f"D{row}"  # 设置图片的锚点
         ws.add_image(img)
         logger.info("数据处理完毕，开始保存excel")
         wb.save(excel_path)
@@ -1466,6 +1487,27 @@ def screenshot_to_excel(test_case_name, path, exception):
 
 # ====================业务处理========================
 # 执行方法结束后打开循环运行
+def delete_bad_mark():
+    try:
+        check_and_launch_aoi()
+        open_program(if_specific=True)
+        while click_color(region=config.COMPONENT_OPERATION_REGION, target_color_rgb=(133,43,222), offset=False):
+            time.sleep(0.2)
+            pyautogui.rightClick()
+            if search_symbol(config.DELETE_BAD_MARK, 2, tolerance=0.7):
+                click_by_png(config.DELETE_BAD_MARK, tolerance=0.7)
+            else:
+                break
+            if search_symbol(config.QUESTION_MARK, 2, tolerance=0.7):
+                pyautogui.press("enter")
+                time.sleep(0.1)
+    except Exception as e:
+        logger.error(f"删除坏板标记时发生错误: {e}")
+    click_by_png(config.SAVE)
+    if search_symbol(config.QUESTION_MARK):
+        pyautogui.press("enter")
+    time.sleep(3)
+    close_aoi()
 def loop(job_path,job_name):
     check_and_launch_aoi()
     check_loop()
@@ -1500,45 +1542,69 @@ def check_new_data_in_rv(if_new_data = None):
         click_by_png(config.RV_NO_CHECKED_NO_CHOSED, timeout=2)
     # 空的的话就跳过
     if search_symbol(config.RV_PCB_LIST_EMPTY, 2):
-        click_by_png(config.RV_CHECKED_NO_CHOSED,timeout=2)
+        click_by_png(config.RV_CHECKED_NO_CHOSED, timeout=2)
     else:
         # 否则 拉到最下面 点击最后一条 查看右上角job信息
         data_coordinate = random.choice(list(pyautogui.locateAllOnScreen(config.RV_PCB_LIST_LANE, confidence=0.8)))
         scroll_down(data_coordinate)
-        click_by_png(config.RV_PCB_LIST_LANE,2,5,preference="down")
+        click_by_png(config.RV_PCB_LIST_LANE, 2, 5, preference="down")
         if_have_new_data_in_no_checked = check_test_time(True)
-        if if_have_new_data_in_no_checked and not if_new_data:
-            raise Exception("rv中出现了一笔五分钟内的新数据")
+        if if_have_new_data_in_no_checked:
+            if if_new_data:
+                logger.info("rv中正确出现了一笔五分钟内的新数据")
+            else:
+                raise Exception("rv中出现了一笔五分钟内的新数据")
 
     # 进已复核再确认一下 拉到最下面 查看右上角job信息
-    click_by_png(config.RV_CHECKED_NO_CHOSED,timeout=2)
+    click_by_png(config.RV_CHECKED_NO_CHOSED, timeout=2)
+    if_have_new_data_in_checked = None
     if search_symbol(config.RV_PCB_LIST_EMPTY, 2):
         pass
     else:
         data_coordinate = random.choice(list(pyautogui.locateAllOnScreen(config.RV_PCB_LIST_LANE, confidence=0.8)))
         scroll_down(data_coordinate)
-        click_by_png(config.RV_PCB_LIST_LANE,2,5,preference="down")
+        click_by_png(config.RV_PCB_LIST_LANE, 2, 5, preference="down")
 
         if_have_new_data_in_checked = check_test_time(True)
-        if if_have_new_data_in_checked and not if_new_data:
-            raise Exception("rv中出现了一笔五分钟内的新数据")
-    if not if_have_new_data_in_checked and not if_have_new_data_in_no_checked and if_new_data:
-        raise Exception("rv未出现五分钟内的新数据")
+        if if_have_new_data_in_checked:
+            if if_new_data:
+                logger.info("rv中正确出现了一笔五分钟内的新数据")
+            else:
+                raise Exception("rv中出现了一笔五分钟内的新数据")
+                
+    if not if_have_new_data_in_checked and not if_have_new_data_in_no_checked:
+        if if_new_data:
+            raise Exception("rv未出现五分钟内的新数据")
 
 
 # 找有对应窗口的元件 并确认含待料的情况
 def find_component_window(window_names, limit_time=300, image=None):
     start_time = time.time()
+    retry_attempts = 5
     # 边在左侧点击元件，边往下找
     while True:
         before_screenshot = pyautogui.screenshot(region=config.BOARD_COMPONENTS_REGION)
-        pyautogui.press("x")
+        pyautogui.press("i")
         time.sleep(3)
         after_screenshot = pyautogui.screenshot(region=config.BOARD_COMPONENTS_REGION)
-        if before_screenshot == after_screenshot:
-            logger.error(f"程式列表到底了都没找到含对应窗口的元件，窗口图片路径为{window_names}")
-            raise Exception(f"程式列表到底了都没找到含对应窗口的元件，窗口图片路径为{window_names}")
         
+        if before_screenshot == after_screenshot:
+            retry_attempts -= 1
+            if retry_attempts == 0:
+                logger.error(f"程式列表到底了都没找到含对应窗口的元件，窗口图片路径为{window_names}")
+                raise Exception(f"程式列表到底了都没找到含对应窗口的元件，窗口图片路径为{window_names}")
+        else:
+            retry_attempts = 5  # 重置试错机会
+            # 连续0.2s不相同时重置试错机会
+            start_compare_time = time.time()
+            while time.time() - start_compare_time < 3:
+                before_screenshot = pyautogui.screenshot(region=config.BOARD_COMPONENTS_REGION)
+                time.sleep(0.2)
+                after_screenshot = pyautogui.screenshot(region=config.BOARD_COMPONENTS_REGION)
+                if before_screenshot != after_screenshot:
+                    retry_attempts = 5
+                    break
+
         if window_names is None:
             if search_symbol(config.COMPONENT_WINDOW_EMPTY, 3, region=config.COMPONENT_WINDOW_REGION, tolerance=0.7):
                 break
@@ -1852,22 +1918,38 @@ def open_program(program_type=0, if_recent=True, if_specific=False, job_path=Non
     time.sleep(3)
     pyautogui.press("enter")
     if if_specific and job_path is None and job_name is None:
-        write_text((715,655),"全算法")
+        pyperclip.copy(directory)
+        time.sleep(0.1)
+        logger.info(f"路径为{directory},剪切板内容: {pyperclip.paste()}")
+        pyautogui.hotkey('ctrl', 'v')
     elif if_specific and job_path is not None and job_name is not None:
         parent_directory = os.path.dirname(job_path)
+        if parent_directory == r"D:\EYAOI":
+            parent_directory = r"D:\EYAOI\JOB"
         logger.info(f"打开程式窗口选择文件夹窗口写入job_path的上一级目录: {parent_directory}, 写入job_name: {job_name}")
-        write_text((715,655),parent_directory)
+        pyperclip.copy(parent_directory)
+        time.sleep(0.1)
+        logger.info(f"剪切板内容: {pyperclip.paste()}")
+        pyautogui.hotkey('ctrl', 'v')
+        # write_text((650,220),parent_directory)
     else:
         logger.info(f"打开程式窗口选择文件夹窗口写入job_path: {directory}")
-        write_text((715,655),directory)
+        # write_text((650,220),directory)
+        pyperclip.copy(directory)
+        time.sleep(0.1)
+        logger.info(f"剪切板内容: {pyperclip.paste()}")
+        pyautogui.hotkey('ctrl', 'v')
     time.sleep(0.5)
-    click_by_png(config.SELECT_FOLDER)
+    # pyautogui.press("enter")
+    click_by_png(config.SELECT_FOLDER,tolerance=0.6)
     if not if_recent:
         click_by_png(config.OFFSET_LEFT_1,tolerance=0.98, type="left")
 
     time.sleep(2)
     if if_specific and job_path is not None and job_name is not None:
-        write_text((650,220),job_name)
+        write_text((570,220),job_name)
+    elif if_specific and job_path is None and job_name is None:
+        write_text((570,220),"全算法")
     # 双击程式
     if program_type == 0:
         symbols = [config.OPEN_PROGRAM_PLUS, config.OPEN_PROGRAM_CURSOR]
@@ -2126,7 +2208,7 @@ def shortcut_key_online_parameter_display_sync_package():
     time.sleep(2)
 
     scroll_down((380, 250), config.SHORTCUT_KEY_COMPONENT_EDIT_REGION)
-    write_text_textbox(config.PARAM_ONLINE_PARAMETER_DISPLAY_SYNC_PACKAGE, "K", if_select_all=False)
+    write_text_textbox(config.PARAM_ONLINE_PARAMETER_DISPLAY_SYNC_PACKAGE, write_content="K", if_select_all=False)
     time.sleep(1)
     click_by_png(config.APPLY,timeout=1.5, tolerance=0.75)
     if search_symbol(config.NO, 1.5, tolerance=0.75):
@@ -2160,7 +2242,7 @@ def param_keep_the_last_pcb_number():
     if search_symbol(config.PARAM_TRACK_1, 2) and search_symbol(config.PARAM_TRACK_2, 2):
         click_by_png(config.PARAM_TRACK_1)
 
-    write_text_textbox(config.PARAM_KEEP_THE_LAST_PCB_NUMBER, "N")
+    write_text_textbox(config.PARAM_KEEP_THE_LAST_PCB_NUMBER, write_content="N")
     time.sleep(1)
     click_by_png(config.APPLY,timeout=1.5, tolerance=0.75)
     if search_symbol(config.NO, 1.5, tolerance=0.75):
@@ -2603,19 +2685,9 @@ def check_dv(if_open_dv_mode=None, if_auto_check_dv=None):
     click_by_png(config.PARAM_PROCESS_SETTING)
     time.sleep(2)
     if if_open_dv_mode is not None:
-        if if_open_dv_mode:
-            if search_symbol(config.PARAM_DV_MODE_NO, 2):
-                click_by_png(config.PARAM_DV_MODE_NO)
-        else:
-            if search_symbol(config.PARAM_DV_MODE_YES, 2):
-                click_by_png(config.PARAM_DV_MODE_YES)
+        check_checkbox_status_before_text("打开DV复判模式", if_open_dv_mode)
     if if_auto_check_dv is not None:
-        if if_auto_check_dv:
-            if search_symbol(config.PARAM_DV_AUTO_CHECK_NO, 2):
-                click_by_png(config.PARAM_DV_AUTO_CHECK_NO)
-        else:
-            if search_symbol(config.PARAM_DV_AUTO_CHECK_YES, 2):
-                click_by_png(config.PARAM_DV_AUTO_CHECK_YES)        
+        check_checkbox_status_before_text("DV自动确认", if_auto_check_dv)
     click_by_png(config.APPLY,timeout=1.5, tolerance=0.75)
     if search_symbol(config.NO, 1.5, tolerance=0.75):
         click_by_png(config.CLOSE, 2, timeout=1.5, tolerance=0.85)
@@ -2927,12 +2999,7 @@ def check_save_djb(if_save_djb):
     time.sleep(2)
     click_by_png(config.PARAM_ALGORITHM_SETTING)
     time.sleep(2)
-    if if_save_djb:
-        if search_symbol(config.SETTING_ALGORITHM_SAVE_DJB_NO):
-            click_by_png(config.SETTING_ALGORITHM_SAVE_DJB_NO)
-    else:
-        if search_symbol(config.SETTING_ALGORITHM_SAVE_DJB_YES):
-            click_by_png(config.SETTING_ALGORITHM_SAVE_DJB_YES)
+    check_checkbox_status_before_text("保存DJB文件", if_save_djb)
 
     click_by_png(config.APPLY,timeout=1.5, tolerance=0.75)
     if search_symbol(config.NO, 1.5, tolerance=0.75):
@@ -2952,7 +3019,7 @@ def check_save_djb(if_save_djb):
         time.sleep(1.5)
 
 # 设置-硬件设置-演算法配置-勾选所有算法（关闭所有算法）
-def check_close_all_algs(if_close_all_algs = True):
+def check_close_all_algs(if_close_all_algs = True, if_close_color_analysis = False):
     if search_symbol(config.SETTING_DARK, 1):
         click_by_png(config.SETTING_DARK)
     else:
@@ -2962,21 +3029,15 @@ def check_close_all_algs(if_close_all_algs = True):
     click_by_png(config.PARAM_ALGORITHM_SETTING)
     time.sleep(2)
     if if_close_all_algs:
-        if search_symbol(config.SETTING_ALGORITHM_ALL_ALGS_NO, 3):
-            click_by_png(config.SETTING_ALGORITHM_ALL_ALGS_NO)
-            click_by_png(config.SETTING_ALGORITHM_MARK_MATCHING_YES)
-            click_by_png(config.SETTING_ALGORITHM_BARCODE_DETECTION_YES)
-        else:
-            if search_symbol(config.SETTING_ALGORITHM_MARK_MATCHING_YES, 3):
-                click_by_png(config.SETTING_ALGORITHM_MARK_MATCHING_YES)
-            if search_symbol(config.SETTING_ALGORITHM_BARCODE_DETECTION_YES, 3):
-                click_by_png(config.SETTING_ALGORITHM_BARCODE_DETECTION_YES)
+        check_checkbox_status_before_text("所有算法",True)
+        check_checkbox_status_before_text("基准点匹配",False)
+        check_checkbox_status_before_text("条码检测",False)
         # 勾选的话 good的可以正常显示
-        if search_symbol(config.SETTING_ALGORITHM_COLOR_ANALYSE_NO, 3, tolerance=0.95):
-            click_by_png(config.SETTING_ALGORITHM_COLOR_ANALYSE_NO, tolerance=0.95)
+        check_checkbox_status_before_text("颜色分析",if_close_color_analysis)
     else:
-        if search_symbol(config.SETTING_ALGORITHM_ALL_ALGS_YES, 3):
-            click_by_png(config.SETTING_ALGORITHM_ALL_ALGS_YES)
+        check_checkbox_status_before_text("所有算法",True)
+        pyautogui.moveTo(config.CENTRE)
+        check_checkbox_status_before_text("所有算法",False)
 
     click_by_png(config.APPLY,timeout=1.5, tolerance=0.75)
     if search_symbol(config.NO, 1.5, tolerance=0.75):
@@ -3802,30 +3863,35 @@ def get_color_in_region(color, region):
     return pixel_count
 
 # 识别屏幕上是否存在指定文字
-def detect_text(target_text):
-    # 截取屏幕
-    screenshot = pyautogui.screenshot()
+def get_text_coordinate(target_text, tolerance=0.66):
+    try:
+        # 截取屏幕
+        screenshot = pyautogui.screenshot()
 
-    # 将截图转换为OpenCV格式
-    screenshot_cv = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
+        # 将截图转换为OpenCV格式
+        screenshot_cv = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
 
-    # 使用EasyOCR识别文字
-    model_directory = os.path.join(os.path.dirname(sys.executable), '_internal', 'model')
-    if os.path.exists(model_directory):
-        reader = easyocr.Reader(lang_list=['ch_sim'], gpu=False, model_storage_directory=model_directory, download_enabled=False)
-    else:
-        reader = easyocr.Reader(lang_list=['ch_sim'], gpu=False, download_enabled=True)
-    result = reader.readtext(screenshot_cv, detail=0)
 
-    # 检查是否包含目标文字
-    for text in result:
-        similarity = SequenceMatcher(None, target_text, text).ratio()
-        if similarity >= 0.66:
-            logger.info(f"识别到与{target_text}相似的文字：{text}")
-            return text  # 返回识别到的文字
+        # 识别文字
+        result = ocr.ocr(screenshot_cv, cls=True)
 
-    logger.info(f"未识别到与{target_text}相似的文字")
-    return None
+        # 检查是否包含目标文字
+        for line in result:
+            for (bbox, (text, prob)) in line:
+                similarity = SequenceMatcher(None, target_text, text).ratio()
+                if similarity >= tolerance:
+                    x = int(bbox[0][0])  # 获取文字的左上角x坐标
+                    y = int(bbox[0][1])  # 获取文字的左上角y坐标
+                    width = int(bbox[2][0] - bbox[0][0])  # 计算文字的宽度
+                    height = int(bbox[2][1] - bbox[0][1])  # 计算文字的高度
+                    logger.info(f"识别到与{target_text}相似的文字：{text}，坐标和尺寸：({x}, {y}, {width}, {height})")
+                    return (x, y, width, height)  # 返回识别到的文字坐标和尺寸
+
+        logger.info(f"未识别到与{target_text}相似的文字")
+        return None
+    except Exception as e:
+        logger.error(f"发生异常: {e}")
+        return None
 
 # 获得文字右侧的文字
 def get_text_by_text(text, direction="right", region=None):
@@ -3837,141 +3903,193 @@ def get_text_by_text(text, direction="right", region=None):
     
     test_time_cv = cv2.cvtColor(np.array(test_time), cv2.COLOR_RGB2BGR)
     
-    if os.path.exists(os.path.join(os.path.dirname(sys.executable), '_internal', 'model')):
-        reader = easyocr.Reader(lang_list=['ch_sim'], gpu=False, model_storage_directory=os.path.join(os.path.dirname(sys.executable), '_internal', 'model'), download_enabled=False)
-    else:
-        reader = easyocr.Reader(lang_list=['ch_sim'], gpu=False, download_enabled=True)
+    # 使用PaddleOCR进行文字识别
+    result = ocr.ocr(test_time_cv, cls=True)
     
-    result = reader.readtext(test_time_cv, detail=1)
-    
-    for (bbox, detected_text, prob) in result:
-        if text in detected_text:
-            # 在图像上绘制识别到的文字区域
-            cv2.rectangle(test_time_cv, bbox[0], bbox[2], (0, 255, 0), 2)
-            cv2.putText(test_time_cv, detected_text, (bbox[0][0], bbox[0][1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+    for line in result:
+        for (bbox, (detected_text, prob)) in line:
+            if text in detected_text:
+                # 在图像上绘制识别到的文字区域
+                cv2.rectangle(test_time_cv, bbox[0], bbox[2], (0, 255, 0), 2)
+                cv2.putText(test_time_cv, detected_text, (bbox[0][0], bbox[0][1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
 
-            if direction == "right":
-                target_x = bbox[1][0]  # 获取目标文字右侧的x坐标
-                for (other_bbox, other_text, other_prob) in result:
-                    if other_bbox[0][0] > target_x and abs(other_bbox[0][1] - bbox[0][1]) < 10:
-                        # 在图像上绘制相邻文字区域
-                        cv2.rectangle(test_time_cv, other_bbox[0], other_bbox[2], (255, 0, 0), 2)
-                        cv2.putText(test_time_cv, other_text, (other_bbox[0][0], other_bbox[0][1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
-                        # 显示图像
-                        cv2.imshow("Detected Text", test_time_cv)
-                        cv2.waitKey(0)
-                        cv2.destroyAllWindows()
-                        return other_text.strip()
-            elif direction == "left":
-                target_x = bbox[0][0]  # 获取目标文字左侧的x坐标
-                for (other_bbox, other_text, other_prob) in result:
-                    if other_bbox[1][0] < target_x and abs(other_bbox[0][1] - bbox[0][1]) < 10:
-                        # 在图像上绘制相邻文字区域
-                        cv2.rectangle(test_time_cv, other_bbox[0], other_bbox[2], (255, 0, 0), 2)
-                        cv2.putText(test_time_cv, other_text, (other_bbox[0][0], other_bbox[0][1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
-                        # 显示图像
-                        cv2.imshow("Detected Text", test_time_cv)
-                        cv2.waitKey(0)
-                        cv2.destroyAllWindows()
-                        return other_text.strip()
-            elif direction == "up":
-                target_y = bbox[0][1]  # 获取目标文字上方的y坐标
-                for (other_bbox, other_text, other_prob) in result:
-                    if other_bbox[2][1] < target_y and abs(other_bbox[0][0] - bbox[0][0]) < 10:
-                        # 在图像上绘制相邻文字区域
-                        cv2.rectangle(test_time_cv, other_bbox[0], other_bbox[2], (255, 0, 0), 2)
-                        cv2.putText(test_time_cv, other_text, (other_bbox[0][0], other_bbox[0][1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
-                        # 显示图像
-                        cv2.imshow("Detected Text", test_time_cv)
-                        cv2.waitKey(0)
-                        cv2.destroyAllWindows()
-                        return other_text.strip()
-            elif direction == "down":
-                target_y = bbox[2][1]  # 获取目标文字下方的y坐标
-                for (other_bbox, other_text, other_prob) in result:
-                    if other_bbox[0][1] > target_y and abs(other_bbox[0][0] - bbox[0][0]) < 10:
-                        # 在图像上绘制相邻文字区域
-                        cv2.rectangle(test_time_cv, other_bbox[0], other_bbox[2], (255, 0, 0), 2)
-                        cv2.putText(test_time_cv, other_text, (other_bbox[0][0], other_bbox[0][1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
-                        # 显示图像
-                        cv2.imshow("Detected Text", test_time_cv)
-                        cv2.waitKey(0)
-                        cv2.destroyAllWindows()
-                        return other_text.strip()
+                if direction == "right":
+                    target_x = bbox[1][0]  # 获取目标文字右侧的x坐标
+                    for (other_bbox, (other_text, other_prob)) in line:
+                        if other_bbox[0][0] > target_x and abs(other_bbox[0][1] - bbox[0][1]) < 10:
+                            # 在图像上绘制相邻文字区域
+                            cv2.rectangle(test_time_cv, other_bbox[0], other_bbox[2], (255, 0, 0), 2)
+                            cv2.putText(test_time_cv, other_text, (other_bbox[0][0], other_bbox[0][1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
+                            # 显示图像
+                            cv2.imshow("Detected Text", test_time_cv)
+                            cv2.waitKey(0)
+                            cv2.destroyAllWindows()
+                            return other_text.strip()
+                elif direction == "left":
+                    target_x = bbox[0][0]  # 获取目标文字左侧的x坐标
+                    for (other_bbox, (other_text, other_prob)) in line:
+                        if other_bbox[1][0] < target_x and abs(other_bbox[0][1] - bbox[0][1]) < 10:
+                            # 在图像上绘制相邻文字区域
+                            cv2.rectangle(test_time_cv, other_bbox[0], other_bbox[2], (255, 0, 0), 2)
+                            cv2.putText(test_time_cv, other_text, (other_bbox[0][0], other_bbox[0][1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
+                            # 显示图像
+                            cv2.imshow("Detected Text", test_time_cv)
+                            cv2.waitKey(0)
+                            cv2.destroyAllWindows()
+                            return other_text.strip()
+                elif direction == "up":
+                    target_y = bbox[0][1]  # 获取目标文字上方的y坐标
+                    for (other_bbox, (other_text, other_prob)) in line:
+                        if other_bbox[2][1] < target_y and abs(other_bbox[0][0] - bbox[0][0]) < 10:
+                            # 在图像上绘制相邻文字区域
+                            cv2.rectangle(test_time_cv, other_bbox[0], other_bbox[2], (255, 0, 0), 2)
+                            cv2.putText(test_time_cv, other_text, (other_bbox[0][0], other_bbox[0][1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
+                            # 显示图像
+                            cv2.imshow("Detected Text", test_time_cv)
+                            cv2.waitKey(0)
+                            cv2.destroyAllWindows()
+                            return other_text.strip()
+                elif direction == "down":
+                    target_y = bbox[2][1]  # 获取目标文字下方的y坐标
+                    for (other_bbox, (other_text, other_prob)) in line:
+                        if other_bbox[0][1] > target_y and abs(other_bbox[0][0] - bbox[0][0]) < 10:
+                            # 在图像上绘制相邻文字区域
+                            cv2.rectangle(test_time_cv, other_bbox[0], other_bbox[2], (255, 0, 0), 2)
+                            cv2.putText(test_time_cv, other_text, (other_bbox[0][0], other_bbox[0][1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
+                            # 显示图像
+                            cv2.imshow("Detected Text", test_time_cv)
+                            cv2.waitKey(0)
+                            cv2.destroyAllWindows()
+                            return other_text.strip()
     raise Exception(f"未能识别到{direction}方向的文字")
+# 矫正识别结果的错别字，并处理冒号后的文本
+def correct_typos(text):
+    typo_dict = {
+        "所有耸": "所有算法",
+        "检测窗口": "检测窗口",
+        "未完待续": "未完待续",
+        "错件": "错件"
+    }
+    for typo, correct in typo_dict.items():
+        similarity = similar(text, typo)
+        if similarity >= 0.66:
+            text = text.replace(typo, correct)
+    return text
 
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
 # 检查文字前面的勾选框状态
-def check_checkbox_status_before_text(target_text, if_check=True, direction="left", range=10, mark_rgb=(107, 107, 107), frame_rgb=(51, 51, 51), similarity_threshold=0.66):
+def check_checkbox_status_before_text(target_text, if_check=True, direction="left", range=25, mark_rgb=(107, 107, 107), frame_rgb=(51, 51, 51), similarity_threshold=0.66):
     logger.info("开始检查文字前的勾选框状态")
     logger.info(f"目标文字: {target_text}, 方向: {direction}, 范围: {range}, 目标颜色: {mark_rgb}, 框架颜色: {frame_rgb}")
 
-    # 截取屏幕
-    screenshot = pyautogui.screenshot()
+    try:
+        # 如果target_text含英文的话，similarity_threshold可以-0.15
+        if re.search('[a-zA-Z]', target_text):
+            similarity_threshold -= 0.25
 
-    # 将截图转换为OpenCV格式
-    screenshot_cv = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
+        # 截取屏幕
+        screenshot = pyautogui.screenshot()
 
-    # 使用EasyOCR识别文字
-    if os.path.exists(os.path.join(os.path.dirname(sys.executable), '_internal', 'model')):
-        reader = easyocr.Reader(lang_list=['ch_sim'], gpu=False, model_storage_directory=os.path.join(os.path.dirname(sys.executable), '_internal', 'model'), download_enabled=False)
-    else:
-        reader = easyocr.Reader(lang_list=['ch_sim'], gpu=False, download_enabled=True)
-    result = reader.readtext(screenshot_cv, detail=1)  # 获取详细信息以获取位置
+        # 将截图转换为OpenCV格式
+        screenshot_cv = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
 
-    # 检查是否包含目标文字
-    for (bbox, text, _) in result:
-        similarity = SequenceMatcher(None, target_text, text).ratio()
-        
-        if similarity >= similarity_threshold:
-            logger.info(f"识别到与{target_text}相似的文字：{text}，相似度: {similarity}")
+        # 使用PaddleOCR识别文字
+        result = ocr.ocr(screenshot_cv, cls=True)  # 获取详细信息以获取位置
 
-            # 获取文字位置
-            (top_left, top_right, bottom_right, bottom_left) = bbox
-            logger.info(f"文字位置: {bbox}")
-            if direction == "left":
-                x_start, x_end = top_left[0] - range, top_left[0]
-                y_start, y_end = top_left[1], bottom_left[1]
-            elif direction == "right":
-                x_start, x_end = top_right[0], top_right[0] + range
-                y_start, y_end = top_right[1], bottom_right[1]
-            elif direction == "up":
-                x_start, x_end = top_left[0], top_right[0]
-                y_start, y_end = top_left[1] - range, top_left[1]
-            elif direction == "down":
-                x_start, x_end = bottom_left[0], bottom_right[0]
-                y_start, y_end = bottom_left[1], bottom_left[1] + range
+        # 检查是否包含目标文字
+        for line in result:
+            for (bbox, (text, _)) in line:
+                text = correct_typos(text)  # 矫正识别结果的错别字
+                similarity = SequenceMatcher(None, target_text, text).ratio()
+                if similarity >= similarity_threshold:
+                    logger.info(f"识别到与{target_text}相似的文字：{text}，相似度: {similarity}")
 
-            # 检查frame_rgb方框内是否存在目标颜色
-            frame_region = screenshot_cv[y_start:y_end, x_start:x_end]
-            mask = cv2.inRange(frame_region, np.array(frame_rgb) - 15, np.array(frame_rgb) + 15)
-            frame_present = np.any(mask)
-            logger.debug(f"框架颜色存在状态: {frame_present}")
+                    # 获取文字位置
+                    (top_left, top_right, bottom_right, bottom_left) = bbox
+                    logger.info(f"文字位置: {bbox}")
+                    if direction == "left":
+                        x_start, x_end = top_left[0] - range, top_left[0]
+                        y_start, y_end = top_left[1], bottom_left[1]
+                    elif direction == "right":
+                        x_start, x_end = top_right[0], top_right[0] + range
+                        y_start, y_end = top_right[1], bottom_right[1]
+                    elif direction == "up":
+                        x_start, x_end = top_left[0], top_right[0]
+                        y_start, y_end = top_left[1] - range, top_left[1]
+                    elif direction == "down":
+                        x_start, x_end = bottom_left[0], bottom_right[0]
+                        y_start, y_end = bottom_left[1], bottom_left[1] + range
+                    # 只要是蓝色就行
+                    color_region = screenshot_cv[y_start:y_end, x_start:x_end]
+                    color_found = False
+                    logger.info(f"开始在区域 ({x_start}, {y_start}) 到 ({x_end}, {y_end}) 检测蓝色")
 
-            if frame_present:
-                # 检查勾选框内部的√mark颜色是否存在
-                mark_region = screenshot_cv[y_start:y_end, x_start:x_end]
-                mark_mask = cv2.inRange(mark_region, np.array(mark_rgb) - 10, np.array(mark_rgb) + 10)  # 缩小颜色范围
-                mark_count = cv2.countNonZero(mark_mask)
-                logger.debug(f"勾选框内部的√mark颜色像素数量: {mark_count}")
+                    # 识别蓝色
+                    lower_blue = np.array([100, 0, 0])
+                    upper_blue = np.array([255, 100, 100])
+                    blue_mask = cv2.inRange(color_region, lower_blue, upper_blue)
 
-                # 设置一个合理的阈值来判断是否存在
-                if (if_check and mark_count > 3) or (not if_check and mark_count <= 3):
-                    logger.info(f"识别到与{target_text}相似的文字且确认勾选框状态与预期一致，不进行点击操作")
-                else:
-                    logger.info(f"识别到与{target_text}相似的文字且确认勾选框状态与预期不一致，将在指定区域点击")
-                    # 点击操作
-                    click_x = (x_start + x_end) // 2
-                    click_y = (y_start + y_end) // 2
-                    logger.info(f"点击位置: ({click_x}, {click_y})")
-                    pyautogui.click(x=click_x, y=click_y)
-                return True
-            else:
-                logger.error(f"在方向{direction}未找到目标颜色的方框")
-        elif similarity > 0.5:
-            logger.info(f"识别到与{target_text}相似度大于0.5的文字：{text}，相似度: {similarity}")
+                    if np.any(blue_mask):
+                        logger.info(f"在方向{direction}识别到蓝色，区域: ({x_start}, {y_start}) 到 ({x_end}, {y_end})")
+                        color_found = True
+                        # 比对和if_check是否一致
+                        if (if_check and np.count_nonzero(blue_mask) > 1) or (not if_check and np.count_nonzero(blue_mask) <= 1):
+                            # 单击找到的颜色像素点
+                            click_x, click_y = np.mean(np.argwhere(blue_mask), axis=0).astype(int)
+                            click_x += x_start
+                            click_y += y_start
+                            logger.info(f"点击位置: ({click_x}, {click_y})")
+                            pyautogui.click(x=click_x, y=click_y)
+                    if not color_found:
+                        logger.info(f"未识别到勾选框的蓝色勾选状态，开始改用框颜色和mark颜色进行检测")
+
+                        logger.info(f"开始检查框架颜色")
+                        frame_region = screenshot_cv[y_start:y_end, x_start:x_end]
+                        # 支持多种frame_rgb颜色
+                        frame_rgbs = [frame_rgb, (51,51,51),(54,54,54),(60,59,57),(66,66,66),(53, 52, 55), (132, 132, 132), (138, 138, 138)]
+                        frame_present = False
+                        for frgb in frame_rgbs:
+                            lower_bound = np.array(frgb) - 5
+                            upper_bound = np.array(frgb) + 5
+                            mask = cv2.inRange(frame_region, lower_bound, upper_bound)
+                            logger.info(f"在区域 ({x_start}, {y_start}) 到 ({x_end}, {y_end}) 识别颜色范围: {lower_bound} 到 {upper_bound}")
+                            if np.any(mask):
+                                frame_present = True
+                                break
+                        logger.debug(f"框架颜色存在状态: {frame_present}")
+
+                        if frame_present:
+                            # 检查勾选框内部的√mark颜色是否存在
+                            mark_region = screenshot_cv[y_start:y_end, x_start:x_end]
+                            # 支持多种mark_rgb颜色
+                            mark_rgbs = [mark_rgb, (72, 72, 72), (108, 108, 108)]
+                            total_mark_count = 0
+                            for m_rgb in mark_rgbs:
+                                mark_mask = cv2.inRange(mark_region, np.array(m_rgb) - 5, np.array(m_rgb) + 5)  # 缩小颜色范围
+                                mark_count = cv2.countNonZero(mark_mask)
+                                total_mark_count += mark_count
+                                logger.debug(f"勾选框内部的√mark{m_rgb}颜色像素数量: {mark_count}")
+
+                            # 设置一个合理的阈值来判断是否存在
+                            if (if_check and total_mark_count > 6) or (not if_check and total_mark_count <= 1):
+                                logger.info(f"识别到与{target_text}相似的文字且确认勾选框状态与预期一致，返回True")
+                                return True
+
+                            logger.info(f"识别到与{target_text}相似的文字且确认勾选框状态与预期不一致，将在指定区域点击")
+                            # 点击操作
+                            click_x = (x_start + x_end) // 2
+                            click_y = (y_start + y_end) // 2
+                            logger.info(f"点击位置: ({click_x}, {click_y})")
+                            pyautogui.click(x=click_x, y=click_y)
+                            return False
+                    else:
+                        logger.error(f"在方向{direction}未找到目标颜色的方框")
+                elif similarity > 0.5:
+                    logger.info(f"识别到与{target_text}相似度大于0.5的文字：{text}，相似度: {similarity}")
+    except Exception as e:
+        logger.error(f"确认文字前勾选框状态方法发生异常: {e}")
     return False
-
-
 
 # 调整将CAD框随机变大，再变小
 def adjust_cad_frame():
@@ -4421,84 +4539,103 @@ def write_text(coordinate, text, if_select_all=True, if_press_enter=False):
     if if_press_enter:
         pyautogui.press('enter')
 
-def write_text_textbox(image_path, text, color=(255, 255, 255), direction="right", locate_direction="left", if_select_all=True, if_press_enter=False):
+def write_text_textbox(image_path=None, ocr_text=None, write_content=None, tolerance=0.75, color=(255, 255, 255), direction="right", locate_direction="left", if_select_all=True, if_press_enter=False):
     try:
-        logger.debug(f"开始处理图片: {image_path}, 方向: {direction}, 颜色: {color}, 识别方向: {locate_direction}")
-        time.sleep(2)
-        
-        # 获取图片在屏幕上的位置
-        symbol = image_fit_screen(image_path)
-        logger.info(f"开始寻找 {symbol}")
-        
-        try:
-            locations = list(pyautogui.locateAllOnScreen(symbol, confidence=0.75))
-            if locations:
-                if locate_direction == "left":
-                    location = min(locations, key=lambda loc: loc.left)
-                elif locate_direction == "right":
-                    location = max(locations, key=lambda loc: loc.left)
-                elif locate_direction == "top":
-                    location = min(locations, key=lambda loc: loc.top)
-                elif locate_direction == "bottom":
-                    location = max(locations, key=lambda loc: loc.top)
-                logger.debug(f"图片位置: {location}")
-            else:
+        if image_path:
+            logger.debug(f"开始处理图片: {image_path}, 方向: {direction}, 颜色: {color}, 识别方向: {locate_direction}")
+            time.sleep(2)
+            
+            # 获取图片在屏幕上的位置
+            symbol = image_fit_screen(image_path)
+            logger.info(f"开始寻找 {symbol}")
+            
+            try:
+                locations = list(pyautogui.locateAllOnScreen(symbol, confidence=tolerance))
+                if locations:
+                    if locate_direction == "left":
+                        location = min(locations, key=lambda loc: loc.left)
+                    elif locate_direction == "right":
+                        location = max(locations, key=lambda loc: loc.left)
+                    elif locate_direction == "top":
+                        location = min(locations, key=lambda loc: loc.top)
+                    elif locate_direction == "bottom":
+                        location = max(locations, key=lambda loc: loc.top)
+                    logger.debug(f"图片位置: {location}")
+                else:
+                    logger.error("未找到指定的图片")
+                    raise Exception("未找到指定的图片")
+            except pyautogui.ImageNotFoundException:
                 logger.error("未找到指定的图片")
                 raise Exception("未找到指定的图片")
-        except pyautogui.ImageNotFoundException:
-            logger.error("未找到指定的图片")
-            raise Exception("未找到指定的图片")
-        except Exception as e:
-            logger.error(f"发生异常: {e}")
-            raise Exception(f"发生异常: {e}")
-
-        # 获取颜色为 color 的区域，基于 location 的中心点，按方向搜索
-        x, y, width, height = map(int, [location.left, location.top, location.width, location.height])
-        center_x = x + width // 2
-        center_y = y + height // 2
-        logger.debug(f"识别标识的中心点坐标: ({center_x}, {center_y})")
-
+            
+            except Exception as e:
+                logger.error(f"发生异常: {e}")
+                raise Exception(f"发生异常: {e}")
+        
+            # 获取颜色为 color 的区域，基于 location 的中心点，按方向搜索
+            x, y, width, height = map(int, [location.left, location.top, location.width, location.height])
+        
+        if ocr_text:
+            x, y, width, height = get_text_coordinate(ocr_text, tolerance)
+            logger.info(f"识别文字的x,y,width,height: ({x}, {y}, {width}, {height})")
+        
         # 根据方向设置搜索区域，确保范围合适
         if direction == "right":
-            # 向右：从 location 的右边界开始，限制为上下边界范围
-            screenshot = pyautogui.screenshot(region=(x + width, y, 1920 - (x + width), height))
+            # 向右：从 ocr_text 的右边界开始，限制为上下边界范围
+            search_x = x + width
+            logger.info(f"方向: 向右, 从 ocr_text 的右边界开始, 限制为上下边界范围, 坐标: ({search_x}, {y}, {1920 - search_x}, {height})")
+            screenshot = pyautogui.screenshot(region=(int(search_x), int(y), int(1920 - search_x), int(height)))
+            logger.info(f"轮廓左上角和右下角全屏坐标: ({search_x}, {y}) 到 ({1920}, {y + height})")
         elif direction == "left":
-            # 向左：从 location 的左边界开始，限制为上下边界范围
-            screenshot = pyautogui.screenshot(region=(0, y, x, height))
+            # 向左：从 ocr_text 的左边界开始，限制为上下边界范围
+            search_x = 0
+            logger.info(f"方向: 向左, 从 ocr_text 的左边界开始, 限制为上下边界范围, 坐标: ({search_x}, {y}, {x}, {height})")
+            screenshot = pyautogui.screenshot(region=(int(search_x), int(y), int(x), int(height)))
+            logger.info(f"轮廓左上角和右下角全屏坐标: ({search_x}, {y}) 到 ({x}, {y + height})")
         elif direction == "above":
-            # 向上：从 location 的上边界开始，限制为左右边界范围
-            screenshot = pyautogui.screenshot(region=(x, 0, width, y))
+            # 向上：从 ocr_text 的上边界开始，限制为左右边界范围
+            search_y = 0
+            logger.info(f"方向: 向上, 从 ocr_text 的上边界开始, 限制为左右边界范围, 坐标: ({x}, {search_y}, {width}, {y})")
+            screenshot = pyautogui.screenshot(region=(int(x), int(search_y), int(width), int(y)))
+            logger.info(f"轮廓左上角和右下角全屏坐标: ({x}, {search_y}) 到 ({x + width}, {y})")
         elif direction == "below":
-            # 向下：从 location 的下边界开始，限制为左右边界范围
-            screenshot = pyautogui.screenshot(region=(x, y + height, width, 1080 - (y + height)))
+            # 向下：从 ocr_text 的下边界开始，限制为左右边界范围
+            search_y = y + height
+            logger.info(f"方向: 向下, 从 ocr_text 的下边界开始, 限制为左右边界范围, 坐标: ({x}, {search_y}, {width}, {1080 - search_y})")
+            screenshot = pyautogui.screenshot(region=(int(x), int(search_y), int(width), int(1080 - search_y)))
+            logger.info(f"轮廓左上角和右下角全屏坐标: ({x}, {search_y}) 到 ({x + width}, 1080)")
         else:
             logger.error("无效的方向参数")
             raise Exception("无效的方向参数")
 
         # 转换截图为 numpy 数组并进行颜色匹配
         screenshot_np = np.array(screenshot)
-        lower_bound = np.array(color) - 10
-        upper_bound = np.array(color) + 10
+        lower_bound = np.array(color) - 0
+        upper_bound = np.array(color) + 0
         mask = cv2.inRange(screenshot_np, lower_bound, upper_bound)
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         if not contours:
-            logger.error("未找到指定颜色的区域")
-            raise Exception("未找到指定颜色的区域")
+            logger.error("未找到文本框")
+            raise Exception("未找到文本框")
         logger.debug(f"找到的轮廓数量: {len(contours)}")
 
         # 过滤掉较小的轮廓
-        min_contour_area = 50  # 设置最小轮廓面积阈值
+        min_contour_area = 80  # 设置最小轮廓面积阈值
         contours = [contour for contour in contours if cv2.contourArea(contour) > min_contour_area]
         if not contours:
-            logger.error("未找到符合条件的颜色区域")
-            raise Exception("未找到符合条件的颜色区域")
+            logger.error("未找到符合条件的颜色区域(文本框)")
+            raise Exception("未找到符合条件的颜色区域(文本框)")
         logger.debug(f"过滤后的轮廓数量: {len(contours)}")
 
-        # 可视化调试：在屏幕上显示所有识别到的轮廓
+        # # 可视化调试：在屏幕上显示所有识别到的轮廓
         # debug_image = screenshot_np.copy()
         # cv2.drawContours(debug_image, contours, -1, (0, 255, 0), 2)
         # cv2.imshow("All Contours", debug_image)
         # cv2.waitKey(0)
+
+        # # 保存识别到轮廓后的截图
+        # cv2.imwrite("contours_screenshot.png", debug_image)
+        # logger.info("识别到轮廓后的截图已保存为 contours_screenshot.png")
 
         # 获取离标识最近的颜色为 color 的区域
         def get_distance_to_center(contour):
@@ -4512,33 +4649,33 @@ def write_text_textbox(image_path, text, color=(255, 255, 255), direction="right
         # 记录所有轮廓的中心点和距离标识中心点的距离
         for contour in contours:
             contour_center_x, contour_center_y = get_distance_to_center(contour)
-            screen_contour_center_x = x + contour_center_x
-            screen_contour_center_y = y + contour_center_y
-            distance_x = abs(screen_contour_center_x - center_x)
-            distance_y = abs(screen_contour_center_y - center_y)
-            logger.debug(f"轮廓中心点: ({screen_contour_center_x}, {screen_contour_center_y}), 距离标识中心点的横向距离: {distance_x}, 纵向距离: {distance_y}")
+            if direction in ["right", "left"]:
+                screen_contour_center_x = search_x + contour_center_x
+            else:
+                screen_contour_center_x = x + contour_center_x
+            if direction in ["above", "below"]:
+                screen_contour_center_y = search_y + contour_center_y
+            else:
+                screen_contour_center_y = y + contour_center_y
+            logger.debug(f"文本框中心点: ({screen_contour_center_x}, {screen_contour_center_y})")
 
         # 查找离中心点300范围内的颜色区域
         if direction in ["right", "left"]:
-            valid_contours = [c for c in contours if abs(x + get_distance_to_center(c)[0] - center_x) <= 300 and abs(x + get_distance_to_center(c)[0] - center_x) > 15]
+            valid_contours = [c for c in contours if abs(get_distance_to_center(c)[0]) <= 300]
             if not valid_contours:
                 raise Exception("未找到300范围内的颜色区域")
             if direction == "right":
-                closest_contour = min(valid_contours, key=lambda c: x + get_distance_to_center(c)[0])
+                closest_contour = min(valid_contours, key=lambda c: get_distance_to_center(c)[0])
             else: 
-                closest_contour = max(valid_contours, key=lambda c: x + get_distance_to_center(c)[0])
-            distance = abs(x + get_distance_to_center(closest_contour)[0] - center_x)
-            logger.debug(f"基于X轴中心点判断，距离为: {distance}")
+                closest_contour = max(valid_contours, key=lambda c: get_distance_to_center(c)[0])
         elif direction in ["above", "below"]:
-            valid_contours = [c for c in contours if abs(y + get_distance_to_center(c)[1] - center_y) <= 300 and abs(y + get_distance_to_center(c)[1] - center_y) > 15]
+            valid_contours = [c for c in contours if abs(get_distance_to_center(c)[1]) <= 300]
             if not valid_contours:
                 raise Exception("未找到300范围内的颜色区域")
             if direction == "above":
-                closest_contour = max(valid_contours, key=lambda c: y + get_distance_to_center(c)[1])
+                closest_contour = max(valid_contours, key=lambda c: get_distance_to_center(c)[1])
             else:
-                closest_contour = min(valid_contours, key=lambda c: y + get_distance_to_center(c)[1])
-            distance = abs(y + get_distance_to_center(closest_contour)[1] - center_y)
-            logger.debug(f"基于Y轴中心点判断，距离为: {distance}")
+                closest_contour = min(valid_contours, key=lambda c: get_distance_to_center(c)[1])
 
         # 获取轮廓B的中心点
         M = cv2.moments(closest_contour)
@@ -4547,26 +4684,37 @@ def write_text_textbox(image_path, text, color=(255, 255, 255), direction="right
             contour_center_y = int(M["m01"] / M["m00"])
             
             # 根据相对位置计算在全屏中的坐标
-            full_screen_center_x = x + contour_center_x
-            full_screen_center_y = y + contour_center_y
-            logger.info(f"识别到的轮廓中心点的全屏坐标: ({full_screen_center_x}, {full_screen_center_y})")
+            if direction in ["right", "left"]:
+                full_screen_center_x = search_x + contour_center_x
+            else:
+                full_screen_center_x = x + contour_center_x
+            if direction in ["above", "below"]:
+                full_screen_center_y = search_y + contour_center_y
+            else:
+                full_screen_center_y = y + contour_center_y
+            logger.info(f"识别到的文本框中心点的全屏坐标: ({full_screen_center_x}, {full_screen_center_y})")
 
-            # # 可视化调试：在屏幕上显示选择的轮廓
+            # # 可视化调试：在屏幕上显示选择的文本框
             # debug_image_selected = screenshot_np.copy()
             # cv2.drawContours(debug_image_selected, [closest_contour], -1, (255, 0, 0), 2)
             # cv2.imshow("Selected Contour", debug_image_selected)
             # cv2.waitKey(0)
 
             # 检查距离是否超过300
+            if direction in ["right", "left"]:
+                distance = abs(contour_center_x)
+            else:
+                distance = abs(contour_center_y)
+
             if distance > 300:
                 detected_color = screenshot_np[contour_center_y, contour_center_x]
                 logger.error(f"找到的区域与标识距离超过300, 坐标: ({full_screen_center_x}, {full_screen_center_y}), 颜色: {detected_color}")
                 raise Exception("找到的区域与标识距离超过300")
 
-            if text:
+            if write_content:
                 # 将文本写入该区域B的中心点
-                write_text((full_screen_center_x, full_screen_center_y), text, if_select_all, if_press_enter)
-                logger.info(f"写入完毕，内容为：{text}")
+                write_text((full_screen_center_x, full_screen_center_y), write_content, if_select_all, if_press_enter)
+                logger.info(f"写入完毕，内容为：{write_content}")
             else:
                 # 如果没有text的话 就单击该坐标
                 pyautogui.click(full_screen_center_x, full_screen_center_y)
@@ -4574,8 +4722,7 @@ def write_text_textbox(image_path, text, color=(255, 255, 255), direction="right
         else:
             raise Exception("未找到合适的颜色区域")
     except Exception as e:
-        logger.error(f"处理图片时发生错误: {e}")
-        raise
+        logger.error(f"写文字到指定文本框时发生错误: {e}")
 
 
 def read_text(*args):
@@ -4627,16 +4774,37 @@ def read_text_choosed(x, y):
 
 
 # 点击选中颜色
-def click_color(times, region, target_color_rgb=(239, 240, 242), right_click=0, direction=None):
+def click_color(times=1, region=None, target_color_rgb=(239, 240, 242), right_click=0, direction=None, offset=True, if_center=False):
     # 截取区域内的屏幕图像
     screenshot = pyautogui.screenshot(region=region)
     screenshot_np = np.array(screenshot)
     # 寻找颜色匹配的像素点，允许RGB上下偏差5
-    lower_bound = np.array([c - 5 for c in target_color_rgb])
-    upper_bound = np.array([c + 5 for c in target_color_rgb])
+    lower_bound = np.array([c - 15 for c in target_color_rgb])
+    upper_bound = np.array([c + 15 for c in target_color_rgb])
     matches = np.where(np.all((screenshot_np >= lower_bound) & (screenshot_np <= upper_bound), axis=-1))
     if matches[0].size > 0:
-        if direction:
+        if if_center:
+            # 计算所有匹配点的中点
+            min_x, max_x = np.min(matches[1]), np.max(matches[1])
+            min_y, max_y = np.min(matches[0]), np.max(matches[0])
+            region_center_x = (min_x + max_x) // 2
+            region_center_y = (min_y + max_y) // 2
+            region_center_x += region[0]
+            region_center_y += region[1]
+            logger.info(f"区域中心点: ({region_center_x}, {region_center_y})")
+            distances = np.sqrt((matches[1] - region_center_x) ** 2 + (matches[0] - region_center_y) ** 2)
+            index = np.argmin(distances)
+            # 获取的x y为内边缘的点
+            x, y = matches[1][index], matches[0][index]
+            # 转换为全屏坐标
+            x += region[0]
+            y += region[1]
+            logger.info(f"原始坐标: ({x}, {y})")
+            # 向区域中心偏移1单位
+            x += 1 if x < region_center_x else -1
+            y += 1 if y < region_center_y else -1
+            logger.info(f"新坐标: ({x}, {y})")
+        elif direction:
             if direction == 'up':
                 index = np.argmin(matches[0])
             elif direction == 'down':
@@ -4646,14 +4814,17 @@ def click_color(times, region, target_color_rgb=(239, 240, 242), right_click=0, 
             elif direction == 'right':
                 index = np.argmax(matches[1])
             x, y = matches[1][index], matches[0][index]
+            # 转换为全屏坐标
+            x += region[0]
+            y += region[1]
         else:
             # 随机获取一个匹配的点的坐标
             random_index = random.randint(0, len(matches[0]) - 1)
             x, y = matches[1][random_index], matches[0][random_index]
+            # 转换为全屏坐标
+            x += region[0]
+            y += region[1]
         
-        # 转换为区域内的相对坐标
-        x += region[0]
-        y += region[1]
         logger.info("找到目标点"+str(x)+","+str(y))
         # 如果times为0，则只移动鼠标不点击
         if times == 0:
@@ -4662,14 +4833,19 @@ def click_color(times, region, target_color_rgb=(239, 240, 242), right_click=0, 
         # 点击指定次数
         for _ in range(times):
             # 获取目标点周围的随机一个像素点
-            offset_x = random.randint(-1, 1)
-            offset_y = random.randint(-1, 1)
+            if offset:
+                offset_x = random.randint(-1, 1)
+                offset_y = random.randint(-1, 1)
+            else:
+                offset_x = 0
+                offset_y = 0
             click_x = x + offset_x
             click_y = y + offset_y
             if right_click == 1:
                 pyautogui.rightClick(click_x, click_y)
             else:
                 pyautogui.click(click_x, click_y)
+            logger.info(f"点击坐标: ({click_x}, {click_y})")
         return True
     logger.info("未找到匹配的像素点")
     return False
@@ -4713,53 +4889,6 @@ def compare_images(image1, image2):
     # 如果差异图像的极值为0，说明两张图像相同
     return diff.getbbox() is None
 
-# 矫正识别结果的错别字，并处理冒号后的文本
-def correct_typos(text):
-    target_texts = ["检测窗口", "未完待续", "错件"]
-    matched_texts = []
-    for target_text in target_texts:
-        match_count = 0
-        # 检查输入文本与目标文本的每个字符
-        for char in text:
-            if char in target_text:
-                match_count += 1
-        # 如果匹配的字符数达到1个或以上，则记录目标文本
-        if match_count >= 1:
-            matched_texts.append(target_text)
-    # 如果有匹配的文本，则返回所有匹配的文本，否则返回原始文本
-    result_texts = matched_texts if matched_texts else text
-
-    # 处理冒号后的文本
-    if ':' in text:
-        result_texts = text.split(':', 1)[1]
-
-    return result_texts
-def similar(a, b):
-    return SequenceMatcher(None, a, b).ratio()
-
-
-# # 识别屏幕上指定区域
-# def read_text_ocr(top_left_point, bottom_right_point, color="black"):
-#     logger.info("开始识别文字")
-#     # 截取屏幕上指定区域的图像，并打印截图区域
-#     bbox = (top_left_point[0], top_left_point[1], bottom_right_point[0], bottom_right_point[1])
-#     screenshot = ImageGrab.grab(bbox=bbox)
-#     screenshot_np = np.array(screenshot)
-#     # 调用颜色过滤方法，过滤为指定颜色
-#     have_specific_color, filtered_image = filter_color(screenshot_np, color)
-#     if not have_specific_color:
-#         logger.error("指定颜色未在截图中找到")
-#         return "未找到指定颜色"
-
-#     # 使用EasyOCR进行文字识别，首先尝试识别英文
-#     reader = easyocr.Reader(['en', 'ch_sim'], gpu=False)  # 同时加载英文和简体中文模型，禁用GPU加速以提高兼容性
-#     results = reader.readtext(filtered_image, detail=1, paragraph=True)  # 启用段落模式以提高识别连贯性
-#     # 输出识别结果
-#     recognized_text = ' '.join([text for (bbox, text, prob) in results])
-#     corrected_text = correct_typos(recognized_text)  # 使用correct_typos函数矫正识别结果
-#     logger.info(f"识别的文字: {corrected_text}")
-
-#     return corrected_text
 
 def read_text_ocr(top_left_point, bottom_right_point):
     logger.info("开始识别文字")
@@ -4767,23 +4896,20 @@ def read_text_ocr(top_left_point, bottom_right_point):
     bbox = (top_left_point[0], top_left_point[1], bottom_right_point[0], bottom_right_point[1])
     screenshot = ImageGrab.grab(bbox=bbox)
 
-    # 使用EasyOCR进行文字识别，首先尝试识别英文和简体中文
-    # 禁止联网，确保模型文件已本地下载
-    model_directory = os.path.join(os.path.dirname(sys.executable), '_internal', 'model')
-    if os.path.exists(model_directory):
-        reader = easyocr.Reader(lang_list=['ch_sim', 'en'], gpu=False, model_storage_directory=model_directory, download_enabled=False)
-    else:
-        reader = easyocr.Reader(lang_list=['ch_sim','en'], gpu=False, download_enabled=True)
-    results = reader.readtext(np.array(screenshot), detail=1, paragraph=True)  # 启用段落模式以提高识别连贯性
+    # 使用PaddleOCR进行文字识别
+    screenshot_np = np.array(screenshot)
+    screenshot_cv = cv2.cvtColor(screenshot_np, cv2.COLOR_RGB2BGR)
+    results = ocr.ocr(screenshot_cv, cls=True)  # 使用PaddleOCR进行识别
 
     # 安全地提取文本，考虑到可能的不同元组长度
-    recognized_text = ''.join([text for item in results for text in (item[1] if len(item) > 1 else [])])
+    recognized_text = ''.join([text for line in results for (bbox, (text, prob)) in line])
 
     # 使用correct_typos函数矫正识别结果
     corrected_text = correct_typos(recognized_text)
     logger.info(f"识别的文字: {corrected_text}")
 
     return corrected_text
+
 
 # 在区域内下滚，直到滚到底（鼠标位置，识别区域）
 def scroll_down(coordinate, region=None, scroll_amount=None):
@@ -4802,6 +4928,7 @@ def scroll_down(coordinate, region=None, scroll_amount=None):
     else:
         scroll_amount = -100  # 修改默认滚动量为-100
         pyautogui.moveTo(coordinate)
+        retry_count = 0  # 初始化重试计数器
         while True:
             # 截取初始区域截图，如果region为None则截图全屏
             region_last_time = pyautogui.screenshot(region=region) if region else pyautogui.screenshot()
@@ -4812,8 +4939,11 @@ def scroll_down(coordinate, region=None, scroll_amount=None):
             # 截取当前区域截图，如果region为None则截图全屏
             region_current_time = pyautogui.screenshot(region=region) if region else pyautogui.screenshot()
             if compare_images(region_current_time, region_last_time):
-                return True
+                retry_count += 1
+                if retry_count >= 5:  # 如果连续5次截图相同，则认为滚动到底
+                    return True
             else:
+                retry_count = 0  # 重置重试计数器
                 region_last_time = region_current_time
 
 
@@ -4839,33 +4969,29 @@ def drop_down_box_search(type, content, region, click_times=1, timeout=6, simila
                 pyautogui.scroll(-200)  # 再下滚
         return False
     elif type == 1:
-        # 使用OCR搜索并点击文字
-        model_directory = os.path.join(os.path.dirname(sys.executable), '_internal', 'model')
-        if os.path.exists(model_directory):
-            reader = easyocr.Reader(lang_list=['en','ch_sim'], gpu=False, model_storage_directory=model_directory, download_enabled=False)
-        else:
-            reader = easyocr.Reader(lang_list=['en','ch_sim'], gpu=False, download_enabled=True)
+        # 使用PaddleOCR搜索并点击文字
         start_time = time.time()
         while time.time() - start_time < timeout:
             # 截取指定区域的屏幕
             screenshot = pyautogui.screenshot(region=region)
-            results = reader.readtext(np.array(screenshot))
+            results = ocr.ocr(np.array(screenshot), cls=True)
             # 遍历识别结果，寻找目标文字
-            for result in results:
-                bbox, text_found, prob = result
-                if similar(content, text_found) >= similarity_threshold:
-                    top_left = bbox[0]
-                    bottom_right = bbox[2]
-                    x = (top_left[0] + bottom_right[0]) / 2
-                    y = (top_left[1] + bottom_right[1]) / 2
+            for line in results:
+                for word_info in line:
+                    bbox, (text_found, prob) = word_info
+                    if similar(content, text_found) >= similarity_threshold:
+                        top_left = bbox[0]
+                        bottom_right = bbox[2]
+                        x = (top_left[0] + bottom_right[0]) / 2
+                        y = (top_left[1] + bottom_right[1]) / 2
 
-                    full_x = region[0] + x
-                    full_y = region[1] + y
+                        full_x = region[0] + x
+                        full_y = region[1] + y
 
-                    for _ in range(click_times):
-                        pyautogui.click(full_x, full_y)
-                    pyautogui.press("enter")
-                    return True
+                        for _ in range(click_times):
+                            pyautogui.click(full_x, full_y)
+                        pyautogui.press("enter")
+                        return True
             # 如果没有找到匹配的文字，将鼠标移到区域的最右侧并向下滚动200单位
             right_edge_x = region[0] + region[2]
             middle_y = region[1] + region[3] / 2

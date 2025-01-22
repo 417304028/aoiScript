@@ -9,6 +9,7 @@ import time
 import pyautogui
 import config
 
+pyautogui.FAILSAFE = False
 # @utils.screenshot_error_to_excel()
 # # 新建单板程式
 # def jbgn_001_01():
@@ -811,7 +812,7 @@ def jbgn_001_40():
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
     start_time = time.time()
     while True:
-        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.8):
             break
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
@@ -851,7 +852,7 @@ def jbgn_001_41():
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
     start_time = time.time()
     while True:
-        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.8):
             break
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
@@ -900,7 +901,7 @@ def jbgn_001_42():
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
     start_time = time.time()
     while True:
-        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.8):
             break
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
@@ -912,7 +913,8 @@ def jbgn_001_42():
     # 1、点击【进入细调界面】，在【元件窗口】中选择含有搜索范围的算法，如：方形定位
     utils.click_by_png(config.NO_PASS_COMPONENT,2)
     time.sleep(3)
-    utils.add_window()
+    utils.click_by_png(config.GUI_CHECK_WINDOW)
+    utils.add_window(None)
     utils.click_by_png(config.SQUARE_POSITIONING)
     utils.click_by_png(config.YES)
     time.sleep(7)
@@ -950,7 +952,7 @@ def jbgn_001_43():
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
     start_time = time.time()
     while True:
-        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.8):
             break
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
@@ -962,7 +964,8 @@ def jbgn_001_43():
     # 1、点击【进入细调界面】，在【元件窗口】中选择含有搜索范围的算法，如：方形定位
     utils.click_by_png(config.NO_PASS_COMPONENT,2)
     time.sleep(3)
-    utils.add_window()
+    utils.click_by_png(config.GUI_CHECK_WINDOW)
+    utils.add_window(None)
     utils.click_by_png(config.SQUARE_POSITIONING)
     utils.click_by_png(config.YES)
     time.sleep(7)
@@ -1041,14 +1044,17 @@ def jbgn_001_46():
 
     start_time = time.time()
     while True:
-        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.8):
             break
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
-    time.sleep(10)
+    time.sleep(25)
+    utils.click_by_png(config.STOP)
+    time.sleep(5)
     create_data_time = datetime.datetime.now()
     # 2、RV在【未复判】列表中双击准备复判的数据，然后点击【全部通过】--【确认】进行复判
     utils.check_and_launch_rv()
+    lane_point = None
     try:
         lane_location = pyautogui.locateOnScreen(config.RV_PCB_LIST_LANE, confidence=0.6)
         if lane_location:
@@ -1058,74 +1064,89 @@ def jbgn_001_46():
             logger.info(f"找到了RV PCB列表的位置: {lane_location}, 中心点坐标: ({center_x}, {center_y})")
     except pyautogui.ImageNotFoundException:
         logger.error("疑似开启了自动复判,PCB列表未识别到数据")
-    if lane_point:
-        pyautogui.doubleClick(lane_point)
-        utils.scroll_down(lane_point,config.RV_PCB_LIST_REGION)
-        utils.click_by_png(config.RV_PCB_LIST_LANE,times=2,preference="bottom",tolerance=0.6)
-        utils.click_by_png(config.RV_ALL_PASS,tolerance=0.7)
-        utils.click_by_png(config.RV_CONFIRM,tolerance=0.7)
-        time.sleep(7)
-    else:
-        logger.error("可能已经自动复判了 直接打开spc")
+    try:
+        if lane_point is not None:
+            pyautogui.doubleClick(lane_point)
+            utils.scroll_down(lane_point, config.RV_PCB_LIST_REGION)
+            utils.click_by_png(config.RV_PCB_LIST_LANE, times=2, preference="bottom", tolerance=0.6)
+            time.sleep(3)
+            utils.click_by_png(config.RV_ALL_PASS, tolerance=0.7)
+            time.sleep(3)
+            utils.click_by_png(config.RV_CONFIRM, tolerance=0.7)
+            time.sleep(7)
+        else:
+            logger.error("可能已经自动复判了 直接打开spc")
+    except Exception as e:
+        logger.error(f"处理rv数据时发生错误: {e}")
     # 3、在SPC点击【程序视图】--【1小时】--【查询】，在搜索结果中选择相应的数据， 点击【PCB视图】
     utils.check_and_launch_spc()
     utils.click_by_png(config.SPC_PROGRAM_VIEW)
-    utils.click_by_png(config.SPC_ONE_HOUR)
-    utils.click_by_png(config.SPC_QUERY)
-    time.sleep(3)
-    # 先获取job名，通过job名去点击对应行
-    utils.read_text(config.CENTRE)
-    # 获取当前时间
-    current_time = datetime.datetime.now()
+    start_time = time.time()
+    found_data = False
 
-    # 读取剪贴板内容
-    clipboard_content = pyperclip.paste()
+    while not found_data and (time.time() - start_time) < 1200:  # 尝试20分钟
+        utils.click_by_png(config.SPC_ONE_HOUR)
+        utils.click_by_png(config.SPC_QUERY,2)
+        time.sleep(3)
+        
+        # 先获取job名，通过job名去点击对应行
+        utils.read_text(config.CENTRE)
+        # 获取当前时间
+        current_time = datetime.datetime.now()
 
-    # 将剪贴板内容按行分割
-    lines = clipboard_content.split('\n')
+        # 读取剪贴板内容
+        clipboard_content = pyperclip.paste()
 
-    # 初始化计数器
-    count_within_three_minutes = 0
-    job_name = None
-    latest_time = None
+        # 将剪贴板内容按行分割
+        lines = clipboard_content.split('\n')
 
-    # 遍历每一行数据
-    for line in lines:
-        # 跳过表头
-        if line.startswith("Selection"):
-            continue
+        # 初始化计数器
+        count_within_ten_minutes = 0
+        latest_time = None
 
-        # 按制表符分割每一行数据
-        parts = line.split('\t')
+        # 遍历每一行数据
+        for line in lines:
+            # 跳过表头
+            if line.startswith("Selection"):
+                continue
 
-        # 确保有足够的列
-        if len(parts) < 4:
-            continue
+            # 按制表符分割每一行数据
+            parts = line.split('\t')
 
-        # 获取截止时间
-        end_time_str = parts[3]
+            # 确保有足够的列
+            if len(parts) < 4:
+                continue
 
-        # 将截止时间字符串转换为datetime对象
-        try:
-            end_time = datetime.datetime.strptime(end_time_str, '%Y-%m-%d %H:%M:%S')
-        except ValueError:
-            continue
+            # 获取截止时间
+            end_time_str = parts[3]
 
-        # 计算时间差
-        time_difference = current_time - end_time
+            # 将截止时间字符串转换为datetime对象
+            try:
+                end_time = datetime.datetime.strptime(end_time_str, '%Y-%m-%d %H:%M:%S')
+            except ValueError:
+                continue
 
-        # 判断时间差是否在五分钟内
-        if abs(time_difference.total_seconds()) <= 300:
-            count_within_three_minutes += 1
-            if latest_time is None or end_time > latest_time:
-                latest_time = end_time
-                job_name = parts[1]
+            # 计算时间差
+            time_difference = current_time - end_time
 
-    # 如果计数器为0，报错
-    if count_within_three_minutes == 0:
-        raise Exception("未找到截止时间在五分钟内的数据，疑似数据未到spc")
+            # 判断时间差是否在十分钟内
+            if abs(time_difference.total_seconds()) <= 600:
+                count_within_ten_minutes += 1
+                if latest_time is None or end_time > latest_time:
+                    latest_time = end_time
+                    job_name = parts[1]
 
-    utils.click_by_ocr(job_name,2)
+        # 如果找到数据，退出循环
+        if count_within_ten_minutes > 0:
+            found_data = True
+        else:
+            time.sleep(30)  # 每隔半分钟重试
+
+    if not found_data:
+        raise Exception("未找到截止时间在十分钟内的数据，疑似数据未到spc")
+
+    if not utils.click_by_ocr(job_name,3):
+        pyautogui.doubleClick(435,240)
     time.sleep(5)
     utils.click_by_png(config.SPC_PCB_VIEW, 2)
     utils.search_symbol_erroring(config.PCB_VIEW_TOPIC,tolerance=0.6)
@@ -1134,6 +1155,8 @@ def jbgn_001_46():
     total_iterations = 0
     black_ratio_2d_count = 0
     black_ratio_3d_count = 0
+    same_screenshot_count = 0
+    start_time = time.time()
     while True:
         black_2d_ratio = utils.get_color_ratio_in_region(config.PCB_2D_IMAGE_REGION, (0,0,0))
         black_3d_ratio = utils.get_color_ratio_in_region(config.PCB_3D_IMAGE_REGION, (0,0,0))
@@ -1145,17 +1168,20 @@ def jbgn_001_46():
 
         before_screenshot = pyautogui.screenshot(region=config.PCB_UP_REGION)
         pyautogui.press("down")
-        time.sleep(1)
+        time.sleep(5)
         after_screenshot = pyautogui.screenshot(region=config.PCB_UP_REGION)
-        if before_screenshot == after_screenshot:
-            if black_ratio_2d_count / total_iterations > 0.8:
-                logger.error(f"多次检测到不良2D图像，2D图像未检测到元件的比率为{black_ratio_2d_count / total_iterations}")
-                raise Exception(f"多次检测到不良2D图像，2D图像未检测到元件的比率为{black_ratio_2d_count / total_iterations}")
-            if black_ratio_3d_count / total_iterations > 0.8:
-                logger.error(f"多次检测到不良3D图像，3D图像未检测到元件的比率为{black_ratio_3d_count / total_iterations}")
-                raise Exception(f"多次检测到不良3D图像，3D图像未检测到元件的比率为{black_ratio_3d_count / total_iterations}")
-            break
-        time.sleep(3)
+        if before_screenshot == after_screenshot or time.time() - start_time > 600:
+            same_screenshot_count += 1
+            if same_screenshot_count >= 5:
+                if black_ratio_2d_count / total_iterations > 0.1:
+                    logger.error(f"多次检测到不良2D图像，2D图像未检测到元件的比率为{black_ratio_2d_count / total_iterations}")
+                    raise Exception(f"多次检测到不良2D图像，2D图像未检测到元件的比率为{black_ratio_2d_count / total_iterations}")
+                if black_ratio_3d_count / total_iterations > 0.1:
+                    logger.error(f"多次检测到不良3D图像，3D图像未检测到元件的比率为{black_ratio_3d_count / total_iterations}")
+                    raise Exception(f"多次检测到不良3D图像，3D图像未检测到元件的比率为{black_ratio_3d_count / total_iterations}")
+                break
+        else:
+            same_screenshot_count = 0
 
     # 确认数据保存路径下有数据
     # 检测F:\DataExport\{job_name}下有没有在create_data_time前后五分钟内的数据生成
@@ -1172,6 +1198,7 @@ def jbgn_001_46():
             if time_difference <= 300:  # 前后五分钟内
                 logger.info(f"找到文件: {file_path}, 创建时间: {file_creation_time}")
                 data_found = True
+                break
 
     if not data_found:
         raise Exception(f"在{create_data_time}前后五分钟内未找到数据生成")
@@ -1198,11 +1225,10 @@ def jbgn_001_47():
 
     start_time = time.time()
     while True:
-        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.8):
             break
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
-    time.sleep(10)
     create_data_time = datetime.datetime.now()
     # 2、在DV界面，点击【全部通过】--【确认完成】按钮
     start_time = time.time()
@@ -1211,6 +1237,7 @@ def jbgn_001_47():
             break
         if time.time() - start_time > 60:
             raise Exception("超过1分钟未能识别到dv界面")
+    utils.click_by_png(config.STOP)
     utils.click_by_ocr("全部通过")
     utils.click_by_ocr("确认完成")
     time.sleep(2)
@@ -1274,7 +1301,7 @@ def jbgn_001_47():
     if count_within_three_minutes == 0:
         raise Exception("未找到截止时间在十分钟内的数据")
 
-    utils.click_by_ocr(job_name,2)
+    utils.click_by_ocr(job_name,3)
     time.sleep(5)
     utils.click_by_png(config.SPC_PCB_VIEW)
     utils.search_symbol_erroring(config.PCB_VIEW_TOPIC,tolerance=0.6)
@@ -1321,6 +1348,7 @@ def jbgn_001_47():
             if time_difference <= 300:  # 前后五分钟内
                 logger.info(f"找到文件: {file_path}, 创建时间: {file_creation_time}")
                 data_found = True
+                break
 
     if not data_found:
         raise Exception(f"在{create_data_time}前后五分钟内未找到数据生成")
@@ -1348,11 +1376,13 @@ def jbgn_001_48():
 
     start_time = time.time()
     while True:
-        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.8):
             break
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
-    time.sleep(10)
+    time.sleep(25)
+    utils.click_by_png(config.STOP)
+    time.sleep(5)
     create_data_time = datetime.datetime.now()
     # 2、在SPC点击【程序视图】--【1小时】--【查询】，在搜索结果中选择相应的数据， 点击【PCB视图】
     utils.check_and_launch_spc()
@@ -1412,15 +1442,18 @@ def jbgn_001_48():
     if count_within_three_minutes == 0:
         raise Exception("未找到截止时间在十分钟内的数据")
 
-    utils.click_by_ocr(job_name,2)
+    if not utils.click_by_ocr(job_name,3):
+        pyautogui.doubleClick(435,240)
     time.sleep(5)
-    utils.click_by_png(config.SPC_PCB_VIEW)
+    utils.click_by_png(config.SPC_PCB_VIEW, 2)
     utils.search_symbol_erroring(config.PCB_VIEW_TOPIC,tolerance=0.6)
     time.sleep(3)
     
     total_iterations = 0
     black_ratio_2d_count = 0
     black_ratio_3d_count = 0
+    same_screenshot_count = 0
+    start_time = time.time()
     while True:
         black_2d_ratio = utils.get_color_ratio_in_region(config.PCB_2D_IMAGE_REGION, (0,0,0))
         black_3d_ratio = utils.get_color_ratio_in_region(config.PCB_3D_IMAGE_REGION, (0,0,0))
@@ -1432,17 +1465,20 @@ def jbgn_001_48():
 
         before_screenshot = pyautogui.screenshot(region=config.PCB_UP_REGION)
         pyautogui.press("down")
-        time.sleep(1)
+        time.sleep(5)
         after_screenshot = pyautogui.screenshot(region=config.PCB_UP_REGION)
-        if before_screenshot == after_screenshot:
-            if black_ratio_2d_count / total_iterations > 0.8:
-                logger.error(f"多次检测到不良2D图像，2D图像未检测到元件的比率为{black_ratio_2d_count / total_iterations}")
-                raise Exception(f"多次检测到不良2D图像，2D图像未检测到元件的比率为{black_ratio_2d_count / total_iterations}")
-            if black_ratio_3d_count / total_iterations > 0.8:
-                logger.error(f"多次检测到不良3D图像，3D图像未检测到元件的比率为{black_ratio_3d_count / total_iterations}")
-                raise Exception(f"多次检测到不良3D图像，3D图像未检测到元件的比率为{black_ratio_3d_count / total_iterations}")
-            break
-        time.sleep(3)
+        if before_screenshot == after_screenshot or time.time() - start_time > 600:
+            same_screenshot_count += 1
+            if same_screenshot_count >= 5:
+                if black_ratio_2d_count / total_iterations > 0.1:
+                    logger.error(f"多次检测到不良2D图像，2D图像未检测到元件的比率为{black_ratio_2d_count / total_iterations}")
+                    raise Exception(f"多次检测到不良2D图像，2D图像未检测到元件的比率为{black_ratio_2d_count / total_iterations}")
+                if black_ratio_3d_count / total_iterations > 0.1:
+                    logger.error(f"多次检测到不良3D图像，3D图像未检测到元件的比率为{black_ratio_3d_count / total_iterations}")
+                    raise Exception(f"多次检测到不良3D图像，3D图像未检测到元件的比率为{black_ratio_3d_count / total_iterations}")
+                break
+        else:
+            same_screenshot_count = 0
 
     # 确认数据保存路径下有数据
     # 检测F:\DataExport\{job_name}下有没有在create_data_time前后五分钟内的数据生成
@@ -1459,6 +1495,7 @@ def jbgn_001_48():
             if time_difference <= 300:  # 前后五分钟内
                 logger.info(f"找到文件: {file_path}, 创建时间: {file_creation_time}")
                 data_found = True
+                break
 
     if not data_found:
         raise Exception(f"在{create_data_time}前后五分钟内未找到数据生成")
@@ -1503,11 +1540,13 @@ def jbgn_001_49():
 
     start_time = time.time()
     while True:
-        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.8):
             break
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
-    time.sleep(10)
+    time.sleep(25)
+    utils.click_by_png(config.STOP)
+    time.sleep(5)
     # 2、在RV检查所有元件的标准图
     utils.check_and_launch_rv()
     utils.scroll_down((100,520),region=config.RV_PCB_LIST_REGION)
@@ -1621,11 +1660,13 @@ def jbgn_001_54():
         raise Exception("未检测到测试板界面的特定标识，疑似能未进入测试板界面")
     start_time = time.time()
     while True:
-        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.8):
             break
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
-    time.sleep(10)
+    time.sleep(25)
+    utils.click_by_png(config.STOP)
+    time.sleep(5)
     # 检测debug_dir下是否有新的.insp文件生成
     if_create_data = utils.check_new_data(debug_dir,minutes=3)
     if not if_create_data:
@@ -1662,7 +1703,7 @@ def jbgn_001_55():
     time.sleep(3)
     start_time = time.time()
     while True:
-        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.8):
             break
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
@@ -1705,35 +1746,36 @@ def jbgn_001_56():
 @utils.screenshot_error_to_excel()
 def jbgn_001_57():
     utils.check_and_launch_aoi() 
-    utils.check_close_all_algs()
+    utils.check_close_all_algs(if_close_color_analysis=False)
     utils.open_program(if_specific=True)   
     # 测试一个忽略板
     pyautogui.rightClick(config.CENTRE)
     utils.click_by_png(config.ADD_OBJECT,tolerance=0.75)
     utils.click_by_png(config.BAD_BOARD_MARK,tolerance=0.75)
     time.sleep(3)
-    utils.add_window()
+    utils.add_window(None)
     time.sleep(1)
     pyautogui.press("enter")
     time.sleep(3)
-    utils.write_text((825,950),"0")
-    utils.write_text((825,975),"0")
-    utils.is_checked((640,949),(652,961),True)
+    # utils.write_text((825,950),"0")
+    # utils.write_text((825,975),"0")
+    utils.is_checked((873,956),(885,968),True)
     pyautogui.press("enter")
     time.sleep(1)
     pyautogui.press("enter")
     time.sleep(5)
-    if not utils.check_color_in_region((255,0,0),region=config.CHECK_RESULT_REGION):
-        raise Exception("标记坏板失败：调整调色板后未检测到坏板结果")
     utils.click_by_png(config.PLAY, 2)
-    for _ in range(5):
-        if utils.search_symbol(config.QUESTION_MARK, 5):
-            pyautogui.press("enter")
-            time.sleep(3)
+    for _ in range (3):
+        time.sleep(5)
+        pyautogui.press("enter")
+        time.sleep(5)
     if not utils.search_symbol(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.8):
         raise Exception("疑似未进入测试板界面")
     if not utils.search_symbol(config.TESTING_INTERFACE_IGNORE, 60):
         raise Exception("未检测到结果：忽略")
+    while utils.search_symbol(config.QUESTION_MARK, 1):
+        time.sleep(1)
+    utils.click_by_png(config.STOP)
     utils.check_and_launch_spc()
     utils.click_by_png(config.SPC_PROGRAM_VIEW)
     utils.click_by_png(config.SPC_ONE_HOUR)
@@ -1784,8 +1826,7 @@ def jbgn_001_57():
     # 如果计数器为0，报错
     if count_within_three_minutes == 0:
         raise Exception("未找到截止时间在十分钟内的数据")
-
-    utils.close_aoi()
+    utils.delete_bad_mark()
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_58():  
@@ -1840,23 +1881,30 @@ def jbgn_001_62():
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
     start_time = time.time()
     while True:
-        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.75):
+        if utils.search_symbol(config.TESTING_INTERFACE_PERCENT_100, 5, tolerance=0.8):
             break
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
+    time.sleep(25)
+    utils.click_by_png(config.STOP)
+    time.sleep(5)
     # 2.计算完成后--查看rv 
     utils.check_and_launch_rv()
     # 3.按快捷键进行复判--提交
-    pcb_list_before = pyautogui.screenshot(config.PCB_LIST_REGION)
-    pcb_component_list_before = pyautogui.screenshot(config.PCB_COMPONENT_LIST_REGION)
-    pyautogui.press('num0')
-    time.sleep(5)
-    pcb_component_list_after = pyautogui.screenshot(config.PCB_COMPONENT_LIST_REGION)
-    if pcb_component_list_before == pcb_component_list_after:
-        raise Exception("复判后pcb元件列表未发生变化")
-    pyautogui.press("enter")
-    time.sleep(5)
-    pcb_list_after = pyautogui.screenshot(config.PCB_LIST_REGION)
-    if pcb_list_before == pcb_list_after:
-        raise Exception("全部通过后pcb列表未发生变化")
+    if utils.search_symbol(config.RV_PCB_LIST_LANE, 3):
+        pcb_list_before = pyautogui.screenshot(region=config.PCB_LIST_REGION)
+        pcb_component_list_before = pyautogui.screenshot(region=config.PCB_COMPONENT_LIST_REGION)
+        pyautogui.press('num0')
+        time.sleep(5)
+        pcb_component_list_after = pyautogui.screenshot(region=config.PCB_COMPONENT_LIST_REGION)
+        if pcb_component_list_before == pcb_component_list_after:
+            raise Exception("使用快捷键复判后pcb元件列表未发生变化")
+        pyautogui.press("num1")
+        time.sleep(10)
+        pcb_list_after = pyautogui.screenshot(region=config.PCB_LIST_REGION)
+        if pcb_list_before == pcb_list_after:
+            raise Exception("使用快捷键全部通过后pcb列表未发生变化")
+    else:
+        utils.check_new_data_in_rv(True)
     utils.close_aoi()
+

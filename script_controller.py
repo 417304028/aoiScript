@@ -10,7 +10,9 @@ import win32event
 import win32api
 import winerror
 import csv
+import paddleocr
 import os
+import utils
 import threading
 import ctypes
 import time
@@ -20,6 +22,9 @@ from tkinter import messagebox
 from tkinter import filedialog
 import json
 import concurrent.futures
+import queue
+from PyQt5 import QtWidgets
+import sys
 
 
 # 在文件的开头定义全局变量
@@ -30,13 +35,15 @@ is_running = False  # 初始化is_running变量
 test_case_status = {}
 # 定义一个全局变量来标记CSV文件是否新创建
 csv_created = False 
-active_loop = False
+active_loop = True
 # 定义一个全局锁，确保同一时间只能执行一个方法
 execution_lock = threading.Lock()
 # 定义一个全局变量来标记配置窗口实例
 config_window_instance = None
+loop_config_window_instance = None
 active_path = None
 active_job_name = None
+gui_queue = queue.Queue()
 
 # 创建一个全局的命名互斥体，确保同一时间只能有一个脚本控制器窗口打开
 mutex = win32event.CreateMutex(None, False, "Global\\ScriptControllerMutex")
@@ -216,6 +223,9 @@ class HomeScreen(tk.Frame):
         self.pack()
         self.create_widgets()
 
+        # 在打开UI时保存AOI和RV的原有配置
+        self.backup_aoi_rv_configs()
+
     def create_widgets(self):
         """
         创建主界面的所有控件。
@@ -228,28 +238,34 @@ class HomeScreen(tk.Frame):
         style.configure("Unselected.TButton", background="lightgray", foreground="black", borderwidth=2, relief="ridge")
 
         self.label = tk.Label(self, text="自动化测试", font=("Segoe UI", 18))
-        self.label.pack(pady=20)
+        self.label.grid(row=0, column=0, columnspan=2, pady=20)
 
         self.icon_frame = tk.Frame(self)
-        self.icon_frame.pack(pady=20)
+        self.icon_frame.grid(row=1, column=0, columnspan=2, pady=20)
 
         self.aoi_icon = ttk.Button(
             self.icon_frame, text="AOI", command=self.toggle_aoi, style="Selected.TButton"
         )
-        self.aoi_icon.pack(padx=10, pady=10)
+        self.aoi_icon.grid(row=0, column=0, padx=20, pady=10)
+
+        # 添加离线重复测试按钮
+        self.offline_repeat_test_icon = ttk.Button(
+            self.icon_frame, text="离线重复测试", command=self.toggle_offline_repeat_test, style="Unselected.TButton"
+        )
+        self.offline_repeat_test_icon.grid(row=0, column=1, padx=20, pady=10)
 
         self.button_frame = tk.Frame(self)
-        self.button_frame.pack(pady=20)
+        self.button_frame.grid(row=2, column=0, columnspan=2, pady=20)
 
         self.confirm_button = ttk.Button(self.button_frame, text="确认", command=self.open_aoi_detail)
-        self.confirm_button.pack(side="left", padx=10)
+        self.confirm_button.grid(row=0, column=0, padx=20, pady=10)
 
         self.exit_button = ttk.Button(self.button_frame, text="退出", command=self.master.quit)
-        self.exit_button.pack(side="right", padx=10)
+        self.exit_button.grid(row=0, column=1, padx=20, pady=10)
 
         # 配置按钮
         self.config_button = ttk.Button(self, text="配置", style="TButton", width=10, command=self.show_config_window)
-        self.config_button.pack(anchor="ne", padx=10, pady=10)  # 将按钮放置在右上角
+        self.config_button.grid(row=3, column=0, columnspan=2, pady=20)
 
     def toggle_aoi(self):
         """
@@ -261,6 +277,19 @@ class HomeScreen(tk.Frame):
         else:
             self.selected_icon.set("AOI")
             self.aoi_icon.configure(style="Selected.TButton")
+            self.offline_repeat_test_icon.configure(style="Unselected.TButton")
+
+    def toggle_offline_repeat_test(self):
+        """
+        切换离线重复测试按钮的选中状态。
+        """
+        if self.selected_icon.get() == "离线重复测试":
+            self.selected_icon.set("")
+            self.offline_repeat_test_icon.configure(style="Unselected.TButton")
+        else:
+            self.selected_icon.set("离线重复测试")
+            self.offline_repeat_test_icon.configure(style="Selected.TButton")
+            self.aoi_icon.configure(style="Unselected.TButton")
 
     def open_aoi_detail(self):
         """
@@ -270,7 +299,6 @@ class HomeScreen(tk.Frame):
             # 销毁当前界面
             for widget in self.master.winfo_children():
                 widget.destroy()
-
 
             # 创建并显示AOIDetailScreen界面
             aoi_detail_screen = AOIDetailScreen(master=self.master)
@@ -284,6 +312,17 @@ class HomeScreen(tk.Frame):
 
             # 使用全局变量获取路径信息
             logger.info(f"使用全局变量获取路径信息: path={active_path}, job_name={active_job_name}")
+
+        elif self.selected_icon.get() == "离线重复测试":
+            # 销毁当前界面
+            for widget in self.master.winfo_children():
+                widget.destroy()
+
+            # 创建并显示OfflineRepeatTestScreen界面
+            offline_repeat_test_screen = OfflineRepeatTestScreen(master=self.master)
+            offline_repeat_test_screen.pack(fill=tk.BOTH, expand=True)
+
+            logger.info("切换至离线重复测试界面。")
 
     def load_modules_in_background(self):
         """
@@ -320,28 +359,32 @@ class HomeScreen(tk.Frame):
             config_window_instance.lift()
             return
 
-        config_window_instance = tk.Toplevel(self)
-        config_window_instance.title("配置选项")
-        config_window_instance.geometry("400x300")
-        config_window_instance.transient(self)
-        config_window_instance.grab_set()
+        try:
+            config_window_instance = tk.Toplevel(self)
+            config_window_instance.title("配置选项")
+            config_window_instance.geometry("400x300")
+            config_window_instance.transient(self)
+            config_window_instance.grab_set()
 
-        # 创建标题
-        title_label = tk.Label(config_window_instance, text="执行软件", font=("Arial", 12, "bold"))
-        title_label.pack(anchor="nw", padx=10, pady=10)
+            # 创建标题
+            title_label = tk.Label(config_window_instance, text="执行软件", font=("Arial", 12, "bold"))
+            title_label.pack(anchor="nw", padx=10, pady=10)
 
-        # 创建按钮并绑定事件
-        button_frame = tk.Frame(config_window_instance)
-        button_frame.pack(anchor="nw", padx=10, pady=10)
+            # 创建按钮并绑定事件
+            button_frame = tk.Frame(config_window_instance)
+            button_frame.pack(anchor="nw", padx=10, pady=10)
 
-        button1 = ttk.Button(button_frame, text="登录密码", command=self.handle_login_password)
-        button1.pack(side=tk.LEFT, padx=5)
+            button1 = ttk.Button(button_frame, text="登录密码", command=self.handle_login_password)
+            button1.pack(side=tk.LEFT, padx=5)
 
-        button2 = ttk.Button(button_frame, text="循环测试", command=self.handle_loop_test)
-        button2.pack(side=tk.LEFT, padx=5)
+            button2 = ttk.Button(button_frame, text="循环测试", command=self.handle_loop_test)
+            button2.pack(side=tk.LEFT, padx=5)
 
-        button3 = ttk.Button(button_frame, text="覆盖设置", command=self.handle_override_settings)
-        button3.pack(side=tk.LEFT, padx=5)
+            button3 = ttk.Button(button_frame, text="覆盖设置", command=self.handle_override_settings)
+            button3.pack(side=tk.LEFT, padx=5)
+
+        except Exception as e:
+            logger.error(f"创建配置窗口时发生错误: {e}")
 
     def handle_login_password(self):
         """
@@ -365,42 +408,55 @@ class HomeScreen(tk.Frame):
         """
         处理覆盖设置按钮事件，显示现有的配置选项。
         """
-        global config_window_instance
-        if config_window_instance is not None and config_window_instance.winfo_exists():
-            config_window_instance.lift()
-            return
+        global loop_config_window_instance
+        try:
+            if loop_config_window_instance is not None and loop_config_window_instance.winfo_exists():
+                loop_config_window_instance.lift()
+                logger.info("配置窗口已存在。")
 
-        config_window_instance = tk.Toplevel(self)
-        config_window_instance.title("覆盖设置")
-        config_window_instance.geometry("300x200")
-        config_window_instance.transient(self)
-        config_window_instance.grab_set()
+            logger.info("创建新的配置窗口。")
+            loop_config_window_instance = tk.Toplevel(self)
+            loop_config_window_instance.title("覆盖设置")
+            loop_config_window_instance.geometry("300x200")
+            loop_config_window_instance.transient(self)
+            loop_config_window_instance.grab_set()
 
-        # 获取屏幕的宽度和高度
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
+            # # 在窗口关闭时重置 config_window_instance
+            # def on_close():
+            #     global config_window_instance
+            #     config_window_instance = None
+            #     config_window_instance.destroy()
 
-        # 计算新窗口的居中位置
-        window_width = 450
-        window_height = 200
-        position_right = (screen_width // 2) - (window_width // 2)
-        position_down = (screen_height // 2) - (window_height // 2)
+            # config_window_instance.protocol("WM_DELETE_WINDOW", on_close)
 
-        # 设置新窗口的位置
-        config_window_instance.geometry(f"+{position_right}+{position_down}")
+            # 获取屏幕的宽度和高度
+            screen_width = self.winfo_screenwidth()
+            screen_height = self.winfo_screenheight()
 
-        # 使用已保存的配置状态初始化勾选框
-        self.aoi_var = tk.BooleanVar(value=self.master.config_state.get("replace_aoi", True))
-        aoi_check = ttk.Checkbutton(config_window_instance, text="替换aoi流程配置及切换程式配置", variable=self.aoi_var)
-        aoi_check.pack(anchor="w", pady=10, padx=10)
+            # 计算新窗口的居中位置
+            window_width = 450
+            window_height = 200
+            position_right = (screen_width // 2) - (window_width // 2)
+            position_down = (screen_height // 2) - (window_height // 2)
 
-        self.rv_var = tk.BooleanVar(value=self.master.config_state.get("replace_rv", True))
-        rv_check = ttk.Checkbutton(config_window_instance, text="替换rv视图配置", variable=self.rv_var)
-        rv_check.pack(anchor="w", pady=10, padx=10)
+            # 设置新窗口的位置
+            loop_config_window_instance.geometry(f"+{position_right}+{position_down}")
 
-        # 确认按钮
-        confirm_button = ttk.Button(config_window_instance, text="确认", command=lambda: self.save_config(config_window_instance))
-        confirm_button.pack(anchor="w", pady=20, padx=10)
+            # 使用已保存的配置状态初始化勾选框
+            self.aoi_var = tk.BooleanVar(value=self.master.config_state.get("replace_aoi", True))
+            aoi_check = ttk.Checkbutton(loop_config_window_instance, text="替换aoi流程配置及切换程式配置", variable=self.aoi_var)
+            aoi_check.pack(anchor="w", pady=10, padx=10)
+
+            self.rv_var = tk.BooleanVar(value=self.master.config_state.get("replace_rv", True))
+            rv_check = ttk.Checkbutton(loop_config_window_instance, text="替换rv视图配置", variable=self.rv_var)
+            rv_check.pack(anchor="w", pady=10, padx=10)
+
+            # 确认按钮
+            confirm_button = ttk.Button(loop_config_window_instance, text="确认", command=lambda: self.save_config(config_window_instance))
+            confirm_button.pack(anchor="w", pady=20, padx=10)
+
+        except Exception as e:
+            logger.error(f"创建配置窗口时发生错误: {e}")
 
     def save_config(self, config_window):
         """
@@ -412,6 +468,68 @@ class HomeScreen(tk.Frame):
         }
         config_window.destroy()
         logger.info(f"配置已保存: {self.master.config_state}")
+
+    def backup_aoi_rv_configs(self):
+        """
+        备份AOI和RV的原有配置。
+        """
+        try:
+            # utils.close_aoi()
+            # utils.close_rv()
+            bin_dir = "d:\\EYAOI\\Bin"
+            script_aoi_config_folder = os.path.join(os.path.dirname(sys.executable), "_internal/aoi_config")
+            script_rv_config_folder = os.path.join(os.path.dirname(sys.executable), "_internal/rv_config")
+
+            # 备份AOI配置
+            aoi_config_folder = None
+            if os.path.exists(os.path.join(bin_dir, "config")):
+                aoi_config_folder = os.path.join(bin_dir, "config")
+            elif os.path.exists(os.path.join(bin_dir, "Config")):
+                aoi_config_folder = os.path.join(bin_dir, "Config")
+            else:
+                for d in os.listdir(bin_dir):
+                    if os.path.isdir(os.path.join(bin_dir, d)) and d.lower().startswith("config"):
+                        aoi_config_folder = os.path.join(bin_dir, d)
+                        break
+
+            if aoi_config_folder and os.path.exists(script_aoi_config_folder):
+                aoi_backup_folder = os.path.join(bin_dir, "aoi", "copy")
+                if not os.path.exists(aoi_backup_folder):
+                    os.makedirs(aoi_backup_folder)
+                for file_name in os.listdir(script_aoi_config_folder):
+                    if file_name.endswith(".bin"):
+                        src_file = os.path.join(script_aoi_config_folder, file_name)
+                        dst_file = os.path.join(aoi_backup_folder, file_name)
+                        try:
+                            shutil.copy2(src_file, dst_file)
+                            logger.info(f"已备份AOI配置文件 {file_name} 到 {aoi_backup_folder}")
+                        except Exception as e:
+                            logger.error(f"无法备份AOI文件: {src_file},错误内容为：{e}")
+
+            # 备份RV配置
+            rv_config_folder = None
+            if os.path.exists(os.path.join(bin_dir, "config", "RV")):
+                rv_config_folder = os.path.join(bin_dir, "config", "RV")
+            elif os.path.exists(os.path.join(bin_dir, "Config", "RV")):
+                rv_config_folder = os.path.join(bin_dir, "Config", "RV")
+
+            if rv_config_folder and os.path.exists(script_rv_config_folder):
+                rv_backup_folder = os.path.join(rv_config_folder, "copy")
+                if not os.path.exists(rv_backup_folder):
+                    os.makedirs(rv_backup_folder)
+                for file_name in os.listdir(script_rv_config_folder):
+                    src_file = os.path.join(rv_config_folder, file_name)
+                    dst_file = os.path.join(rv_backup_folder, file_name)
+                    if os.path.exists(src_file):
+                        try:
+                            shutil.copy2(src_file, dst_file)
+                            logger.info(f"已备份RV配置文件 {file_name} 到 {rv_backup_folder}")
+                        except Exception as e:
+                            logger.error(f"无法备份RV文件: {src_file},错误：{e}")
+
+        except Exception as e:
+            logger.error(f"备份AOI和RV配置时发生错误: {e}")
+
 class AOIDetailScreen(tk.Frame):
     def __init__(self, master=None):
         """
@@ -716,6 +834,9 @@ class AOIDetailScreen(tk.Frame):
                 # 将界面置前
                 self.master.focus_force()
 
+                # 在方法执行完毕后恢复AOI和RV的配置
+                self.restore_aoi_rv_configs()
+
         def execute_method(method, index):
             """
             执行单个用例方法。
@@ -863,6 +984,9 @@ class AOIDetailScreen(tk.Frame):
                 stop_thread(thread)  # 强制终止线程
         self.create_prompt_box("脚本已终止", True)
         is_running = False
+
+        # 恢复AOI和RV的配置
+        self.restore_aoi_rv_configs()
 
     def on_search(self, event):
         """
@@ -1035,7 +1159,157 @@ class AOIDetailScreen(tk.Frame):
         搜索框输入事件处理函数。
         """
         self.load_test_cases(self.case_combobox.get())
-    
+
+    def restore_aoi_rv_configs(self):
+        """
+        恢复AOI和RV的配置。
+        """
+        try:
+            bin_dir = "d:\\EYAOI\\Bin"
+            rv_config_folder = "d:\\EYAOI\\Bin\\config\\RV"
+
+            # 恢复AOI配置
+            aoi_backup_folder = os.path.join(bin_dir, "copy")
+            aoi_config_folder = None
+            if os.path.exists(os.path.join(bin_dir, "config")):
+                aoi_config_folder = os.path.join(bin_dir, "config")
+            elif os.path.exists(os.path.join(bin_dir, "Config")):
+                aoi_config_folder = os.path.join(bin_dir, "Config")
+            else:
+                for d in os.listdir(bin_dir):
+                    if os.path.isdir(os.path.join(bin_dir, d)) and d.lower().startswith("config"):
+                        aoi_config_folder = os.path.join(bin_dir, d)
+                        break
+
+            if aoi_config_folder and os.path.exists(aoi_backup_folder):
+                for file_name in os.listdir(aoi_backup_folder):
+                    backup_file = os.path.join(aoi_backup_folder, file_name)
+                    config_file = os.path.join(aoi_config_folder, file_name)
+                    if os.path.isfile(config_file):
+                        os.remove(config_file)
+                    shutil.copy2(backup_file, config_file)
+                    logger.info(f"已将 {file_name} 从 {aoi_backup_folder} 恢复到 {aoi_config_folder}")
+
+            # 恢复RV配置
+            rv_backup_folder = os.path.join(rv_config_folder, "copy")
+            if os.path.exists(rv_backup_folder):
+                for file_name in os.listdir(rv_backup_folder):
+                    backup_file = os.path.join(rv_backup_folder, file_name)
+                    config_file = os.path.join(rv_config_folder, file_name)
+                    if os.path.isfile(config_file):
+                        os.remove(config_file)
+                    shutil.copy2(backup_file, config_file)
+                    logger.info(f"已将 {file_name} 从 {rv_backup_folder} 恢复到 {rv_config_folder}")
+
+        except Exception as e:
+            logger.error(f"恢复AOI和RV配置时发生错误: {e}")
+class OfflineRepeatTestScreen(tk.Frame):
+    def __init__(self, master=None):
+        """
+        初始化OfflineRepeatTestScreen类，创建离线重复测试界面。
+        """
+        super().__init__(master)
+        self.master = master
+        self.master.geometry("750x360")
+        self.pack(fill=tk.BOTH, expand=True)
+        self.create_widgets()
+        self.process_queue()
+
+    def create_widgets(self):
+        style = ttk.Style()
+        style.configure("TButton", font=("Segoe UI", 12), padding=10)
+
+        self.label = tk.Label(self, text="离线重复测试", font=("Segoe UI", 18))
+        self.label.pack(pady=20)
+
+        self.button_frame = tk.Frame(self, width=690, height=100)
+        self.button_frame.pack_propagate(False)
+        self.button_frame.pack(pady=10)
+
+        self.test_current_window_button = ttk.Button(self.button_frame, text="测试当前窗口", command=self.test_current_window)
+        self.test_current_window_button.pack(side="left", padx=10)
+
+        self.test_current_component_button = ttk.Button(self.button_frame, text="测试当前元件", command=self.test_current_component)
+        self.test_current_component_button.pack(side="left", padx=10)
+
+        self.test_current_group_button = ttk.Button(self.button_frame, text="测试当前分组", command=self.test_current_group)
+        self.test_current_group_button.pack(side="left", padx=10)
+
+        self.test_current_board_button = ttk.Button(self.button_frame, text="测试当前整版", command=self.test_current_board)
+        self.test_current_board_button.pack(side="left", padx=10)
+
+        # 将返回和停止按钮放在界面的下方同一行
+        self.button_frame_bottom = tk.Frame(self)
+        self.button_frame_bottom.pack(pady=10)
+
+        self.back_button = ttk.Button(self.button_frame_bottom, text="返回", command=self.go_back)
+        self.back_button.pack(side="left", padx=10)
+
+        self.stop_button = ttk.Button(self.button_frame_bottom, text="停止", command=self.terminate_execution)
+        self.stop_button.pack(side="left", padx=10)
+
+    def go_back(self):
+        """
+        返回上级界面。
+        """
+        for widget in self.master.winfo_children():
+            widget.destroy()
+        home_screen = HomeScreen(master=self.master)
+        home_screen.pack(fill=tk.BOTH, expand=True)
+
+    def test_current_window(self):
+        # 将需要更新的操作放入队列
+        gui_queue.put(lambda: self.update_label("测试当前窗口"))
+
+    def update_label(self, text):
+        self.label.config(text=text)
+
+    def test_current_component(self):
+        """
+        测试当前元件的事件处理。
+        """
+        kfzy.test_current_component()
+
+    def test_current_group(self):
+        """
+        测试当前分组的事件处理。
+        """
+        kfzy.test_current_group()
+
+    def test_current_board(self):
+        """
+        测试当前整版的事件处理。
+        """
+        kfzy.test_current_board()
+
+    def terminate_execution(self):
+        """
+        终止当前执行的用例函数。
+        """
+        global thread, current_thread, is_running
+        self.running_event.clear()
+        if current_thread and current_thread.is_alive():
+            logger.info("正在终止当前运行的用例函数")
+            stop_thread(current_thread)  # 强制终止当前线程
+        if thread and thread.is_alive():
+            thread.join(timeout=5)  # 等待线程结束，设置超时时间为5秒
+            if thread.is_alive():
+                logger.error("线程未能在预期时间内结束")
+                stop_thread(thread)  # 强制终止线程
+        self.create_prompt_box("脚本已终止", True)
+        is_running = False
+
+    def process_queue(self):
+        try:
+            while True:
+                # 从队列中获取并执行操作
+                task = gui_queue.get_nowait()
+                task()
+        except queue.Empty:
+            pass
+        # 定期检查队列
+        self.master.after(100, self.process_queue)
+
 class LoopTestWindow(tk.Toplevel):
     def __init__(self, master):
         """
@@ -1206,8 +1480,8 @@ class LoopTestWindow(tk.Toplevel):
         except FileNotFoundError:
             # 添加几条示例路径
             self.path_data = [
-                {"文件夹路径": "D:\\EYAOI\\JOB\\全算法", "JOB名称": "全算法定位", "状态": ""},
-                {"文件夹路径": "D:\\EYAOI\\JOB\\测试1", "JOB名称": "测试1", "状态": "生效中"},
+                {"文件夹路径": "D:\\EYAOI\\JOB\\全算法", "JOB名称": "全算法", "状态": ""},
+                {"文件夹路径": "D:\\EYAOI\\JOB\\测试1", "JOB名称": "测试1", "状态": ""},
                 {"文件夹路径": "D:\\EYAOI\\JOB\\测试2", "JOB名称": "测试2", "状态": ""}
             ]
 
@@ -1585,3 +1859,4 @@ if __name__ == "__main__":
     setup_logger()
     app = Application()
     app.mainloop()
+

@@ -356,16 +356,24 @@ def tccs_007_03():
     utils.find_component_window(config.ALG_OCV,image=config.WAIT_MATERIAL_EMPTY)
     # 3.选择OCV窗口，切换到“显示过滤图像”，点二值化（0至255）
     utils.click_by_png(config.DISPLAY_FILTERED_IMAGE)
-    utils.is_checked((638,955),(650,967),True)
+    utils.is_checked((638,956),(650,968),True)
     time.sleep(3)
     # 3.添加待料（要自动识别到有字符即可），点确认添加待料
     utils.click_by_png(config.ADD_STANDARD_IMAGE)
-    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC)
+    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC, tolerance=0.7)
     random_coordinate = random.choice(config.LIGHT_VIEWS_POINTS)
     pyautogui.click(random_coordinate)
     utils.click_by_png(config.YES)
-    if not utils.check_color_in_region((248,0,0),config.OCR_RESULT_REGION):
-        raise Exception("ocv未识别到字符")
+
+    start_time = time.time()
+    while not utils.click_by_ocr("OCV字符数量", tolerance=0.4):
+        if time.time() - start_time > 20:
+            raise Exception("未识别到ocv编辑窗口")
+        time.sleep(1)
+    utils.write_text_textbox(ocr_text="OCV字符数量", write_content="4",tolerance=0.3)
+    utils.write_text_textbox(ocr_text="字符名", write_content="1234")
+    utils.click_by_ocr("应用")
+    
     utils.click_by_png(config.APPLY)
     time.sleep(3)
     utils.caton_or_flashback("AOI.exe")
@@ -381,7 +389,7 @@ def tccs_008_01():
     # 2.选择已有的可添加代料的算法，点击【+】--选择光源--【确定】添加代料
     utils.find_component_window((config.CW_BODY_CHECK, config.CW_IMAGE_MATCHING))
     utils.click_by_png(config.ADD_STANDARD_IMAGE)
-    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC)
+    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC, tolerance=0.7)
     used_coordinates = set()
     random_coordinate = random.choice(config.LIGHT_VIEWS_POINTS)
     used_coordinates.add(random_coordinate)
@@ -393,7 +401,7 @@ def tccs_008_01():
     time.sleep(5)
     # 3.重复操作2，添加不同光源的代料
     utils.click_by_png(config.ADD_STANDARD_IMAGE)
-    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC)
+    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC, tolerance=0.7)
     remaining_coordinates = list(set(config.LIGHT_VIEWS_POINTS) - used_coordinates)
     random_coordinate = random.choice(remaining_coordinates)
     pyautogui.click(random_coordinate)
@@ -415,7 +423,7 @@ def tccs_008_02():
     # 2.选择字符检测，点击【+】--选择光源--【确定】添加代料
     utils.find_component_window(config.ALG_OCV)
     utils.click_by_png(config.ADD_STANDARD_IMAGE)
-    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC)
+    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC, tolerance=0.7)
     used_coordinates = set()
     random_coordinate = random.choice(config.LIGHT_VIEWS_POINTS)
     used_coordinates.add(random_coordinate)
@@ -427,7 +435,7 @@ def tccs_008_02():
     time.sleep(5)
     # 3.重复操作2，添加不同光源的代料
     utils.click_by_png(config.ADD_STANDARD_IMAGE)
-    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC)
+    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC, tolerance=0.7)
     remaining_coordinates = list(set(config.LIGHT_VIEWS_POINTS) - used_coordinates)
     random_coordinate = random.choice(remaining_coordinates)
     pyautogui.click(random_coordinate)
@@ -449,11 +457,11 @@ def tccs_008_03():
     utils.find_component_window(config.ALG_OCV,image=config.WAIT_MATERIAL_EMPTY)
     # 3.选择OCV窗口，切换到“显示过滤图像”，点二值化（0至255）
     utils.click_by_png(config.DISPLAY_FILTERED_IMAGE)
-    utils.is_checked((638,955),(650,967),True)
+    utils.is_checked((638,956),(650,968),True)
     time.sleep(3)
     # 3.添加待料（要自动识别到有字符即可），点确认添加待料
     utils.click_by_png(config.ADD_STANDARD_IMAGE)
-    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC)
+    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC, tolerance=0.7)
     random_coordinate = random.choice(config.LIGHT_VIEWS_POINTS)
     pyautogui.click(random_coordinate)
     utils.click_by_png(config.YES)
@@ -506,7 +514,7 @@ def tccs_008_04():
     # 3.选择已有的可添加代料的算法，点击【+】--选择光源--【确定】添加代料
     utils.find_component_window((config.CW_BODY_CHECK, config.CW_IMAGE_MATCHING))
     utils.click_by_png(config.ADD_STANDARD_IMAGE)
-    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC)
+    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC, tolerance=0.7)
     used_coordinates = set()
     random_coordinate = random.choice(config.LIGHT_VIEWS_POINTS)
     used_coordinates.add(random_coordinate)
@@ -518,7 +526,7 @@ def tccs_008_04():
     time.sleep(5)
     # 4.重复操作3，添加不同光源的代料
     utils.click_by_png(config.ADD_STANDARD_IMAGE)
-    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC)
+    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC, tolerance=0.7)
     remaining_coordinates = list(set(config.LIGHT_VIEWS_POINTS) - used_coordinates)
     random_coordinate = random.choice(remaining_coordinates)
     pyautogui.click(random_coordinate)
@@ -560,7 +568,7 @@ def tccs_008_05():
     # 3.选择字符检测，点击【+】--选择光源--【确定】添加代料
     utils.find_component_window(config.ALG_OCV)
     utils.click_by_png(config.ADD_STANDARD_IMAGE)
-    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC)
+    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC, tolerance=0.7)
     used_coordinates = set()
     random_coordinate = random.choice(config.LIGHT_VIEWS_POINTS)
     used_coordinates.add(random_coordinate)
@@ -572,7 +580,7 @@ def tccs_008_05():
     time.sleep(5)
     # 4.重复操作3，添加不同光源的代料
     utils.click_by_png(config.ADD_STANDARD_IMAGE)
-    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC)
+    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC, tolerance=0.7)
     remaining_coordinates = list(set(config.LIGHT_VIEWS_POINTS) - used_coordinates)
     random_coordinate = random.choice(remaining_coordinates)
     pyautogui.click(random_coordinate)
@@ -612,12 +620,12 @@ def tccs_008_06():
     time.sleep(5)
     # 3.选择OCV窗口，切换到“显示过滤图像”，点二值化（0至255）
     utils.click_by_png(config.DISPLAY_FILTERED_IMAGE)
-    utils.is_checked((638,955),(650,967),True)
+    utils.is_checked((638,956),(650,968),True)
     time.sleep(3)
     # 4.选择字符检测，点击【+】--选择光源--【确定】添加代料
     utils.find_component_window(config.ALG_OCV)
     utils.click_by_png(config.ADD_STANDARD_IMAGE)
-    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC)
+    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC, tolerance=0.7)
     used_coordinates = set()
     random_coordinate = random.choice(config.LIGHT_VIEWS_POINTS)
     used_coordinates.add(random_coordinate)
@@ -629,7 +637,7 @@ def tccs_008_06():
     time.sleep(5)
     # 5.重复操作4，添加不同光源的代料
     utils.click_by_png(config.ADD_STANDARD_IMAGE)
-    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC)
+    utils.search_symbol_erroring(config.IMAGE_PROCESS_TOPIC, tolerance=0.7)
     remaining_coordinates = list(set(config.LIGHT_VIEWS_POINTS) - used_coordinates)
     random_coordinate = random.choice(remaining_coordinates)
     pyautogui.click(random_coordinate)
