@@ -1,6 +1,8 @@
-from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QFileDialog, QListWidget, QListWidgetItem, QInputDialog, QFormLayout, QComboBox, QWidget, QStatusBar, QSpacerItem, QSizePolicy
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QFileDialog, QListWidget, \
+    QListWidgetItem, QInputDialog, QFormLayout, QComboBox, QWidget, QStatusBar, QSpacerItem, QSizePolicy
+
 import config
 
 

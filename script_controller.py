@@ -1,18 +1,20 @@
 import shutil
+import sys
 import tkinter as tk
 from tkinter import ttk
+
 from loguru import logger
-import sys
+
 sys.coinit_flags = 2
 from scripts import yjk, lxbj, jbgn, kjj, spc, tccs, sjdc, kfzy
 from utils import setup_logger,loop
 import win32event
 import win32api
+import win32gui
+import win32con
 import winerror
 import csv
-import paddleocr
 import os
-import utils
 import threading
 import ctypes
 import time
@@ -23,7 +25,6 @@ from tkinter import filedialog
 import json
 import concurrent.futures
 import queue
-from PyQt5 import QtWidgets
 import sys
 
 
@@ -765,7 +766,7 @@ class AOIDetailScreen(tk.Frame):
                 thread = None
             self.running_event.set()
             test_case_status.clear()  # 清理状态
-            self.master.iconify()
+            # self.master.iconify()
             selected_items = self.table.selection()
             selected_methods = [self.table.item(item, "values")[0] for item in selected_items]
             module_name = self.case_combobox.get()
@@ -1213,6 +1214,10 @@ class OfflineRepeatTestScreen(tk.Frame):
         self.master.geometry("750x360")
         self.pack(fill=tk.BOTH, expand=True)
         self.create_widgets()
+        self.running_event = threading.Event()
+        self.current_task = None
+        self.selected_button = None
+        self.current_thread = None
         self.process_queue()
 
     def create_widgets(self):
@@ -1226,27 +1231,49 @@ class OfflineRepeatTestScreen(tk.Frame):
         self.button_frame.pack_propagate(False)
         self.button_frame.pack(pady=10)
 
-        self.test_current_window_button = ttk.Button(self.button_frame, text="测试当前窗口", command=self.test_current_window)
+        self.test_current_window_button = ttk.Button(
+            self.button_frame, text="测试当前窗口", command=lambda: self.select_task(self.test_current_window, self.test_current_window_button)
+        )
         self.test_current_window_button.pack(side="left", padx=10)
 
-        self.test_current_component_button = ttk.Button(self.button_frame, text="测试当前元件", command=self.test_current_component)
+        self.test_current_component_button = ttk.Button(
+            self.button_frame, text="测试当前元件", command=lambda: self.select_task(self.test_current_component, self.test_current_component_button)
+        )
         self.test_current_component_button.pack(side="left", padx=10)
 
-        self.test_current_group_button = ttk.Button(self.button_frame, text="测试当前分组", command=self.test_current_group)
+        self.test_current_group_button = ttk.Button(
+            self.button_frame, text="测试当前分组", command=lambda: self.select_task(self.test_current_group, self.test_current_group_button)
+        )
         self.test_current_group_button.pack(side="left", padx=10)
 
-        self.test_current_board_button = ttk.Button(self.button_frame, text="测试当前整版", command=self.test_current_board)
+        self.test_current_board_button = ttk.Button(
+            self.button_frame, text="测试当前整版", command=lambda: self.select_task(self.test_current_board, self.test_current_board_button)
+        )
         self.test_current_board_button.pack(side="left", padx=10)
 
-        # 将返回和停止按钮放在界面的下方同一行
+        # 将运行按钮放在返回和停止按钮的左边
         self.button_frame_bottom = tk.Frame(self)
         self.button_frame_bottom.pack(pady=10)
+
+        self.run_button = ttk.Button(self.button_frame_bottom, text="运行", command=self.run_task)
+        self.run_button.pack(side="left", padx=10)
 
         self.back_button = ttk.Button(self.button_frame_bottom, text="返回", command=self.go_back)
         self.back_button.pack(side="left", padx=10)
 
         self.stop_button = ttk.Button(self.button_frame_bottom, text="停止", command=self.terminate_execution)
         self.stop_button.pack(side="left", padx=10)
+
+    def select_task(self, task, button):
+        """
+        选择任务并更新按钮状态。
+        """
+        if self.selected_button:
+            self.selected_button.state(["!pressed"])
+        self.current_task = task
+        self.selected_button = button
+        self.selected_button.state(["pressed"])
+        self.update_label(f"已选择任务: {task.__name__}")
 
     def go_back(self):
         """
@@ -1257,54 +1284,90 @@ class OfflineRepeatTestScreen(tk.Frame):
         home_screen = HomeScreen(master=self.master)
         home_screen.pack(fill=tk.BOTH, expand=True)
 
-    def test_current_window(self):
-        # 将需要更新的操作放入队列
-        gui_queue.put(lambda: self.update_label("测试当前窗口"))
+    def run_task(self):
+        """
+        运行当前选中的任务。
+        """
+        if self.current_task:
+            self.current_thread = threading.Thread(target=self.execute_task, daemon=True)
+            self.current_thread.start()
 
-    def update_label(self, text):
-        self.label.config(text=text)
+    def execute_task(self):
+        """
+        执行任务的线程。在开始任务前先将顶级窗口最小化（通过发送最小化命令），等待1秒以确保窗口已完全最小化，
+        然后将任务放入队列中执行。
+        """
+        # # 通过当前组件获取顶级窗口
+        # top = self.winfo_toplevel()
+        # hwnd = top.winfo_id()
+        # try:
+        #     # 发送 WM_SYSCOMMAND 消息，命令值为 SC_MINIMIZE，使窗口最小化
+        #     win32gui.PostMessage(hwnd, win32con.WM_SYSCOMMAND, win32con.SC_MINIMIZE, 0)
+        # except Exception as e:
+        #     logger.error("通过Win32API发送最小化消息失败: " + str(e))
+        # # 等待1秒，确保窗口完全最小化
+        # time.sleep(1)
+        gui_queue.put(self.current_task)
+        self.update_label(f"正在运行: {self.current_task.__name__}")
+
+    def test_current_window(self):
+        """
+        测试当前窗口的事件处理。
+        """
+        threading.Thread(target=kfzy.test_current_window, daemon=True).start()
 
     def test_current_component(self):
         """
         测试当前元件的事件处理。
         """
-        kfzy.test_current_component()
+        threading.Thread(target=kfzy.test_current_component, daemon=True).start()
 
     def test_current_group(self):
         """
         测试当前分组的事件处理。
         """
-        kfzy.test_current_group()
+        threading.Thread(target=kfzy.test_current_group, daemon=True).start()
 
     def test_current_board(self):
         """
         测试当前整版的事件处理。
         """
-        kfzy.test_current_board()
+        threading.Thread(target=kfzy.test_current_board, daemon=True).start()
 
     def terminate_execution(self):
         """
         终止当前执行的用例函数。
         """
-        global thread, current_thread, is_running
         self.running_event.clear()
-        if current_thread and current_thread.is_alive():
+        if self.current_thread and self.current_thread.is_alive():
+            self._stop_thread(self.current_thread)
             logger.info("正在终止当前运行的用例函数")
-            stop_thread(current_thread)  # 强制终止当前线程
-        if thread and thread.is_alive():
-            thread.join(timeout=5)  # 等待线程结束，设置超时时间为5秒
-            if thread.is_alive():
-                logger.error("线程未能在预期时间内结束")
-                stop_thread(thread)  # 强制终止线程
-        self.create_prompt_box("脚本已终止", True)
-        is_running = False
+            self.current_task = None
+            self.update_label("任务已终止")
+
+    def _stop_thread(self, thread):
+        """强行终止线程"""
+        if not thread.is_alive():
+            return
+        exc = ctypes.py_object(SystemExit)
+        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(thread.ident), exc)
+        if res == 0:
+            raise ValueError("线程不存在")
+        elif res > 1:
+            ctypes.pythonapi.PyThreadState_SetAsyncExc(thread.ident, None)
+            raise SystemError("线程终止失败")
+
+    def update_label(self, text):
+        self.label.config(text=text)
 
     def process_queue(self):
         try:
             while True:
                 # 从队列中获取并执行操作
                 task = gui_queue.get_nowait()
+                self.running_event.set()
                 task()
+                self.running_event.clear()
         except queue.Empty:
             pass
         # 定期检查队列
@@ -1588,7 +1651,6 @@ class LoopTestWindow(tk.Toplevel):
 
         tk.Button(edit_window, text="取消", command=edit_window.destroy).grid(row=2, column=0, pady=10)
         tk.Button(edit_window, text="保存", command=save_edit_changes, bg="#169bd5", fg="white").grid(row=2, column=1, pady=10)
-
 
 class LoginPasswordWindow(tk.Toplevel):
     def __init__(self, master=None):

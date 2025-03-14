@@ -1,0 +1,390 @@
+﻿09:53:18.097 Info[P 14776 T 129 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227094132
+TrainTime(S):0.015
+CapFovTime(S):36.880
+AlgCalTime(S):705.475
+AlgRunTime(S):705.475
+10:27:58.749 Info[P 14776 T 181 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227100351
+TrainTime(S):0.062
+CapFovTime(S):66.504
+AlgCalTime(S):1446.759
+AlgRunTime(S):1446.759
+11:09:54.369 Info[P 14776 T 122 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227104828
+TrainTime(S):0.000
+CapFovTime(S):93.695
+AlgCalTime(S):1285.577
+AlgRunTime(S):1285.577
+11:21:13.663 Info[P 14776 T 292 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227112023
+TrainTime(S):0.394
+CapFovTime(S):35.245
+AlgCalTime(S):49.688
+AlgRunTime(S):49.688
+11:22:17.645 Info[P 14776 T 268 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227112127
+TrainTime(S):0.000
+CapFovTime(S):34.227
+AlgCalTime(S):48.847
+AlgRunTime(S):48.847
+11:23:23.388 Info[P 14776 T 99 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227112232
+TrainTime(S):0.000
+CapFovTime(S):38.043
+AlgCalTime(S):50.294
+AlgRunTime(S):50.294
+11:24:28.422 Info[P 14776 T 263 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227112340
+TrainTime(S):0.000
+CapFovTime(S):35.380
+AlgCalTime(S):47.702
+AlgRunTime(S):47.702
+11:25:31.891 Info[P 14776 T 168 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227112443
+TrainTime(S):0.000
+CapFovTime(S):34.086
+AlgCalTime(S):47.335
+AlgRunTime(S):47.335
+11:26:36.421 Info[P 14776 T 277 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227112544
+TrainTime(S):0.015
+CapFovTime(S):38.618
+AlgCalTime(S):50.810
+AlgRunTime(S):50.810
+11:27:38.986 Info[P 14776 T 262 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227112651
+TrainTime(S):0.000
+CapFovTime(S):34.628
+AlgCalTime(S):47.398
+AlgRunTime(S):47.398
+11:28:37.837 Info[P 14776 T 190 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227112749
+TrainTime(S):0.000
+CapFovTime(S):33.396
+AlgCalTime(S):47.276
+AlgRunTime(S):47.276
+11:29:43.424 Info[P 14776 T 306 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227112851
+TrainTime(S):0.000
+CapFovTime(S):37.269
+AlgCalTime(S):51.253
+AlgRunTime(S):51.253
+11:30:49.456 Info[P 14776 T 261 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227113001
+TrainTime(S):0.000
+CapFovTime(S):34.660
+AlgCalTime(S):46.893
+AlgRunTime(S):46.893
+11:31:53.769 Info[P 14776 T 287 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227113105
+TrainTime(S):0.000
+CapFovTime(S):34.315
+AlgCalTime(S):46.854
+AlgRunTime(S):46.854
+11:32:58.325 Info[P 14776 T 300 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227113207
+TrainTime(S):0.000
+CapFovTime(S):37.750
+AlgCalTime(S):49.820
+AlgRunTime(S):49.820
+11:33:56.219 Info[P 14776 T 255 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227113305
+TrainTime(S):0.000
+CapFovTime(S):35.985
+AlgCalTime(S):49.520
+AlgRunTime(S):49.520
+11:34:50.896 Info[P 14776 T 153 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227113402
+TrainTime(S):0.000
+CapFovTime(S):33.203
+AlgCalTime(S):47.274
+AlgRunTime(S):47.274
+11:35:45.937 Info[P 14776 T 302 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227113458
+TrainTime(S):0.000
+CapFovTime(S):35.934
+AlgCalTime(S):46.595
+AlgRunTime(S):46.595
+11:36:47.603 Info[P 14776 T 191 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227113553
+TrainTime(S):0.000
+CapFovTime(S):35.576
+AlgCalTime(S):53.728
+AlgRunTime(S):53.728
+11:37:14.670 Info[P 14776 T 305 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227113655
+TrainTime(S):0.000
+CapFovTime(S):18.706
+AlgCalTime(S):18.878
+AlgRunTime(S):18.878
+11:38:23.334 Info[P 14776 T 248 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227113732
+TrainTime(S):0.000
+CapFovTime(S):37.837
+AlgCalTime(S):50.420
+AlgRunTime(S):50.420
+11:39:22.926 Info[P 14776 T 308 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227113830
+TrainTime(S):0.000
+CapFovTime(S):36.095
+AlgCalTime(S):51.308
+AlgRunTime(S):51.308
+11:40:21.321 Info[P 14776 T 259 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227113930
+TrainTime(S):0.000
+CapFovTime(S):34.313
+AlgCalTime(S):50.632
+AlgRunTime(S):50.632
+11:41:23.230 Info[P 14776 T 288 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227114028
+TrainTime(S):0.000
+CapFovTime(S):38.740
+AlgCalTime(S):53.667
+AlgRunTime(S):53.667
+11:42:19.951 Info[P 14776 T 273 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227114130
+TrainTime(S):0.000
+CapFovTime(S):34.098
+AlgCalTime(S):48.874
+AlgRunTime(S):48.874
+11:43:18.722 Info[P 14776 T 275 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227114226
+TrainTime(S):0.000
+CapFovTime(S):34.792
+AlgCalTime(S):51.478
+AlgRunTime(S):51.478
+11:44:18.430 Info[P 14776 T 245 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227114325
+TrainTime(S):0.000
+CapFovTime(S):37.712
+AlgCalTime(S):51.850
+AlgRunTime(S):51.850
+11:45:16.158 Info[P 14776 T 284 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227114425
+TrainTime(S):0.000
+CapFovTime(S):35.049
+AlgCalTime(S):49.589
+AlgRunTime(S):49.589
+11:46:13.960 Info[P 14776 T 275 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227114523
+TrainTime(S):0.000
+CapFovTime(S):35.038
+AlgCalTime(S):50.097
+AlgRunTime(S):50.097
+11:47:14.978 Info[P 14776 T 284 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227114621
+TrainTime(S):0.000
+CapFovTime(S):37.659
+AlgCalTime(S):52.179
+AlgRunTime(S):52.179
+11:48:13.702 Info[P 14776 T 307 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227114722
+TrainTime(S):0.000
+CapFovTime(S):36.037
+AlgCalTime(S):50.597
+AlgRunTime(S):50.597
+11:49:11.260 Info[P 14776 T 308 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227114820
+TrainTime(S):0.015
+CapFovTime(S):34.524
+AlgCalTime(S):50.178
+AlgRunTime(S):50.178
+11:50:40.955 Info[P 14776 T 273 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227114948
+TrainTime(S):0.000
+CapFovTime(S):38.140
+AlgCalTime(S):51.287
+AlgRunTime(S):51.287
+11:51:52.777 Info[P 14776 T 288 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227115102
+TrainTime(S):0.000
+CapFovTime(S):34.547
+AlgCalTime(S):49.478
+AlgRunTime(S):49.478
+11:53:03.656 Info[P 14776 T 284 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227115213
+TrainTime(S):0.000
+CapFovTime(S):34.030
+AlgCalTime(S):49.581
+AlgRunTime(S):49.581
+11:54:19.184 Info[P 14776 T 145 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227115325
+TrainTime(S):0.000
+CapFovTime(S):38.230
+AlgCalTime(S):53.295
+AlgRunTime(S):53.295
+11:55:30.714 Info[P 14776 T 324 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227115440
+TrainTime(S):0.000
+CapFovTime(S):34.396
+AlgCalTime(S):49.594
+AlgRunTime(S):49.594
+11:56:41.842 Info[P 14776 T 290 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227115550
+TrainTime(S):0.000
+CapFovTime(S):34.939
+AlgCalTime(S):50.310
+AlgRunTime(S):50.310
+11:57:56.939 Info[P 14776 T 133 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227115702
+TrainTime(S):0.000
+CapFovTime(S):38.699
+AlgCalTime(S):53.906
+AlgRunTime(S):53.906
+11:59:07.687 Info[P 14776 T 256 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227115816
+TrainTime(S):0.000
+CapFovTime(S):34.786
+AlgCalTime(S):49.994
+AlgRunTime(S):49.994
+12:00:05.232 Info[P 14776 T 246 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227115914
+TrainTime(S):0.000
+CapFovTime(S):34.919
+AlgCalTime(S):49.465
+AlgRunTime(S):49.465
+12:01:07.223 Info[P 14776 T 281 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227120012
+TrainTime(S):0.000
+CapFovTime(S):38.708
+AlgCalTime(S):53.502
+AlgRunTime(S):53.502
+12:02:05.952 Info[P 14776 T 308 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227120114
+TrainTime(S):0.000
+CapFovTime(S):36.059
+AlgCalTime(S):50.150
+AlgRunTime(S):50.150
+12:03:03.848 Info[P 14776 T 243 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227120213
+TrainTime(S):0.000
+CapFovTime(S):34.290
+AlgCalTime(S):49.540
+AlgRunTime(S):49.540
+12:04:04.599 Info[P 14776 T 256 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227120311
+TrainTime(S):0.015
+CapFovTime(S):36.919
+AlgCalTime(S):52.705
+AlgRunTime(S):52.705
+12:05:00.478 Info[P 14776 T 279 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227120411
+TrainTime(S):0.000
+CapFovTime(S):34.560
+AlgCalTime(S):48.720
+AlgRunTime(S):48.720
+12:05:58.717 Info[P 14776 T 276 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227120507
+TrainTime(S):0.000
+CapFovTime(S):34.351
+AlgCalTime(S):50.653
+AlgRunTime(S):50.653
+12:06:59.833 Info[P 14776 T 314 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227120605
+TrainTime(S):0.000
+CapFovTime(S):38.063
+AlgCalTime(S):53.266
+AlgRunTime(S):53.266
+12:07:56.929 Info[P 14776 T 274 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227120707
+TrainTime(S):0.000
+CapFovTime(S):35.784
+AlgCalTime(S):49.007
+AlgRunTime(S):49.007
+12:09:14.126 Info[P 14776 T 133 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227120804
+TrainTime(S):0.000
+CapFovTime(S):53.882
+AlgCalTime(S):69.164
+AlgRunTime(S):69.164
+12:10:15.487 Info[P 14776 T 244 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227120921
+TrainTime(S):0.000
+CapFovTime(S):38.145
+AlgCalTime(S):52.847
+AlgRunTime(S):52.847
+12:11:12.493 Info[P 14776 T 91 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227121022
+TrainTime(S):0.000
+CapFovTime(S):33.891
+AlgCalTime(S):49.761
+AlgRunTime(S):49.761
+12:12:09.355 Info[P 14776 T 320 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227121119
+TrainTime(S):0.000
+CapFovTime(S):34.868
+AlgCalTime(S):48.796
+AlgRunTime(S):48.796
+12:13:09.163 Info[P 14776 T 244 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227121216
+TrainTime(S):0.000
+CapFovTime(S):40.652
+AlgCalTime(S):52.376
+AlgRunTime(S):52.376
+12:14:21.257 Info[P 14776 T 265 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227121316
+TrainTime(S):0.000
+CapFovTime(S):49.870
+AlgCalTime(S):64.140
+AlgRunTime(S):64.140
+12:15:20.099 Info[P 14776 T 279 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227121429
+TrainTime(S):0.000
+CapFovTime(S):34.909
+AlgCalTime(S):50.165
+AlgRunTime(S):50.165
+12:16:19.948 Info[P 14776 T 283 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227121527
+TrainTime(S):0.000
+CapFovTime(S):38.474
+AlgCalTime(S):51.771
+AlgRunTime(S):51.771
+12:17:18.681 Info[P 14776 T 273 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227121627
+TrainTime(S):0.000
+CapFovTime(S):35.855
+AlgCalTime(S):50.629
+AlgRunTime(S):50.629
+12:18:27.313 Info[P 14776 T 277 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227121725
+TrainTime(S):0.000
+CapFovTime(S):47.952
+AlgCalTime(S):61.115
+AlgRunTime(S):61.115
+12:19:26.697 Info[P 14776 T 280 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227121834
+TrainTime(S):0.000
+CapFovTime(S):38.341
+AlgCalTime(S):51.564
+AlgRunTime(S):51.564
+12:20:37.604 Info[P 14776 T 324 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227121933
+TrainTime(S):0.000
+CapFovTime(S):47.886
+AlgCalTime(S):63.004
+AlgRunTime(S):63.004
+12:21:33.059 Info[P 14776 T 307 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227122044
+TrainTime(S):0.000
+CapFovTime(S):34.888
+AlgCalTime(S):47.906
+AlgRunTime(S):47.906
+12:22:49.807 Info[P 14776 T 290 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227122139
+TrainTime(S):0.000
+CapFovTime(S):57.242
+AlgCalTime(S):69.656
+AlgRunTime(S):69.656
+12:23:47.641 Info[P 14776 T 244 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227122256
+TrainTime(S):0.000
+CapFovTime(S):36.108
+AlgCalTime(S):50.024
+AlgRunTime(S):50.024
+12:24:43.082 Info[P 14776 T 288 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227122354
+TrainTime(S):0.000
+CapFovTime(S):35.353
+AlgCalTime(S):47.816
+AlgRunTime(S):47.816
+12:25:42.913 Info[P 14776 T 271 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227122450
+TrainTime(S):0.000
+CapFovTime(S):40.149
+AlgCalTime(S):52.003
+AlgRunTime(S):52.003
+12:26:47.650 Info[P 14776 T 246 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227122549
+TrainTime(S):0.000
+CapFovTime(S):41.995
+AlgCalTime(S):57.064
+AlgRunTime(S):57.064
+12:27:45.200 Info[P 14776 T 91 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227122655
+TrainTime(S):0.000
+CapFovTime(S):34.612
+AlgCalTime(S):48.905
+AlgRunTime(S):48.905
+12:28:49.244 Info[P 14776 T 264 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227122752
+TrainTime(S):0.000
+CapFovTime(S):43.596
+AlgCalTime(S):56.259
+AlgRunTime(S):56.259
+12:30:01.537 Info[P 14776 T 289 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227122855
+TrainTime(S):0.000
+CapFovTime(S):34.869
+AlgCalTime(S):65.203
+AlgRunTime(S):65.203
+12:31:49.026 Info[P 14776 T 313 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227123058
+TrainTime(S):0.000
+CapFovTime(S):35.327
+AlgCalTime(S):49.949
+AlgRunTime(S):49.949
+12:33:10.951 Info[P 14776 T 288 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227123205
+TrainTime(S):0.000
+CapFovTime(S):52.760
+AlgCalTime(S):65.171
+AlgRunTime(S):65.171
+12:34:08.432 Info[P 14776 T 85 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227123317
+TrainTime(S):0.000
+CapFovTime(S):34.856
+AlgCalTime(S):50.025
+AlgRunTime(S):50.025
+12:35:24.102 Info[P 14776 T 257 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227123417
+TrainTime(S):0.000
+CapFovTime(S):50.075
+AlgCalTime(S):65.441
+AlgRunTime(S):65.441
+12:36:24.767 Info[P 14776 T 286 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227123530
+TrainTime(S):0.000
+CapFovTime(S):38.872
+AlgCalTime(S):52.974
+AlgRunTime(S):52.974
+12:37:21.540 Info[P 14776 T 317 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227123632
+TrainTime(S):0.000
+CapFovTime(S):37.773
+AlgCalTime(S):48.555
+AlgRunTime(S):48.555
+12:37:57.283 Info[P 14776 T 285 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227123730
+TrainTime(S):0.001
+CapFovTime(S):26.421
+AlgCalTime(S):26.514
+AlgRunTime(S):26.514
+13:17:55.253 Info[P 11388 T 131 CL_InspectMainFlow->BoardInspect(0:0)]	PCBID:20250227131750
+TrainTime(S):0.419
+CapFovTime(S):3.763
+AlgCalTime(S):4.157
+AlgRunTime(S):4.157

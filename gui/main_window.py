@@ -1,7 +1,11 @@
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QApplication, QLabel, QLineEdit, QFileDialog, QScrollArea, QStyle
-from PyQt5.QtGui import QIcon
+import os
+import subprocess
+import sys
+
 from PyQt5.QtCore import QSettings, QSize, Qt, QTimer
-import sys, os, subprocess
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QApplication, QLabel, QLineEdit, QFileDialog, QScrollArea, QStyle
+
 import config
 from gui.create_script_window import CreateScriptWindow
 

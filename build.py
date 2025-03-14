@@ -1,6 +1,7 @@
-import re
 import os
+import re
 import shutil
+
 import pyautogui
 
 try:

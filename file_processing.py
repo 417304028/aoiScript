@@ -1,13 +1,15 @@
-import time
-import openpyxl
-from openpyxl.drawing.image import Image
-from openpyxl.chart import PieChart, Reference
-import tkinter as tk
-from tkinter import filedialog, messagebox
-from pathlib import Path
-import pandas as pd
-import utils
 import threading
+import time
+import tkinter as tk
+from pathlib import Path
+from tkinter import filedialog, messagebox
+
+import openpyxl
+import pandas as pd
+from openpyxl.drawing.image import Image
+
+import utils
+
 
 class FileProcessingApp:
     def __init__(self, master):

@@ -1,27 +1,28 @@
 import datetime
-import difflib
-import random
 import sys
-from tkinter import filedialog
-sys.coinit_flags = 2
+import psutil
+import pyautogui
+import config
+import win32gui
+import win32api
+import win32process
+import win32con
+# sys.coinit_flags = 2
 import shutil
 import subprocess
 import zipfile
 import tkinter as tk
 from tkinter import messagebox
-import cv2
-import numpy as np
-import psutil
-import utils, config
+from scripts import kfzy
+import utils
 from loguru import logger
-import pyautogui
 import os, time
-from PIL import Image as PILImage
-import win32gui, win32con
-import threading
+import paddleocr.tools
+import paddleocr
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QMessageBox
+
 
 def build_script_controller():
-    utils.setup_logger()
     # 检测D:\\work\\aoi_output目录是否存在并清空其内部所有文件
     output_dir = r"D:\work\aoi_output"
 
@@ -66,6 +67,7 @@ def build_script_controller():
     command = [
         "pyinstaller", "--onedir", "--clean", "--noconsole",
         # "pyinstaller", "--onedir", "--console",
+        "--additional-hooks-dir=hooks",
         "--add-data", "images;images",
         "--add-data", "aoi_config;aoi_config",
         "--add-data", "rv_config;rv_config",
@@ -75,8 +77,10 @@ def build_script_controller():
         "--hidden-import=paddle",
         "--hidden-import=paddle.fluid.core",
         "--hidden-import=paddleocr",
-        "--hidden-import=paddleocr.tools",
-        "--hidden-import=paddleocr.tools.infer",
+        # 为解决运行exe报错 KeyError: 'paddleocr.tools' ，移除了以下两行隐藏导入，
+        # 因为 paddleocr.tools 及其子模块已通过 hooks 自动收集
+        # "--hidden-import=paddleocr.tools",
+        # "--hidden-import=paddleocr.tools.infer",
         "--hidden-import=shapely",
         "--hidden-import=pyclipper",
         "--hidden-import=numpy",
@@ -89,11 +93,12 @@ def build_script_controller():
         "--hidden-import=imgaug",
         "--hidden-import=albumentations",
         "--hidden-import=docx",
+        # "--runtime-hook=hooks/hook-paddleocr.py",  # 在运行时修复 tools 模块的导入问题
         "--distpath", "D:\\work\\aoi_output",
         "--workpath", "D:\\work\\build",
         "script_controller.py",
         "--noconfirm",
-        "--debug=all"
+        # "--debug=all"
     ]
 
     subprocess.run(command, check=True)
@@ -127,7 +132,7 @@ def build_script_controller():
 
     # 五分钟内不停传输 直到复制完成
     start_time = time.time()
-    while time.time() - start_time < 300:
+    while time.time() - start_time < 600:
         logger.info("开始尝试传输文件至215")
         try:
             shutil.copy(zip_filename, target_zip_path)
@@ -137,7 +142,7 @@ def build_script_controller():
             logger.error(f"无法复制zip文件到目标路径 {target_zip_path}: {e}")
             time.sleep(3)  # 等待3秒后重试
 
-    if time.time() - start_time >= 300:
+    if time.time() - start_time >= 600:
         logger.error("五分钟内未能成功发送文件")
     root = tk.Tk()
     # root.withdraw()  # 隐藏主窗口

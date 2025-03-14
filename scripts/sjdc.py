@@ -2,11 +2,14 @@
 import datetime
 import os
 import shutil
-from loguru import logger
-import utils
-import config
-import pyautogui
 import time
+
+import pyautogui
+from loguru import logger
+
+import config
+import utils
+
 
 @utils.screenshot_error_to_excel()
 def sjdc_001_01():

@@ -1,13 +1,12 @@
 import datetime
 import os
 import shutil
-from loguru import logger
-import psutil
-import pyperclip
-import utils
 import time
 import pyautogui
+import pyperclip
+from loguru import logger
 import config
+import utils
 
 pyautogui.FAILSAFE = False
 # @utils.screenshot_error_to_excel()
@@ -68,6 +67,7 @@ def jbgn_001_04():
         pyautogui.press("enter")
         pyautogui.write(directory)
         time.sleep(0.5)
+        pyautogui.press("enter")
         utils.click_by_png(config.SELECT_FOLDER)
         utils.click_by_png(config.OFFSET_LEFT_1,tolerance=0.98, type="left")
         time.sleep(2)
@@ -78,19 +78,43 @@ def jbgn_001_04():
             program_count += utils.count_symbol_on_region(symbol, object_of_reference=config.OPEN_PROGRAM_REMOVE, direction="left")
         if program_count == 0:
             raise Exception("未发现任何程式")
-        # 计算D:\EYAOI\JOB内，包含.fov文件夹（要包含.txt文件和.bmp文件）的文件夹个数
+        # 计算 D:\EYAOI\JOB 内符合 job 结构要求的文件夹个数
+        # 要求：job 由 .fov、.tjb/.mjb、.pnf 组成，其中：
+        # - .fov 文件夹中必须包含至少一个 .txt 文件和一个 .bmp 文件；
+        # - 必须存在一个以 .tjb 或 .mjb 结尾的项，其中 .tjb 为文件，.mjb 为文件夹（只需其中之一即可）；
+        # - 必须存在一个以 .pnf 结尾的文件夹。
         folder_count = 0
         for folder_name in os.listdir(directory):
             folder_path = os.path.join(directory, folder_name)
             if os.path.isdir(folder_path):
-                # 查找以 .fov 结尾的文件夹
-                fov_folders = [f for f in os.listdir(folder_path) if f.endswith('.fov') and os.path.isdir(os.path.join(folder_path, f))]
-                for fov_folder in fov_folders:
-                    fov_folder_path = os.path.join(folder_path, fov_folder)
-                    # 检查 .fov 文件夹中是否包含 .txt 和 .bmp 文件
-                    if any(file.endswith('.txt') for file in os.listdir(fov_folder_path)) and any(file.endswith('.bmp') for file in os.listdir(fov_folder_path)):
-                        folder_count += 1
-                        break  # 找到一个符合条件的 .fov 文件夹即可，不需要继续检查其他 .fov 文件夹
+                has_valid_fov = False
+                has_tjb_or_mjb = False
+                has_pnf = False
+
+                # 检查 .fov 文件夹及其内容
+                for subfolder in os.listdir(folder_path):
+                    subfolder_path = os.path.join(folder_path, subfolder)
+                    if os.path.isdir(subfolder_path) and subfolder.endswith('.fov'):
+                        files = os.listdir(subfolder_path)
+                        if any(file.endswith('.txt') for file in files) and any(file.endswith('.bmp') for file in files):
+                            has_valid_fov = True
+                            break
+
+                # 检查 .tjb 文件或 .mjb 文件夹
+                for subfolder in os.listdir(folder_path):
+                    subfolder_path = os.path.join(folder_path, subfolder)
+                    if (os.path.isfile(subfolder_path) and subfolder.endswith('.tjb')) or (os.path.isdir(subfolder_path) and subfolder.endswith('.mjb')):
+                        has_tjb_or_mjb = True
+                        break
+
+                # 检查 .pnf 文件夹
+                for subfolder in os.listdir(folder_path):
+                    if os.path.isdir(os.path.join(folder_path, subfolder)) and subfolder.endswith('.pnf'):
+                        has_pnf = True
+                        break
+
+                if has_valid_fov and has_tjb_or_mjb and has_pnf:
+                    folder_count += 1
         # 如果program_count小于13，比较数量是否相同
         if program_count < 13 and program_count != folder_count:
             logger.warning(f"未能显示目录下所有程式，识别到的程式数量: {program_count}，文件夹内程式数量: {folder_count}")
@@ -112,7 +136,7 @@ def jbgn_001_04():
             time.sleep(3)
             if utils.search_symbol(config.OPEN_PROGRAM_TOPIC):
                 raise Exception("关闭打开程式弹窗失败")
-            utils.close_aoi()
+            utils.initialize_aoi()
         elif i == 1:
             # 5、重复步骤1-3，点击【是】按钮
             utils.click_by_png(config.YES)
@@ -128,7 +152,7 @@ def jbgn_001_04():
                 raise Exception("点击是后，疑似未进入整版视图界面")
             time.sleep(3)
             utils.caton_or_flashback("AOI.exe")
-            utils.close_aoi()        
+            utils.initialize_aoi()        
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_05():
@@ -145,6 +169,7 @@ def jbgn_001_05():
     pyautogui.press("enter")
     pyautogui.write(directory)
     time.sleep(0.5)
+    pyautogui.press("enter")
     utils.click_by_png(config.SELECT_FOLDER)
     utils.click_by_png(config.OFFSET_LEFT_1,tolerance=0.98, type="left")
     time.sleep(2)
@@ -155,19 +180,43 @@ def jbgn_001_05():
         program_count += utils.count_symbol_on_region(symbol, object_of_reference=config.OPEN_PROGRAM_REMOVE, direction="left")
     if program_count == 0:
         raise Exception("未发现任何程式")
-    # 计算D:\EYAOI\JOB内，包含.fov文件夹（要包含.txt文件和.bmp文件）的文件夹个数
+    # 计算 D:\EYAOI\JOB 内符合 job 结构要求的文件夹个数
+    # 要求：job 由 .fov、.tjb/.mjb、.pnf 组成，其中：
+    # - .fov 文件夹中必须包含至少一个 .txt 文件和一个 .bmp 文件；
+    # - 必须存在一个以 .tjb 或 .mjb 结尾的项，其中 .tjb 为文件，.mjb 为文件夹（只需其中之一即可）；
+    # - 必须存在一个以 .pnf 结尾的文件夹。
     folder_count = 0
     for folder_name in os.listdir(directory):
         folder_path = os.path.join(directory, folder_name)
         if os.path.isdir(folder_path):
-            # 查找以 .fov 结尾的文件夹
-            fov_folders = [f for f in os.listdir(folder_path) if f.endswith('.fov') and os.path.isdir(os.path.join(folder_path, f))]
-            for fov_folder in fov_folders:
-                fov_folder_path = os.path.join(folder_path, fov_folder)
-                # 检查 .fov 文件夹中是否包含 .txt 和 .bmp 文件
-                if any(file.endswith('.txt') for file in os.listdir(fov_folder_path)) and any(file.endswith('.bmp') for file in os.listdir(fov_folder_path)):
-                    folder_count += 1
-                    break  # 找到一个符合条件的 .fov 文件夹即可，不需要继续检查其他 .fov 文件夹
+            has_valid_fov = False
+            has_tjb_or_mjb = False
+            has_pnf = False
+
+            # 检查 .fov 文件夹及其内容
+            for subfolder in os.listdir(folder_path):
+                subfolder_path = os.path.join(folder_path, subfolder)
+                if os.path.isdir(subfolder_path) and subfolder.endswith('.fov'):
+                    files = os.listdir(subfolder_path)
+                    if any(file.endswith('.txt') for file in files) and any(file.endswith('.bmp') for file in files):
+                        has_valid_fov = True
+                        break
+
+            # 检查 .tjb 文件或 .mjb 文件夹
+            for subfolder in os.listdir(folder_path):
+                subfolder_path = os.path.join(folder_path, subfolder)
+                if (os.path.isfile(subfolder_path) and subfolder.endswith('.tjb')) or (os.path.isdir(subfolder_path) and subfolder.endswith('.mjb')):
+                    has_tjb_or_mjb = True
+                    break
+
+            # 检查 .pnf 文件夹
+            for subfolder in os.listdir(folder_path):
+                if os.path.isdir(os.path.join(folder_path, subfolder)) and subfolder.endswith('.pnf'):
+                    has_pnf = True
+                    break
+
+            if has_valid_fov and has_tjb_or_mjb and has_pnf:
+                folder_count += 1
 
     # 如果program_count小于13，比较数量是否相同
     if program_count < 13 and program_count != folder_count:
@@ -194,7 +243,7 @@ def jbgn_001_05():
         raise Exception("打开程式后还存在打开程式弹窗")
     utils.search_symbol_erroring(config.AOI_TOPIC, 3)
     utils.caton_or_flashback("AOI.exe")
-    utils.close_aoi()  
+    utils.initialize_aoi()  
 
 @utils.screenshot_error_to_excel()  
 def jbgn_001_06():
@@ -211,7 +260,9 @@ def jbgn_001_06():
     pyautogui.press("enter")
     pyautogui.write(directory)
     time.sleep(0.5)
-    utils.click_by_png(config.SELECT_FOLDER)
+    pyautogui.press("enter")
+    if utils.search_symbol(config.SELECT_FOLDER,timeout=2):
+        utils.click_by_png(config.SELECT_FOLDER)
     utils.click_by_png(config.OFFSET_LEFT_1,tolerance=0.98, type="left")
     time.sleep(2)
     symbols = [config.OPEN_PROGRAM_PLUS, config.OPEN_PROGRAM_CURSOR]
@@ -220,19 +271,43 @@ def jbgn_001_06():
         program_count += utils.count_symbol_on_region(symbol, object_of_reference=config.OPEN_PROGRAM_REMOVE, direction="left")
     if program_count == 0:
         raise Exception("左侧程式列表未发现任何程式")
-    # 计算D:\EYAOI\JOB内，包含.fov文件夹（要包含.txt文件和.bmp文件）的文件夹个数
+    # 计算 D:\EYAOI\JOB 内符合 job 结构要求的文件夹个数
+    # 要求：job 由 .fov、.tjb/.mjb、.pnf 组成，其中：
+    # - .fov 文件夹中必须包含至少一个 .txt 文件和一个 .bmp 文件；
+    # - 必须存在一个以 .tjb 或 .mjb 结尾的项，其中 .tjb 为文件，.mjb 为文件夹（只需其中之一即可）；
+    # - 必须存在一个以 .pnf 结尾的文件夹。
     folder_count = 0
     for folder_name in os.listdir(directory):
         folder_path = os.path.join(directory, folder_name)
         if os.path.isdir(folder_path):
-            # 查找以 .fov 结尾的文件夹
-            fov_folders = [f for f in os.listdir(folder_path) if f.endswith('.fov') and os.path.isdir(os.path.join(folder_path, f))]
-            for fov_folder in fov_folders:
-                fov_folder_path = os.path.join(folder_path, fov_folder)
-                # 检查 .fov 文件夹中是否包含 .txt 和 .bmp 文件
-                if any(file.endswith('.txt') for file in os.listdir(fov_folder_path)) and any(file.endswith('.bmp') for file in os.listdir(fov_folder_path)):
-                    folder_count += 1
-                    break  # 找到一个符合条件的 .fov 文件夹即可，不需要继续检查其他 .fov 文件夹
+            has_valid_fov = False
+            has_tjb_or_mjb = False
+            has_pnf = False
+
+            # 检查 .fov 文件夹及其内容
+            for subfolder in os.listdir(folder_path):
+                subfolder_path = os.path.join(folder_path, subfolder)
+                if os.path.isdir(subfolder_path) and subfolder.endswith('.fov'):
+                    files = os.listdir(subfolder_path)
+                    if any(file.endswith('.txt') for file in files) and any(file.endswith('.bmp') for file in files):
+                        has_valid_fov = True
+                        break
+
+            # 检查 .tjb 文件或 .mjb 文件夹
+            for subfolder in os.listdir(folder_path):
+                subfolder_path = os.path.join(folder_path, subfolder)
+                if (os.path.isfile(subfolder_path) and subfolder.endswith('.tjb')) or (os.path.isdir(subfolder_path) and subfolder.endswith('.mjb')):
+                    has_tjb_or_mjb = True
+                    break
+
+            # 检查 .pnf 文件夹
+            for subfolder in os.listdir(folder_path):
+                if os.path.isdir(os.path.join(folder_path, subfolder)) and subfolder.endswith('.pnf'):
+                    has_pnf = True
+                    break
+
+            if has_valid_fov and has_tjb_or_mjb and has_pnf:
+                folder_count += 1
 
     # 如果program_count小于13，比较数量是否相同
     if program_count < 13 and program_count != folder_count:
@@ -278,7 +353,7 @@ def jbgn_001_06():
     if utils.search_symbol(config.OPEN_PROGRAM_TOPIC, 2):
         raise Exception("打开程式后还存在打开程式弹窗")
     utils.caton_or_flashback("AOI.exe")
-    utils.close_aoi()    
+    utils.initialize_aoi()    
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_07():
@@ -297,6 +372,7 @@ def jbgn_001_07():
     pyautogui.press("enter")
     pyautogui.write(directory)
     time.sleep(0.5)
+    pyautogui.press("enter")
     utils.click_by_png(config.SELECT_FOLDER)
     utils.click_by_png(config.OFFSET_LEFT_1,tolerance=0.98, type="left")
     time.sleep(2)
@@ -307,20 +383,44 @@ def jbgn_001_07():
         program_count += utils.count_symbol_on_region(symbol, object_of_reference=config.OPEN_PROGRAM_REMOVE, direction="left")
     if program_count == 0:
         raise Exception("未发现任何程式")
-    # 计算D:\EYAOI\JOB内，包含.fov文件夹（要包含.txt文件和.bmp文件）的文件夹个数
+    # 计算 D:\EYAOI\JOB 内符合 job 结构要求的文件夹个数
+    # 要求：job 由 .fov、.tjb/.mjb、.pnf 组成，其中：
+    # - .fov 文件夹中必须包含至少一个 .txt 文件和一个 .bmp 文件；
+    # - 必须存在一个以 .tjb 或 .mjb 结尾的项，其中 .tjb 为文件，.mjb 为文件夹（只需其中之一即可）；
+    # - 必须存在一个以 .pnf 结尾的文件夹。
     folder_count = 0
     for folder_name in os.listdir(directory):
         folder_path = os.path.join(directory, folder_name)
         if os.path.isdir(folder_path):
-            # 查找以 .fov 结尾的文件夹
-            fov_folders = [f for f in os.listdir(folder_path) if f.endswith('.fov') and os.path.isdir(os.path.join(folder_path, f))]
-            for fov_folder in fov_folders:
-                fov_folder_path = os.path.join(folder_path, fov_folder)
-                # 检查 .fov 文件夹中是否包含 .txt 和 .bmp 文件
-                if any(file.endswith('.txt') for file in os.listdir(fov_folder_path)) and any(file.endswith('.bmp') for file in os.listdir(fov_folder_path)):
-                    folder_count += 1
-                    break  # 找到一个符合条件的 .fov 文件夹即可，不需要继续检查其他 .fov 文件夹
-    # 如果program_count小于13，比较数量是否相同
+            has_valid_fov = False
+            has_tjb_or_mjb = False
+            has_pnf = False
+
+            # 检查 .fov 文件夹及其内容
+            for subfolder in os.listdir(folder_path):
+                subfolder_path = os.path.join(folder_path, subfolder)
+                if os.path.isdir(subfolder_path) and subfolder.endswith('.fov'):
+                    files = os.listdir(subfolder_path)
+                    if any(file.endswith('.txt') for file in files) and any(file.endswith('.bmp') for file in files):
+                        has_valid_fov = True
+                        break
+
+            # 检查 .tjb 文件或 .mjb 文件夹
+            for subfolder in os.listdir(folder_path):
+                subfolder_path = os.path.join(folder_path, subfolder)
+                if (os.path.isfile(subfolder_path) and subfolder.endswith('.tjb')) or (os.path.isdir(subfolder_path) and subfolder.endswith('.mjb')):
+                    has_tjb_or_mjb = True
+                    break
+
+            # 检查 .pnf 文件夹
+            for subfolder in os.listdir(folder_path):
+                if os.path.isdir(os.path.join(folder_path, subfolder)) and subfolder.endswith('.pnf'):
+                    has_pnf = True
+                    break
+
+            if has_valid_fov and has_tjb_or_mjb and has_pnf:
+                folder_count += 1
+
     if program_count < 13 and program_count != folder_count:
         logger.warning(f"未能显示目录下所有程式，识别到的程式数量: {program_count}，文件夹内程式数量: {folder_count}")
         raise Exception(f"未能显示目录下所有程式，识别到的程式数量: {program_count}，文件夹内程式数量: {folder_count}")
@@ -346,7 +446,7 @@ def jbgn_001_07():
     for symbol in symbols:
         if utils.search_symbol(symbol, 3, object_of_reference = config.OPEN_PROGRAM_REMOVE,direction="right",tolerance=0.7):
             raise Exception("移除程式失败")
-    utils.close_aoi()
+    utils.initialize_aoi()
 
 # @utils.screenshot_error_to_excel()
 # def jbgn_001_08():
@@ -437,7 +537,7 @@ def jbgn_001_07():
 
 
 
-#     utils.close_aoi()
+#     utils.initialize_aoi()
 
 # @utils.screenshot_error_to_excel()
 # def jbgn_001_09():
@@ -456,7 +556,7 @@ def jbgn_001_07():
 #     # utils.select_program(program_name)
 #     # 4、点击【是】按钮
 #     utils.click_by_png(config.YES)
-#     utils.close_aoi()
+#     utils.initialize_aoi()
 
 # @utils.screenshot_error_to_excel()
 # def jbgn_001_10():
@@ -500,7 +600,7 @@ def jbgn_001_07():
 #     utils.click_by_png(config.YES)
 #     while utils.search_symbol(config.PROGRAM_LOADING, 5):
 #         time.sleep(5)
-#     utils.close_aoi()
+#     utils.initialize_aoi()
 @utils.screenshot_error_to_excel()
 def jbgn_001_11():
     # 1、打开AOI软件，点击左上角【打开程式】按钮
@@ -528,7 +628,7 @@ def jbgn_001_11():
 
     if not recent_folder_found:
         raise Exception("在D:\\EYAOI\\JOB下未找到60秒内修改过的文件夹")
-    utils.close_aoi()
+    utils.initialize_aoi()
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_12():
@@ -556,7 +656,7 @@ def jbgn_001_12():
     else:
         # 删除该job
         shutil.rmtree(r"D:\EYAOI\JOB\save_test")
-    utils.close_aoi()
+    utils.initialize_aoi()
 # @utils.screenshot_error_to_excel()
 # def jbgn_001_13():
 #     # 1、点击左上角【运行】按钮
@@ -806,7 +906,7 @@ def jbgn_001_40():
     utils.is_checked((84,273),(96,285),True)
     utils.click_by_png(config.PLAY, 2)
     for _ in range (3):
-        time.sleep(5)
+        time.sleep(6)
         pyautogui.press("enter")
         time.sleep(5)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
@@ -816,7 +916,11 @@ def jbgn_001_40():
             break
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
-    utils.click_by_png(config.STOP)
+    if utils.search_symbol(config.QUESTION_MARK, 3, tolerance=0.75):
+        utils.click_by_png(config.CLOSE,timeout=3)
+    else:
+        if not utils.click_by_ocr("停止"):
+            raise Exception("未能识别到停止按钮")
     utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75, timeout=20)
     time.sleep(5)
     utils.click_by_png(config.TESTING_INTERFACE_ENTER_DETAIL_INTERFACE)
@@ -834,7 +938,7 @@ def jbgn_001_40():
         raise Exception("算法参数值发生变化")
     else:
         logger.info("算法参数值未发生变化")
-    utils.close_aoi()
+    utils.initialize_aoi()
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_41():
@@ -846,7 +950,7 @@ def jbgn_001_41():
     utils.is_checked((84,273),(96,285),True)
     utils.click_by_png(config.PLAY, 2)
     for _ in range (3):
-        time.sleep(5)
+        time.sleep(6)
         pyautogui.press("enter")
         time.sleep(5)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
@@ -856,7 +960,12 @@ def jbgn_001_41():
             break
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
-    utils.click_by_png(config.STOP)
+    if utils.search_symbol(config.QUESTION_MARK, 3, tolerance=0.75):
+        utils.click_by_png(config.CLOSE,timeout=3)
+    else:
+        if not utils.click_by_ocr("停止"):
+            raise Exception("未能识别到停止按钮")
+    
     utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75, timeout=20)
     time.sleep(5)
     utils.click_by_png(config.TESTING_INTERFACE_ENTER_DETAIL_INTERFACE)
@@ -883,7 +992,7 @@ def jbgn_001_41():
                     raise Exception("元件切换时间不在一秒以内")
         for _ in range(7):
             utils.scroll_down((200, 380), config.BOARD_COMPONENTS_REGION, "-100")
-    utils.close_aoi()
+    utils.initialize_aoi()
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_42():
@@ -895,7 +1004,7 @@ def jbgn_001_42():
     utils.is_checked((84,273),(96,285),True)
     utils.click_by_png(config.PLAY, 2)
     for _ in range (3):
-        time.sleep(5)
+        time.sleep(6)
         pyautogui.press("enter")
         time.sleep(5)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
@@ -905,7 +1014,11 @@ def jbgn_001_42():
             break
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
-    utils.click_by_png(config.STOP)
+    if utils.search_symbol(config.QUESTION_MARK, 3, tolerance=0.75):
+        utils.click_by_png(config.CLOSE,timeout=3)
+    else:
+        if not utils.click_by_ocr("停止"):
+            raise Exception("未能识别到停止按钮")
     utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75, timeout=20)
     time.sleep(5)
     utils.click_by_png(config.TESTING_INTERFACE_ENTER_DETAIL_INTERFACE)
@@ -934,7 +1047,7 @@ def jbgn_001_42():
         raise Exception("3D图未发生变化")
     else:
         logger.info("3D图发生变化")
-    utils.close_aoi()
+    utils.initialize_aoi()
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_43():
@@ -946,7 +1059,7 @@ def jbgn_001_43():
     utils.is_checked((84,273),(96,285),True)
     utils.click_by_png(config.PLAY, 2)
     for _ in range (3):
-        time.sleep(5)
+        time.sleep(6)
         pyautogui.press("enter")
         time.sleep(5)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
@@ -956,7 +1069,11 @@ def jbgn_001_43():
             break
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
-    utils.click_by_png(config.STOP)
+    if utils.search_symbol(config.QUESTION_MARK, 3, tolerance=0.75):
+        utils.click_by_png(config.CLOSE,timeout=3)
+    else:
+        if not utils.click_by_ocr("停止"):
+            raise Exception("未能识别到停止按钮")
     utils.search_symbol_erroring(config.TESTING_INTERFACE_STOP,tolerance=0.75, timeout=20)
     time.sleep(5)
     utils.click_by_png(config.TESTING_INTERFACE_ENTER_DETAIL_INTERFACE)
@@ -973,8 +1090,10 @@ def jbgn_001_43():
     utils.click_by_png(config.COMPONENT_3D_IMAGE)
     time.sleep(3)
     before_screenshot = pyautogui.screenshot(region=config.COMPONENT_OPERATION_REGION)
+    pyautogui.moveTo(100,100)
     utils.click_by_png(config.COMPONENT_3D_IMAGE)
     # 2、将算法的检测框拉大、缩小，点击【元件3D图】
+    time.sleep(3)
     utils.expand_choose_box()
     time.sleep(3)
     utils.click_by_png(config.COMPONENT_3D_IMAGE)
@@ -983,7 +1102,7 @@ def jbgn_001_43():
         raise Exception("3D图未发生变化")
     else:
         logger.info("3D图发生变化")
-    utils.close_aoi()
+    utils.initialize_aoi()
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_44():
@@ -995,16 +1114,20 @@ def jbgn_001_44():
     # 1、点击【运行】按钮，【运行】按钮置灰进入检测状态
     utils.click_by_png(config.PLAY, 2)
     for _ in range (3):
-        time.sleep(5)
+        time.sleep(6)
         pyautogui.press("enter")
         time.sleep(5)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
     # 2、点击【停止】按钮，查看UI界面在1秒内显示的状态
     time.sleep(10)
-    utils.click_by_png(config.STOP)
+    if utils.search_symbol(config.QUESTION_MARK, 3, tolerance=0.75):
+        utils.click_by_png(config.CLOSE,timeout=3)
+    else:
+        if not utils.click_by_ocr("停止"):
+            raise Exception("未能识别到停止按钮")
     if not utils.search_symbol(config.TESTING_INTERFACE_STOP,1,config.ALG_PARAM_REGION,tolerance=0.75):
         raise Exception("未识别到停止，疑似UI界面在1秒内未显示【停止】状态")
-    utils.close_aoi()
+    utils.initialize_aoi()
 
 # @utils.screenshot_error_to_excel()
 # def jbgn_001_45():
@@ -1037,7 +1160,7 @@ def jbgn_001_46():
     # 跑完后面才有数据
     utils.click_by_png(config.PLAY, 2)
     for _ in range (3):
-        time.sleep(5)
+        time.sleep(6)
         pyautogui.press("enter")
         time.sleep(5)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
@@ -1048,8 +1171,12 @@ def jbgn_001_46():
             break
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
-    time.sleep(25)
-    utils.click_by_png(config.STOP)
+    time.sleep(30)
+    if utils.search_symbol(config.QUESTION_MARK, 3, tolerance=0.75):
+        utils.click_by_png(config.CLOSE,timeout=3)
+    else:
+        if not utils.click_by_ocr("停止"):
+            raise Exception("未能识别到停止按钮")
     time.sleep(5)
     create_data_time = datetime.datetime.now()
     # 2、RV在【未复判】列表中双击准备复判的数据，然后点击【全部通过】--【确认】进行复判
@@ -1067,7 +1194,7 @@ def jbgn_001_46():
     try:
         if lane_point is not None:
             pyautogui.doubleClick(lane_point)
-            utils.scroll_down(lane_point, config.RV_PCB_LIST_REGION)
+            utils.scroll_down(lane_point, config.RV_PCB_LIST_REGION, wait_time=0.4)
             utils.click_by_png(config.RV_PCB_LIST_LANE, times=2, preference="bottom", tolerance=0.6)
             time.sleep(3)
             utils.click_by_png(config.RV_ALL_PASS, tolerance=0.7)
@@ -1190,6 +1317,7 @@ def jbgn_001_46():
         raise Exception(f"目录不存在: {data_export_path}")
 
     data_found = False
+    latest_file_time = None
     for root, dirs, files in os.walk(data_export_path):
         for file in files:
             file_path = os.path.join(root, file)
@@ -1199,11 +1327,17 @@ def jbgn_001_46():
                 logger.info(f"找到文件: {file_path}, 创建时间: {file_creation_time}")
                 data_found = True
                 break
+            if latest_file_time is None or file_creation_time > latest_file_time:
+                latest_file_time = file_creation_time
 
     if not data_found:
-        raise Exception(f"在{create_data_time}前后五分钟内未找到数据生成")
+        if latest_file_time:
+            time_since_last_file = (create_data_time - latest_file_time).total_seconds() / 60
+            raise Exception(f"在{create_data_time}前后五分钟内未找到数据生成，最近一条数据生成是在{abs(time_since_last_file):.2f}分钟前")
+        else:
+            raise Exception(f"在{create_data_time}前后五分钟内未找到数据生成，且没有找到任何数据")
 
-    utils.close_aoi()
+    utils.initialize_aoi()
 @utils.screenshot_error_to_excel()
 def jbgn_001_47():
     utils.check_and_launch_aoi()
@@ -1218,7 +1352,7 @@ def jbgn_001_47():
     # 跑完后面才有数据
     utils.click_by_png(config.PLAY, 2)
     for _ in range (3):
-        time.sleep(5)
+        time.sleep(6)
         pyautogui.press("enter")
         time.sleep(5)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
@@ -1237,7 +1371,11 @@ def jbgn_001_47():
             break
         if time.time() - start_time > 60:
             raise Exception("超过1分钟未能识别到dv界面")
-    utils.click_by_png(config.STOP)
+    if utils.search_symbol(config.QUESTION_MARK, 3, tolerance=0.75):
+        utils.click_by_png(config.CLOSE,timeout=3)
+    else:
+        if not utils.click_by_ocr("停止"):
+            raise Exception("未能识别到停止按钮")
     utils.click_by_ocr("全部通过")
     utils.click_by_ocr("确认完成")
     time.sleep(2)
@@ -1310,7 +1448,12 @@ def jbgn_001_47():
     total_iterations = 0
     black_ratio_2d_count = 0
     black_ratio_3d_count = 0
+    start_time = time.time()
     while True:
+        if time.time() - start_time > 300:
+            logger.error("检测循环超过五分钟，强制退出")
+            break
+
         black_2d_ratio = utils.get_color_ratio_in_region(config.PCB_2D_IMAGE_REGION, (0,0,0))
         black_3d_ratio = utils.get_color_ratio_in_region(config.PCB_3D_IMAGE_REGION, (0,0,0))
         if black_2d_ratio > 0.8:
@@ -1340,6 +1483,7 @@ def jbgn_001_47():
         raise Exception(f"目录不存在: {data_export_path}")
 
     data_found = False
+    latest_file_time = None
     for root, dirs, files in os.walk(data_export_path):
         for file in files:
             file_path = os.path.join(root, file)
@@ -1349,11 +1493,17 @@ def jbgn_001_47():
                 logger.info(f"找到文件: {file_path}, 创建时间: {file_creation_time}")
                 data_found = True
                 break
+            if latest_file_time is None or file_creation_time > latest_file_time:
+                latest_file_time = file_creation_time
 
     if not data_found:
-        raise Exception(f"在{create_data_time}前后五分钟内未找到数据生成")
+        if latest_file_time:
+            time_since_last_file = (create_data_time - latest_file_time).total_seconds() / 60
+            raise Exception(f"在{create_data_time}前后五分钟内未找到数据生成，最近一条数据生成是在{abs(time_since_last_file):.2f}分钟前")
+        else:
+            raise Exception(f"在{create_data_time}前后五分钟内未找到数据生成，且没有找到任何数据")
 
-    utils.close_aoi()
+    utils.initialize_aoi()
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_48():
@@ -1369,7 +1519,7 @@ def jbgn_001_48():
     # 跑完后面才有数据
     utils.click_by_png(config.PLAY, 2)
     for _ in range (3):
-        time.sleep(5)
+        time.sleep(6)
         pyautogui.press("enter")
         time.sleep(5)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
@@ -1380,8 +1530,12 @@ def jbgn_001_48():
             break
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
-    time.sleep(25)
-    utils.click_by_png(config.STOP)
+    time.sleep(30)
+    if utils.search_symbol(config.QUESTION_MARK, 3, tolerance=0.75):
+        utils.click_by_png(config.CLOSE,timeout=3)
+    else:
+        if not utils.click_by_ocr("停止"):
+            raise Exception("未能识别到停止按钮")
     time.sleep(5)
     create_data_time = datetime.datetime.now()
     # 2、在SPC点击【程序视图】--【1小时】--【查询】，在搜索结果中选择相应的数据， 点击【PCB视图】
@@ -1487,6 +1641,7 @@ def jbgn_001_48():
         raise Exception(f"目录不存在: {data_export_path}")
 
     data_found = False
+    latest_file_time = None
     for root, dirs, files in os.walk(data_export_path):
         for file in files:
             file_path = os.path.join(root, file)
@@ -1496,11 +1651,17 @@ def jbgn_001_48():
                 logger.info(f"找到文件: {file_path}, 创建时间: {file_creation_time}")
                 data_found = True
                 break
+            if latest_file_time is None or file_creation_time > latest_file_time:
+                latest_file_time = file_creation_time
 
     if not data_found:
-        raise Exception(f"在{create_data_time}前后五分钟内未找到数据生成")
+        if latest_file_time:
+            time_since_last_file = (create_data_time - latest_file_time).total_seconds() / 60
+            raise Exception(f"在{create_data_time}前后五分钟内未找到数据生成，最近一条数据生成是在{abs(time_since_last_file):.2f}分钟前")
+        else:
+            raise Exception(f"在{create_data_time}前后五分钟内未找到数据生成，且没有找到任何数据")
 
-    utils.close_aoi()
+    utils.initialize_aoi()
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_49():
@@ -1544,8 +1705,12 @@ def jbgn_001_49():
             break
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
-    time.sleep(25)
-    utils.click_by_png(config.STOP)
+    time.sleep(30)
+    if utils.search_symbol(config.QUESTION_MARK, 3, tolerance=0.75):
+        utils.click_by_png(config.CLOSE,timeout=3)
+    else:
+        if not utils.click_by_ocr("停止"):
+            raise Exception("未能识别到停止按钮")
     time.sleep(5)
     # 2、在RV检查所有元件的标准图
     utils.check_and_launch_rv()
@@ -1570,7 +1735,7 @@ def jbgn_001_49():
             break
         if time.time() - start_time > 300:
             logger.success("切换元件切换了超过五分钟，应该都有标准图")
-    utils.close_aoi()
+    utils.initialize_aoi()
 
 # @utils.screenshot_error_to_excel()
 # def jbgn_001_50():
@@ -1634,7 +1799,7 @@ def jbgn_001_53():
         raise Exception("在D:\EYAOI\BIN\Debug下有生成新文件，但未生成.dat文件")
     else:
         logger.info(f"生成的.dat文件: {new_dat_files}")
-    utils.close_aoi()
+    utils.initialize_aoi()
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_54():
@@ -1656,6 +1821,7 @@ def jbgn_001_54():
         time.sleep(2)
         pyautogui.press("enter")
         time.sleep(2)
+    utils.minimize_service_process_manager()
     if not utils.search_symbol(config.TESTING_INTERFACE_INFORMATION,timeout=30,tolerance=0.8):
         raise Exception("未检测到测试板界面的特定标识，疑似能未进入测试板界面")
     start_time = time.time()
@@ -1664,8 +1830,12 @@ def jbgn_001_54():
             break
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
-    time.sleep(25)
-    utils.click_by_png(config.STOP)
+    time.sleep(30)
+    if utils.search_symbol(config.QUESTION_MARK, 3, tolerance=0.75):
+        utils.click_by_png(config.CLOSE,timeout=3)
+    else:
+        if not utils.click_by_ocr("停止"):
+            raise Exception("未能识别到停止按钮")
     time.sleep(5)
     # 检测debug_dir下是否有新的.insp文件生成
     if_create_data = utils.check_new_data(debug_dir,minutes=3)
@@ -1683,7 +1853,7 @@ def jbgn_001_54():
     else:
         logger.info(f"生成的.insp文件: {new_insp_files}")
 
-    utils.close_aoi()
+    utils.initialize_aoi()
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_55():
@@ -1698,6 +1868,7 @@ def jbgn_001_55():
         time.sleep(2)
         pyautogui.press("enter")
         time.sleep(2)
+    utils.minimize_service_process_manager()
     if not utils.search_symbol(config.TESTING_INTERFACE_INFORMATION,timeout=30,tolerance=0.8):
         raise Exception("未检测到测试板界面的特定标识，疑似能未进入测试板界面")
     time.sleep(3)
@@ -1723,7 +1894,7 @@ def jbgn_001_55():
     except ValueError:
         raise Exception("未找到任何.djb文件")
 
-    utils.close_aoi()
+    utils.initialize_aoi()
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_56():
@@ -1735,7 +1906,7 @@ def jbgn_001_56():
     utils.is_checked((84,273),(96,285),True)
     utils.click_by_png(config.PLAY, 2)
     for _ in range (3):
-        time.sleep(5)
+        time.sleep(6)
         pyautogui.press("enter")
         time.sleep(5)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
@@ -1766,7 +1937,7 @@ def jbgn_001_57():
     time.sleep(5)
     utils.click_by_png(config.PLAY, 2)
     for _ in range (3):
-        time.sleep(5)
+        time.sleep(6)
         pyautogui.press("enter")
         time.sleep(5)
     if not utils.search_symbol(config.TESTING_INTERFACE_INFORMATION,60,tolerance=0.8):
@@ -1775,7 +1946,11 @@ def jbgn_001_57():
         raise Exception("未检测到结果：忽略")
     while utils.search_symbol(config.QUESTION_MARK, 1):
         time.sleep(1)
-    utils.click_by_png(config.STOP)
+    if utils.search_symbol(config.QUESTION_MARK, 3, tolerance=0.75):
+        utils.click_by_png(config.CLOSE,timeout=3)
+    else:
+        if not utils.click_by_ocr("停止"):
+            raise Exception("未能识别到停止按钮")
     utils.check_and_launch_spc()
     utils.click_by_png(config.SPC_PROGRAM_VIEW)
     utils.click_by_png(config.SPC_ONE_HOUR)
@@ -1836,7 +2011,7 @@ def jbgn_001_58():
     utils.click_by_png(config.TEST_WINDOW)
     time.sleep(3)
     utils.caton_or_flashback("AOI.exe")
-    utils.close_aoi()
+    utils.initialize_aoi()
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_59():  
@@ -1846,7 +2021,7 @@ def jbgn_001_59():
     utils.click_by_png(config.TEST_COMPONENT)
     time.sleep(3)
     utils.caton_or_flashback("AOI.exe")
-    utils.close_aoi()
+    utils.initialize_aoi()
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_60():  
@@ -1856,7 +2031,7 @@ def jbgn_001_60():
     utils.click_by_png(config.TEST_GROUP)
     time.sleep(3)
     utils.caton_or_flashback("AOI.exe")
-    utils.close_aoi()
+    utils.initialize_aoi()
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_61():  
@@ -1866,7 +2041,7 @@ def jbgn_001_61():
     utils.click_by_png(config.TEST_BOARD)
     time.sleep(3)
     utils.caton_or_flashback("AOI.exe")
-    utils.close_aoi()
+    utils.initialize_aoi()
 
 @utils.screenshot_error_to_excel()
 def jbgn_001_62():  
@@ -1875,7 +2050,7 @@ def jbgn_001_62():
     utils.open_program(if_specific=True)
     utils.click_by_png(config.PLAY, 2)
     for _ in range (3):
-        time.sleep(5)
+        time.sleep(6)
         pyautogui.press("enter")
         time.sleep(5)
     utils.search_symbol_erroring(config.TESTING_INTERFACE_INFORMATION,100,tolerance=0.75)
@@ -1885,26 +2060,41 @@ def jbgn_001_62():
             break
         if time.time() - start_time > 300:
             raise Exception("循环单次时疑似超过五分钟")
-    time.sleep(25)
-    utils.click_by_png(config.STOP)
+    time.sleep(30)
+    if utils.search_symbol(config.QUESTION_MARK, 3, tolerance=0.75):
+        utils.click_by_png(config.CLOSE,timeout=3)
+    else:
+        if not utils.click_by_ocr("停止"):
+            raise Exception("未能识别到停止按钮")
     time.sleep(5)
     # 2.计算完成后--查看rv 
     utils.check_and_launch_rv()
     # 3.按快捷键进行复判--提交
-    if utils.search_symbol(config.RV_PCB_LIST_LANE, 3):
+    if utils.search_symbol(config.RV_PCB_LIST_LANE, 3, tolerance=0.7):
         pcb_list_before = pyautogui.screenshot(region=config.PCB_LIST_REGION)
         pcb_component_list_before = pyautogui.screenshot(region=config.PCB_COMPONENT_LIST_REGION)
         pyautogui.press('num0')
         time.sleep(5)
         pcb_component_list_after = pyautogui.screenshot(region=config.PCB_COMPONENT_LIST_REGION)
+        error_count = 0  # 初始化错误计数
         if pcb_component_list_before == pcb_component_list_after:
-            raise Exception("使用快捷键复判后pcb元件列表未发生变化")
+            logger.error("使用快捷键num0复判后pcb元件列表未发生变化，疑似快捷键无效")
+            error_count += 1  # 记录num0失败
+
         pyautogui.press("num1")
         time.sleep(10)
         pcb_list_after = pyautogui.screenshot(region=config.PCB_LIST_REGION)
         if pcb_list_before == pcb_list_after:
-            raise Exception("使用快捷键全部通过后pcb列表未发生变化")
+            logger.error("使用快捷键全部通过后pcb列表未发生变化，疑似快捷键无效")
+            error_count += 2  # 记录num1失败
+
+        if error_count == 1:
+            raise Exception("num0失败，num1成功")
+        elif error_count == 2:
+            raise Exception("num0失败，num1失败")
+        elif error_count == 0:
+            raise Exception("num0成功，num1成功")
     else:
         utils.check_new_data_in_rv(True)
-    utils.close_aoi()
+    utils.initialize_aoi()
 

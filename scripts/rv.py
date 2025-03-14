@@ -1,19 +1,22 @@
 import csv
-import glob
-import time
-import openpyxl
-from openpyxl.styles import Font
-import pyperclip
-import utils
-import config
-import re
-import os
 import datetime
+import glob
+import os
+import re
+import time
+
 import chardet
-import pyautogui
+import openpyxl
 import pandas as pd
-from pywinauto import Application, Desktop
+import pyautogui
+import pyperclip
 from loguru import logger
+from openpyxl.styles import Font
+from pywinauto import Application, Desktop
+
+import config
+import utils
+
 
 def front_rv_window():
     try:

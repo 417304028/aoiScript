@@ -1,9 +1,11 @@
 import random
-import utils
-import config
-import pyautogui
 import time
+
+import pyautogui
 from loguru import logger
+
+import config
+import utils
 
 
 # monkey test 遍历程式以及元件，测试aoi会不会出问题

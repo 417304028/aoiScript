@@ -1,0 +1,1013 @@
+﻿09:41:32.009 Info[P 14776 T 129 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481332	PCBInspect_Mode:InLine
+09:41:32.149 Info[P 14776 T 123 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=硒磐微0909-66 AppVersion=V9.29N_20250226
+09:41:32.149 Info[P 14776 T 123 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+09:42:08.358 Info[P 14776 T 123 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 36.2
+09:53:09.081 Info[P 14776 T 140 CL_InspectThread->ࠆ(0:0)]	Thd_5:ThdS:9:41:32,CalS:9:41:32,CalE:9:53:09,Time: 696 / 696,CalWinTime:623,CompNum:427
+09:53:11.962 Info[P 14776 T 120 CL_InspectThread->ࠆ(0:0)]	Thd_2:ThdS:9:41:32,CalS:9:41:32,CalE:9:53:11,Time: 699 / 699,CalWinTime:622,CompNum:427
+09:53:13.910 Info[P 14776 T 159 CL_InspectThread->ࠆ(0:0)]	Thd_0:ThdS:9:41:32,CalS:9:41:32,CalE:9:53:13,Time: 701 / 701,CalWinTime:627,CompNum:428
+09:53:16.004 Info[P 14776 T 151 CL_InspectThread->ࠆ(0:0)]	Thd_1:ThdS:9:41:32,CalS:9:41:32,CalE:9:53:16,Time: 703 / 703,CalWinTime:624,CompNum:428
+09:53:16.296 Info[P 14776 T 111 CL_InspectThread->ࠆ(0:0)]	Thd_6:ThdS:9:41:32,CalS:9:41:32,CalE:9:53:16,Time: 704 / 704,CalWinTime:628,CompNum:427
+09:53:16.849 Info[P 14776 T 142 CL_InspectThread->ࠆ(0:0)]	Thd_3:ThdS:9:41:32,CalS:9:41:32,CalE:9:53:16,Time: 704 / 704,CalWinTime:630,CompNum:427
+09:53:17.490 Info[P 14776 T 117 CL_InspectThread->ࠆ(0:0)]	Thd_4:ThdS:9:41:32,CalS:9:41:32,CalE:9:53:17,Time: 705 / 705,CalWinTime:630,CompNum:427
+09:53:18.047 Info[P 14776 T 97 CL_InspectThread->ࠆ(0:0)]	Thd_7:ThdS:9:41:32,CalS:9:41:32,CalE:9:53:18,Time: 705 / 705,CalWinTime:631,CompNum:427
+09:53:18.097 Info[P 14776 T 129 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:9:41:32,BlobS:9:41:32,BlobE:9:41:32,CalThdS:9:41:32,StartCapMark:9:41:32,EndCapFov:9:42:09,InspE:9:53:18,TranBLOB 0.015, Total(BIn/ThdS): 706.088 / 705.963(3418)/,PCBCompNum:False,ACC:8,ThdNum:705963
+10:03:51.257 Info[P 14776 T 181 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481333	PCBInspect_Mode:InLine
+10:03:51.429 Info[P 14776 T 121 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=硒磐微0909-66 AppVersion=V9.29N_20250226
+10:03:51.429 Info[P 14776 T 121 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+10:04:57.259 Info[P 14776 T 121 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 65.8
+10:27:32.181 Info[P 14776 T 194 CL_InspectThread->ࠆ(0:0)]	Thd_2:ThdS:10:03:51,CalS:10:03:51,CalE:10:27:32,Time: 1420 / 1420,CalWinTime:1291,CompNum:427
+10:27:33.416 Info[P 14776 T 75 CL_InspectThread->ࠆ(0:0)]	Thd_6:ThdS:10:03:51,CalS:10:03:51,CalE:10:27:33,Time: 1421 / 1421,CalWinTime:1300,CompNum:427
+10:27:38.865 Info[P 14776 T 185 CL_InspectThread->ࠆ(0:0)]	Thd_1:ThdS:10:03:51,CalS:10:03:51,CalE:10:27:38,Time: 1427 / 1427,CalWinTime:1305,CompNum:428
+10:27:48.229 Info[P 14776 T 156 CL_InspectThread->ࠆ(0:0)]	Thd_5:ThdS:10:03:51,CalS:10:03:51,CalE:10:27:48,Time: 1436 / 1436,CalWinTime:1317,CompNum:427
+10:27:49.588 Info[P 14776 T 129 CL_InspectThread->ࠆ(0:0)]	Thd_3:ThdS:10:03:51,CalS:10:03:51,CalE:10:27:49,Time: 1438 / 1438,CalWinTime:1310,CompNum:427
+10:27:50.291 Info[P 14776 T 152 CL_InspectThread->ࠆ(0:0)]	Thd_7:ThdS:10:03:51,CalS:10:03:51,CalE:10:27:50,Time: 1438 / 1438,CalWinTime:1311,CompNum:427
+10:27:55.275 Info[P 14776 T 204 CL_InspectThread->ࠆ(0:0)]	Thd_0:ThdS:10:03:51,CalS:10:03:51,CalE:10:27:55,Time: 1443 / 1443,CalWinTime:1318,CompNum:428
+10:27:58.718 Info[P 14776 T 134 CL_InspectThread->ࠆ(0:0)]	Thd_4:ThdS:10:03:51,CalS:10:03:51,CalE:10:27:58,Time: 1447 / 1447,CalWinTime:1327,CompNum:427
+10:27:58.749 Info[P 14776 T 181 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:10:03:51,BlobS:10:03:51,BlobE:10:03:51,CalThdS:10:03:51,StartCapMark:10:03:51,EndCapFov:10:04:58,InspE:10:27:58,TranBLOB 0.062, Total(BIn/ThdS): 1447.492 / 1447.320(3418)/,PCBCompNum:False,ACC:8,ThdNum:1447320
+10:48:28.111 Info[P 14776 T 122 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481334	PCBInspect_Mode:InLine
+10:48:28.346 Info[P 14776 T 160 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=硒磐微0909-66 AppVersion=V9.29N_20250226
+10:48:28.346 Info[P 14776 T 160 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+10:50:19.991 Info[P 14776 T 160 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 111.6
+11:09:04.590 Info[P 14776 T 87 CL_InspectThread->ࠆ(0:0)]	Thd_2:ThdS:10:48:28,CalS:10:48:28,CalE:11:09:04,Time: 1236 / 1236,CalWinTime:1142,CompNum:427
+11:09:23.617 Info[P 14776 T 153 CL_InspectThread->ࠆ(0:0)]	Thd_6:ThdS:10:48:28,CalS:10:48:28,CalE:11:09:23,Time: 1255 / 1255,CalWinTime:1159,CompNum:427
+11:09:39.092 Info[P 14776 T 99 CL_InspectThread->ࠆ(0:0)]	Thd_1:ThdS:10:48:28,CalS:10:48:28,CalE:11:09:39,Time: 1270 / 1270,CalWinTime:1177,CompNum:428
+11:09:42.270 Info[P 14776 T 86 CL_InspectThread->ࠆ(0:0)]	Thd_3:ThdS:10:48:28,CalS:10:48:28,CalE:11:09:42,Time: 1273 / 1273,CalWinTime:1178,CompNum:427
+11:09:45.411 Info[P 14776 T 144 CL_InspectThread->ࠆ(0:0)]	Thd_5:ThdS:10:48:28,CalS:10:48:28,CalE:11:09:45,Time: 1277 / 1277,CalWinTime:1182,CompNum:427
+11:09:45.864 Info[P 14776 T 133 CL_InspectThread->ࠆ(0:0)]	Thd_0:ThdS:10:48:28,CalS:10:48:28,CalE:11:09:45,Time: 1277 / 1277,CalWinTime:1187,CompNum:428
+11:09:47.238 Info[P 14776 T 85 CL_InspectThread->ࠆ(0:0)]	Thd_7:ThdS:10:48:28,CalS:10:48:28,CalE:11:09:47,Time: 1278 / 1278,CalWinTime:1185,CompNum:427
+11:09:54.228 Info[P 14776 T 191 CL_InspectThread->ࠆ(0:0)]	Thd_4:ThdS:10:48:28,CalS:10:48:28,CalE:11:09:54,Time: 1285 / 1285,CalWinTime:1184,CompNum:427
+11:09:54.369 Info[P 14776 T 122 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:10:48:28,BlobS:10:48:28,BlobE:10:48:28,CalThdS:10:48:28,StartCapMark:10:48:28,EndCapFov:10:50:02,InspE:11:09:54,TranBLOB 0.000, Total(BIn/ThdS): 1286.257 / 1286.101(3418)/,PCBCompNum:False,ACC:8,ThdNum:1286101
+11:20:22.796 Info[P 14776 T 292 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481335	PCBInspect_Mode:InLine
+11:20:23.427 Info[P 14776 T 281 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:20:23.427 Info[P 14776 T 281 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:20:59.923 Info[P 14776 T 281 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 36.5
+11:21:02.360 Info[P 14776 T 122 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:20:23,CalS:11:20:23,CalE:11:21:02,Time: 38 / 38,CalWinTime:30,CompNum:87
+11:21:03.469 Info[P 14776 T 171 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:20:23,CalS:11:20:23,CalE:11:21:03,Time: 40 / 40,CalWinTime:32,CompNum:87
+11:21:05.844 Info[P 14776 T 291 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:20:23,CalS:11:20:23,CalE:11:21:05,Time: 42 / 42,CalWinTime:33,CompNum:87
+11:21:09.194 Info[P 14776 T 288 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:20:23,CalS:11:20:23,CalE:11:21:09,Time: 45 / 45,CalWinTime:39,CompNum:86
+11:21:12.444 Info[P 14776 T 287 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:20:23,CalS:11:20:23,CalE:11:21:12,Time: 49 / 49,CalWinTime:42,CompNum:86
+11:21:13.147 Info[P 14776 T 74 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:20:23,CalS:11:20:23,CalE:11:21:13,Time: 49 / 49,CalWinTime:41,CompNum:87
+11:21:13.178 Info[P 14776 T 289 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:20:23,CalS:11:20:23,CalE:11:21:13,Time: 49 / 49,CalWinTime:40,CompNum:87
+11:21:13.491 Info[P 14776 T 290 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:20:23,CalS:11:20:23,CalE:11:21:13,Time: 50 / 50,CalWinTime:41,CompNum:87
+11:21:13.663 Info[P 14776 T 292 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:20:22,BlobS:11:20:22,BlobE:11:20:23,CalThdS:11:20:23,StartCapMark:11:20:23,EndCapFov:11:20:59,InspE:11:21:13,TranBLOB 0.394, Total(BIn/ThdS): 50.866 / 50.235(696)/,PCBCompNum:False,ACC:8,ThdNum:50235
+11:21:27.969 Info[P 14776 T 268 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481336	PCBInspect_Mode:InLine
+11:21:27.984 Info[P 14776 T 303 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:21:27.984 Info[P 14776 T 303 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:22:03.932 Info[P 14776 T 303 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 35.9
+11:22:07.767 Info[P 14776 T 273 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:21:27,CalS:11:21:27,CalE:11:22:07,Time: 39 / 39,CalWinTime:31,CompNum:87
+11:22:08.048 Info[P 14776 T 274 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:21:27,CalS:11:21:27,CalE:11:22:08,Time: 40 / 40,CalWinTime:32,CompNum:87
+11:22:11.469 Info[P 14776 T 271 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:21:27,CalS:11:21:27,CalE:11:22:11,Time: 43 / 43,CalWinTime:28,CompNum:87
+11:22:11.672 Info[P 14776 T 275 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:21:27,CalS:11:21:27,CalE:11:22:11,Time: 43 / 43,CalWinTime:35,CompNum:87
+11:22:13.204 Info[P 14776 T 279 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:21:27,CalS:11:21:27,CalE:11:22:13,Time: 45 / 45,CalWinTime:37,CompNum:86
+11:22:14.860 Info[P 14776 T 278 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:21:27,CalS:11:21:27,CalE:11:22:14,Time: 46 / 46,CalWinTime:39,CompNum:86
+11:22:16.766 Info[P 14776 T 272 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:21:27,CalS:11:21:27,CalE:11:22:16,Time: 48 / 48,CalWinTime:39,CompNum:87
+11:22:17.516 Info[P 14776 T 276 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:21:27,CalS:11:21:27,CalE:11:22:17,Time: 49 / 49,CalWinTime:38,CompNum:87
+11:22:17.645 Info[P 14776 T 268 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:21:27,BlobS:11:21:27,BlobE:11:21:27,CalThdS:11:21:27,StartCapMark:11:21:28,EndCapFov:11:22:03,InspE:11:22:17,TranBLOB 0.000, Total(BIn/ThdS): 49.676 / 49.661(696)/,PCBCompNum:False,ACC:8,ThdNum:49661
+11:22:32.294 Info[P 14776 T 99 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481337	PCBInspect_Mode:InLine
+11:22:32.309 Info[P 14776 T 288 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:22:32.309 Info[P 14776 T 288 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:23:11.356 Info[P 14776 T 288 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 39
+11:23:12.075 Info[P 14776 T 280 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:22:32,CalS:11:22:32,CalE:11:23:12,Time: 39 / 39,CalWinTime:31,CompNum:87
+11:23:12.466 Info[P 14776 T 283 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:22:32,CalS:11:22:32,CalE:11:23:12,Time: 40 / 40,CalWinTime:31,CompNum:87
+11:23:12.981 Info[P 14776 T 270 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:22:32,CalS:11:22:32,CalE:11:23:12,Time: 40 / 40,CalWinTime:32,CompNum:87
+11:23:20.420 Info[P 14776 T 268 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:22:32,CalS:11:22:32,CalE:11:23:20,Time: 48 / 48,CalWinTime:32,CompNum:87
+11:23:20.498 Info[P 14776 T 292 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:22:32,CalS:11:22:32,CalE:11:23:20,Time: 48 / 48,CalWinTime:32,CompNum:87
+11:23:20.498 Info[P 14776 T 287 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:22:32,CalS:11:22:32,CalE:11:23:20,Time: 48 / 48,CalWinTime:38,CompNum:87
+11:23:20.498 Info[P 14776 T 282 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:22:32,CalS:11:22:32,CalE:11:23:20,Time: 48 / 48,CalWinTime:35,CompNum:87
+11:23:23.357 Info[P 14776 T 281 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:22:32,CalS:11:22:32,CalE:11:23:23,Time: 51 / 51,CalWinTime:42,CompNum:87
+11:23:23.388 Info[P 14776 T 99 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:22:32,BlobS:11:22:32,BlobE:11:22:32,CalThdS:11:22:32,StartCapMark:11:22:33,EndCapFov:11:23:11,InspE:11:23:23,TranBLOB 0.000, Total(BIn/ThdS): 51.094 / 51.079(696)/,PCBCompNum:False,ACC:8,ThdNum:51079
+11:23:40.009 Info[P 14776 T 263 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481338	PCBInspect_Mode:InLine
+11:23:40.024 Info[P 14776 T 87 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:23:40.024 Info[P 14776 T 87 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:24:16.317 Info[P 14776 T 87 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 36.3
+11:24:18.317 Info[P 14776 T 257 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:23:40,CalS:11:23:40,CalE:11:24:18,Time: 38 / 38,CalWinTime:29,CompNum:87
+11:24:20.735 Info[P 14776 T 266 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:23:40,CalS:11:23:40,CalE:11:24:20,Time: 40 / 40,CalWinTime:32,CompNum:87
+11:24:21.141 Info[P 14776 T 267 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:23:40,CalS:11:23:40,CalE:11:24:21,Time: 41 / 41,CalWinTime:32,CompNum:87
+11:24:21.813 Info[P 14776 T 269 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:23:40,CalS:11:23:40,CalE:11:24:21,Time: 41 / 41,CalWinTime:32,CompNum:87
+11:24:22.860 Info[P 14776 T 99 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:23:40,CalS:11:23:40,CalE:11:24:22,Time: 42 / 42,CalWinTime:34,CompNum:86
+11:24:26.266 Info[P 14776 T 291 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:23:40,CalS:11:23:40,CalE:11:24:26,Time: 46 / 46,CalWinTime:39,CompNum:86
+11:24:28.015 Info[P 14776 T 122 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:23:40,CalS:11:23:40,CalE:11:24:28,Time: 47 / 47,CalWinTime:38,CompNum:87
+11:24:28.281 Info[P 14776 T 133 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:23:40,CalS:11:23:40,CalE:11:24:28,Time: 48 / 48,CalWinTime:39,CompNum:87
+11:24:28.422 Info[P 14776 T 263 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:23:40,BlobS:11:23:40,BlobE:11:23:40,CalThdS:11:23:40,StartCapMark:11:23:40,EndCapFov:11:24:16,InspE:11:24:28,TranBLOB 0.000, Total(BIn/ThdS): 48.413 / 48.397(696)/,PCBCompNum:False,ACC:8,ThdNum:48397
+11:24:43.847 Info[P 14776 T 168 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481339	PCBInspect_Mode:InLine
+11:24:43.863 Info[P 14776 T 288 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:24:43.863 Info[P 14776 T 288 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:25:18.985 Info[P 14776 T 288 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 35.1
+11:25:22.714 Info[P 14776 T 289 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:24:43,CalS:11:24:43,CalE:11:25:22,Time: 38 / 38,CalWinTime:28,CompNum:87
+11:25:24.433 Info[P 14776 T 263 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:24:43,CalS:11:24:43,CalE:11:25:24,Time: 40 / 40,CalWinTime:32,CompNum:87
+11:25:25.011 Info[P 14776 T 264 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:24:43,CalS:11:24:43,CalE:11:25:25,Time: 41 / 41,CalWinTime:32,CompNum:87
+11:25:25.026 Info[P 14776 T 275 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:24:43,CalS:11:24:43,CalE:11:25:25,Time: 41 / 41,CalWinTime:32,CompNum:87
+11:25:26.948 Info[P 14776 T 290 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:24:43,CalS:11:24:43,CalE:11:25:26,Time: 43 / 43,CalWinTime:35,CompNum:86
+11:25:30.172 Info[P 14776 T 171 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:24:43,CalS:11:24:43,CalE:11:25:30,Time: 46 / 46,CalWinTime:38,CompNum:86
+11:25:31.688 Info[P 14776 T 74 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:24:43,CalS:11:24:43,CalE:11:25:31,Time: 47 / 47,CalWinTime:37,CompNum:87
+11:25:31.875 Info[P 14776 T 265 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:24:43,CalS:11:24:43,CalE:11:25:31,Time: 48 / 48,CalWinTime:39,CompNum:87
+11:25:31.891 Info[P 14776 T 168 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:24:43,BlobS:11:24:43,BlobE:11:24:43,CalThdS:11:24:43,StartCapMark:11:24:44,EndCapFov:11:25:18,InspE:11:25:31,TranBLOB 0.000, Total(BIn/ThdS): 48.043 / 48.043(696)/,PCBCompNum:False,ACC:8,ThdNum:48043
+11:25:44.901 Info[P 14776 T 277 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481340	PCBInspect_Mode:InLine
+11:25:44.916 Info[P 14776 T 324 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:25:44.916 Info[P 14776 T 324 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:26:24.120 Info[P 14776 T 324 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 39.2
+11:26:25.104 Info[P 14776 T 301 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:25:44,CalS:11:25:44,CalE:11:26:25,Time: 40 / 40,CalWinTime:31,CompNum:87
+11:26:26.604 Info[P 14776 T 306 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:25:44,CalS:11:25:44,CalE:11:26:26,Time: 41 / 41,CalWinTime:33,CompNum:87
+11:26:27.010 Info[P 14776 T 125 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:25:44,CalS:11:25:44,CalE:11:26:27,Time: 42 / 42,CalWinTime:32,CompNum:87
+11:26:33.765 Info[P 14776 T 327 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:25:44,CalS:11:25:44,CalE:11:26:33,Time: 48 / 48,CalWinTime:39,CompNum:87
+11:26:33.874 Info[P 14776 T 321 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:25:44,CalS:11:25:44,CalE:11:26:33,Time: 48 / 48,CalWinTime:35,CompNum:87
+11:26:33.890 Info[P 14776 T 168 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:25:44,CalS:11:25:44,CalE:11:26:33,Time: 48 / 48,CalWinTime:33,CompNum:87
+11:26:33.905 Info[P 14776 T 310 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:25:44,CalS:11:25:44,CalE:11:26:33,Time: 48 / 48,CalWinTime:34,CompNum:87
+11:26:36.390 Info[P 14776 T 318 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:25:44,CalS:11:25:44,CalE:11:26:36,Time: 51 / 51,CalWinTime:42,CompNum:87
+11:26:36.421 Info[P 14776 T 277 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:25:44,BlobS:11:25:44,BlobE:11:25:44,CalThdS:11:25:44,StartCapMark:11:25:45,EndCapFov:11:26:24,InspE:11:26:36,TranBLOB 0.015, Total(BIn/ThdS): 51.520 / 51.504(696)/,PCBCompNum:False,ACC:8,ThdNum:51504
+11:26:51.016 Info[P 14776 T 262 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481341	PCBInspect_Mode:InLine
+11:26:51.016 Info[P 14776 T 277 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:26:51.016 Info[P 14776 T 277 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:27:26.591 Info[P 14776 T 277 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 35.6
+11:27:28.263 Info[P 14776 T 257 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:26:51,CalS:11:26:51,CalE:11:27:28,Time: 37 / 37,CalWinTime:28,CompNum:87
+11:27:30.669 Info[P 14776 T 267 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:26:51,CalS:11:26:51,CalE:11:27:30,Time: 39 / 39,CalWinTime:31,CompNum:87
+11:27:31.091 Info[P 14776 T 266 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:26:51,CalS:11:26:51,CalE:11:27:31,Time: 40 / 40,CalWinTime:31,CompNum:87
+11:27:31.596 Info[P 14776 T 269 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:26:51,CalS:11:26:51,CalE:11:27:31,Time: 40 / 40,CalWinTime:32,CompNum:87
+11:27:33.065 Info[P 14776 T 287 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:26:51,CalS:11:26:51,CalE:11:27:33,Time: 42 / 42,CalWinTime:34,CompNum:86
+11:27:37.377 Info[P 14776 T 322 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:26:51,CalS:11:26:51,CalE:11:27:37,Time: 46 / 46,CalWinTime:38,CompNum:86
+11:27:38.330 Info[P 14776 T 122 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:26:51,CalS:11:26:51,CalE:11:27:38,Time: 47 / 47,CalWinTime:38,CompNum:87
+11:27:38.892 Info[P 14776 T 133 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:26:51,CalS:11:26:51,CalE:11:27:38,Time: 47 / 47,CalWinTime:39,CompNum:87
+11:27:38.986 Info[P 14776 T 262 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:26:51,BlobS:11:26:51,BlobE:11:26:51,CalThdS:11:26:51,StartCapMark:11:26:51,EndCapFov:11:27:26,InspE:11:27:38,TranBLOB 0.000, Total(BIn/ThdS): 47.970 / 47.970(696)/,PCBCompNum:False,ACC:8,ThdNum:47970
+11:27:49.773 Info[P 14776 T 190 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481342	PCBInspect_Mode:InLine
+11:27:49.789 Info[P 14776 T 263 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:27:49.789 Info[P 14776 T 263 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:28:24.191 Info[P 14776 T 263 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 34.4
+11:28:27.566 Info[P 14776 T 160 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:27:49,CalS:11:27:49,CalE:11:28:27,Time: 37 / 37,CalWinTime:29,CompNum:87
+11:28:28.457 Info[P 14776 T 85 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:27:49,CalS:11:27:49,CalE:11:28:28,Time: 38 / 38,CalWinTime:30,CompNum:87
+11:28:29.050 Info[P 14776 T 297 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:27:49,CalS:11:27:49,CalE:11:28:29,Time: 39 / 39,CalWinTime:30,CompNum:87
+11:28:29.644 Info[P 14776 T 320 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:27:49,CalS:11:27:49,CalE:11:28:29,Time: 39 / 39,CalWinTime:31,CompNum:87
+11:28:30.160 Info[P 14776 T 302 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:27:49,CalS:11:27:49,CalE:11:28:30,Time: 40 / 40,CalWinTime:32,CompNum:86
+11:28:34.821 Info[P 14776 T 273 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:27:49,CalS:11:27:49,CalE:11:28:34,Time: 45 / 45,CalWinTime:37,CompNum:86
+11:28:36.602 Info[P 14776 T 272 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:27:49,CalS:11:27:49,CalE:11:28:36,Time: 46 / 46,CalWinTime:38,CompNum:87
+11:28:37.680 Info[P 14776 T 279 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:27:49,CalS:11:27:49,CalE:11:28:37,Time: 47 / 47,CalWinTime:39,CompNum:87
+11:28:37.837 Info[P 14776 T 190 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:27:49,BlobS:11:27:49,BlobE:11:27:49,CalThdS:11:27:49,StartCapMark:11:27:50,EndCapFov:11:28:23,InspE:11:28:37,TranBLOB 0.000, Total(BIn/ThdS): 48.063 / 48.047(696)/,PCBCompNum:False,ACC:8,ThdNum:48047
+11:28:51.582 Info[P 14776 T 306 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481343	PCBInspect_Mode:InLine
+11:28:51.597 Info[P 14776 T 270 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:28:51.597 Info[P 14776 T 270 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:29:30.284 Info[P 14776 T 270 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 38.7
+11:29:31.909 Info[P 14776 T 275 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:28:51,CalS:11:28:51,CalE:11:29:31,Time: 40 / 40,CalWinTime:31,CompNum:87
+11:29:33.060 Info[P 14776 T 289 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:28:51,CalS:11:28:51,CalE:11:29:33,Time: 41 / 41,CalWinTime:33,CompNum:87
+11:29:33.888 Info[P 14776 T 264 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:28:51,CalS:11:28:51,CalE:11:29:33,Time: 42 / 42,CalWinTime:33,CompNum:87
+11:29:42.090 Info[P 14776 T 288 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:28:51,CalS:11:28:51,CalE:11:29:42,Time: 50 / 50,CalWinTime:41,CompNum:87
+11:29:42.090 Info[P 14776 T 87 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:28:51,CalS:11:28:51,CalE:11:29:42,Time: 50 / 50,CalWinTime:33,CompNum:87
+11:29:42.090 Info[P 14776 T 190 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:28:51,CalS:11:28:51,CalE:11:29:42,Time: 50 / 50,CalWinTime:33,CompNum:87
+11:29:42.137 Info[P 14776 T 304 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:28:51,CalS:11:28:51,CalE:11:29:42,Time: 50 / 50,CalWinTime:33,CompNum:87
+11:29:43.315 Info[P 14776 T 290 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:28:51,CalS:11:28:51,CalE:11:29:43,Time: 51 / 51,CalWinTime:43,CompNum:87
+11:29:43.424 Info[P 14776 T 306 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:28:51,BlobS:11:28:51,BlobE:11:28:51,CalThdS:11:28:51,StartCapMark:11:28:52,EndCapFov:11:29:29,InspE:11:29:43,TranBLOB 0.000, Total(BIn/ThdS): 51.842 / 51.826(696)/,PCBCompNum:False,ACC:8,ThdNum:51826
+11:30:01.616 Info[P 14776 T 261 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481344	PCBInspect_Mode:InLine
+11:30:01.632 Info[P 14776 T 86 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:30:01.632 Info[P 14776 T 86 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:30:37.723 Info[P 14776 T 86 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 36.1
+11:30:40.707 Info[P 14776 T 328 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:30:01,CalS:11:30:01,CalE:11:30:40,Time: 39 / 39,CalWinTime:30,CompNum:87
+11:30:40.988 Info[P 14776 T 167 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:30:01,CalS:11:30:01,CalE:11:30:40,Time: 39 / 39,CalWinTime:31,CompNum:87
+11:30:41.363 Info[P 14776 T 314 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:30:01,CalS:11:30:01,CalE:11:30:41,Time: 39 / 39,CalWinTime:31,CompNum:87
+11:30:43.551 Info[P 14776 T 326 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:30:01,CalS:11:30:01,CalE:11:30:43,Time: 41 / 41,CalWinTime:33,CompNum:87
+11:30:43.660 Info[P 14776 T 310 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:30:01,CalS:11:30:01,CalE:11:30:43,Time: 42 / 42,CalWinTime:34,CompNum:86
+11:30:46.941 Info[P 14776 T 321 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:30:01,CalS:11:30:01,CalE:11:30:46,Time: 45 / 45,CalWinTime:38,CompNum:86
+11:30:48.941 Info[P 14776 T 317 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:30:01,CalS:11:30:01,CalE:11:30:48,Time: 47 / 47,CalWinTime:39,CompNum:87
+11:30:49.378 Info[P 14776 T 168 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:30:01,CalS:11:30:01,CalE:11:30:49,Time: 47 / 47,CalWinTime:39,CompNum:87
+11:30:49.456 Info[P 14776 T 261 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:30:01,BlobS:11:30:01,BlobE:11:30:01,CalThdS:11:30:01,StartCapMark:11:30:02,EndCapFov:11:30:37,InspE:11:30:49,TranBLOB 0.000, Total(BIn/ThdS): 47.839 / 47.824(696)/,PCBCompNum:False,ACC:8,ThdNum:47824
+11:31:05.970 Info[P 14776 T 287 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481345	PCBInspect_Mode:InLine
+11:31:05.986 Info[P 14776 T 308 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:31:05.986 Info[P 14776 T 308 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:31:41.870 Info[P 14776 T 308 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 35.9
+11:31:43.495 Info[P 14776 T 245 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:31:05,CalS:11:31:05,CalE:11:31:43,Time: 37 / 37,CalWinTime:28,CompNum:87
+11:31:44.910 Info[P 14776 T 247 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:31:05,CalS:11:31:05,CalE:11:31:44,Time: 38 / 38,CalWinTime:30,CompNum:87
+11:31:44.988 Info[P 14776 T 246 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:31:05,CalS:11:31:05,CalE:11:31:44,Time: 39 / 39,CalWinTime:30,CompNum:87
+11:31:47.113 Info[P 14776 T 261 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:31:05,CalS:11:31:05,CalE:11:31:47,Time: 41 / 41,CalWinTime:32,CompNum:86
+11:31:48.363 Info[P 14776 T 249 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:31:05,CalS:11:31:05,CalE:11:31:48,Time: 42 / 42,CalWinTime:33,CompNum:87
+11:31:51.097 Info[P 14776 T 259 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:31:05,CalS:11:31:05,CalE:11:31:51,Time: 45 / 45,CalWinTime:37,CompNum:86
+11:31:52.894 Info[P 14776 T 256 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:31:05,CalS:11:31:05,CalE:11:31:52,Time: 46 / 46,CalWinTime:37,CompNum:87
+11:31:53.706 Info[P 14776 T 253 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:31:05,CalS:11:31:05,CalE:11:31:53,Time: 47 / 47,CalWinTime:39,CompNum:87
+11:31:53.769 Info[P 14776 T 287 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:31:05,BlobS:11:31:05,BlobE:11:31:05,CalThdS:11:31:05,StartCapMark:11:31:06,EndCapFov:11:31:41,InspE:11:31:53,TranBLOB 0.000, Total(BIn/ThdS): 47.798 / 47.798(696)/,PCBCompNum:False,ACC:8,ThdNum:47798
+11:32:07.624 Info[P 14776 T 300 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481346	PCBInspect_Mode:InLine
+11:32:07.640 Info[P 14776 T 313 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:32:07.640 Info[P 14776 T 313 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:32:45.974 Info[P 14776 T 284 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:32:07,CalS:11:32:07,CalE:11:32:45,Time: 38 / 38,CalWinTime:30,CompNum:87
+11:32:46.709 Info[P 14776 T 313 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 39.1
+11:32:47.583 Info[P 14776 T 324 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:32:07,CalS:11:32:07,CalE:11:32:47,Time: 39 / 39,CalWinTime:31,CompNum:87
+11:32:48.521 Info[P 14776 T 133 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:32:07,CalS:11:32:07,CalE:11:32:48,Time: 40 / 40,CalWinTime:33,CompNum:87
+11:32:57.419 Info[P 14776 T 288 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:32:07,CalS:11:32:07,CalE:11:32:57,Time: 49 / 49,CalWinTime:34,CompNum:87
+11:32:57.419 Info[P 14776 T 270 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:32:07,CalS:11:32:07,CalE:11:32:57,Time: 49 / 49,CalWinTime:33,CompNum:87
+11:32:57.419 Info[P 14776 T 301 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:32:07,CalS:11:32:07,CalE:11:32:57,Time: 49 / 49,CalWinTime:41,CompNum:87
+11:32:57.435 Info[P 14776 T 290 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:32:07,CalS:11:32:07,CalE:11:32:57,Time: 49 / 49,CalWinTime:33,CompNum:87
+11:32:58.247 Info[P 14776 T 327 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:32:07,CalS:11:32:07,CalE:11:32:58,Time: 50 / 50,CalWinTime:42,CompNum:87
+11:32:58.325 Info[P 14776 T 300 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:32:07,BlobS:11:32:07,BlobE:11:32:07,CalThdS:11:32:07,StartCapMark:11:32:08,EndCapFov:11:32:46,InspE:11:32:58,TranBLOB 0.000, Total(BIn/ThdS): 50.701 / 50.701(696)/,PCBCompNum:False,ACC:8,ThdNum:50701
+11:33:05.795 Info[P 14776 T 255 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481347	PCBInspect_Mode:InLine
+11:33:05.811 Info[P 14776 T 190 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:33:05.811 Info[P 14776 T 190 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:33:42.809 Info[P 14776 T 190 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 37
+11:33:46.496 Info[P 14776 T 291 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:33:05,CalS:11:33:05,CalE:11:33:46,Time: 40 / 40,CalWinTime:32,CompNum:87
+11:33:47.064 Info[P 14776 T 326 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:33:05,CalS:11:33:05,CalE:11:33:47,Time: 41 / 41,CalWinTime:31,CompNum:87
+11:33:47.330 Info[P 14776 T 285 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:33:05,CalS:11:33:05,CalE:11:33:47,Time: 41 / 41,CalWinTime:32,CompNum:87
+11:33:47.470 Info[P 14776 T 278 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:33:05,CalS:11:33:05,CalE:11:33:47,Time: 41 / 41,CalWinTime:32,CompNum:87
+11:33:49.173 Info[P 14776 T 87 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:33:05,CalS:11:33:05,CalE:11:33:49,Time: 43 / 43,CalWinTime:35,CompNum:86
+11:33:52.720 Info[P 14776 T 271 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:33:05,CalS:11:33:05,CalE:11:33:52,Time: 46 / 46,CalWinTime:38,CompNum:86
+11:33:54.438 Info[P 14776 T 280 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:33:05,CalS:11:33:05,CalE:11:33:54,Time: 48 / 48,CalWinTime:39,CompNum:87
+11:33:56.141 Info[P 14776 T 299 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:33:05,CalS:11:33:05,CalE:11:33:56,Time: 50 / 50,CalWinTime:41,CompNum:87
+11:33:56.219 Info[P 14776 T 255 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:33:05,BlobS:11:33:05,BlobE:11:33:05,CalThdS:11:33:05,StartCapMark:11:33:06,EndCapFov:11:33:42,InspE:11:33:56,TranBLOB 0.000, Total(BIn/ThdS): 50.423 / 50.408(696)/,PCBCompNum:False,ACC:8,ThdNum:50408
+11:34:02.851 Info[P 14776 T 153 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481348	PCBInspect_Mode:InLine
+11:34:02.867 Info[P 14776 T 244 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:34:02.867 Info[P 14776 T 244 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:34:37.269 Info[P 14776 T 244 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 34.4
+11:34:40.691 Info[P 14776 T 305 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:34:02,CalS:11:34:02,CalE:11:34:40,Time: 37 / 37,CalWinTime:29,CompNum:87
+11:34:41.334 Info[P 14776 T 255 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:34:02,CalS:11:34:02,CalE:11:34:41,Time: 38 / 38,CalWinTime:28,CompNum:87
+11:34:42.771 Info[P 14776 T 286 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:34:02,CalS:11:34:02,CalE:11:34:42,Time: 39 / 39,CalWinTime:31,CompNum:87
+11:34:43.693 Info[P 14776 T 282 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:34:02,CalS:11:34:02,CalE:11:34:43,Time: 40 / 40,CalWinTime:32,CompNum:87
+11:34:45.568 Info[P 14776 T 248 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:34:02,CalS:11:34:02,CalE:11:34:45,Time: 42 / 42,CalWinTime:34,CompNum:86
+11:34:47.541 Info[P 14776 T 254 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:34:02,CalS:11:34:02,CalE:11:34:47,Time: 44 / 44,CalWinTime:37,CompNum:86
+11:34:50.363 Info[P 14776 T 171 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:34:02,CalS:11:34:02,CalE:11:34:50,Time: 47 / 47,CalWinTime:39,CompNum:87
+11:34:50.753 Info[P 14776 T 262 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:34:02,CalS:11:34:02,CalE:11:34:50,Time: 47 / 47,CalWinTime:38,CompNum:87
+11:34:50.896 Info[P 14776 T 153 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:34:02,BlobS:11:34:02,BlobE:11:34:02,CalThdS:11:34:02,StartCapMark:11:34:03,EndCapFov:11:34:36,InspE:11:34:50,TranBLOB 0.000, Total(BIn/ThdS): 48.044 / 48.029(696)/,PCBCompNum:False,ACC:8,ThdNum:48029
+11:34:58.137 Info[P 14776 T 302 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481349	PCBInspect_Mode:InLine
+11:34:58.153 Info[P 14776 T 308 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:34:58.153 Info[P 14776 T 308 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:35:34.597 Info[P 14776 T 253 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:34:58,CalS:11:34:58,CalE:11:35:34,Time: 36 / 36,CalWinTime:26,CompNum:87
+11:35:35.011 Info[P 14776 T 256 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:34:58,CalS:11:34:58,CalE:11:35:35,Time: 36 / 36,CalWinTime:28,CompNum:87
+11:35:35.558 Info[P 14776 T 308 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 37.4
+11:35:37.151 Info[P 14776 T 249 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:34:58,CalS:11:34:58,CalE:11:35:37,Time: 38 / 38,CalWinTime:29,CompNum:87
+11:35:43.529 Info[P 14776 T 261 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:34:58,CalS:11:34:58,CalE:11:35:43,Time: 45 / 45,CalWinTime:36,CompNum:87
+11:35:43.545 Info[P 14776 T 247 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:34:58,CalS:11:34:58,CalE:11:35:43,Time: 45 / 45,CalWinTime:28,CompNum:87
+11:35:43.592 Info[P 14776 T 245 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:34:58,CalS:11:34:58,CalE:11:35:43,Time: 45 / 45,CalWinTime:27,CompNum:87
+11:35:43.623 Info[P 14776 T 246 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:34:58,CalS:11:34:58,CalE:11:35:43,Time: 45 / 45,CalWinTime:31,CompNum:87
+11:35:45.921 Info[P 14776 T 259 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:34:58,CalS:11:34:58,CalE:11:35:45,Time: 47 / 47,CalWinTime:39,CompNum:87
+11:35:45.937 Info[P 14776 T 302 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:34:58,BlobS:11:34:58,BlobE:11:34:58,CalThdS:11:34:58,StartCapMark:11:34:59,EndCapFov:11:35:35,InspE:11:35:45,TranBLOB 0.000, Total(BIn/ThdS): 47.799 / 47.784(696)/,PCBCompNum:False,ACC:8,ThdNum:47784
+11:35:53.065 Info[P 14776 T 191 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481350	PCBInspect_Mode:InLine
+11:35:53.096 Info[P 14776 T 133 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:35:53.096 Info[P 14776 T 133 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:36:29.749 Info[P 14776 T 133 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 36.7
+11:36:38.252 Info[P 14776 T 302 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:35:53,CalS:11:35:53,CalE:11:36:38,Time: 45 / 45,CalWinTime:35,CompNum:87
+11:36:38.424 Info[P 14776 T 243 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:35:53,CalS:11:35:53,CalE:11:36:38,Time: 45 / 45,CalWinTime:37,CompNum:87
+11:36:38.659 Info[P 14776 T 263 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:35:53,CalS:11:35:53,CalE:11:36:38,Time: 45 / 45,CalWinTime:37,CompNum:87
+11:36:40.604 Info[P 14776 T 274 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:35:53,CalS:11:35:53,CalE:11:36:40,Time: 47 / 47,CalWinTime:38,CompNum:87
+11:36:42.276 Info[P 14776 T 270 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:35:53,CalS:11:35:53,CalE:11:36:42,Time: 49 / 49,CalWinTime:41,CompNum:86
+11:36:43.823 Info[P 14776 T 288 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:35:53,CalS:11:35:53,CalE:11:36:43,Time: 50 / 50,CalWinTime:43,CompNum:86
+11:36:46.041 Info[P 14776 T 290 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:35:53,CalS:11:35:53,CalE:11:36:46,Time: 52 / 52,CalWinTime:42,CompNum:87
+11:36:47.510 Info[P 14776 T 300 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:35:53,CalS:11:35:53,CalE:11:36:47,Time: 54 / 54,CalWinTime:46,CompNum:87
+11:36:47.603 Info[P 14776 T 191 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:35:53,BlobS:11:35:53,BlobE:11:35:53,CalThdS:11:35:53,StartCapMark:11:35:53,EndCapFov:11:36:29,InspE:11:36:47,TranBLOB 0.000, Total(BIn/ThdS): 54.538 / 54.522(696)/,PCBCompNum:False,ACC:8,ThdNum:54522
+11:36:55.086 Info[P 14776 T 305 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481351	PCBInspect_Mode:InLine
+11:36:55.102 Info[P 14776 T 271 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:36:55.102 Info[P 14776 T 271 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:37:10.659 Info[P 14776 T 122 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:36:55,CalS:11:36:55,CalE:11:37:10,Time: 15 / 15,CalWinTime:9,CompNum:87
+11:37:10.841 Info[P 14776 T 291 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:36:55,CalS:11:36:55,CalE:11:37:10,Time: 15 / 15,CalWinTime:9,CompNum:87
+11:37:11.029 Info[P 14776 T 299 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:36:55,CalS:11:36:55,CalE:11:37:11,Time: 15 / 15,CalWinTime:11,CompNum:86
+11:37:11.060 Info[P 14776 T 280 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:36:55,CalS:11:36:55,CalE:11:37:11,Time: 15 / 15,CalWinTime:10,CompNum:86
+11:37:11.076 Info[P 14776 T 285 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:36:55,CalS:11:36:55,CalE:11:37:11,Time: 15 / 15,CalWinTime:10,CompNum:87
+11:37:11.123 Info[P 14776 T 271 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 16
+11:37:11.154 Info[P 14776 T 289 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:36:55,CalS:11:36:55,CalE:11:37:11,Time: 16 / 16,CalWinTime:9,CompNum:87
+11:37:11.232 Info[P 14776 T 191 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:36:55,CalS:11:36:55,CalE:11:37:11,Time: 16 / 16,CalWinTime:10,CompNum:87
+11:37:14.639 Info[P 14776 T 278 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:36:55,CalS:11:36:55,CalE:11:37:14,Time: 19 / 19,CalWinTime:12,CompNum:87
+11:37:14.670 Info[P 14776 T 305 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:36:55,BlobS:11:36:55,BlobE:11:36:55,CalThdS:11:36:55,StartCapMark:11:36:55,EndCapFov:11:37:14,InspE:11:37:14,TranBLOB 0.000, Total(BIn/ThdS): 19.584 / 19.568(696)/,PCBCompNum:False,ACC:8,ThdNum:19568
+11:37:32.185 Info[P 14776 T 248 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481352	PCBInspect_Mode:InLine
+11:37:32.201 Info[P 14776 T 270 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:37:32.201 Info[P 14776 T 270 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:38:11.032 Info[P 14776 T 270 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 38.8
+11:38:12.423 Info[P 14776 T 276 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:37:32,CalS:11:37:32,CalE:11:38:12,Time: 40 / 40,CalWinTime:33,CompNum:87
+11:38:13.688 Info[P 14776 T 244 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:37:32,CalS:11:37:32,CalE:11:38:13,Time: 41 / 41,CalWinTime:31,CompNum:87
+11:38:14.797 Info[P 14776 T 313 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:37:32,CalS:11:37:32,CalE:11:38:14,Time: 42 / 42,CalWinTime:32,CompNum:87
+11:38:21.068 Info[P 14776 T 294 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:37:32,CalS:11:37:32,CalE:11:38:21,Time: 48 / 48,CalWinTime:35,CompNum:87
+11:38:21.084 Info[P 14776 T 293 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:37:32,CalS:11:37:32,CalE:11:38:21,Time: 48 / 48,CalWinTime:35,CompNum:87
+11:38:21.100 Info[P 14776 T 305 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:37:32,CalS:11:37:32,CalE:11:38:21,Time: 48 / 48,CalWinTime:33,CompNum:87
+11:38:21.209 Info[P 14776 T 133 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:37:32,CalS:11:37:32,CalE:11:38:21,Time: 49 / 49,CalWinTime:41,CompNum:87
+11:38:23.303 Info[P 14776 T 324 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:37:32,CalS:11:37:32,CalE:11:38:23,Time: 51 / 51,CalWinTime:40,CompNum:87
+11:38:23.334 Info[P 14776 T 248 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:37:32,BlobS:11:37:32,BlobE:11:37:32,CalThdS:11:37:32,StartCapMark:11:37:32,EndCapFov:11:38:10,InspE:11:38:23,TranBLOB 0.000, Total(BIn/ThdS): 51.148 / 51.132(696)/,PCBCompNum:False,ACC:8,ThdNum:51132
+11:38:30.920 Info[P 14776 T 308 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481353	PCBInspect_Mode:InLine
+11:38:30.936 Info[P 14776 T 248 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:38:30.936 Info[P 14776 T 248 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:39:08.635 Info[P 14776 T 248 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 37.7
+11:39:11.657 Info[P 14776 T 295 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:38:30,CalS:11:38:30,CalE:11:39:11,Time: 40 / 40,CalWinTime:31,CompNum:87
+11:39:11.782 Info[P 14776 T 311 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:38:30,CalS:11:38:30,CalE:11:39:11,Time: 40 / 40,CalWinTime:31,CompNum:87
+11:39:13.578 Info[P 14776 T 307 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:38:30,CalS:11:38:30,CalE:11:39:13,Time: 42 / 42,CalWinTime:34,CompNum:87
+11:39:15.641 Info[P 14776 T 302 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:38:30,CalS:11:38:30,CalE:11:39:15,Time: 44 / 44,CalWinTime:35,CompNum:87
+11:39:16.391 Info[P 14776 T 300 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:38:30,CalS:11:38:30,CalE:11:39:16,Time: 45 / 45,CalWinTime:37,CompNum:86
+11:39:18.469 Info[P 14776 T 274 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:38:30,CalS:11:38:30,CalE:11:39:18,Time: 47 / 47,CalWinTime:40,CompNum:86
+11:39:19.453 Info[P 14776 T 263 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:38:30,CalS:11:38:30,CalE:11:39:19,Time: 48 / 48,CalWinTime:40,CompNum:87
+11:39:22.848 Info[P 14776 T 243 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:38:30,CalS:11:38:30,CalE:11:39:22,Time: 51 / 51,CalWinTime:43,CompNum:87
+11:39:22.926 Info[P 14776 T 308 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:38:30,BlobS:11:38:30,BlobE:11:38:30,CalThdS:11:38:30,StartCapMark:11:38:31,EndCapFov:11:39:07,InspE:11:39:22,TranBLOB 0.000, Total(BIn/ThdS): 52.006 / 51.990(696)/,PCBCompNum:False,ACC:8,ThdNum:51990
+11:39:30.088 Info[P 14776 T 259 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481354	PCBInspect_Mode:InLine
+11:39:30.104 Info[P 14776 T 308 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:39:30.104 Info[P 14776 T 308 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:40:05.361 Info[P 14776 T 308 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 35.3
+11:40:11.454 Info[P 14776 T 286 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:39:30,CalS:11:39:30,CalE:11:40:11,Time: 41 / 41,CalWinTime:32,CompNum:87
+11:40:11.517 Info[P 14776 T 327 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:39:30,CalS:11:39:30,CalE:11:40:11,Time: 41 / 41,CalWinTime:32,CompNum:87
+11:40:12.931 Info[P 14776 T 289 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:39:30,CalS:11:39:30,CalE:11:40:12,Time: 42 / 42,CalWinTime:33,CompNum:87
+11:40:13.243 Info[P 14776 T 284 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:39:30,CalS:11:39:30,CalE:11:40:13,Time: 43 / 43,CalWinTime:34,CompNum:87
+11:40:15.790 Info[P 14776 T 291 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:39:30,CalS:11:39:30,CalE:11:40:15,Time: 45 / 45,CalWinTime:37,CompNum:86
+11:40:17.274 Info[P 14776 T 285 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:39:30,CalS:11:39:30,CalE:11:40:17,Time: 47 / 47,CalWinTime:39,CompNum:86
+11:40:20.665 Info[P 14776 T 191 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:39:30,CalS:11:39:30,CalE:11:40:20,Time: 50 / 50,CalWinTime:41,CompNum:87
+11:40:21.133 Info[P 14776 T 122 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:39:30,CalS:11:39:30,CalE:11:40:21,Time: 51 / 51,CalWinTime:41,CompNum:87
+11:40:21.321 Info[P 14776 T 259 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:39:30,BlobS:11:39:30,BlobE:11:39:30,CalThdS:11:39:30,StartCapMark:11:39:30,EndCapFov:11:40:05,InspE:11:40:21,TranBLOB 0.000, Total(BIn/ThdS): 51.232 / 51.217(696)/,PCBCompNum:False,ACC:8,ThdNum:51217
+11:40:28.914 Info[P 14776 T 288 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481355	PCBInspect_Mode:InLine
+11:40:28.930 Info[P 14776 T 244 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:40:28.930 Info[P 14776 T 244 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:41:08.443 Info[P 14776 T 244 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 39.5
+11:41:10.177 Info[P 14776 T 133 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:40:28,CalS:11:40:28,CalE:11:41:10,Time: 41 / 41,CalWinTime:33,CompNum:87
+11:41:11.802 Info[P 14776 T 324 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:40:28,CalS:11:40:28,CalE:11:41:11,Time: 42 / 42,CalWinTime:33,CompNum:87
+11:41:13.449 Info[P 14776 T 270 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:40:28,CalS:11:40:28,CalE:11:41:13,Time: 44 / 44,CalWinTime:35,CompNum:87
+11:41:21.198 Info[P 14776 T 276 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:40:28,CalS:11:40:28,CalE:11:41:21,Time: 52 / 52,CalWinTime:42,CompNum:87
+11:41:21.214 Info[P 14776 T 278 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:40:28,CalS:11:40:28,CalE:11:41:21,Time: 52 / 52,CalWinTime:36,CompNum:87
+11:41:21.214 Info[P 14776 T 271 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:40:28,CalS:11:40:28,CalE:11:41:21,Time: 52 / 52,CalWinTime:36,CompNum:87
+11:41:21.277 Info[P 14776 T 261 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:40:28,CalS:11:40:28,CalE:11:41:21,Time: 52 / 52,CalWinTime:36,CompNum:87
+11:41:23.042 Info[P 14776 T 313 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:40:28,CalS:11:40:28,CalE:11:41:23,Time: 54 / 54,CalWinTime:46,CompNum:87
+11:41:23.230 Info[P 14776 T 288 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:40:28,BlobS:11:40:28,BlobE:11:40:28,CalThdS:11:40:28,StartCapMark:11:40:29,EndCapFov:11:41:08,InspE:11:41:23,TranBLOB 0.000, Total(BIn/ThdS): 54.315 / 54.299(696)/,PCBCompNum:False,ACC:8,ThdNum:54299
+11:41:30.478 Info[P 14776 T 273 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481356	PCBInspect_Mode:InLine
+11:41:30.478 Info[P 14776 T 248 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:41:30.478 Info[P 14776 T 248 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:42:05.894 Info[P 14776 T 248 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 35.4
+11:42:10.644 Info[P 14776 T 145 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:41:30,CalS:11:41:30,CalE:11:42:10,Time: 40 / 40,CalWinTime:31,CompNum:87
+11:42:12.206 Info[P 14776 T 153 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:41:30,CalS:11:41:30,CalE:11:42:12,Time: 41 / 41,CalWinTime:33,CompNum:87
+11:42:13.284 Info[P 14776 T 245 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:41:30,CalS:11:41:30,CalE:11:42:13,Time: 42 / 42,CalWinTime:33,CompNum:87
+11:42:13.394 Info[P 14776 T 255 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:41:30,CalS:11:41:30,CalE:11:42:13,Time: 42 / 42,CalWinTime:34,CompNum:87
+11:42:13.847 Info[P 14776 T 253 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:41:30,CalS:11:41:30,CalE:11:42:13,Time: 43 / 43,CalWinTime:35,CompNum:86
+11:42:18.092 Info[P 14776 T 249 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:41:30,CalS:11:41:30,CalE:11:42:18,Time: 47 / 47,CalWinTime:40,CompNum:86
+11:42:19.748 Info[P 14776 T 246 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:41:30,CalS:11:41:30,CalE:11:42:19,Time: 49 / 49,CalWinTime:41,CompNum:87
+11:42:19.920 Info[P 14776 T 247 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:41:30,CalS:11:41:30,CalE:11:42:19,Time: 49 / 49,CalWinTime:40,CompNum:87
+11:42:19.951 Info[P 14776 T 273 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:41:30,BlobS:11:41:30,BlobE:11:41:30,CalThdS:11:41:30,StartCapMark:11:41:31,EndCapFov:11:42:05,InspE:11:42:19,TranBLOB 0.000, Total(BIn/ThdS): 49.473 / 49.473(696)/,PCBCompNum:False,ACC:8,ThdNum:49473
+11:42:26.480 Info[P 14776 T 275 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481357	PCBInspect_Mode:InLine
+11:42:26.496 Info[P 14776 T 295 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:42:26.496 Info[P 14776 T 295 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:43:02.255 Info[P 14776 T 295 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 35.8
+11:43:07.202 Info[P 14776 T 244 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:42:26,CalS:11:42:26,CalE:11:43:07,Time: 40 / 40,CalWinTime:31,CompNum:87
+11:43:08.358 Info[P 14776 T 256 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:42:26,CalS:11:42:26,CalE:11:43:08,Time: 41 / 41,CalWinTime:33,CompNum:87
+11:43:10.124 Info[P 14776 T 260 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:42:26,CalS:11:42:26,CalE:11:43:10,Time: 43 / 43,CalWinTime:34,CompNum:87
+11:43:10.514 Info[P 14776 T 305 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:42:26,CalS:11:42:26,CalE:11:43:10,Time: 44 / 44,CalWinTime:34,CompNum:87
+11:43:10.702 Info[P 14776 T 307 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:42:26,CalS:11:42:26,CalE:11:43:10,Time: 44 / 44,CalWinTime:35,CompNum:86
+11:43:15.785 Info[P 14776 T 311 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:42:26,CalS:11:42:26,CalE:11:43:15,Time: 49 / 49,CalWinTime:41,CompNum:86
+11:43:17.394 Info[P 14776 T 301 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:42:26,CalS:11:42:26,CalE:11:43:17,Time: 50 / 50,CalWinTime:41,CompNum:87
+11:43:18.566 Info[P 14776 T 280 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:42:26,CalS:11:42:26,CalE:11:43:18,Time: 52 / 52,CalWinTime:43,CompNum:87
+11:43:18.722 Info[P 14776 T 275 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:42:26,BlobS:11:42:26,BlobE:11:42:26,CalThdS:11:42:26,StartCapMark:11:42:27,EndCapFov:11:43:02,InspE:11:43:18,TranBLOB 0.000, Total(BIn/ThdS): 52.241 / 52.226(696)/,PCBCompNum:False,ACC:8,ThdNum:52226
+11:43:25.806 Info[P 14776 T 245 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481358	PCBInspect_Mode:InLine
+11:43:25.822 Info[P 14776 T 263 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:43:25.822 Info[P 14776 T 263 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:44:04.979 Info[P 14776 T 263 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 39.2
+11:44:05.848 Info[P 14776 T 255 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:43:25,CalS:11:43:25,CalE:11:44:05,Time: 40 / 40,CalWinTime:31,CompNum:87
+11:44:08.832 Info[P 14776 T 313 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:43:25,CalS:11:43:25,CalE:11:44:08,Time: 43 / 43,CalWinTime:33,CompNum:87
+11:44:08.957 Info[P 14776 T 153 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:43:25,CalS:11:43:25,CalE:11:44:08,Time: 43 / 43,CalWinTime:34,CompNum:87
+11:44:15.316 Info[P 14776 T 273 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:43:25,CalS:11:43:25,CalE:11:44:15,Time: 49 / 49,CalWinTime:39,CompNum:87
+11:44:15.331 Info[P 14776 T 290 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:43:25,CalS:11:43:25,CalE:11:44:15,Time: 49 / 49,CalWinTime:33,CompNum:87
+11:44:15.331 Info[P 14776 T 302 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:43:25,CalS:11:43:25,CalE:11:44:15,Time: 49 / 49,CalWinTime:35,CompNum:87
+11:44:15.347 Info[P 14776 T 275 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:43:25,CalS:11:43:25,CalE:11:44:15,Time: 49 / 49,CalWinTime:35,CompNum:87
+11:44:18.399 Info[P 14776 T 145 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:43:25,CalS:11:43:25,CalE:11:44:18,Time: 52 / 52,CalWinTime:43,CompNum:87
+11:44:18.430 Info[P 14776 T 245 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:43:25,BlobS:11:43:25,BlobE:11:43:25,CalThdS:11:43:25,StartCapMark:11:43:26,EndCapFov:11:44:04,InspE:11:44:18,TranBLOB 0.000, Total(BIn/ThdS): 52.623 / 52.623(696)/,PCBCompNum:False,ACC:8,ThdNum:52623
+11:44:25.713 Info[P 14776 T 284 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481359	PCBInspect_Mode:InLine
+11:44:25.728 Info[P 14776 T 300 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:44:25.728 Info[P 14776 T 300 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:45:02.103 Info[P 14776 T 300 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 36.4
+11:45:07.159 Info[P 14776 T 261 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:44:25,CalS:11:44:25,CalE:11:45:07,Time: 41 / 41,CalWinTime:31,CompNum:87
+11:45:07.784 Info[P 14776 T 245 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:44:25,CalS:11:44:25,CalE:11:45:07,Time: 42 / 42,CalWinTime:34,CompNum:87
+11:45:08.315 Info[P 14776 T 246 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:44:25,CalS:11:44:25,CalE:11:45:08,Time: 42 / 42,CalWinTime:34,CompNum:87
+11:45:08.768 Info[P 14776 T 247 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:44:25,CalS:11:44:25,CalE:11:45:08,Time: 43 / 43,CalWinTime:33,CompNum:87
+11:45:10.143 Info[P 14776 T 276 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:44:25,CalS:11:44:25,CalE:11:45:10,Time: 44 / 44,CalWinTime:36,CompNum:86
+11:45:13.487 Info[P 14776 T 248 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:44:25,CalS:11:44:25,CalE:11:45:13,Time: 47 / 47,CalWinTime:40,CompNum:86
+11:45:15.674 Info[P 14776 T 253 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:44:25,CalS:11:44:25,CalE:11:45:15,Time: 49 / 49,CalWinTime:40,CompNum:87
+11:45:16.080 Info[P 14776 T 249 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:44:25,CalS:11:44:25,CalE:11:45:16,Time: 50 / 50,CalWinTime:42,CompNum:87
+11:45:16.158 Info[P 14776 T 284 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:44:25,BlobS:11:44:25,BlobE:11:44:25,CalThdS:11:44:25,StartCapMark:11:44:26,EndCapFov:11:45:01,InspE:11:45:16,TranBLOB 0.000, Total(BIn/ThdS): 50.445 / 50.445(696)/,PCBCompNum:False,ACC:8,ThdNum:50445
+11:45:23.040 Info[P 14776 T 275 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481360	PCBInspect_Mode:InLine
+11:45:23.056 Info[P 14776 T 324 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:45:23.056 Info[P 14776 T 324 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:45:59.385 Info[P 14776 T 324 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 36.3
+11:46:05.088 Info[P 14776 T 153 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:45:23,CalS:11:45:23,CalE:11:46:05,Time: 42 / 42,CalWinTime:33,CompNum:87
+11:46:05.338 Info[P 14776 T 313 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:45:23,CalS:11:45:23,CalE:11:46:05,Time: 42 / 42,CalWinTime:33,CompNum:87
+11:46:05.947 Info[P 14776 T 255 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:45:23,CalS:11:45:23,CalE:11:46:05,Time: 42 / 42,CalWinTime:33,CompNum:87
+11:46:07.650 Info[P 14776 T 145 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:45:23,CalS:11:45:23,CalE:11:46:07,Time: 44 / 44,CalWinTime:36,CompNum:87
+11:46:07.930 Info[P 14776 T 274 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:45:23,CalS:11:45:23,CalE:11:46:07,Time: 44 / 44,CalWinTime:36,CompNum:86
+11:46:11.023 Info[P 14776 T 243 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:45:23,CalS:11:45:23,CalE:11:46:11,Time: 47 / 47,CalWinTime:40,CompNum:86
+11:46:13.585 Info[P 14776 T 263 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:45:23,CalS:11:45:23,CalE:11:46:13,Time: 50 / 50,CalWinTime:40,CompNum:87
+11:46:13.788 Info[P 14776 T 273 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:45:23,CalS:11:45:23,CalE:11:46:13,Time: 50 / 50,CalWinTime:42,CompNum:87
+11:46:13.960 Info[P 14776 T 275 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:45:23,BlobS:11:45:23,BlobE:11:45:23,CalThdS:11:45:23,StartCapMark:11:45:23,EndCapFov:11:45:58,InspE:11:46:13,TranBLOB 0.000, Total(BIn/ThdS): 50.919 / 50.904(696)/,PCBCompNum:False,ACC:8,ThdNum:50904
+11:46:21.968 Info[P 14776 T 284 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481361	PCBInspect_Mode:InLine
+11:46:21.984 Info[P 14776 T 191 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:46:21.984 Info[P 14776 T 191 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:47:00.927 Info[P 14776 T 191 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 38.9
+11:47:01.474 Info[P 14776 T 247 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:46:21,CalS:11:46:21,CalE:11:47:01,Time: 39 / 39,CalWinTime:31,CompNum:87
+11:47:05.692 Info[P 14776 T 246 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:46:21,CalS:11:46:21,CalE:11:47:05,Time: 43 / 43,CalWinTime:35,CompNum:87
+11:47:06.052 Info[P 14776 T 249 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:46:21,CalS:11:46:21,CalE:11:47:06,Time: 44 / 44,CalWinTime:35,CompNum:87
+11:47:13.541 Info[P 14776 T 248 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:46:21,CalS:11:46:21,CalE:11:47:13,Time: 51 / 51,CalWinTime:42,CompNum:87
+11:47:13.572 Info[P 14776 T 291 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:46:21,CalS:11:46:21,CalE:11:47:13,Time: 51 / 51,CalWinTime:36,CompNum:87
+11:47:13.588 Info[P 14776 T 261 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:46:21,CalS:11:46:21,CalE:11:47:13,Time: 51 / 51,CalWinTime:37,CompNum:87
+11:47:13.666 Info[P 14776 T 245 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:46:21,CalS:11:46:21,CalE:11:47:13,Time: 51 / 51,CalWinTime:37,CompNum:87
+11:47:14.931 Info[P 14776 T 253 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:46:21,CalS:11:46:21,CalE:11:47:14,Time: 52 / 52,CalWinTime:44,CompNum:87
+11:47:14.978 Info[P 14776 T 284 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:46:21,BlobS:11:46:21,BlobE:11:46:21,CalThdS:11:46:21,StartCapMark:11:46:22,EndCapFov:11:47:00,InspE:11:47:14,TranBLOB 0.000, Total(BIn/ThdS): 53.010 / 52.994(696)/,PCBCompNum:False,ACC:8,ThdNum:52994
+11:47:22.521 Info[P 14776 T 307 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481362	PCBInspect_Mode:InLine
+11:47:22.537 Info[P 14776 T 300 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:47:22.537 Info[P 14776 T 300 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:47:59.261 Info[P 14776 T 300 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 36.7
+11:48:04.792 Info[P 14776 T 271 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:47:22,CalS:11:47:22,CalE:11:48:04,Time: 42 / 42,CalWinTime:32,CompNum:87
+11:48:05.432 Info[P 14776 T 133 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:47:22,CalS:11:47:22,CalE:11:48:05,Time: 42 / 42,CalWinTime:34,CompNum:87
+11:48:05.776 Info[P 14776 T 270 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:47:22,CalS:11:47:22,CalE:11:48:05,Time: 43 / 43,CalWinTime:35,CompNum:87
+11:48:07.119 Info[P 14776 T 87 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:47:22,CalS:11:47:22,CalE:11:48:07,Time: 44 / 44,CalWinTime:35,CompNum:87
+11:48:07.666 Info[P 14776 T 286 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:47:22,CalS:11:47:22,CalE:11:48:07,Time: 45 / 45,CalWinTime:37,CompNum:86
+11:48:12.077 Info[P 14776 T 278 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:47:22,CalS:11:47:22,CalE:11:48:12,Time: 49 / 49,CalWinTime:41,CompNum:86
+11:48:13.374 Info[P 14776 T 302 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:47:22,CalS:11:47:22,CalE:11:48:13,Time: 50 / 50,CalWinTime:42,CompNum:87
+11:48:13.499 Info[P 14776 T 293 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:47:22,CalS:11:47:22,CalE:11:48:13,Time: 50 / 50,CalWinTime:41,CompNum:87
+11:48:13.702 Info[P 14776 T 307 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:47:22,BlobS:11:47:22,BlobE:11:47:22,CalThdS:11:47:22,StartCapMark:11:47:23,EndCapFov:11:47:59,InspE:11:48:13,TranBLOB 0.000, Total(BIn/ThdS): 51.181 / 51.165(696)/,PCBCompNum:False,ACC:8,ThdNum:51165
+11:48:20.351 Info[P 14776 T 308 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481363	PCBInspect_Mode:InLine
+11:48:20.367 Info[P 14776 T 263 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:48:20.367 Info[P 14776 T 263 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:48:55.825 Info[P 14776 T 263 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 35.5
+11:49:01.350 Info[P 14776 T 295 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:48:20,CalS:11:48:20,CalE:11:49:01,Time: 40 / 40,CalWinTime:32,CompNum:87
+11:49:01.631 Info[P 14776 T 288 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:48:20,CalS:11:48:20,CalE:11:49:01,Time: 41 / 41,CalWinTime:32,CompNum:87
+11:49:03.365 Info[P 14776 T 275 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:48:20,CalS:11:48:20,CalE:11:49:03,Time: 42 / 42,CalWinTime:33,CompNum:87
+11:49:03.646 Info[P 14776 T 289 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:48:20,CalS:11:48:20,CalE:11:49:03,Time: 43 / 43,CalWinTime:34,CompNum:87
+11:49:04.896 Info[P 14776 T 243 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:48:20,CalS:11:48:20,CalE:11:49:04,Time: 44 / 44,CalWinTime:35,CompNum:86
+11:49:09.255 Info[P 14776 T 274 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:48:20,CalS:11:48:20,CalE:11:49:09,Time: 48 / 48,CalWinTime:41,CompNum:86
+11:49:10.239 Info[P 14776 T 285 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:48:20,CalS:11:48:20,CalE:11:49:10,Time: 49 / 49,CalWinTime:41,CompNum:87
+11:49:11.088 Info[P 14776 T 324 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:48:20,CalS:11:48:20,CalE:11:49:11,Time: 50 / 50,CalWinTime:41,CompNum:87
+11:49:11.260 Info[P 14776 T 308 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:48:20,BlobS:11:48:20,BlobE:11:48:20,CalThdS:11:48:20,StartCapMark:11:48:21,EndCapFov:11:48:55,InspE:11:49:11,TranBLOB 0.015, Total(BIn/ThdS): 50.909 / 50.893(696)/,PCBCompNum:False,ACC:8,ThdNum:50893
+11:49:48.756 Info[P 14776 T 273 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481364	PCBInspect_Mode:InLine
+11:49:48.771 Info[P 14776 T 302 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:49:48.771 Info[P 14776 T 302 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:50:28.340 Info[P 14776 T 302 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 39.6
+11:50:28.714 Info[P 14776 T 245 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:49:48,CalS:11:49:48,CalE:11:50:28,Time: 39 / 39,CalWinTime:32,CompNum:87
+11:50:31.277 Info[P 14776 T 246 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:49:48,CalS:11:49:48,CalE:11:50:31,Time: 42 / 42,CalWinTime:34,CompNum:87
+11:50:31.527 Info[P 14776 T 261 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:49:48,CalS:11:49:48,CalE:11:50:31,Time: 42 / 42,CalWinTime:34,CompNum:87
+11:50:39.518 Info[P 14776 T 253 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:49:48,CalS:11:49:48,CalE:11:50:39,Time: 50 / 50,CalWinTime:35,CompNum:87
+11:50:39.549 Info[P 14776 T 276 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:49:48,CalS:11:49:48,CalE:11:50:39,Time: 50 / 50,CalWinTime:40,CompNum:87
+11:50:39.596 Info[P 14776 T 249 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:49:48,CalS:11:49:48,CalE:11:50:39,Time: 50 / 50,CalWinTime:35,CompNum:87
+11:50:39.596 Info[P 14776 T 247 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:49:48,CalS:11:49:48,CalE:11:50:39,Time: 50 / 50,CalWinTime:35,CompNum:87
+11:50:40.830 Info[P 14776 T 308 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:49:48,CalS:11:49:48,CalE:11:50:40,Time: 52 / 52,CalWinTime:44,CompNum:87
+11:50:40.955 Info[P 14776 T 273 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:49:48,BlobS:11:49:48,BlobE:11:49:48,CalThdS:11:49:48,StartCapMark:11:49:49,EndCapFov:11:50:27,InspE:11:50:40,TranBLOB 0.000, Total(BIn/ThdS): 52.199 / 52.183(696)/,PCBCompNum:False,ACC:8,ThdNum:52183
+11:51:02.464 Info[P 14776 T 288 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481365	PCBInspect_Mode:InLine
+11:51:02.480 Info[P 14776 T 295 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:51:02.480 Info[P 14776 T 295 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:51:38.613 Info[P 14776 T 295 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 36.1
+11:51:41.331 Info[P 14776 T 324 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:51:02,CalS:11:51:02,CalE:11:51:41,Time: 38 / 38,CalWinTime:30,CompNum:87
+11:51:43.074 Info[P 14776 T 274 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:51:02,CalS:11:51:02,CalE:11:51:43,Time: 40 / 40,CalWinTime:31,CompNum:87
+11:51:43.902 Info[P 14776 T 243 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:51:02,CalS:11:51:02,CalE:11:51:43,Time: 41 / 41,CalWinTime:33,CompNum:87
+11:51:44.168 Info[P 14776 T 263 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:51:02,CalS:11:51:02,CalE:11:51:44,Time: 41 / 41,CalWinTime:32,CompNum:87
+11:51:44.949 Info[P 14776 T 122 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:51:02,CalS:11:51:02,CalE:11:51:44,Time: 42 / 42,CalWinTime:34,CompNum:86
+11:51:48.636 Info[P 14776 T 273 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:51:02,CalS:11:51:02,CalE:11:51:48,Time: 46 / 46,CalWinTime:38,CompNum:86
+11:51:52.059 Info[P 14776 T 248 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:51:02,CalS:11:51:02,CalE:11:51:52,Time: 49 / 49,CalWinTime:40,CompNum:87
+11:51:52.621 Info[P 14776 T 291 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:51:02,CalS:11:51:02,CalE:11:51:52,Time: 50 / 50,CalWinTime:41,CompNum:87
+11:51:52.777 Info[P 14776 T 288 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:51:02,BlobS:11:51:02,BlobE:11:51:02,CalThdS:11:51:02,StartCapMark:11:51:03,EndCapFov:11:51:37,InspE:11:51:52,TranBLOB 0.000, Total(BIn/ThdS): 50.312 / 50.297(696)/,PCBCompNum:False,ACC:8,ThdNum:50297
+11:52:13.140 Info[P 14776 T 284 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481366	PCBInspect_Mode:InLine
+11:52:13.156 Info[P 14776 T 290 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:52:13.156 Info[P 14776 T 290 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:52:48.495 Info[P 14776 T 290 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 35.3
+11:52:53.464 Info[P 14776 T 301 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:52:13,CalS:11:52:13,CalE:11:52:53,Time: 40 / 40,CalWinTime:31,CompNum:87
+11:52:54.485 Info[P 14776 T 311 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:52:13,CalS:11:52:13,CalE:11:52:54,Time: 41 / 41,CalWinTime:33,CompNum:87
+11:52:55.625 Info[P 14776 T 313 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:52:13,CalS:11:52:13,CalE:11:52:55,Time: 42 / 42,CalWinTime:33,CompNum:87
+11:52:55.688 Info[P 14776 T 255 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:52:13,CalS:11:52:13,CalE:11:52:55,Time: 42 / 42,CalWinTime:33,CompNum:87
+11:52:56.219 Info[P 14776 T 289 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:52:13,CalS:11:52:13,CalE:11:52:56,Time: 43 / 43,CalWinTime:35,CompNum:86
+11:53:00.172 Info[P 14776 T 288 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:52:13,CalS:11:52:13,CalE:11:53:00,Time: 47 / 47,CalWinTime:40,CompNum:86
+11:53:02.593 Info[P 14776 T 153 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:52:13,CalS:11:52:13,CalE:11:53:02,Time: 49 / 49,CalWinTime:40,CompNum:87
+11:53:03.640 Info[P 14776 T 307 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:52:13,CalS:11:52:13,CalE:11:53:03,Time: 50 / 50,CalWinTime:41,CompNum:87
+11:53:03.656 Info[P 14776 T 284 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:52:13,BlobS:11:52:13,BlobE:11:52:13,CalThdS:11:52:13,StartCapMark:11:52:14,EndCapFov:11:52:48,InspE:11:53:03,TranBLOB 0.000, Total(BIn/ThdS): 50.515 / 50.499(696)/,PCBCompNum:False,ACC:8,ThdNum:50499
+11:53:25.086 Info[P 14776 T 145 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481367	PCBInspect_Mode:InLine
+11:53:25.101 Info[P 14776 T 284 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:53:25.101 Info[P 14776 T 284 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:54:04.151 Info[P 14776 T 284 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 39
+11:54:04.901 Info[P 14776 T 247 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:53:25,CalS:11:53:25,CalE:11:54:04,Time: 39 / 39,CalWinTime:31,CompNum:87
+11:54:07.790 Info[P 14776 T 249 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:53:25,CalS:11:53:25,CalE:11:54:07,Time: 42 / 42,CalWinTime:34,CompNum:87
+11:54:09.258 Info[P 14776 T 246 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:53:25,CalS:11:53:25,CalE:11:54:09,Time: 44 / 44,CalWinTime:34,CompNum:87
+11:54:15.773 Info[P 14776 T 261 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:53:25,CalS:11:53:25,CalE:11:54:15,Time: 50 / 50,CalWinTime:41,CompNum:87
+11:54:15.773 Info[P 14776 T 253 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:53:25,CalS:11:53:25,CalE:11:54:15,Time: 50 / 50,CalWinTime:34,CompNum:87
+11:54:15.805 Info[P 14776 T 256 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:53:25,CalS:11:53:25,CalE:11:54:15,Time: 50 / 50,CalWinTime:34,CompNum:87
+11:54:15.805 Info[P 14776 T 305 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:53:25,CalS:11:53:25,CalE:11:54:15,Time: 50 / 50,CalWinTime:36,CompNum:87
+11:54:19.044 Info[P 14776 T 245 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:53:25,CalS:11:53:25,CalE:11:54:19,Time: 53 / 53,CalWinTime:44,CompNum:87
+11:54:19.184 Info[P 14776 T 145 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:53:25,BlobS:11:53:25,BlobE:11:53:25,CalThdS:11:53:25,StartCapMark:11:53:25,EndCapFov:11:54:04,InspE:11:54:19,TranBLOB 0.000, Total(BIn/ThdS): 54.098 / 54.098(696)/,PCBCompNum:False,ACC:8,ThdNum:54098
+11:54:40.420 Info[P 14776 T 324 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481368	PCBInspect_Mode:InLine
+11:54:40.436 Info[P 14776 T 191 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:54:40.436 Info[P 14776 T 191 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:55:15.844 Info[P 14776 T 191 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 35.4
+11:55:21.209 Info[P 14776 T 243 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:54:40,CalS:11:54:40,CalE:11:55:21,Time: 40 / 40,CalWinTime:31,CompNum:87
+11:55:22.709 Info[P 14776 T 263 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:54:40,CalS:11:54:40,CalE:11:55:22,Time: 42 / 42,CalWinTime:33,CompNum:87
+11:55:23.303 Info[P 14776 T 248 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:54:40,CalS:11:54:40,CalE:11:55:23,Time: 42 / 42,CalWinTime:34,CompNum:87
+11:55:23.319 Info[P 14776 T 291 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:54:40,CalS:11:54:40,CalE:11:55:23,Time: 42 / 42,CalWinTime:34,CompNum:87
+11:55:25.084 Info[P 14776 T 145 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:54:40,CalS:11:54:40,CalE:11:55:25,Time: 44 / 44,CalWinTime:36,CompNum:86
+11:55:29.011 Info[P 14776 T 285 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:54:40,CalS:11:54:40,CalE:11:55:29,Time: 48 / 48,CalWinTime:41,CompNum:86
+11:55:30.151 Info[P 14776 T 122 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:54:40,CalS:11:54:40,CalE:11:55:30,Time: 49 / 49,CalWinTime:39,CompNum:87
+11:55:30.542 Info[P 14776 T 273 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:54:40,CalS:11:54:40,CalE:11:55:30,Time: 50 / 50,CalWinTime:41,CompNum:87
+11:55:30.714 Info[P 14776 T 324 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:54:40,BlobS:11:54:40,BlobE:11:54:40,CalThdS:11:54:40,StartCapMark:11:54:41,EndCapFov:11:55:15,InspE:11:55:30,TranBLOB 0.000, Total(BIn/ThdS): 50.293 / 50.293(696)/,PCBCompNum:False,ACC:8,ThdNum:50293
+11:55:50.758 Info[P 14776 T 290 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481369	PCBInspect_Mode:InLine
+11:55:50.773 Info[P 14776 T 275 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:55:50.773 Info[P 14776 T 275 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:56:26.642 Info[P 14776 T 275 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 35.9
+11:56:30.957 Info[P 14776 T 308 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:55:50,CalS:11:55:50,CalE:11:56:30,Time: 40 / 40,CalWinTime:30,CompNum:87
+11:56:33.316 Info[P 14776 T 256 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:55:50,CalS:11:55:50,CalE:11:56:33,Time: 42 / 42,CalWinTime:34,CompNum:87
+11:56:33.488 Info[P 14776 T 305 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:55:50,CalS:11:55:50,CalE:11:56:33,Time: 42 / 42,CalWinTime:34,CompNum:87
+11:56:33.863 Info[P 14776 T 253 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:55:50,CalS:11:55:50,CalE:11:56:33,Time: 43 / 43,CalWinTime:33,CompNum:87
+11:56:35.144 Info[P 14776 T 324 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:55:50,CalS:11:55:50,CalE:11:56:35,Time: 44 / 44,CalWinTime:37,CompNum:86
+11:56:39.842 Info[P 14776 T 280 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:55:50,CalS:11:55:50,CalE:11:56:39,Time: 49 / 49,CalWinTime:42,CompNum:86
+11:56:41.311 Info[P 14776 T 249 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:55:50,CalS:11:55:50,CalE:11:56:41,Time: 50 / 50,CalWinTime:42,CompNum:87
+11:56:41.670 Info[P 14776 T 247 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:55:50,CalS:11:55:50,CalE:11:56:41,Time: 50 / 50,CalWinTime:41,CompNum:87
+11:56:41.842 Info[P 14776 T 290 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:55:50,BlobS:11:55:50,BlobE:11:55:50,CalThdS:11:55:50,StartCapMark:11:55:51,EndCapFov:11:56:26,InspE:11:56:41,TranBLOB 0.000, Total(BIn/ThdS): 51.084 / 51.068(696)/,PCBCompNum:False,ACC:8,ThdNum:51068
+11:57:02.247 Info[P 14776 T 133 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481370	PCBInspect_Mode:InLine
+11:57:02.262 Info[P 14776 T 290 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:57:02.262 Info[P 14776 T 290 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:57:42.686 Info[P 14776 T 290 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 40.4
+11:57:44.654 Info[P 14776 T 273 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:57:02,CalS:11:57:02,CalE:11:57:44,Time: 42 / 42,CalWinTime:33,CompNum:87
+11:57:45.717 Info[P 14776 T 248 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:57:02,CalS:11:57:02,CalE:11:57:45,Time: 43 / 43,CalWinTime:35,CompNum:87
+11:57:46.873 Info[P 14776 T 122 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:57:02,CalS:11:57:02,CalE:11:57:46,Time: 44 / 44,CalWinTime:35,CompNum:87
+11:57:53.096 Info[P 14776 T 274 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:57:02,CalS:11:57:02,CalE:11:57:53,Time: 50 / 50,CalWinTime:41,CompNum:87
+11:57:53.159 Info[P 14776 T 291 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:57:02,CalS:11:57:02,CalE:11:57:53,Time: 50 / 50,CalWinTime:37,CompNum:87
+11:57:53.174 Info[P 14776 T 263 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:57:02,CalS:11:57:02,CalE:11:57:53,Time: 50 / 50,CalWinTime:37,CompNum:87
+11:57:53.174 Info[P 14776 T 243 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:57:02,CalS:11:57:02,CalE:11:57:53,Time: 50 / 50,CalWinTime:36,CompNum:87
+11:57:56.752 Info[P 14776 T 295 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:57:02,CalS:11:57:02,CalE:11:57:56,Time: 54 / 54,CalWinTime:46,CompNum:87
+11:57:56.939 Info[P 14776 T 133 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:57:02,BlobS:11:57:02,BlobE:11:57:02,CalThdS:11:57:02,StartCapMark:11:57:03,EndCapFov:11:57:41,InspE:11:57:56,TranBLOB 0.000, Total(BIn/ThdS): 54.692 / 54.677(696)/,PCBCompNum:False,ACC:8,ThdNum:54677
+11:58:16.983 Info[P 14776 T 256 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481371	PCBInspect_Mode:InLine
+11:58:16.998 Info[P 14776 T 271 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:58:16.998 Info[P 14776 T 271 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:58:52.932 Info[P 14776 T 271 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 35.9
+11:58:57.775 Info[P 14776 T 305 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:58:16,CalS:11:58:16,CalE:11:58:57,Time: 40 / 40,CalWinTime:31,CompNum:87
+11:58:58.338 Info[P 14776 T 253 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:58:16,CalS:11:58:16,CalE:11:58:58,Time: 41 / 41,CalWinTime:32,CompNum:87
+11:58:59.150 Info[P 14776 T 249 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:58:16,CalS:11:58:16,CalE:11:58:59,Time: 42 / 42,CalWinTime:34,CompNum:87
+11:59:00.134 Info[P 14776 T 247 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:58:16,CalS:11:58:16,CalE:11:59:00,Time: 43 / 43,CalWinTime:34,CompNum:87
+11:59:01.391 Info[P 14776 T 276 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:58:16,CalS:11:58:16,CalE:11:59:01,Time: 44 / 44,CalWinTime:36,CompNum:86
+11:59:05.125 Info[P 14776 T 275 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:58:16,CalS:11:58:16,CalE:11:59:05,Time: 48 / 48,CalWinTime:40,CompNum:86
+11:59:07.546 Info[P 14776 T 280 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:58:16,CalS:11:58:16,CalE:11:59:07,Time: 50 / 50,CalWinTime:42,CompNum:87
+11:59:07.624 Info[P 14776 T 324 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:58:16,CalS:11:58:16,CalE:11:59:07,Time: 50 / 50,CalWinTime:41,CompNum:87
+11:59:07.687 Info[P 14776 T 256 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:58:16,BlobS:11:58:16,BlobE:11:58:16,CalThdS:11:58:16,StartCapMark:11:58:17,EndCapFov:11:58:52,InspE:11:59:07,TranBLOB 0.000, Total(BIn/ThdS): 50.704 / 50.688(696)/,PCBCompNum:False,ACC:8,ThdNum:50688
+11:59:14.824 Info[P 14776 T 246 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481372	PCBInspect_Mode:InLine
+11:59:14.839 Info[P 14776 T 153 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+11:59:14.839 Info[P 14776 T 153 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+11:59:51.103 Info[P 14776 T 153 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 36.2
+11:59:55.368 Info[P 14776 T 261 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:11:59:14,CalS:11:59:14,CalE:11:59:55,Time: 40 / 40,CalWinTime:30,CompNum:87
+11:59:56.821 Info[P 14776 T 270 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:11:59:14,CalS:11:59:14,CalE:11:59:56,Time: 41 / 41,CalWinTime:33,CompNum:87
+11:59:57.384 Info[P 14776 T 284 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:11:59:14,CalS:11:59:14,CalE:11:59:57,Time: 42 / 42,CalWinTime:34,CompNum:87
+11:59:58.024 Info[P 14776 T 285 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:11:59:14,CalS:11:59:14,CalE:11:59:58,Time: 43 / 43,CalWinTime:34,CompNum:87
+11:59:59.696 Info[P 14776 T 307 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:11:59:14,CalS:11:59:14,CalE:11:59:59,Time: 44 / 44,CalWinTime:36,CompNum:86
+12:00:02.936 Info[P 14776 T 288 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:11:59:14,CalS:11:59:14,CalE:12:00:02,Time: 48 / 48,CalWinTime:41,CompNum:86
+12:00:04.920 Info[P 14776 T 289 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:11:59:14,CalS:11:59:14,CalE:12:00:04,Time: 50 / 50,CalWinTime:40,CompNum:87
+12:00:05.092 Info[P 14776 T 308 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:11:59:14,CalS:11:59:14,CalE:12:00:05,Time: 50 / 50,CalWinTime:41,CompNum:87
+12:00:05.232 Info[P 14776 T 246 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:11:59:14,BlobS:11:59:14,BlobE:11:59:14,CalThdS:11:59:14,StartCapMark:11:59:15,EndCapFov:11:59:50,InspE:12:00:05,TranBLOB 0.000, Total(BIn/ThdS): 50.408 / 50.392(696)/,PCBCompNum:False,ACC:8,ThdNum:50392
+12:00:12.870 Info[P 14776 T 281 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481373	PCBInspect_Mode:InLine
+12:00:12.886 Info[P 14776 T 248 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:00:12.886 Info[P 14776 T 248 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:00:52.241 Info[P 14776 T 248 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 39.4
+12:00:53.428 Info[P 14776 T 191 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:00:12,CalS:12:00:12,CalE:12:00:53,Time: 40 / 40,CalWinTime:31,CompNum:87
+12:00:55.756 Info[P 14776 T 145 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:00:12,CalS:12:00:12,CalE:12:00:55,Time: 42 / 42,CalWinTime:34,CompNum:87
+12:00:56.818 Info[P 14776 T 243 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:00:12,CalS:12:00:12,CalE:12:00:56,Time: 43 / 43,CalWinTime:35,CompNum:87
+12:01:03.707 Info[P 14776 T 291 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:00:12,CalS:12:00:12,CalE:12:01:03,Time: 50 / 50,CalWinTime:41,CompNum:87
+12:01:03.786 Info[P 14776 T 245 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:00:12,CalS:12:00:12,CalE:12:01:03,Time: 50 / 50,CalWinTime:35,CompNum:87
+12:01:03.786 Info[P 14776 T 244 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:00:12,CalS:12:00:12,CalE:12:01:03,Time: 50 / 50,CalWinTime:34,CompNum:87
+12:01:03.786 Info[P 14776 T 246 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:00:12,CalS:12:00:12,CalE:12:01:03,Time: 50 / 50,CalWinTime:36,CompNum:87
+12:01:07.129 Info[P 14776 T 263 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:00:12,CalS:12:00:12,CalE:12:01:07,Time: 54 / 54,CalWinTime:45,CompNum:87
+12:01:07.223 Info[P 14776 T 281 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:00:12,BlobS:12:00:12,BlobE:12:00:12,CalThdS:12:00:12,StartCapMark:12:00:13,EndCapFov:12:00:52,InspE:12:01:07,TranBLOB 0.000, Total(BIn/ThdS): 54.352 / 54.352(696)/,PCBCompNum:False,ACC:8,ThdNum:54352
+12:01:14.951 Info[P 14776 T 308 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481374	PCBInspect_Mode:InLine
+12:01:14.966 Info[P 14776 T 122 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:01:14.966 Info[P 14776 T 122 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:01:52.064 Info[P 14776 T 122 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 37.1
+12:01:56.729 Info[P 14776 T 85 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:01:14,CalS:12:01:14,CalE:12:01:56,Time: 41 / 41,CalWinTime:33,CompNum:87
+12:01:57.182 Info[P 14776 T 265 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:01:14,CalS:12:01:14,CalE:12:01:57,Time: 42 / 42,CalWinTime:33,CompNum:87
+12:01:57.713 Info[P 14776 T 260 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:01:14,CalS:12:01:14,CalE:12:01:57,Time: 42 / 42,CalWinTime:33,CompNum:87
+12:01:59.635 Info[P 14776 T 285 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:01:14,CalS:12:01:14,CalE:12:01:59,Time: 44 / 44,CalWinTime:34,CompNum:87
+12:02:00.557 Info[P 14776 T 273 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:01:14,CalS:12:01:14,CalE:12:02:00,Time: 45 / 45,CalWinTime:36,CompNum:86
+12:02:03.421 Info[P 14776 T 261 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:01:14,CalS:12:01:14,CalE:12:02:03,Time: 48 / 48,CalWinTime:40,CompNum:86
+12:02:04.843 Info[P 14776 T 270 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:01:14,CalS:12:01:14,CalE:12:02:04,Time: 49 / 49,CalWinTime:41,CompNum:87
+12:02:05.936 Info[P 14776 T 284 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:01:14,CalS:12:01:14,CalE:12:02:05,Time: 50 / 50,CalWinTime:41,CompNum:87
+12:02:05.952 Info[P 14776 T 308 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:01:14,BlobS:12:01:14,BlobE:12:01:14,CalThdS:12:01:14,StartCapMark:12:01:15,EndCapFov:12:01:51,InspE:12:02:05,TranBLOB 0.000, Total(BIn/ThdS): 51.001 / 50.985(696)/,PCBCompNum:False,ACC:8,ThdNum:50985
+12:02:13.429 Info[P 14776 T 243 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481375	PCBInspect_Mode:InLine
+12:02:13.444 Info[P 14776 T 244 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:02:13.444 Info[P 14776 T 244 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:02:49.176 Info[P 14776 T 244 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 35.7
+12:02:53.270 Info[P 14776 T 144 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:02:13,CalS:12:02:13,CalE:12:02:53,Time: 39 / 39,CalWinTime:31,CompNum:87
+12:02:53.691 Info[P 14776 T 297 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:02:13,CalS:12:02:13,CalE:12:02:53,Time: 40 / 40,CalWinTime:30,CompNum:87
+12:02:54.067 Info[P 14776 T 289 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:02:13,CalS:12:02:13,CalE:12:02:54,Time: 40 / 40,CalWinTime:32,CompNum:87
+12:02:55.926 Info[P 14776 T 133 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:02:13,CalS:12:02:13,CalE:12:02:55,Time: 42 / 42,CalWinTime:33,CompNum:87
+12:02:57.364 Info[P 14776 T 245 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:02:13,CalS:12:02:13,CalE:12:02:57,Time: 43 / 43,CalWinTime:35,CompNum:86
+12:02:59.270 Info[P 14776 T 246 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:02:13,CalS:12:02:13,CalE:12:02:59,Time: 45 / 45,CalWinTime:38,CompNum:86
+12:03:02.582 Info[P 14776 T 191 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:02:13,CalS:12:02:13,CalE:12:03:02,Time: 49 / 49,CalWinTime:40,CompNum:87
+12:03:03.660 Info[P 14776 T 145 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:02:13,CalS:12:02:13,CalE:12:03:03,Time: 50 / 50,CalWinTime:41,CompNum:87
+12:03:03.848 Info[P 14776 T 243 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:02:13,BlobS:12:02:13,BlobE:12:02:13,CalThdS:12:02:13,StartCapMark:12:02:14,EndCapFov:12:02:48,InspE:12:03:03,TranBLOB 0.000, Total(BIn/ThdS): 50.418 / 50.403(696)/,PCBCompNum:False,ACC:8,ThdNum:50403
+12:03:10.996 Info[P 14776 T 256 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481376	PCBInspect_Mode:InLine
+12:03:11.012 Info[P 14776 T 263 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:03:11.012 Info[P 14776 T 263 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:03:49.298 Info[P 14776 T 263 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 38.3
+12:03:51.360 Info[P 14776 T 275 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:03:11,CalS:12:03:11,CalE:12:03:51,Time: 40 / 40,CalWinTime:31,CompNum:87
+12:03:52.516 Info[P 14776 T 324 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:03:11,CalS:12:03:11,CalE:12:03:52,Time: 41 / 41,CalWinTime:33,CompNum:87
+12:03:52.860 Info[P 14776 T 276 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:03:11,CalS:12:03:11,CalE:12:03:52,Time: 41 / 41,CalWinTime:33,CompNum:87
+12:04:02.146 Info[P 14776 T 243 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:03:11,CalS:12:03:11,CalE:12:04:02,Time: 51 / 51,CalWinTime:41,CompNum:87
+12:04:02.162 Info[P 14776 T 247 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:03:11,CalS:12:03:11,CalE:12:04:02,Time: 51 / 51,CalWinTime:35,CompNum:87
+12:04:02.177 Info[P 14776 T 249 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:03:11,CalS:12:03:11,CalE:12:04:02,Time: 51 / 51,CalWinTime:33,CompNum:87
+12:04:02.209 Info[P 14776 T 280 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:03:11,CalS:12:03:11,CalE:12:04:02,Time: 51 / 51,CalWinTime:34,CompNum:87
+12:04:04.458 Info[P 14776 T 307 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:03:11,CalS:12:03:11,CalE:12:04:04,Time: 53 / 53,CalWinTime:44,CompNum:87
+12:04:04.599 Info[P 14776 T 256 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:03:10,BlobS:12:03:10,BlobE:12:03:11,CalThdS:12:03:11,StartCapMark:12:03:11,EndCapFov:12:03:48,InspE:12:04:04,TranBLOB 0.015, Total(BIn/ThdS): 53.602 / 53.587(696)/,PCBCompNum:False,ACC:8,ThdNum:53587
+12:04:11.185 Info[P 14776 T 279 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481377	PCBInspect_Mode:InLine
+12:04:11.200 Info[P 14776 T 327 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:04:11.200 Info[P 14776 T 327 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:04:46.521 Info[P 14776 T 327 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 35.3
+12:04:50.536 Info[P 14776 T 256 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:04:11,CalS:12:04:11,CalE:12:04:50,Time: 39 / 39,CalWinTime:30,CompNum:87
+12:04:51.630 Info[P 14776 T 253 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:04:11,CalS:12:04:11,CalE:12:04:51,Time: 40 / 40,CalWinTime:31,CompNum:87
+12:04:51.770 Info[P 14776 T 305 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:04:11,CalS:12:04:11,CalE:12:04:51,Time: 40 / 40,CalWinTime:32,CompNum:87
+12:04:53.333 Info[P 14776 T 271 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:04:11,CalS:12:04:11,CalE:12:04:53,Time: 42 / 42,CalWinTime:33,CompNum:87
+12:04:54.192 Info[P 14776 T 259 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:04:11,CalS:12:04:11,CalE:12:04:54,Time: 42 / 42,CalWinTime:35,CompNum:86
+12:04:57.681 Info[P 14776 T 272 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:04:11,CalS:12:04:11,CalE:12:04:57,Time: 46 / 46,CalWinTime:39,CompNum:86
+12:05:00.243 Info[P 14776 T 290 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:04:11,CalS:12:04:11,CalE:12:05:00,Time: 49 / 49,CalWinTime:41,CompNum:87
+12:05:00.322 Info[P 14776 T 295 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:04:11,CalS:12:04:11,CalE:12:05:00,Time: 49 / 49,CalWinTime:39,CompNum:87
+12:05:00.478 Info[P 14776 T 279 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:04:11,BlobS:12:04:11,BlobE:12:04:11,CalThdS:12:04:11,StartCapMark:12:04:11,EndCapFov:12:04:46,InspE:12:05:00,TranBLOB 0.000, Total(BIn/ThdS): 49.292 / 49.277(696)/,PCBCompNum:False,ACC:8,ThdNum:49277
+12:05:07.292 Info[P 14776 T 276 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481378	PCBInspect_Mode:InLine
+12:05:07.308 Info[P 14776 T 249 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:05:07.308 Info[P 14776 T 249 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:05:43.025 Info[P 14776 T 249 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 35.7
+12:05:49.963 Info[P 14776 T 248 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:05:07,CalS:12:05:07,CalE:12:05:49,Time: 42 / 42,CalWinTime:33,CompNum:87
+12:05:50.166 Info[P 14776 T 301 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:05:07,CalS:12:05:07,CalE:12:05:50,Time: 42 / 42,CalWinTime:33,CompNum:87
+12:05:50.510 Info[P 14776 T 244 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:05:07,CalS:12:05:07,CalE:12:05:50,Time: 43 / 43,CalWinTime:34,CompNum:87
+12:05:51.103 Info[P 14776 T 274 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:05:07,CalS:12:05:07,CalE:12:05:51,Time: 43 / 43,CalWinTime:34,CompNum:87
+12:05:51.791 Info[P 14776 T 247 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:05:07,CalS:12:05:07,CalE:12:05:51,Time: 44 / 44,CalWinTime:35,CompNum:86
+12:05:54.915 Info[P 14776 T 280 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:05:07,CalS:12:05:07,CalE:12:05:54,Time: 47 / 47,CalWinTime:39,CompNum:86
+12:05:56.743 Info[P 14776 T 275 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:05:07,CalS:12:05:07,CalE:12:05:56,Time: 49 / 49,CalWinTime:41,CompNum:87
+12:05:58.529 Info[P 14776 T 324 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:05:07,CalS:12:05:07,CalE:12:05:58,Time: 51 / 51,CalWinTime:41,CompNum:87
+12:05:58.717 Info[P 14776 T 276 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:05:07,BlobS:12:05:07,BlobE:12:05:07,CalThdS:12:05:07,StartCapMark:12:05:08,EndCapFov:12:05:42,InspE:12:05:58,TranBLOB 0.000, Total(BIn/ThdS): 51.424 / 51.408(696)/,PCBCompNum:False,ACC:8,ThdNum:51408
+12:06:05.656 Info[P 14776 T 314 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481379	PCBInspect_Mode:InLine
+12:06:05.672 Info[P 14776 T 289 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:06:05.672 Info[P 14776 T 289 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:06:45.021 Info[P 14776 T 289 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 39.3
+12:06:48.625 Info[P 14776 T 145 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:06:05,CalS:12:06:05,CalE:12:06:48,Time: 42 / 42,CalWinTime:34,CompNum:87
+12:06:49.407 Info[P 14776 T 246 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:06:05,CalS:12:06:05,CalE:12:06:49,Time: 43 / 43,CalWinTime:34,CompNum:87
+12:06:49.891 Info[P 14776 T 191 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:06:05,CalS:12:06:05,CalE:12:06:49,Time: 44 / 44,CalWinTime:34,CompNum:87
+12:06:57.234 Info[P 14776 T 263 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:06:05,CalS:12:06:05,CalE:12:06:57,Time: 51 / 51,CalWinTime:37,CompNum:87
+12:06:57.234 Info[P 14776 T 243 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:06:05,CalS:12:06:05,CalE:12:06:57,Time: 51 / 51,CalWinTime:35,CompNum:87
+12:06:57.234 Info[P 14776 T 245 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:06:05,CalS:12:06:05,CalE:12:06:57,Time: 51 / 51,CalWinTime:34,CompNum:87
+12:06:57.437 Info[P 14776 T 144 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:06:05,CalS:12:06:05,CalE:12:06:57,Time: 51 / 51,CalWinTime:42,CompNum:87
+12:06:59.661 Info[P 14776 T 133 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:06:05,CalS:12:06:05,CalE:12:06:59,Time: 53 / 53,CalWinTime:45,CompNum:87
+12:06:59.833 Info[P 14776 T 314 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:06:05,BlobS:12:06:05,BlobE:12:06:05,CalThdS:12:06:05,StartCapMark:12:06:06,EndCapFov:12:06:44,InspE:12:06:59,TranBLOB 0.000, Total(BIn/ThdS): 54.176 / 54.161(696)/,PCBCompNum:False,ACC:8,ThdNum:54161
+12:07:07.037 Info[P 14776 T 274 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481380	PCBInspect_Mode:InLine
+12:07:07.053 Info[P 14776 T 297 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:07:07.053 Info[P 14776 T 297 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:07:43.815 Info[P 14776 T 297 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 36.8
+12:07:47.143 Info[P 14776 T 308 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:07:07,CalS:12:07:07,CalE:12:07:47,Time: 40 / 40,CalWinTime:31,CompNum:87
+12:07:49.164 Info[P 14776 T 264 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:07:07,CalS:12:07:07,CalE:12:07:49,Time: 42 / 42,CalWinTime:33,CompNum:87
+12:07:49.554 Info[P 14776 T 320 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:07:07,CalS:12:07:07,CalE:12:07:49,Time: 42 / 42,CalWinTime:34,CompNum:87
+12:07:49.945 Info[P 14776 T 273 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:07:07,CalS:12:07:07,CalE:12:07:49,Time: 42 / 42,CalWinTime:33,CompNum:87
+12:07:51.617 Info[P 14776 T 301 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:07:07,CalS:12:07:07,CalE:12:07:51,Time: 44 / 44,CalWinTime:36,CompNum:86
+12:07:55.132 Info[P 14776 T 244 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:07:07,CalS:12:07:07,CalE:12:07:55,Time: 48 / 48,CalWinTime:41,CompNum:86
+12:07:56.632 Info[P 14776 T 307 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:07:07,CalS:12:07:07,CalE:12:07:56,Time: 49 / 49,CalWinTime:40,CompNum:87
+12:07:56.788 Info[P 14776 T 248 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:07:07,CalS:12:07:07,CalE:12:07:56,Time: 49 / 49,CalWinTime:39,CompNum:87
+12:07:56.929 Info[P 14776 T 274 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:07:07,BlobS:12:07:07,BlobE:12:07:07,CalThdS:12:07:07,StartCapMark:12:07:07,EndCapFov:12:07:43,InspE:12:07:56,TranBLOB 0.000, Total(BIn/ThdS): 49.891 / 49.891(696)/,PCBCompNum:False,ACC:8,ThdNum:49891
+12:08:04.394 Info[P 14776 T 133 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481381	PCBInspect_Mode:InLine
+12:08:04.394 Info[P 14776 T 243 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:08:04.394 Info[P 14776 T 243 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:08:59.140 Info[P 14776 T 243 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 54.7
+12:09:02.479 Info[P 14776 T 274 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:08:04,CalS:12:08:04,CalE:12:09:02,Time: 58 / 58,CalWinTime:30,CompNum:87
+12:09:03.635 Info[P 14776 T 275 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:08:04,CalS:12:08:04,CalE:12:09:03,Time: 59 / 59,CalWinTime:32,CompNum:87
+12:09:04.104 Info[P 14776 T 260 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:08:04,CalS:12:08:04,CalE:12:09:04,Time: 59 / 59,CalWinTime:31,CompNum:87
+12:09:05.572 Info[P 14776 T 191 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:08:04,CalS:12:08:04,CalE:12:09:05,Time: 61 / 61,CalWinTime:33,CompNum:87
+12:09:06.760 Info[P 14776 T 263 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:08:04,CalS:12:08:04,CalE:12:09:06,Time: 62 / 62,CalWinTime:35,CompNum:86
+12:09:10.610 Info[P 14776 T 245 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:08:04,CalS:12:08:04,CalE:12:09:10,Time: 66 / 66,CalWinTime:40,CompNum:86
+12:09:12.532 Info[P 14776 T 246 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:08:04,CalS:12:08:04,CalE:12:09:12,Time: 68 / 68,CalWinTime:40,CompNum:87
+12:09:14.110 Info[P 14776 T 145 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:08:04,CalS:12:08:04,CalE:12:09:14,Time: 69 / 69,CalWinTime:41,CompNum:87
+12:09:14.126 Info[P 14776 T 133 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:08:04,BlobS:12:08:04,BlobE:12:08:04,CalThdS:12:08:04,StartCapMark:12:08:04,EndCapFov:12:08:58,InspE:12:09:14,TranBLOB 0.000, Total(BIn/ThdS): 69.731 / 69.731(696)/,PCBCompNum:False,ACC:8,ThdNum:69731
+12:09:21.728 Info[P 14776 T 244 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481382	PCBInspect_Mode:InLine
+12:09:21.743 Info[P 14776 T 265 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:09:21.743 Info[P 14776 T 265 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:10:01.363 Info[P 14776 T 265 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 39.6
+12:10:03.004 Info[P 14776 T 320 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:09:21,CalS:12:09:21,CalE:12:10:03,Time: 41 / 41,CalWinTime:33,CompNum:87
+12:10:04.675 Info[P 14776 T 273 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:09:21,CalS:12:09:21,CalE:12:10:04,Time: 42 / 42,CalWinTime:34,CompNum:87
+12:10:05.332 Info[P 14776 T 264 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:09:21,CalS:12:09:21,CalE:12:10:05,Time: 43 / 43,CalWinTime:34,CompNum:87
+12:10:12.815 Info[P 14776 T 324 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:09:21,CalS:12:09:21,CalE:12:10:12,Time: 51 / 51,CalWinTime:41,CompNum:87
+12:10:12.831 Info[P 14776 T 248 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:09:21,CalS:12:09:21,CalE:12:10:12,Time: 51 / 51,CalWinTime:36,CompNum:87
+12:10:12.894 Info[P 14776 T 144 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:09:21,CalS:12:09:21,CalE:12:10:12,Time: 51 / 51,CalWinTime:35,CompNum:87
+12:10:12.909 Info[P 14776 T 307 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:09:21,CalS:12:09:21,CalE:12:10:12,Time: 51 / 51,CalWinTime:36,CompNum:87
+12:10:15.284 Info[P 14776 T 308 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:09:21,CalS:12:09:21,CalE:12:10:15,Time: 53 / 53,CalWinTime:44,CompNum:87
+12:10:15.487 Info[P 14776 T 244 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:09:21,BlobS:12:09:21,BlobE:12:09:21,CalThdS:12:09:21,StartCapMark:12:09:22,EndCapFov:12:10:00,InspE:12:10:15,TranBLOB 0.000, Total(BIn/ThdS): 53.759 / 53.743(696)/,PCBCompNum:False,ACC:8,ThdNum:53743
+12:10:22.256 Info[P 14776 T 91 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481383	PCBInspect_Mode:InLine
+12:10:22.272 Info[P 14776 T 289 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:10:22.272 Info[P 14776 T 289 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:10:57.076 Info[P 14776 T 289 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 34.8
+12:11:02.051 Info[P 14776 T 249 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:10:22,CalS:12:10:22,CalE:12:11:02,Time: 39 / 39,CalWinTime:31,CompNum:87
+12:11:03.504 Info[P 14776 T 301 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:10:22,CalS:12:10:22,CalE:12:11:03,Time: 41 / 41,CalWinTime:30,CompNum:87
+12:11:03.536 Info[P 14776 T 280 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:10:22,CalS:12:10:22,CalE:12:11:03,Time: 41 / 41,CalWinTime:33,CompNum:87
+12:11:04.692 Info[P 14776 T 276 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:10:22,CalS:12:10:22,CalE:12:11:04,Time: 42 / 42,CalWinTime:33,CompNum:87
+12:11:07.207 Info[P 14776 T 285 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:10:22,CalS:12:10:22,CalE:12:11:07,Time: 44 / 44,CalWinTime:37,CompNum:86
+12:11:08.707 Info[P 14776 T 270 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:10:22,CalS:12:10:22,CalE:12:11:08,Time: 46 / 46,CalWinTime:38,CompNum:86
+12:11:09.988 Info[P 14776 T 261 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:10:22,CalS:12:10:22,CalE:12:11:09,Time: 47 / 47,CalWinTime:39,CompNum:87
+12:11:12.368 Info[P 14776 T 284 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:10:22,CalS:12:10:22,CalE:12:11:12,Time: 50 / 50,CalWinTime:40,CompNum:87
+12:11:12.493 Info[P 14776 T 91 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:10:22,BlobS:12:10:22,BlobE:12:10:22,CalThdS:12:10:22,StartCapMark:12:10:22,EndCapFov:12:10:56,InspE:12:11:12,TranBLOB 0.000, Total(BIn/ThdS): 50.236 / 50.221(696)/,PCBCompNum:False,ACC:8,ThdNum:50221
+12:11:19.818 Info[P 14776 T 320 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481384	PCBInspect_Mode:InLine
+12:11:19.833 Info[P 14776 T 144 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:11:19.833 Info[P 14776 T 144 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:11:55.912 Info[P 14776 T 144 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 36.1
+12:12:00.958 Info[P 14776 T 281 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:11:19,CalS:12:11:19,CalE:12:12:00,Time: 41 / 41,CalWinTime:31,CompNum:87
+12:12:01.895 Info[P 14776 T 91 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:11:19,CalS:12:11:19,CalE:12:12:01,Time: 42 / 42,CalWinTime:33,CompNum:87
+12:12:01.927 Info[P 14776 T 328 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:11:19,CalS:12:11:19,CalE:12:12:01,Time: 42 / 42,CalWinTime:33,CompNum:87
+12:12:02.177 Info[P 14776 T 310 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:11:19,CalS:12:11:19,CalE:12:12:02,Time: 42 / 42,CalWinTime:34,CompNum:87
+12:12:03.481 Info[P 14776 T 248 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:11:19,CalS:12:11:19,CalE:12:12:03,Time: 43 / 43,CalWinTime:36,CompNum:86
+12:12:08.074 Info[P 14776 T 307 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:11:19,CalS:12:11:19,CalE:12:12:08,Time: 48 / 48,CalWinTime:41,CompNum:86
+12:12:08.918 Info[P 14776 T 273 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:11:19,CalS:12:11:19,CalE:12:12:08,Time: 49 / 49,CalWinTime:40,CompNum:87
+12:12:09.293 Info[P 14776 T 271 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:11:19,CalS:12:11:19,CalE:12:12:09,Time: 49 / 49,CalWinTime:41,CompNum:87
+12:12:09.355 Info[P 14776 T 320 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:11:19,BlobS:12:11:19,BlobE:12:11:19,CalThdS:12:11:19,StartCapMark:12:11:20,EndCapFov:12:11:55,InspE:12:12:09,TranBLOB 0.000, Total(BIn/ThdS): 49.537 / 49.521(696)/,PCBCompNum:False,ACC:8,ThdNum:49521
+12:12:16.016 Info[P 14776 T 244 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481385	PCBInspect_Mode:InLine
+12:12:16.031 Info[P 14776 T 320 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:12:16.031 Info[P 14776 T 320 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:12:57.424 Info[P 14776 T 320 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 41.4
+12:12:57.580 Info[P 14776 T 245 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:12:16,CalS:12:12:16,CalE:12:12:57,Time: 41 / 41,CalWinTime:33,CompNum:87
+12:12:57.814 Info[P 14776 T 263 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:12:16,CalS:12:12:16,CalE:12:12:57,Time: 41 / 41,CalWinTime:32,CompNum:87
+12:12:58.924 Info[P 14776 T 246 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:12:16,CalS:12:12:16,CalE:12:12:58,Time: 42 / 42,CalWinTime:34,CompNum:87
+12:13:07.148 Info[P 14776 T 145 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:12:16,CalS:12:12:16,CalE:12:13:07,Time: 51 / 51,CalWinTime:35,CompNum:87
+12:13:07.211 Info[P 14776 T 253 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:12:16,CalS:12:12:16,CalE:12:13:07,Time: 51 / 51,CalWinTime:42,CompNum:87
+12:13:07.211 Info[P 14776 T 260 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:12:16,CalS:12:12:16,CalE:12:13:07,Time: 51 / 51,CalWinTime:32,CompNum:87
+12:13:07.226 Info[P 14776 T 191 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:12:16,CalS:12:12:16,CalE:12:13:07,Time: 51 / 51,CalWinTime:37,CompNum:87
+12:13:09.132 Info[P 14776 T 243 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:12:16,CalS:12:12:16,CalE:12:13:09,Time: 53 / 53,CalWinTime:44,CompNum:87
+12:13:09.163 Info[P 14776 T 244 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:12:16,BlobS:12:12:16,BlobE:12:12:16,CalThdS:12:12:16,StartCapMark:12:12:16,EndCapFov:12:12:57,InspE:12:13:09,TranBLOB 0.000, Total(BIn/ThdS): 53.147 / 53.132(696)/,PCBCompNum:False,ACC:8,ThdNum:53132
+12:13:16.408 Info[P 14776 T 265 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481386	PCBInspect_Mode:InLine
+12:13:16.424 Info[P 14776 T 247 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:13:16.424 Info[P 14776 T 247 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:14:07.144 Info[P 14776 T 247 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 50.7
+12:14:10.987 Info[P 14776 T 308 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:13:16,CalS:12:13:16,CalE:12:14:10,Time: 54 / 54,CalWinTime:29,CompNum:87
+12:14:11.628 Info[P 14776 T 281 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:13:16,CalS:12:13:16,CalE:12:14:11,Time: 55 / 55,CalWinTime:46,CompNum:87
+12:14:13.456 Info[P 14776 T 264 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:13:16,CalS:12:13:16,CalE:12:14:13,Time: 57 / 57,CalWinTime:48,CompNum:87
+12:14:14.252 Info[P 14776 T 91 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:13:16,CalS:12:13:16,CalE:12:14:14,Time: 57 / 57,CalWinTime:48,CompNum:87
+12:14:15.508 Info[P 14776 T 273 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:13:16,CalS:12:13:16,CalE:12:14:15,Time: 59 / 59,CalWinTime:50,CompNum:86
+12:14:18.632 Info[P 14776 T 271 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:13:16,CalS:12:13:16,CalE:12:14:18,Time: 62 / 62,CalWinTime:54,CompNum:86
+12:14:20.507 Info[P 14776 T 310 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:13:16,CalS:12:13:16,CalE:12:14:20,Time: 64 / 64,CalWinTime:55,CompNum:87
+12:14:21.101 Info[P 14776 T 328 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:13:16,CalS:12:13:16,CalE:12:14:21,Time: 64 / 64,CalWinTime:54,CompNum:87
+12:14:21.257 Info[P 14776 T 265 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:13:16,BlobS:12:13:16,BlobE:12:13:16,CalThdS:12:13:16,StartCapMark:12:13:17,EndCapFov:12:14:06,InspE:12:14:21,TranBLOB 0.000, Total(BIn/ThdS): 64.848 / 64.833(696)/,PCBCompNum:False,ACC:8,ThdNum:64833
+12:14:29.302 Info[P 14776 T 279 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481387	PCBInspect_Mode:InLine
+12:14:29.318 Info[P 14776 T 284 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:14:29.318 Info[P 14776 T 284 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:15:05.374 Info[P 14776 T 284 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 36
+12:15:08.781 Info[P 14776 T 275 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:14:29,CalS:12:14:29,CalE:12:15:08,Time: 39 / 39,CalWinTime:30,CompNum:87
+12:15:10.937 Info[P 14776 T 265 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:14:29,CalS:12:14:29,CalE:12:15:10,Time: 41 / 41,CalWinTime:33,CompNum:87
+12:15:11.937 Info[P 14776 T 324 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:14:29,CalS:12:14:29,CalE:12:15:11,Time: 42 / 42,CalWinTime:34,CompNum:87
+12:15:12.828 Info[P 14776 T 248 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:14:29,CalS:12:14:29,CalE:12:15:12,Time: 43 / 43,CalWinTime:35,CompNum:87
+12:15:13.859 Info[P 14776 T 270 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:14:29,CalS:12:14:29,CalE:12:15:13,Time: 44 / 44,CalWinTime:36,CompNum:86
+12:15:18.833 Info[P 14776 T 285 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:14:29,CalS:12:14:29,CalE:12:15:18,Time: 49 / 49,CalWinTime:41,CompNum:86
+12:15:19.693 Info[P 14776 T 289 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:14:29,CalS:12:14:29,CalE:12:15:19,Time: 50 / 50,CalWinTime:41,CompNum:87
+12:15:19.911 Info[P 14776 T 256 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:14:29,CalS:12:14:29,CalE:12:15:19,Time: 50 / 50,CalWinTime:41,CompNum:87
+12:15:20.099 Info[P 14776 T 279 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:14:29,BlobS:12:14:29,BlobE:12:14:29,CalThdS:12:14:29,StartCapMark:12:14:29,EndCapFov:12:15:04,InspE:12:15:20,TranBLOB 0.000, Total(BIn/ThdS): 50.796 / 50.780(696)/,PCBCompNum:False,ACC:8,ThdNum:50780
+12:15:27.357 Info[P 14776 T 283 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481388	PCBInspect_Mode:InLine
+12:15:27.372 Info[P 14776 T 263 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:15:27.372 Info[P 14776 T 263 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:16:06.760 Info[P 14776 T 263 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 39.4
+12:16:08.225 Info[P 14776 T 191 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:15:27,CalS:12:15:27,CalE:12:16:08,Time: 40 / 40,CalWinTime:33,CompNum:87
+12:16:09.897 Info[P 14776 T 145 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:15:27,CalS:12:15:27,CalE:12:16:09,Time: 42 / 42,CalWinTime:33,CompNum:87
+12:16:12.506 Info[P 14776 T 260 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:15:27,CalS:12:15:27,CalE:12:16:12,Time: 45 / 45,CalWinTime:37,CompNum:87
+12:16:17.896 Info[P 14776 T 245 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:15:27,CalS:12:15:27,CalE:12:16:17,Time: 50 / 50,CalWinTime:41,CompNum:87
+12:16:17.990 Info[P 14776 T 279 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:15:27,CalS:12:15:27,CalE:12:16:17,Time: 50 / 50,CalWinTime:37,CompNum:87
+12:16:17.990 Info[P 14776 T 305 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:15:27,CalS:12:15:27,CalE:12:16:17,Time: 50 / 50,CalWinTime:36,CompNum:87
+12:16:18.021 Info[P 14776 T 261 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:15:27,CalS:12:15:27,CalE:12:16:18,Time: 50 / 50,CalWinTime:35,CompNum:87
+12:16:19.823 Info[P 14776 T 246 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:15:27,CalS:12:15:27,CalE:12:16:19,Time: 52 / 52,CalWinTime:44,CompNum:87
+12:16:19.948 Info[P 14776 T 283 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:15:27,BlobS:12:15:27,BlobE:12:15:27,CalThdS:12:15:27,StartCapMark:12:15:28,EndCapFov:12:16:06,InspE:12:16:19,TranBLOB 0.000, Total(BIn/ThdS): 52.591 / 52.575(696)/,PCBCompNum:False,ACC:8,ThdNum:52575
+12:16:27.280 Info[P 14776 T 273 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481389	PCBInspect_Mode:InLine
+12:16:27.296 Info[P 14776 T 315 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:16:27.296 Info[P 14776 T 315 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:17:03.892 Info[P 14776 T 315 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 36.6
+12:17:09.385 Info[P 14776 T 320 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:16:27,CalS:12:16:27,CalE:12:17:09,Time: 42 / 42,CalWinTime:32,CompNum:87
+12:17:09.463 Info[P 14776 T 307 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:16:27,CalS:12:16:27,CalE:12:17:09,Time: 42 / 42,CalWinTime:30,CompNum:87
+12:17:10.854 Info[P 14776 T 253 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:16:27,CalS:12:16:27,CalE:12:17:10,Time: 43 / 43,CalWinTime:34,CompNum:87
+12:17:13.182 Info[P 14776 T 243 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:16:27,CalS:12:16:27,CalE:12:17:13,Time: 45 / 45,CalWinTime:35,CompNum:87
+12:17:13.963 Info[P 14776 T 283 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:16:27,CalS:12:16:27,CalE:12:17:13,Time: 46 / 46,CalWinTime:37,CompNum:86
+12:17:15.916 Info[P 14776 T 284 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:16:27,CalS:12:16:27,CalE:12:17:15,Time: 48 / 48,CalWinTime:40,CompNum:86
+12:17:16.853 Info[P 14776 T 275 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:16:27,CalS:12:16:27,CalE:12:17:16,Time: 49 / 49,CalWinTime:41,CompNum:87
+12:17:18.634 Info[P 14776 T 265 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:16:27,CalS:12:16:27,CalE:12:17:18,Time: 51 / 51,CalWinTime:42,CompNum:87
+12:17:18.681 Info[P 14776 T 273 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:16:27,BlobS:12:16:27,BlobE:12:16:27,CalThdS:12:16:27,StartCapMark:12:16:28,EndCapFov:12:17:03,InspE:12:17:18,TranBLOB 0.000, Total(BIn/ThdS): 51.400 / 51.385(696)/,PCBCompNum:False,ACC:8,ThdNum:51385
+12:17:25.454 Info[P 14776 T 277 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481390	PCBInspect_Mode:InLine
+12:17:25.470 Info[P 14776 T 273 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:17:25.470 Info[P 14776 T 273 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:18:14.291 Info[P 14776 T 273 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 48.8
+12:18:17.447 Info[P 14776 T 261 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:17:25,CalS:12:17:25,CalE:12:18:17,Time: 51 / 51,CalWinTime:42,CompNum:87
+12:18:19.010 Info[P 14776 T 279 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:17:25,CalS:12:17:25,CalE:12:18:19,Time: 53 / 53,CalWinTime:44,CompNum:87
+12:18:19.650 Info[P 14776 T 260 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:17:25,CalS:12:17:25,CalE:12:18:19,Time: 54 / 54,CalWinTime:45,CompNum:87
+12:18:19.830 Info[P 14776 T 305 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:17:25,CalS:12:17:25,CalE:12:18:19,Time: 54 / 54,CalWinTime:45,CompNum:87
+12:18:21.376 Info[P 14776 T 245 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:17:25,CalS:12:17:25,CalE:12:18:21,Time: 55 / 55,CalWinTime:47,CompNum:86
+12:18:23.642 Info[P 14776 T 145 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:17:25,CalS:12:17:25,CalE:12:18:23,Time: 58 / 58,CalWinTime:46,CompNum:87
+12:18:24.392 Info[P 14776 T 246 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:17:25,CalS:12:17:25,CalE:12:18:24,Time: 58 / 58,CalWinTime:50,CompNum:86
+12:18:27.298 Info[P 14776 T 191 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:17:25,CalS:12:17:25,CalE:12:18:27,Time: 61 / 61,CalWinTime:53,CompNum:87
+12:18:27.313 Info[P 14776 T 277 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:17:25,BlobS:12:17:25,BlobE:12:17:25,CalThdS:12:17:25,StartCapMark:12:17:26,EndCapFov:12:18:14,InspE:12:18:27,TranBLOB 0.000, Total(BIn/ThdS): 61.859 / 61.843(696)/,PCBCompNum:False,ACC:8,ThdNum:61843
+12:18:34.360 Info[P 14776 T 280 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481391	PCBInspect_Mode:InLine
+12:18:34.376 Info[P 14776 T 265 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:18:34.376 Info[P 14776 T 265 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:19:14.365 Info[P 14776 T 265 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 40
+12:19:15.552 Info[P 14776 T 289 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:18:34,CalS:12:18:34,CalE:12:19:15,Time: 41 / 41,CalWinTime:32,CompNum:87
+12:19:17.490 Info[P 14776 T 315 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:18:34,CalS:12:18:34,CalE:12:19:17,Time: 43 / 43,CalWinTime:34,CompNum:87
+12:19:18.505 Info[P 14776 T 263 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:18:34,CalS:12:18:34,CalE:12:19:18,Time: 44 / 44,CalWinTime:35,CompNum:87
+12:19:24.807 Info[P 14776 T 284 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:18:34,CalS:12:18:34,CalE:12:19:24,Time: 50 / 50,CalWinTime:41,CompNum:87
+12:19:24.838 Info[P 14776 T 277 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:18:34,CalS:12:18:34,CalE:12:19:24,Time: 50 / 50,CalWinTime:36,CompNum:87
+12:19:24.854 Info[P 14776 T 270 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:18:34,CalS:12:18:34,CalE:12:19:24,Time: 50 / 50,CalWinTime:34,CompNum:87
+12:19:24.885 Info[P 14776 T 244 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:18:34,CalS:12:18:34,CalE:12:19:24,Time: 50 / 50,CalWinTime:35,CompNum:87
+12:19:26.572 Info[P 14776 T 283 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:18:34,CalS:12:18:34,CalE:12:19:26,Time: 52 / 52,CalWinTime:43,CompNum:87
+12:19:26.697 Info[P 14776 T 280 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:18:34,BlobS:12:18:34,BlobE:12:18:34,CalThdS:12:18:34,StartCapMark:12:18:35,EndCapFov:12:19:13,InspE:12:19:26,TranBLOB 0.000, Total(BIn/ThdS): 52.336 / 52.321(696)/,PCBCompNum:False,ACC:8,ThdNum:52321
+12:19:33.820 Info[P 14776 T 324 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481392	PCBInspect_Mode:InLine
+12:19:33.835 Info[P 14776 T 191 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:19:33.835 Info[P 14776 T 191 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:20:23.393 Info[P 14776 T 191 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 49.6
+12:20:28.564 Info[P 14776 T 280 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:19:33,CalS:12:19:33,CalE:12:20:28,Time: 54 / 54,CalWinTime:45,CompNum:87
+12:20:28.861 Info[P 14776 T 301 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:19:33,CalS:12:19:33,CalE:12:20:28,Time: 55 / 55,CalWinTime:33,CompNum:87
+12:20:28.924 Info[P 14776 T 256 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:19:33,CalS:12:19:33,CalE:12:20:28,Time: 55 / 55,CalWinTime:47,CompNum:87
+12:20:29.283 Info[P 14776 T 285 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:19:33,CalS:12:19:33,CalE:12:20:29,Time: 55 / 55,CalWinTime:43,CompNum:87
+12:20:32.042 Info[P 14776 T 145 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:19:33,CalS:12:19:33,CalE:12:20:32,Time: 58 / 58,CalWinTime:49,CompNum:86
+12:20:34.245 Info[P 14776 T 246 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:19:33,CalS:12:19:33,CalE:12:20:34,Time: 60 / 60,CalWinTime:53,CompNum:86
+12:20:36.558 Info[P 14776 T 245 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:19:33,CalS:12:19:33,CalE:12:20:36,Time: 62 / 62,CalWinTime:53,CompNum:87
+12:20:37.417 Info[P 14776 T 273 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:19:33,CalS:12:19:33,CalE:12:20:37,Time: 63 / 63,CalWinTime:55,CompNum:87
+12:20:37.604 Info[P 14776 T 324 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:19:33,BlobS:12:19:33,BlobE:12:19:33,CalThdS:12:19:33,StartCapMark:12:19:34,EndCapFov:12:20:22,InspE:12:20:37,TranBLOB 0.000, Total(BIn/ThdS): 63.784 / 63.784(696)/,PCBCompNum:False,ACC:8,ThdNum:63784
+12:20:44.522 Info[P 14776 T 307 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481393	PCBInspect_Mode:InLine
+12:20:44.537 Info[P 14776 T 289 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:20:44.537 Info[P 14776 T 289 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:21:20.400 Info[P 14776 T 289 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 35.9
+12:21:22.846 Info[P 14776 T 261 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:20:44,CalS:12:20:44,CalE:12:21:22,Time: 38 / 38,CalWinTime:29,CompNum:87
+12:21:24.267 Info[P 14776 T 305 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:20:44,CalS:12:20:44,CalE:12:21:24,Time: 39 / 39,CalWinTime:31,CompNum:87
+12:21:24.455 Info[P 14776 T 279 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:20:44,CalS:12:20:44,CalE:12:21:24,Time: 39 / 39,CalWinTime:32,CompNum:87
+12:21:26.595 Info[P 14776 T 318 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:20:44,CalS:12:20:44,CalE:12:21:26,Time: 42 / 42,CalWinTime:33,CompNum:87
+12:21:27.361 Info[P 14776 T 277 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:20:44,CalS:12:20:44,CalE:12:21:27,Time: 42 / 42,CalWinTime:34,CompNum:86
+12:21:31.267 Info[P 14776 T 244 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:20:44,CalS:12:20:44,CalE:12:21:31,Time: 46 / 46,CalWinTime:39,CompNum:86
+12:21:32.204 Info[P 14776 T 322 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:20:44,CalS:12:20:44,CalE:12:21:32,Time: 47 / 47,CalWinTime:39,CompNum:87
+12:21:33.027 Info[P 14776 T 313 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:20:44,CalS:12:20:44,CalE:12:21:33,Time: 48 / 48,CalWinTime:39,CompNum:87
+12:21:33.059 Info[P 14776 T 307 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:20:44,BlobS:12:20:44,BlobE:12:20:44,CalThdS:12:20:44,StartCapMark:12:20:45,EndCapFov:12:21:20,InspE:12:21:33,TranBLOB 0.000, Total(BIn/ThdS): 48.536 / 48.521(696)/,PCBCompNum:False,ACC:8,ThdNum:48521
+12:21:39.438 Info[P 14776 T 290 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481394	PCBInspect_Mode:InLine
+12:21:39.453 Info[P 14776 T 273 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:21:39.453 Info[P 14776 T 273 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:22:37.815 Info[P 14776 T 273 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 58.4
+12:22:39.315 Info[P 14776 T 191 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:21:39,CalS:12:21:39,CalE:12:22:39,Time: 59 / 59,CalWinTime:51,CompNum:87
+12:22:39.955 Info[P 14776 T 270 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:21:39,CalS:12:21:39,CalE:12:22:39,Time: 60 / 60,CalWinTime:51,CompNum:87
+12:22:40.471 Info[P 14776 T 145 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:21:39,CalS:12:21:39,CalE:12:22:40,Time: 61 / 61,CalWinTime:51,CompNum:87
+12:22:48.338 Info[P 14776 T 320 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:21:39,CalS:12:21:39,CalE:12:22:48,Time: 68 / 68,CalWinTime:52,CompNum:87
+12:22:48.354 Info[P 14776 T 275 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:21:39,CalS:12:21:39,CalE:12:22:48,Time: 68 / 68,CalWinTime:55,CompNum:87
+12:22:48.400 Info[P 14776 T 263 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:21:39,CalS:12:21:39,CalE:12:22:48,Time: 68 / 68,CalWinTime:53,CompNum:87
+12:22:49.666 Info[P 14776 T 246 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:21:39,CalS:12:21:39,CalE:12:22:49,Time: 70 / 70,CalWinTime:61,CompNum:87
+12:22:49.728 Info[P 14776 T 245 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:21:39,CalS:12:21:39,CalE:12:22:49,Time: 70 / 70,CalWinTime:42,CompNum:87
+12:22:49.807 Info[P 14776 T 290 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:21:39,BlobS:12:21:39,BlobE:12:21:39,CalThdS:12:21:39,StartCapMark:12:21:40,EndCapFov:12:22:37,InspE:12:22:49,TranBLOB 0.000, Total(BIn/ThdS): 70.368 / 70.353(696)/,PCBCompNum:False,ACC:8,ThdNum:70353
+12:22:56.876 Info[P 14776 T 244 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481395	PCBInspect_Mode:InLine
+12:22:56.876 Info[P 14776 T 256 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:22:56.876 Info[P 14776 T 256 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:23:34.085 Info[P 14776 T 256 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 37.2
+12:23:36.536 Info[P 14776 T 289 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:22:56,CalS:12:22:56,CalE:12:23:36,Time: 39 / 39,CalWinTime:31,CompNum:87
+12:23:37.817 Info[P 14776 T 247 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:22:56,CalS:12:22:56,CalE:12:23:37,Time: 40 / 40,CalWinTime:32,CompNum:87
+12:23:39.926 Info[P 14776 T 324 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:22:56,CalS:12:22:56,CalE:12:23:39,Time: 43 / 43,CalWinTime:34,CompNum:87
+12:23:40.957 Info[P 14776 T 248 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:22:56,CalS:12:22:56,CalE:12:23:40,Time: 44 / 44,CalWinTime:34,CompNum:87
+12:23:42.129 Info[P 14776 T 133 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:22:56,CalS:12:22:56,CalE:12:23:42,Time: 45 / 45,CalWinTime:37,CompNum:86
+12:23:45.923 Info[P 14776 T 257 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:22:56,CalS:12:22:56,CalE:12:23:45,Time: 49 / 49,CalWinTime:40,CompNum:86
+12:23:46.438 Info[P 14776 T 251 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:22:56,CalS:12:22:56,CalE:12:23:46,Time: 49 / 49,CalWinTime:41,CompNum:87
+12:23:47.594 Info[P 14776 T 267 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:22:56,CalS:12:22:56,CalE:12:23:47,Time: 50 / 50,CalWinTime:41,CompNum:87
+12:23:47.641 Info[P 14776 T 244 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:22:56,BlobS:12:22:56,BlobE:12:22:56,CalThdS:12:22:56,StartCapMark:12:22:57,EndCapFov:12:23:33,InspE:12:23:47,TranBLOB 0.000, Total(BIn/ThdS): 50.780 / 50.765(696)/,PCBCompNum:False,ACC:8,ThdNum:50765
+12:23:54.705 Info[P 14776 T 288 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481396	PCBInspect_Mode:InLine
+12:23:54.721 Info[P 14776 T 270 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:23:54.721 Info[P 14776 T 270 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:24:30.588 Info[P 14776 T 270 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 35.9
+12:24:33.572 Info[P 14776 T 277 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:23:54,CalS:12:23:54,CalE:12:24:33,Time: 38 / 38,CalWinTime:28,CompNum:87
+12:24:34.799 Info[P 14776 T 274 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:23:54,CalS:12:23:54,CalE:12:24:34,Time: 40 / 40,CalWinTime:30,CompNum:87
+12:24:35.275 Info[P 14776 T 243 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:23:54,CalS:12:23:54,CalE:12:24:35,Time: 40 / 40,CalWinTime:32,CompNum:87
+12:24:37.426 Info[P 14776 T 273 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:23:54,CalS:12:23:54,CalE:12:24:37,Time: 42 / 42,CalWinTime:33,CompNum:87
+12:24:38.036 Info[P 14776 T 191 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:23:54,CalS:12:23:54,CalE:12:24:38,Time: 43 / 43,CalWinTime:34,CompNum:86
+12:24:40.770 Info[P 14776 T 145 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:23:54,CalS:12:23:54,CalE:12:24:40,Time: 46 / 46,CalWinTime:38,CompNum:86
+12:24:42.738 Info[P 14776 T 245 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:23:54,CalS:12:23:54,CalE:12:24:42,Time: 48 / 48,CalWinTime:39,CompNum:87
+12:24:42.957 Info[P 14776 T 246 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:23:54,CalS:12:23:54,CalE:12:24:42,Time: 48 / 48,CalWinTime:38,CompNum:87
+12:24:43.082 Info[P 14776 T 288 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:23:54,BlobS:12:23:54,BlobE:12:23:54,CalThdS:12:23:54,StartCapMark:12:23:55,EndCapFov:12:24:30,InspE:12:24:43,TranBLOB 0.000, Total(BIn/ThdS): 48.376 / 48.361(696)/,PCBCompNum:False,ACC:8,ThdNum:48361
+12:24:49.998 Info[P 14776 T 271 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481397	PCBInspect_Mode:InLine
+12:24:50.013 Info[P 14776 T 318 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:24:50.013 Info[P 14776 T 318 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:25:31.091 Info[P 14776 T 318 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 41.1
+12:25:34.106 Info[P 14776 T 307 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:24:50,CalS:12:24:50,CalE:12:25:34,Time: 44 / 44,CalWinTime:35,CompNum:87
+12:25:35.137 Info[P 14776 T 301 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:24:50,CalS:12:24:50,CalE:12:25:35,Time: 45 / 45,CalWinTime:36,CompNum:87
+12:25:35.247 Info[P 14776 T 261 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:24:50,CalS:12:24:50,CalE:12:25:35,Time: 45 / 45,CalWinTime:35,CompNum:87
+12:25:41.570 Info[P 14776 T 305 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:24:50,CalS:12:24:50,CalE:12:25:41,Time: 51 / 51,CalWinTime:42,CompNum:87
+12:25:41.664 Info[P 14776 T 288 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:24:50,CalS:12:24:50,CalE:12:25:41,Time: 51 / 51,CalWinTime:38,CompNum:87
+12:25:41.664 Info[P 14776 T 253 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:24:50,CalS:12:24:50,CalE:12:25:41,Time: 51 / 51,CalWinTime:36,CompNum:87
+12:25:41.695 Info[P 14776 T 280 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:24:50,CalS:12:24:50,CalE:12:25:41,Time: 51 / 51,CalWinTime:36,CompNum:87
+12:25:42.757 Info[P 14776 T 279 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:24:50,CalS:12:24:50,CalE:12:25:42,Time: 52 / 52,CalWinTime:43,CompNum:87
+12:25:42.913 Info[P 14776 T 271 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:24:49,BlobS:12:24:50,BlobE:12:24:50,CalThdS:12:24:50,StartCapMark:12:24:50,EndCapFov:12:25:31,InspE:12:25:42,TranBLOB 0.000, Total(BIn/ThdS): 52.915 / 52.899(696)/,PCBCompNum:False,ACC:8,ThdNum:52899
+12:25:49.798 Info[P 14776 T 246 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481398	PCBInspect_Mode:InLine
+12:25:49.813 Info[P 14776 T 277 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:25:49.813 Info[P 14776 T 277 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:26:32.924 Info[P 14776 T 277 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 43.1
+12:26:36.924 Info[P 14776 T 310 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:25:49,CalS:12:25:49,CalE:12:26:36,Time: 47 / 47,CalWinTime:37,CompNum:87
+12:26:39.036 Info[P 14776 T 276 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:25:49,CalS:12:25:49,CalE:12:26:39,Time: 49 / 49,CalWinTime:36,CompNum:87
+12:26:40.083 Info[P 14776 T 271 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:25:49,CalS:12:25:49,CalE:12:26:40,Time: 50 / 50,CalWinTime:42,CompNum:87
+12:26:41.114 Info[P 14776 T 275 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:25:49,CalS:12:25:49,CalE:12:26:41,Time: 51 / 51,CalWinTime:38,CompNum:87
+12:26:41.114 Info[P 14776 T 274 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:25:49,CalS:12:25:49,CalE:12:26:41,Time: 51 / 51,CalWinTime:43,CompNum:86
+12:26:44.817 Info[P 14776 T 243 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:25:49,CalS:12:25:49,CalE:12:26:44,Time: 55 / 55,CalWinTime:47,CompNum:86
+12:26:46.832 Info[P 14776 T 273 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:25:49,CalS:12:25:49,CalE:12:26:46,Time: 57 / 57,CalWinTime:46,CompNum:87
+12:26:47.603 Info[P 14776 T 245 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:25:49,CalS:12:25:49,CalE:12:26:47,Time: 57 / 57,CalWinTime:45,CompNum:87
+12:26:47.650 Info[P 14776 T 246 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:25:49,BlobS:12:25:49,BlobE:12:25:49,CalThdS:12:25:49,StartCapMark:12:25:50,EndCapFov:12:26:32,InspE:12:26:47,TranBLOB 0.000, Total(BIn/ThdS): 57.852 / 57.836(696)/,PCBCompNum:False,ACC:8,ThdNum:57836
+12:26:55.383 Info[P 14776 T 91 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481399	PCBInspect_Mode:InLine
+12:26:55.398 Info[P 14776 T 86 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:26:55.398 Info[P 14776 T 86 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:27:31.266 Info[P 14776 T 86 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 35.9
+12:27:36.735 Info[P 14776 T 191 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:26:55,CalS:12:26:55,CalE:12:27:36,Time: 41 / 41,CalWinTime:32,CompNum:87
+12:27:36.781 Info[P 14776 T 246 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:26:55,CalS:12:26:55,CalE:12:27:36,Time: 41 / 41,CalWinTime:32,CompNum:87
+12:27:37.125 Info[P 14776 T 145 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:26:55,CalS:12:26:55,CalE:12:27:37,Time: 41 / 41,CalWinTime:33,CompNum:87
+12:27:39.248 Info[P 14776 T 270 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:26:55,CalS:12:26:55,CalE:12:27:39,Time: 43 / 43,CalWinTime:34,CompNum:87
+12:27:39.607 Info[P 14776 T 299 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:26:55,CalS:12:26:55,CalE:12:27:39,Time: 44 / 44,CalWinTime:36,CompNum:86
+12:27:43.185 Info[P 14776 T 255 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:26:55,CalS:12:26:55,CalE:12:27:43,Time: 47 / 47,CalWinTime:40,CompNum:86
+12:27:44.950 Info[P 14776 T 263 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:26:55,CalS:12:26:55,CalE:12:27:44,Time: 49 / 49,CalWinTime:41,CompNum:87
+12:27:45.060 Info[P 14776 T 144 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:26:55,CalS:12:26:55,CalE:12:27:45,Time: 49 / 49,CalWinTime:40,CompNum:87
+12:27:45.200 Info[P 14776 T 91 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:26:55,BlobS:12:26:55,BlobE:12:26:55,CalThdS:12:26:55,StartCapMark:12:26:56,EndCapFov:12:27:30,InspE:12:27:45,TranBLOB 0.000, Total(BIn/ThdS): 49.817 / 49.801(696)/,PCBCompNum:False,ACC:8,ThdNum:49801
+12:27:52.162 Info[P 14776 T 264 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481400	PCBInspect_Mode:InLine
+12:27:52.178 Info[P 14776 T 244 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:27:52.178 Info[P 14776 T 244 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:28:36.612 Info[P 14776 T 279 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:27:52,CalS:12:27:52,CalE:12:28:36,Time: 44 / 44,CalWinTime:32,CompNum:87
+12:28:36.940 Info[P 14776 T 244 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 44.8
+12:28:39.683 Info[P 14776 T 305 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:27:52,CalS:12:27:52,CalE:12:28:39,Time: 47 / 47,CalWinTime:38,CompNum:87
+12:28:40.339 Info[P 14776 T 261 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:27:52,CalS:12:27:52,CalE:12:28:40,Time: 48 / 48,CalWinTime:34,CompNum:87
+12:28:43.839 Info[P 14776 T 280 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:27:52,CalS:12:27:52,CalE:12:28:43,Time: 51 / 51,CalWinTime:39,CompNum:87
+12:28:43.854 Info[P 14776 T 301 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:27:52,CalS:12:27:52,CalE:12:28:43,Time: 51 / 51,CalWinTime:38,CompNum:87
+12:28:43.854 Info[P 14776 T 307 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:27:52,CalS:12:27:52,CalE:12:28:43,Time: 51 / 51,CalWinTime:39,CompNum:87
+12:28:44.354 Info[P 14776 T 91 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:27:52,CalS:12:27:52,CalE:12:28:44,Time: 52 / 52,CalWinTime:42,CompNum:87
+12:28:49.213 Info[P 14776 T 241 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:27:52,CalS:12:27:52,CalE:12:28:49,Time: 57 / 57,CalWinTime:48,CompNum:87
+12:28:49.244 Info[P 14776 T 264 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:27:52,BlobS:12:27:52,BlobE:12:27:52,CalThdS:12:27:52,StartCapMark:12:27:52,EndCapFov:12:28:36,InspE:12:28:49,TranBLOB 0.000, Total(BIn/ThdS): 57.082 / 57.066(696)/,PCBCompNum:False,ACC:8,ThdNum:57066
+12:28:55.736 Info[P 14776 T 289 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481401	PCBInspect_Mode:InLine
+12:28:55.736 Info[P 14776 T 257 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:28:55.736 Info[P 14776 T 257 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:29:31.187 Info[P 14776 T 257 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 35.5
+12:29:51.547 Info[P 14776 T 253 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:28:55,CalS:12:28:55,CalE:12:29:51,Time: 55 / 55,CalWinTime:30,CompNum:87
+12:29:53.718 Info[P 14776 T 324 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:28:55,CalS:12:28:55,CalE:12:29:53,Time: 57 / 57,CalWinTime:49,CompNum:87
+12:29:53.984 Info[P 14776 T 281 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:28:55,CalS:12:28:55,CalE:12:29:53,Time: 58 / 58,CalWinTime:34,CompNum:87
+12:29:54.156 Info[P 14776 T 322 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:28:55,CalS:12:28:55,CalE:12:29:54,Time: 58 / 58,CalWinTime:33,CompNum:87
+12:29:56.406 Info[P 14776 T 267 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:28:55,CalS:12:28:55,CalE:12:29:56,Time: 60 / 60,CalWinTime:36,CompNum:86
+12:29:59.561 Info[P 14776 T 251 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:28:55,CalS:12:28:55,CalE:12:29:59,Time: 63 / 63,CalWinTime:40,CompNum:86
+12:30:00.443 Info[P 14776 T 247 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:28:55,CalS:12:28:55,CalE:12:30:00,Time: 64 / 64,CalWinTime:55,CompNum:87
+12:30:01.412 Info[P 14776 T 248 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:28:55,CalS:12:28:55,CalE:12:30:01,Time: 65 / 65,CalWinTime:56,CompNum:87
+12:30:01.537 Info[P 14776 T 289 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:28:55,BlobS:12:28:55,BlobE:12:28:55,CalThdS:12:28:55,StartCapMark:12:28:56,EndCapFov:12:29:31,InspE:12:30:01,TranBLOB 0.000, Total(BIn/ThdS): 65.801 / 65.801(696)/,PCBCompNum:False,ACC:8,ThdNum:65801
+12:30:58.461 Info[P 14776 T 313 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481402	PCBInspect_Mode:InLine
+12:30:58.477 Info[P 14776 T 133 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:30:58.477 Info[P 14776 T 133 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:31:34.638 Info[P 14776 T 133 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 36.2
+12:31:37.997 Info[P 14776 T 308 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:30:58,CalS:12:30:58,CalE:12:31:37,Time: 39 / 39,CalWinTime:30,CompNum:87
+12:31:39.263 Info[P 14776 T 310 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:30:58,CalS:12:30:58,CalE:12:31:39,Time: 40 / 40,CalWinTime:32,CompNum:87
+12:31:40.185 Info[P 14776 T 271 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:30:58,CalS:12:30:58,CalE:12:31:40,Time: 41 / 41,CalWinTime:32,CompNum:87
+12:31:40.935 Info[P 14776 T 249 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:30:58,CalS:12:30:58,CalE:12:31:40,Time: 42 / 42,CalWinTime:34,CompNum:87
+12:31:42.464 Info[P 14776 T 273 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:30:58,CalS:12:30:58,CalE:12:31:42,Time: 43 / 43,CalWinTime:35,CompNum:86
+12:31:45.839 Info[P 14776 T 245 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:30:58,CalS:12:30:58,CalE:12:31:45,Time: 47 / 47,CalWinTime:40,CompNum:86
+12:31:48.495 Info[P 14776 T 276 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:30:58,CalS:12:30:58,CalE:12:31:48,Time: 50 / 50,CalWinTime:40,CompNum:87
+12:31:48.870 Info[P 14776 T 275 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:30:58,CalS:12:30:58,CalE:12:31:48,Time: 50 / 50,CalWinTime:41,CompNum:87
+12:31:49.026 Info[P 14776 T 313 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:30:58,BlobS:12:30:58,BlobE:12:30:58,CalThdS:12:30:58,StartCapMark:12:30:59,EndCapFov:12:31:34,InspE:12:31:49,TranBLOB 0.000, Total(BIn/ThdS): 50.564 / 50.549(696)/,PCBCompNum:False,ACC:8,ThdNum:50549
+12:32:05.195 Info[P 14776 T 288 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481403	PCBInspect_Mode:InLine
+12:32:05.211 Info[P 14776 T 248 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:32:05.211 Info[P 14776 T 248 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:32:58.306 Info[P 14776 T 248 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 53.1
+12:32:58.806 Info[P 14776 T 243 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:32:05,CalS:12:32:05,CalE:12:32:58,Time: 53 / 53,CalWinTime:30,CompNum:87
+12:33:00.727 Info[P 14776 T 314 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:32:05,CalS:12:32:05,CalE:12:33:00,Time: 55 / 55,CalWinTime:47,CompNum:87
+12:33:01.087 Info[P 14776 T 251 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:32:05,CalS:12:32:05,CalE:12:33:01,Time: 55 / 55,CalWinTime:47,CompNum:87
+12:33:07.076 Info[P 14776 T 313 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:32:05,CalS:12:32:05,CalE:12:33:07,Time: 61 / 61,CalWinTime:48,CompNum:87
+12:33:07.107 Info[P 14776 T 277 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:32:05,CalS:12:32:05,CalE:12:33:07,Time: 61 / 61,CalWinTime:49,CompNum:87
+12:33:07.107 Info[P 14776 T 246 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:32:05,CalS:12:32:05,CalE:12:33:07,Time: 61 / 61,CalWinTime:49,CompNum:87
+12:33:07.295 Info[P 14776 T 267 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:32:05,CalS:12:32:05,CalE:12:33:07,Time: 62 / 62,CalWinTime:53,CompNum:87
+12:33:10.810 Info[P 14776 T 257 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:32:05,CalS:12:32:05,CalE:12:33:10,Time: 65 / 65,CalWinTime:57,CompNum:87
+12:33:10.951 Info[P 14776 T 288 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:32:05,BlobS:12:32:05,BlobE:12:32:05,CalThdS:12:32:05,StartCapMark:12:32:05,EndCapFov:12:32:58,InspE:12:33:10,TranBLOB 0.000, Total(BIn/ThdS): 65.755 / 65.739(696)/,PCBCompNum:False,ACC:8,ThdNum:65739
+12:33:17.525 Info[P 14776 T 85 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481404	PCBInspect_Mode:InLine
+12:33:17.541 Info[P 14776 T 289 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:33:17.541 Info[P 14776 T 289 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:33:53.487 Info[P 14776 T 289 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 35.9
+12:33:58.424 Info[P 14776 T 241 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:33:17,CalS:12:33:17,CalE:12:33:58,Time: 40 / 40,CalWinTime:32,CompNum:87
+12:33:59.705 Info[P 14776 T 288 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:33:17,CalS:12:33:17,CalE:12:33:59,Time: 42 / 42,CalWinTime:33,CompNum:87
+12:33:59.768 Info[P 14776 T 91 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:33:17,CalS:12:33:17,CalE:12:33:59,Time: 42 / 42,CalWinTime:34,CompNum:87
+12:34:00.705 Info[P 14776 T 328 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:33:17,CalS:12:33:17,CalE:12:34:00,Time: 43 / 43,CalWinTime:33,CompNum:87
+12:34:02.752 Info[P 14776 T 255 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:33:17,CalS:12:33:17,CalE:12:34:02,Time: 45 / 45,CalWinTime:37,CompNum:86
+12:34:05.464 Info[P 14776 T 299 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:33:17,CalS:12:33:17,CalE:12:34:05,Time: 47 / 47,CalWinTime:40,CompNum:86
+12:34:05.917 Info[P 14776 T 318 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:33:17,CalS:12:33:17,CalE:12:34:05,Time: 48 / 48,CalWinTime:39,CompNum:87
+12:34:08.339 Info[P 14776 T 86 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:33:17,CalS:12:33:17,CalE:12:34:08,Time: 50 / 50,CalWinTime:41,CompNum:87
+12:34:08.432 Info[P 14776 T 85 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:33:17,BlobS:12:33:17,BlobE:12:33:17,CalThdS:12:33:17,StartCapMark:12:33:18,EndCapFov:12:33:53,InspE:12:34:08,TranBLOB 0.000, Total(BIn/ThdS): 50.906 / 50.891(696)/,PCBCompNum:False,ACC:8,ThdNum:50891
+12:34:17.729 Info[P 14776 T 257 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481405	PCBInspect_Mode:InLine
+12:34:17.729 Info[P 14776 T 313 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:34:17.729 Info[P 14776 T 313 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:35:08.595 Info[P 14776 T 313 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 50.9
+12:35:15.056 Info[P 14776 T 304 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:34:17,CalS:12:34:17,CalE:12:35:15,Time: 57 / 57,CalWinTime:48,CompNum:87
+12:35:15.165 Info[P 14776 T 264 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:34:17,CalS:12:34:17,CalE:12:35:15,Time: 57 / 57,CalWinTime:46,CompNum:87
+12:35:17.040 Info[P 14776 T 85 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:34:17,CalS:12:34:17,CalE:12:35:17,Time: 59 / 59,CalWinTime:51,CompNum:87
+12:35:17.446 Info[P 14776 T 244 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:34:17,CalS:12:34:17,CalE:12:35:17,Time: 59 / 59,CalWinTime:50,CompNum:87
+12:35:19.071 Info[P 14776 T 277 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:34:17,CalS:12:34:17,CalE:12:35:19,Time: 61 / 61,CalWinTime:52,CompNum:86
+12:35:22.336 Info[P 14776 T 314 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:34:17,CalS:12:34:17,CalE:12:35:22,Time: 64 / 64,CalWinTime:56,CompNum:86
+12:35:23.820 Info[P 14776 T 251 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:34:17,CalS:12:34:17,CalE:12:35:23,Time: 66 / 66,CalWinTime:57,CompNum:87
+12:35:23.961 Info[P 14776 T 243 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:34:17,CalS:12:34:17,CalE:12:35:23,Time: 66 / 66,CalWinTime:56,CompNum:87
+12:35:24.102 Info[P 14776 T 257 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:34:17,BlobS:12:34:17,BlobE:12:34:17,CalThdS:12:34:17,StartCapMark:12:34:18,EndCapFov:12:35:08,InspE:12:35:24,TranBLOB 0.000, Total(BIn/ThdS): 66.372 / 66.372(696)/,PCBCompNum:False,ACC:8,ThdNum:66372
+12:35:30.947 Info[P 14776 T 286 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481406	PCBInspect_Mode:InLine
+12:35:30.962 Info[P 14776 T 252 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:35:30.962 Info[P 14776 T 252 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:36:11.102 Info[P 14776 T 252 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 40.1
+12:36:13.352 Info[P 14776 T 320 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:35:30,CalS:12:35:30,CalE:12:36:13,Time: 42 / 42,CalWinTime:33,CompNum:87
+12:36:15.425 Info[P 14776 T 260 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:35:30,CalS:12:35:30,CalE:12:36:15,Time: 44 / 44,CalWinTime:35,CompNum:87
+12:36:15.753 Info[P 14776 T 285 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:35:30,CalS:12:35:30,CalE:12:36:15,Time: 44 / 44,CalWinTime:35,CompNum:87
+12:36:20.768 Info[P 14776 T 267 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:35:30,CalS:12:35:30,CalE:12:36:20,Time: 49 / 49,CalWinTime:37,CompNum:87
+12:36:20.768 Info[P 14776 T 248 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:35:30,CalS:12:35:30,CalE:12:36:20,Time: 49 / 49,CalWinTime:38,CompNum:87
+12:36:20.830 Info[P 14776 T 290 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:35:30,CalS:12:35:30,CalE:12:36:20,Time: 49 / 49,CalWinTime:36,CompNum:87
+12:36:21.190 Info[P 14776 T 265 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:35:30,CalS:12:35:30,CalE:12:36:21,Time: 50 / 50,CalWinTime:40,CompNum:87
+12:36:24.611 Info[P 14776 T 284 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:35:30,CalS:12:35:30,CalE:12:36:24,Time: 53 / 53,CalWinTime:45,CompNum:87
+12:36:24.767 Info[P 14776 T 286 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:35:30,BlobS:12:35:30,BlobE:12:35:30,CalThdS:12:35:30,StartCapMark:12:35:31,EndCapFov:12:36:10,InspE:12:36:24,TranBLOB 0.000, Total(BIn/ThdS): 53.820 / 53.805(696)/,PCBCompNum:False,ACC:8,ThdNum:53805
+12:36:32.214 Info[P 14776 T 317 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481407	PCBInspect_Mode:InLine
+12:36:32.230 Info[P 14776 T 310 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:36:32.230 Info[P 14776 T 310 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:37:10.987 Info[P 14776 T 310 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 38.8
+12:37:12.726 Info[P 14776 T 297 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:36:32,CalS:12:36:32,CalE:12:37:12,Time: 40 / 40,CalWinTime:32,CompNum:87
+12:37:14.804 Info[P 14776 T 293 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:36:32,CalS:12:36:32,CalE:12:37:14,Time: 42 / 42,CalWinTime:34,CompNum:87
+12:37:15.228 Info[P 14776 T 87 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:36:32,CalS:12:36:32,CalE:12:37:15,Time: 42 / 42,CalWinTime:33,CompNum:87
+12:37:15.678 Info[P 14776 T 291 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:36:32,CalS:12:36:32,CalE:12:37:15,Time: 43 / 43,CalWinTime:33,CompNum:87
+12:37:17.060 Info[P 14776 T 249 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:36:32,CalS:12:36:32,CalE:12:37:17,Time: 44 / 44,CalWinTime:36,CompNum:86
+12:37:18.948 Info[P 14776 T 327 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:36:32,CalS:12:36:32,CalE:12:37:18,Time: 46 / 46,CalWinTime:38,CompNum:87
+12:37:20.618 Info[P 14776 T 308 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:36:32,CalS:12:36:32,CalE:12:37:20,Time: 48 / 48,CalWinTime:41,CompNum:86
+12:37:21.488 Info[P 14776 T 272 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:36:32,CalS:12:36:32,CalE:12:37:21,Time: 49 / 49,CalWinTime:39,CompNum:87
+12:37:21.539 Info[P 14776 T 317 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:36:32,BlobS:12:36:32,BlobE:12:36:32,CalThdS:12:36:32,StartCapMark:12:36:32,EndCapFov:12:37:10,InspE:12:37:21,TranBLOB 0.000, Total(BIn/ThdS): 49.324 / 49.309(696)/,PCBCompNum:False,ACC:8,ThdNum:49309
+12:37:30.063 Info[P 14776 T 285 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481408	PCBInspect_Mode:InLine
+12:37:30.073 Info[P 14776 T 248 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+12:37:30.073 Info[P 14776 T 248 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+12:37:56.426 Info[P 14776 T 320 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:12:37:30,CalS:12:37:30,CalE:12:37:56,Time: 26 / 26,CalWinTime:0,CompNum:87
+12:37:56.304 Info[P 14776 T 271 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:12:37:30,CalS:12:37:30,CalE:12:37:56,Time: 26 / 26,CalWinTime:20,CompNum:87
+12:37:56.456 Info[P 14776 T 317 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:12:37:30,CalS:12:37:30,CalE:12:37:56,Time: 26 / 26,CalWinTime:21,CompNum:87
+12:37:56.535 Info[P 14776 T 281 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:12:37:30,CalS:12:37:30,CalE:12:37:56,Time: 26 / 26,CalWinTime:21,CompNum:87
+12:37:56.535 Info[P 14776 T 294 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:12:37:30,CalS:12:37:30,CalE:12:37:56,Time: 26 / 26,CalWinTime:21,CompNum:87
+12:37:56.535 Info[P 14776 T 260 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:12:37:30,CalS:12:37:30,CalE:12:37:56,Time: 26 / 26,CalWinTime:22,CompNum:86
+12:37:56.535 Info[P 14776 T 290 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:12:37:30,CalS:12:37:30,CalE:12:37:56,Time: 26 / 26,CalWinTime:21,CompNum:86
+12:37:56.566 Info[P 14776 T 289 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:12:37:30,CalS:12:37:30,CalE:12:37:56,Time: 26 / 26,CalWinTime:20,CompNum:87
+12:37:57.142 Info[P 14776 T 248 CL_InspectThreadSpectial->ࠏ(0:0)]	End Cap FOV 27.1
+12:37:57.283 Info[P 14776 T 285 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:12:37:30,BlobS:12:37:30,BlobE:12:37:30,CalThdS:12:37:30,StartCapMark:12:37:30,EndCapFov:12:37:57,InspE:12:37:57,TranBLOB 0.001, Total(BIn/ThdS): 27.220 / 27.214(696)/,PCBCompNum:False,ACC:8,ThdNum:27214
+13:17:49.818 Info[P 11388 T 131 CL_DataProc_API->RecordLog_ThdTimeStats(0:0)]	PCBID_481408	PCBInspect_Mode:InLine
+13:17:50.519 Info[P 11388 T 114 CL_InspectThreadSpectial->ࠏ(0:0)]	JobName=全算法（仅测试，勿修改） AppVersion=V9.29N_20250226
+13:17:50.529 Info[P 11388 T 114 CL_InspectThreadSpectial->ࠏ(0:0)]	Start Cap FOV 0
+13:17:55.109 Info[P 11388 T 91 CL_InspectThread->ࠅ(0:0)]	Thd_1:ThdS:13:17:50,CalS:13:17:50,CalE:13:17:55,Time: 4 / 4,CalWinTime:1,CompNum:87
+13:17:55.110 Info[P 11388 T 18 CL_InspectThread->ࠅ(0:0)]	Thd_0:ThdS:13:17:50,CalS:13:17:50,CalE:13:17:55,Time: 4 / 4,CalWinTime:1,CompNum:87
+13:17:55.142 Info[P 11388 T 119 CL_InspectThread->ࠅ(0:0)]	Thd_5:ThdS:13:17:50,CalS:13:17:50,CalE:13:17:55,Time: 4 / 4,CalWinTime:0,CompNum:87
+13:17:55.143 Info[P 11388 T 123 CL_InspectThread->ࠅ(0:0)]	Thd_2:ThdS:13:17:50,CalS:13:17:50,CalE:13:17:55,Time: 4 / 4,CalWinTime:0,CompNum:87
+13:17:55.143 Info[P 11388 T 120 CL_InspectThread->ࠅ(0:0)]	Thd_4:ThdS:13:17:50,CalS:13:17:50,CalE:13:17:55,Time: 4 / 4,CalWinTime:0,CompNum:87
+13:17:55.143 Info[P 11388 T 122 CL_InspectThread->ࠅ(0:0)]	Thd_3:ThdS:13:17:50,CalS:13:17:50,CalE:13:17:55,Time: 4 / 4,CalWinTime:0,CompNum:87
+13:17:55.143 Info[P 11388 T 117 CL_InspectThread->ࠅ(0:0)]	Thd_7:ThdS:13:17:50,CalS:13:17:50,CalE:13:17:55,Time: 4 / 4,CalWinTime:0,CompNum:86
+13:17:55.157 Info[P 11388 T 118 CL_InspectThread->ࠅ(0:0)]	Thd_6:ThdS:13:17:50,CalS:13:17:50,CalE:13:17:55,Time: 4 / 4,CalWinTime:0,CompNum:87
+13:17:55.252 Info[P 11388 T 131 CL_InspectMainFlow->BoardInspect(0:0)]	InspS:13:17:49,BlobS:13:17:49,BlobE:13:17:50,CalThdS:13:17:50,StartCapMark:13:17:51,EndCapFov:13:17:54,InspE:13:17:55,TranBLOB 0.419, Total(BIn/ThdS): 5.434 / 4.748(697)/,PCBCompNum:False,ACC:8,ThdNum:4748

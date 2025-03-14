@@ -1,8 +1,10 @@
+import os
 import tkinter as tk
 from tkinter import ttk, messagebox
-import os
+
 from scripts.rv import rv_ai_test
 from utils import setup_logger
+
 
 def submit():
     train_eval_paths = [path.strip().replace('；', ';') for path in entry_train_eval_path.get().split(';') if path.strip() and path.strip() != default_text]  # 支持多个由;分隔开的路径，并去除每个路径前后的空白符

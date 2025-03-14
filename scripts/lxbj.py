@@ -1,12 +1,15 @@
+import os
 import random
+import shutil
 import time
-from loguru import logger
+
 import pyautogui
 import pyperclip
+from loguru import logger
+
 import config
 import utils
-import shutil
-import os
+
 
 # TODO 需要在线版aoi
 # @utils.screenshot_error_to_excel()

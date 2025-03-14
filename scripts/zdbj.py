@@ -1,7 +1,6 @@
-import utils
-import time
-import pyautogui
 import config
+import utils
+
 
 @utils.screenshot_error_to_excel()
 def zdbj_001_01():

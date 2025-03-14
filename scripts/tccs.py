@@ -1,14 +1,11 @@
-import datetime
-import os
 import random
-import shutil
-from loguru import logger
-import psutil
-import pyperclip
-import utils
 import time
+
 import pyautogui
+
 import config
+import utils
+
 
 # @utils.screenshot_error_to_excel()
 # def tccs_001_01():

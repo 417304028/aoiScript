@@ -1,6 +1,7 @@
 import pyautogui
-import utils
+
 import config
+import utils
 
 
 # @utils.screenshot_error_to_excel()

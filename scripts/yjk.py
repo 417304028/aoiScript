@@ -1,13 +1,15 @@
+import datetime
 import fnmatch
 import os
-import datetime
 import random
-import pyperclip
-import utils
-import config
-import pyautogui
 import time
+
+import pyautogui
+import pyperclip
 from loguru import logger
+
+import config
+import utils
 
 
 # 遍历所有硬件icon的话麻烦死了 让测试自己多跑几次

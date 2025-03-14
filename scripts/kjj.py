@@ -1,11 +1,14 @@
 import os
 import random
-import pyperclip
-import utils
 import time
+
 import pyautogui
-import config
+import pyperclip
 from loguru import logger
+
+import config
+import utils
+
 
 @utils.screenshot_error_to_excel()
 def kjj_001_01():

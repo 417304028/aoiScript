@@ -1,11 +1,11 @@
-import os
-import random
-import pyperclip
 import utils
-import time
 import pyautogui
 import config
-from loguru import logger
+import pyautogui
+
+import config
+import utils
+
 
 @utils.screenshot_error_to_excel()
 def zxtc_001_01():
